@@ -1,7 +1,7 @@
 <project name="tritonus_tests" default="compile" basedir=".">
   <target name="init">
     <tstamp/>
-    <property name="src" value="." />
+    <property name="src" value="src" />
     <property name="build" value="." />
     <property name="dist"  value="." />
     <!--
