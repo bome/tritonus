@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 package	org.tritonus.sampled.convert.gsm;
 
 
+import	java.io.DataInputStream;
 import	java.io.InputStream;
 import	java.io.IOException;
 
@@ -151,9 +152,9 @@ public class GSMFormatConversionProvider
 
 
 	public static class DecodedGSMAudioInputStream
-		extends		TAsynchronousFilteredAudioInputStream
+	extends		TAsynchronousFilteredAudioInputStream
 	{
-		private InputStream		m_encodedStream;
+		private DataInputStream		m_encodedStream;
 		private GSMDecoder		m_decoder;
 
 		/*
@@ -172,7 +173,7 @@ public class GSMFormatConversionProvider
 			{
 				TDebug.out("DecodedGSMAudioInputStream.<init>(): called");
 			}
-			m_encodedStream = inputStream;
+			m_encodedStream = new DataInputStream(inputStream);
 			m_decoder = new GSMDecoder();
 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
 			m_abBuffer = new byte[BUFFER_SIZE];
@@ -184,27 +185,17 @@ public class GSMFormatConversionProvider
 		{
 			if (TDebug.TraceAudioConverter)
 			{
-				TDebug.out("DecodedGSMAudioInputStream.execute(): called");
+				TDebug.out("DecodedGSMAudioInputStream.execute(): begin");
 			}
 			try
 			{
-				int	nRead = m_encodedStream.read(m_abFrameBuffer);
-				/*
-				 *	Currently, we take all kinds of errors
-				 *	as end of stream.
-				 */
-				if (nRead != ENCODED_GSM_FRAME_SIZE)
-				{
-					if (TDebug.TraceAudioConverter)
-					{
-						TDebug.out("DecodedGSMAudioInputStream.execute(): not read whole GSM frame (" + nRead + ")");
-					}
-					m_circularBuffer.close();
-					return;
-				}
+				m_encodedStream.readFully(m_abFrameBuffer);
 			}
 			catch (IOException e)
 			{
+				/*
+				  Not only errors, but also EOF is catched here.
+				 */
 				if (TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
@@ -258,7 +249,7 @@ public class GSMFormatConversionProvider
 
 
 	public static class EncodedGSMAudioInputStream
-		extends		TAsynchronousFilteredAudioInputStream
+	extends		TAsynchronousFilteredAudioInputStream
 	{
 		private AudioInputStream	m_decodedStream;
 		private Encoder			m_encoder;
