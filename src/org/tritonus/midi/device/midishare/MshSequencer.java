@@ -46,9 +46,9 @@ import	org.tritonus.midi.device.midishare.*;
 
 import	grame.midishare.*;
 import	grame.midishare.player.*;
+import	grame.midishare.tools.*;
 
-
-public class MshSequencer
+final public class MshSequencer
 	extends		TSequencer
 {
 
@@ -69,9 +69,9 @@ public class MshSequencer
 	protected void openImpl() throws MidiUnavailableException
 	{
 		if (m_refNum == -1) {
-		 	m_refNum = MidiPlayer.Open("JavaSound Player");
-		 	
-		 	// Reporting error??
+		
+			// Opens the MidiShare native sequencer
+		 	m_refNum = MidiPlayer.Open(availableName("JavaSound Player"));
 		 	if (m_refNum < 0)  throw  new MidiUnavailableException("MidiShare sequencer open error");
 		 	
 		 	// To be changed later
@@ -91,11 +91,6 @@ public class MshSequencer
 		}
 	}
 	
-	private boolean  IsTempoMap(int t){return (t == Midi.typeCopyright) 
-  									|| (t== Midi.typeMarker) 
-  									|| ((t >=Midi.typeTempo) && (t<=Midi.typeKeySign)); }
- 
-
 
 	public void setSequence(Sequence sequence)
 		throws	InvalidMidiDataException
@@ -107,21 +102,26 @@ public class MshSequencer
 		setTempoFactor(1.0F);
 		
 		Track[]	aTracks = sequence.getTracks();
-		int mshEv, mshSeq, nTrack, nEv, eventNum = 0; 
+		int mshEv, mshSeq, mshSeq1, nTrack, nEv, eventNum = 0; 
 		
+		// Count the event number, allocate MidiShare events if necessary
 		for (nTrack = 0; nTrack < aTracks.length; nTrack++){ eventNum+=aTracks[nTrack].size();}
 		if (Midi.FreeSpace() < eventNum) Midi.GrowSpace(eventNum);
 		
-		if ((mshSeq = Midi.NewSeq()) != 0) {
+		if (((mshSeq = Midi.NewSeq()) != 0) && ((mshSeq1 = Midi.NewSeq()) != 0)) {
 			for (nTrack = 0; nTrack < aTracks.length; nTrack++){
 				for (nEv = 0; nEv<aTracks[nTrack].size() ; nEv++) {
 					mshEv = MshEventConverter.decodeEvent(aTracks[nTrack].get(nEv));
 					if (mshEv != 0){
 						// Set the tracknumber
 						Midi.SetRefnum(mshEv,IsTempoMap(Midi.GetType(mshEv)) ? 0 : Math.min(256,nTrack+1));
-						Midi.AddSeq(mshSeq,mshEv);
+						Midi.AddSeq(mshSeq1,mshEv);
 					}
 				}
+				// Mix the temporary sequence in the result sequence
+				MidiSequence.Mix(mshSeq1,mshSeq);
+				Midi.SetFirstEv(mshSeq1, 0);
+				Midi.SetLastEv(mshSeq1, 0);
 			}
 			MidiPlayer.SetAllTrack(m_refNum,mshSeq,sequence.getResolution());
 		}else {
@@ -259,31 +259,7 @@ public class MshSequencer
 	{
 		MidiPlayer.SetPosMs(m_refNum, (int)lMicroseconds/1000);
 	}
-
-	private Sequencer.SyncMode MshSync2SequencerSync(int sync) 
-	{
-		switch (sync) {
-			case MidiPlayer.kInternalSync:
-				return  Sequencer.SyncMode.INTERNAL_CLOCK;
-			case MidiPlayer.kClockSync:
-				return  Sequencer.SyncMode.MIDI_SYNC;
-			case MidiPlayer.kSMPTESync:
-				return  Sequencer.SyncMode.MIDI_TIME_CODE;
-		}
-		return null;
-	}
 	
-	private int Sequencer2MshSync( Sequencer.SyncMode sync) 
-	{
-		if (sync.equals(Sequencer.SyncMode.INTERNAL_CLOCK))
-			return MidiPlayer.kInternalSync;
-		else if (sync.equals(Sequencer.SyncMode.MIDI_SYNC))
-			return MidiPlayer.kClockSync;
-		else if (sync.equals(Sequencer.SyncMode.MIDI_TIME_CODE))
-			return MidiPlayer.kSMPTESync;
-		else 
-			return MidiPlayer.kInternalSync;	
-	}
 
 	public Sequencer.SyncMode getMasterSyncMode()
 	{
@@ -325,36 +301,71 @@ public class MshSequencer
 		return new Sequencer.SyncMode[0];
 	}
 
-
 	public boolean getTrackMute(int nTrack)
 	{
 		// TODO: VERIFIER numero de piste
-		//return  (MidiPlayer.GetParam(m_refNum,nTrack, MidiPlayer.kMute) == MidiPlayer.kMuteOn);
-		return  (MidiPlayer.GetParam(m_refNum,nTrack, 0) == MidiPlayer.kMuteOn);
+		return  (MidiPlayer.GetParam(m_refNum,nTrack, MidiPlayer.kMute) == MidiPlayer.kMuteOn);
 	}
-
 
 	public void setTrackMute(int nTrack, boolean bMute)
 	{
 		// TODO: VERIFIER numero de piste
-		//MidiPlayer.SetParam(m_refNum,nTrack,  MidiPlayer.kMute ,  (bMute) ? MidiPlayer.kMuteOn : MidiPlayer.kMuteOff);
-		MidiPlayer.SetParam(m_refNum,nTrack, 0,  (bMute) ? MidiPlayer.kMuteOn : MidiPlayer.kMuteOff);
+		MidiPlayer.SetParam(m_refNum,nTrack,  MidiPlayer.kMute ,  (bMute) ? MidiPlayer.kMuteOn : MidiPlayer.kMuteOff);
 	}
 
 	public boolean getTrackSolo(int nTrack)
 	{
-		// TODO:
-		//return false;
-		//return  (MidiPlayer.GetParam(m_refNum,nTrack, MidiPlayer.kSolo) == MidiPlayer.kSoloOn);
-		return  (MidiPlayer.GetParam(m_refNum,nTrack, 1) == MidiPlayer.kSoloOn);
+		// TODO: VERIFIER numero de piste
+		return  (MidiPlayer.GetParam(m_refNum,nTrack, MidiPlayer.kSolo) == MidiPlayer.kSoloOn);
 	}
 
 	public void setTrackSolo(int nTrack, boolean bSolo)
 	{
 		// TODO: VERIFIER numero de piste
-		//MidiPlayer.SetParam(m_refNum,nTrack,  MidiPlayer.kSolo ,  (bSolo) ? MidiPlayer.kSoloOn : MidiPlayer.kSoloOff);
-		MidiPlayer.SetParam(m_refNum,nTrack, 1 ,  (bSolo) ? MidiPlayer.kSoloOn : MidiPlayer.kSoloOff);
+		MidiPlayer.SetParam(m_refNum,nTrack,  MidiPlayer.kSolo ,  (bSolo) ? MidiPlayer.kSoloOn : MidiPlayer.kSoloOff);
 	}
+
+
+	// Private methods
+
+	private Sequencer.SyncMode MshSync2SequencerSync(int sync) 
+	{
+		switch (sync) {
+			case MidiPlayer.kInternalSync:
+				return  Sequencer.SyncMode.INTERNAL_CLOCK;
+			case MidiPlayer.kClockSync:
+				return  Sequencer.SyncMode.MIDI_SYNC;
+			case MidiPlayer.kSMPTESync:
+				return  Sequencer.SyncMode.MIDI_TIME_CODE;
+		}
+		return null;
+	}
+	
+	private int Sequencer2MshSync( Sequencer.SyncMode sync) 
+	{
+		if (sync.equals(Sequencer.SyncMode.INTERNAL_CLOCK))
+			return MidiPlayer.kInternalSync;
+		else if (sync.equals(Sequencer.SyncMode.MIDI_SYNC))
+			return MidiPlayer.kClockSync;
+		else if (sync.equals(Sequencer.SyncMode.MIDI_TIME_CODE))
+			return MidiPlayer.kSMPTESync;
+		else 
+			return MidiPlayer.kInternalSync;	
+	}
+	
+	private static	String availableName(String name) {
+		int num = Midi.CountAppls();
+		for (int i = 0 ; i< num; i++) {
+			if (Midi.GetNamedAppl(name+(i+1)) < 0) return name + (i+1);
+		}
+		return name + num;
+	}
+	
+	private boolean  IsTempoMap(int t){return (t == Midi.typeCopyright) 
+  						|| (t== Midi.typeMarker) 
+  						|| ((t >=Midi.typeTempo) && (t<=Midi.typeKeySign)); }
+ 
+
 
 
 	///////////////////////////////////////////////////
