@@ -25,17 +25,19 @@ implements Player
 
 
 
-	public TPlayer()
+	protected TPlayer()
 	{
 		this(new Control[0]);
 	}
 
 
-	public TPlayer(Control[] aControls)
+
+	protected TPlayer(Control[] aControls)
 	{
 		super(aControls);
 		m_listeners = new Vector();
 		m_nState = UNREALIZED;
+		m_timeBase = getDefaultTimeBase();
 	}
 
 
@@ -46,6 +48,8 @@ implements Player
 	public void realize()
 		throws MediaException
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateNotClosed();
 	}
 
 
@@ -54,6 +58,8 @@ implements Player
 	public void prefetch()
 		throws MediaException
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateNotClosed();
 	}
 
 
@@ -62,6 +68,8 @@ implements Player
 	public void start()
 		throws MediaException
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateNotClosed();
 	}
 
 
@@ -69,6 +77,8 @@ implements Player
 	// TODO:
 	public void stop()
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateNotClosed();
 	}
 
 
@@ -76,6 +86,8 @@ implements Player
 	// TODO:
 	public void deallocate()
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateNotClosed();
 	}
 
 
@@ -83,25 +95,42 @@ implements Player
 	// TODO:
 	public void close()
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateRealized();
 	}
 
 
 
-	/*
-	  As some kind of default behaviour, setting the TimeBase is
-	  not allowed. If you want to change this, you need to
-	  override this method.
+	/**	Set TimeBase for this player.
+		This implementation checks for a legal state to set the TimeBase
+		and sets the passed TimeBase. If null is passed, a value
+		returned by {@link #getDefaultTimeBase() getDefaultTimeBase()}
+		is used to set the TimeBase. No further restrictions are enforced.
+		If additional restrictions are needed, subclasses should override
+		this method (not really a good solution, but for now).
+
+		@see #getDefaultTimeBase()
 	 */
-	public void setTimeBase(TimeBase masterTimeBase)
+	public void setTimeBase(TimeBase timeBase)
 		throws MediaException
 	{
-		throw new MediaException("setting TimeBase for this player is not possible");
+		// The following call can throw an IllegalStateException.
+		checkStateRealizedNotStarted();
+
+		if (timeBase == null)
+		{
+			timeBase = getDefaultTimeBase();
+		}
+		m_timeBase = timeBase;
 	}
 
 
 
 	public TimeBase getTimeBase()
 	{
+		// The following call can throw an IllegalStateException.
+		checkStateRealized();
+
 		return m_timeBase;
 	}
 
@@ -110,6 +139,8 @@ implements Player
 	// TODO:
 	public long setMediaTime(long lNow)
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateRealized();
 		return -1;
 	}
 
@@ -118,6 +149,8 @@ implements Player
 	// TODO:
 	public long getMediaTime()
 	{
+		// The following check can throw an IllegalStateException.
+		checkStateNotClosed();
 		return -1;
 	}
 
@@ -170,10 +203,67 @@ implements Player
 	}
 
 
+
+	protected abstract TimeBase getDefaultTimeBase();
+
+
 	protected boolean isStateLegalForControls()
 	{
 		int	nState = getState();
 		return nState != UNREALIZED && nState != CLOSED;
+	}
+
+
+
+	/**	Checks if the state is REALIZED, PREFETCHED or STARTED.
+		If this condition is not met (states UNREALIZED or CLOSED),
+		an IllegalStateException is throw.
+
+		@throws IllegalStateException Thrown if the state is UNREALIZED
+		or CLOSED.
+	*/
+	private void checkStateRealized()
+	{
+		int	nState = getState();
+		if (nState == UNREALIZED || nState == CLOSED)
+		{
+			throw new IllegalStateException("state is UNREALIZED or CLOSED. Required state is REALIZED, PREFETCHED or STARTED.");
+		}
+	}
+
+
+
+	/**	Checks if the state is REALIZED or PREFETCHED.
+		If this condition is not met (states UNREALIZED, STARTED or CLOSED),
+		an IllegalStateException is throw.
+
+		@throws IllegalStateException Thrown if the state is UNREALIZED,
+		STARTED or CLOSED.
+	*/
+	private void checkStateRealizedNotStarted()
+	{
+		int	nState = getState();
+		if (nState == UNREALIZED || nState == STARTED || nState == CLOSED)
+		{
+			throw new IllegalStateException("state is UNREALIZED, STARTED or CLOSED. Required state is REALIZED or PREFETCHED STARTED.");
+		}
+	}
+
+
+
+	/**	Checks if the state is UNREALIZED, REALIZED, PREFETCHED or STARTED.
+		If this condition is not met (state CLOSED),
+		an IllegalStateException is throw.
+
+		@throws IllegalStateException Thrown if the state is CLOSED.
+	*/
+	private void checkStateNotClosed()
+	{
+		int	nState = getState();
+		if (nState == CLOSED)
+		{
+			throw new IllegalStateException("state is CLOSED. Required state is UNREALIZED, REALIZED, PREFETCHED or STARTED.");
+		}
 	}
 }
 
