@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -59,16 +59,19 @@ public abstract class TDataLine
 	public TDataLine(TMixer mixer,
 			 DataLine.Info info)
 	{
-		super(mixer, info);
+		super(mixer,
+		      info);
 		init(info);
 	}
 
 
 
-	public TDataLine(DataLine.Info info,
+	public TDataLine(TMixer mixer,
+			 DataLine.Info info,
 			 Collection controls)
 	{
-		super(info,
+		super(mixer,
+		      info,
 		      controls);
 		init(info);
 	}

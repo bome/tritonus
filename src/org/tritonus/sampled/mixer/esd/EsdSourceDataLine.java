@@ -29,6 +29,7 @@ package	org.tritonus.sampled.mixer.esd;
 import	java.io.IOException;
 
 import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.Control;
 import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.FloatControl;
 import	javax.sound.sampled.LineUnavailableException;
@@ -39,9 +40,9 @@ import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.esd.Esd;
 import	org.tritonus.lowlevel.esd.EsdStream;
 import	org.tritonus.sampled.TConversionTool;
+import	org.tritonus.sampled.TVolumeUtils;
 import	org.tritonus.sampled.mixer.TMixer;
 import	org.tritonus.sampled.mixer.TSourceTargetDataLine;
-
 
 
 
@@ -49,9 +50,6 @@ public class EsdSourceDataLine
 	extends		TSourceTargetDataLine
 	implements	SourceDataLine
 {
-	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
-
-
 	private EsdStream		m_esdStream;
 	private boolean			m_bSwapBytes;
 	private byte[]			m_abSwapBuffer;
@@ -60,6 +58,24 @@ public class EsdSourceDataLine
 	 *	Only used if m_bSwapBytes is true.
 	 */
 	private int			m_nBytesPerSample;
+
+
+	/*
+	 *	Used to store the muted state.
+	 */
+	private boolean			m_bMuted;
+
+
+	/*
+	 *	Used to store the gain while the channel is muted.
+	 */
+	private float			m_fGain;
+
+
+	/*
+	 *	Used to store the pan while the channel is muted.
+	 */
+	private float			m_fPan;
 
 
 
@@ -74,6 +90,7 @@ public class EsdSourceDataLine
 		      new DataLine.Info(SourceDataLine.class,
 					format,
 					nBufferSize));
+		addControl(new EsdSourceDataLineGainControl());
 /*
   if (TDebug.TraceSourceDataLine)
   {
@@ -242,10 +259,35 @@ public class EsdSourceDataLine
 
 
 	/**
-	 *	dGain is logarithmic!!
+	 *	fGain is logarithmic!!
 	 */
-	private void setGain(float dGain)
+	private void setGain(float fGain)
 	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.setGain(): gain: " + fGain);
+		}
+		m_fGain = fGain;
+		if (! m_bMuted)
+		{
+			setGainImpl();
+		}
+	}
+
+
+
+	/**
+	 *	fGain is logarithmic!!
+	 */
+	private void setGainImpl()
+	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.setGainImpl(): called: ");
+		}
+		float	fLinear = (float) TVolumeUtils.log2lin(m_fGain);
+		m_esdStream.setVolume((int) (fLinear * 256),
+				      (int) (fLinear * 256));
 	}
 
 
@@ -258,7 +300,7 @@ public class EsdSourceDataLine
 		 *	These variables should be static. However, Java 1.1
 		 *	doesn't allow this. So they aren't.
 		 */
-		private /*static*/ final float	MAX_GAIN = 90.0F;
+		private /*static*/ final float	MAX_GAIN = 24.0F;
 		private /*static*/ final float	MIN_GAIN = -96.0F;
 
 		// TODO: recheck this value
@@ -271,7 +313,7 @@ public class EsdSourceDataLine
 
 		/*package*/ EsdSourceDataLineGainControl()
 		{
-			super(FloatControl.Type.VOLUME,	// or MASTER_GAIN ?
+			super(FloatControl.Type.MASTER_GAIN,	// or VOLUME  ?
 			      -96.0F,	// MIN_GAIN,
 			      24.0F,	// MAX_GAIN,
 			      0.01F,	// precision
@@ -288,56 +330,66 @@ public class EsdSourceDataLine
 
 		public void setValue(float fGain)
 		{
-			fGain = Math.max(Math.min(fGain, getMaximum()), getMinimum());
-			if (Math.abs(fGain - getValue()) > 1.0E9)
+			if (TDebug.TraceSourceDataLine)
 			{
+				TDebug.out("EsdSourceDataLineGainControl.setValue(): gain: " + fGain);
+			}
+			fGain = Math.max(Math.min(fGain, getMaximum()), getMinimum());
+			if (TDebug.TraceSourceDataLine)
+			{
+				TDebug.out("EsdSourceDataLineGainControl.setValue(): limited gain: " + fGain);
+				TDebug.out("EsdSourceDataLineGainControl.setValue(): current gain: " + getValue());
+			}
+			if (Math.abs(fGain - getValue()) > 1.0E-9)
+			{
+				if (TDebug.TraceSourceDataLine)
+				{
+					TDebug.out("EsdSourceDataLineGainControl.setValue(): really changing gain");
+				}
 				super.setValue(fGain);
-				// if (!getMute())
-				// {
 				EsdSourceDataLine.this.setGain(getValue());
-				// }
 			}
 		}
 
 
+
+		public float getMaximum()
+		{
+			return MAX_GAIN;
+		}
+
+
+
+		public float getMinimum()
+		{
+			return MIN_GAIN;
+		}
+
+
+
+		public int getIncrements()
+		{
+			// TODO: check this value
+			return GAIN_INCREMENTS;
+		}
+
+
+
+		public void fade(float fInitialGain, float fFinalGain, int nFrames)
+		{
+			// TODO:
+		}
+
+
+
+		public int getFadePrecision()
+		{
+			//TODO:
+			return -1;
+		}
+
+
 /*
-  public float getMaximum()
-  {
-  return MAX_GAIN;
-  }
-
-
-
-  public float getMinimum()
-  {
-  return MIN_GAIN;
-  }
-
-
-
-  public int getIncrements()
-  {
-  // TODO: check this value
-  return GAIN_INCREMENTS;
-  }
-
-
-
-  public void fade(float fInitialGain, float fFinalGain, int nFrames)
-  {
-  // TODO:
-  }
-
-
-
-  public int getFadePrecision()
-  {
-  //TODO:
-  return -1;
-  }
-
-
-
   public boolean getMute()
   {
   return m_bMuted;

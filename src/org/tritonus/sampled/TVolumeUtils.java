@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus;
+package	org.tritonus.sampled;
 
 
 

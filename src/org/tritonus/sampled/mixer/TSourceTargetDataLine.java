@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -57,10 +57,12 @@ public abstract class TSourceTargetDataLine
 
 
 
-	public TSourceTargetDataLine(DataLine.Info info,
+	public TSourceTargetDataLine(TMixer mixer,
+				     DataLine.Info info,
 				     Collection controls)
 	{
-		super(info,
+		super(mixer,
+		      info,
 		      controls);
 	}
 

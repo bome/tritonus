@@ -46,6 +46,14 @@ public class EsdStream
 
 
 
+	/**	Holds player id of the stream in EsounD.
+	 *	This field is long because on 64 bit architectures, the native
+	 *	size of ints may be 64 bit.
+	 */
+	private long			m_lNativePlayerId;
+
+
+
 
 
 	public EsdStream()
@@ -79,6 +87,14 @@ public class EsdStream
 	 *	return from this call.
 	 */
 	public native void close();
+
+
+
+	/**	Sets the volume for this stream.
+	 *	The values for the volume should be normalized
+	 *	to 256 (256 means 0 dB).
+	 */
+	public native void setVolume(int nLeft, int nRight);
 
 }
 

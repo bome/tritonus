@@ -299,6 +299,14 @@ public class AlsaPcm
 	public static final int	SND_PCM_DIG3_CON_CLOCK_VARIABLE =	(2<<4);	/* variable pitch */
 
 
+
+	static
+	{
+		System.loadLibrary("tritonusalsa");
+	}
+
+
+
 	/**
 	 *	Holds the pointer to snd_pcm_t for the native code.
 	 *	This must be long to be 64bit-clean.

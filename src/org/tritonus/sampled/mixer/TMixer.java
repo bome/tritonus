@@ -40,7 +40,7 @@ import	org.tritonus.TDebug;
 import	org.tritonus.util.ArraySet;
 
 
-
+// TODO: global controls (that use the system mixer)
 public abstract class TMixer
 	extends		TLine
 	implements	Mixer
@@ -80,12 +80,21 @@ public abstract class TMixer
 
 	public Mixer.Info getMixerInfo()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.isLineSupported(): called");
+		}
 		return m_mixerInfo;
 	}
 
 
+
 	public Line.Info[] getSourceLineInfo()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.isLineSupported(): called");
+		}
 		return (Line.Info[]) m_supportedSourceLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
 	}
 
@@ -93,6 +102,10 @@ public abstract class TMixer
 
 	public Line.Info[] getTargetLineInfo()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.isLineSupported(): called");
+		}
 		return (Line.Info[]) m_supportedTargetLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
 	}
 
@@ -100,16 +113,24 @@ public abstract class TMixer
 
 	public Line.Info[] getSourceLineInfo(Line.Info info)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getSourceLineInfo(): info to test: " + info);
+		}
 		// TODO:
-		return null;
+		return EMPTY_LINE_INFO_ARRAY;
 	}
 
 
 
 	public Line.Info[] getTargetLineInfo(Line.Info info)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getTargetLineInfo(): info to test: " + info);
+		}
 		// TODO:
-		return null;
+		return EMPTY_LINE_INFO_ARRAY;
 	}
 
 
@@ -153,8 +174,20 @@ public abstract class TMixer
 
 
 
+/*
+  not implemented here:
+  getLine(Line.Info)
+  getMaxLines(Line.Info)
+ */
+
+
+
 	public Line[] getSourceLines()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getSourceLines(): called");
+		}
 		return (Line[]) m_openSourceDataLines.toArray(EMPTY_LINE_ARRAY);
 	}
 
@@ -162,6 +195,10 @@ public abstract class TMixer
 
 	public Line[] getTargetLines()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getTargetLines(): called");
+		}
 		return (Line[]) m_openTargetDataLines.toArray(EMPTY_LINE_ARRAY);
 	}
 
@@ -174,10 +211,12 @@ public abstract class TMixer
 	}
 
 
+
 	public void unsynchronize(Line[] aLines)
 	{
 		throw new IllegalArgumentException("synchronization not supported");
 	}
+
 
 
 	public boolean isSynchronizationSupported(Line[] aLines,
@@ -190,6 +229,10 @@ public abstract class TMixer
 
 	protected boolean isSourceFormatSupported(AudioFormat format)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.isSourceFormatSupported(): format to test: " + format);
+		}
 		Iterator	iterator = m_supportedSourceFormats.iterator();
 		while (iterator.hasNext())
 		{
@@ -206,6 +249,10 @@ public abstract class TMixer
 
 	protected boolean isTargetFormatSupported(AudioFormat format)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.isTargetFormatSupported(): format to test: " + format);
+		}
 		Iterator	iterator = m_supportedTargetFormats.iterator();
 		while (iterator.hasNext())
 		{
@@ -222,6 +269,10 @@ public abstract class TMixer
 
 	/*package*/ void registerOpenLine(Line line)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.registerOpenLine(): line to register: " + line);
+		}
 		if (line instanceof SourceDataLine)
 		{
 			synchronized (m_openSourceDataLines)
@@ -242,6 +293,10 @@ public abstract class TMixer
 
 	/*package*/ void unregisterOpenLine(Line line)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.unregisterOpenLine(): line to unregister: " + line);
+		}
 		if (line instanceof SourceDataLine)
 		{
 			synchronized (m_openSourceDataLines)

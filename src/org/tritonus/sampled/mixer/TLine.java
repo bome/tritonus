@@ -1,5 +1,8 @@
 /*
  *	TLine.java
+ *
+ *	This file is part of Tritonus,
+ *	an implementation of the Java Sound API.
  */
 
 /*
@@ -61,7 +64,8 @@ public abstract class TLine
 
 
 
-	protected TLine(TMixer mixer, Line.Info info)
+	protected TLine(TMixer mixer,
+			Line.Info info)
 	{
 		setLineInfo(info);
 		setOpen(false);
@@ -72,10 +76,11 @@ public abstract class TLine
 
 
 
-	protected TLine(Line.Info info,
+	protected TLine(TMixer mixer,
+			Line.Info info,
 			Collection controls)
 	{
-		this (null, info);
+		this (mixer, info);
 		m_controls.addAll(controls);
 	}
 
@@ -147,11 +152,7 @@ public abstract class TLine
 
 
 
-	// not defined here:
-	// public void close()
-	// TODO: implement close here + openImpl()?
 	public void close()
-		// throws	LineUnavailableException
 	{
 		if (TDebug.TraceLine)
 		{
@@ -185,7 +186,6 @@ public abstract class TLine
 	 *	Subclasses should override this method.
 	 */
 	protected void closeImpl()
-		// throws	LineUnavailableException
 	{
 		if (TDebug.TraceLine)
 		{
@@ -234,9 +234,6 @@ public abstract class TLine
 		}
 	}
 
-
-
-	// TODO: pass conntrols with constructor?
 
 
 	protected void addControl(Control control)

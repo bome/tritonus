@@ -216,6 +216,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getChannelInfo
 	values[15] = channelInfo.transfer_block_size;
 	values[16] = channelInfo.mmap_size;
 	values[17] = channelInfo.mixer_device;
+/*
+	printf("mixer device: %d\n", channelInfo.mixer_device);
+	printf("mixer eid name: %s\n", channelInfo.mixer_eid.name);
+	printf("mixer eid index: %d\n", channelInfo.mixer_eid.index);
+	printf("mixer eid type: %d\n", channelInfo.mixer_eid.type);
+*/
 	// values[18] = channelInfo.mixer_eid;
 	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
 
