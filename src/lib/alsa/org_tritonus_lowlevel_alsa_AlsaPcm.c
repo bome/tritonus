@@ -24,6 +24,7 @@
 
 
 #include	<sys/asoundlib.h>
+#include	<errno.h>
 #include	"org_tritonus_lowlevel_alsa_AlsaPcm.h"
 
 
@@ -184,7 +185,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getChannelInfo
 	int	nLength;
 	snd_pcm_channel_info_t	channelInfo;
 	snd_pcm_t*	handle = getNativeHandle(env, obj);
-	int		nReturn = snd_pcm_channel_info(handle, &channelInfo);
+	int		nReturn;
+	memset(&channelInfo, 0, sizeof(channelInfo));
+	nReturn = snd_pcm_channel_info(handle, &channelInfo);
 	nLength = (*env)->GetArrayLength(env, anValues);
 	if (nLength < 18)
 	{
@@ -246,7 +249,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getChannelSetup
 	int	nLength;
 	snd_pcm_channel_setup_t	channelSetup;
 	snd_pcm_t*	handle = getNativeHandle(env, obj);
-	int		nReturn = snd_pcm_channel_setup(handle, &channelSetup);
+	int		nReturn;
+	memset(&channelSetup, 0, sizeof(channelSetup));
+	nReturn = snd_pcm_channel_setup(handle, &channelSetup);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_pcm_channel_setup failed");
@@ -307,11 +312,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getChannelStatus
 	snd_pcm_channel_status_t	channelStatus;
 	snd_pcm_t*	handle = getNativeHandle(env, obj);
 	int		nReturn;
+	memset(&channelStatus, 0, sizeof(channelStatus));
 	channelStatus.channel = nChannel;
+	printf("getChannelStatus(): handle: %p\n", handle);
 	nReturn = snd_pcm_channel_status(handle, &channelStatus);
 	if (nReturn < 0)
 	{
-		throwRuntimeException(env, "snd_pcm_channel_status failed");
+		return nReturn;
+		// throwRuntimeException(env, "snd_pcm_channel_status failed");
 	}
 	nLength = (*env)->GetArrayLength(env, anValues);
 	if (nLength < 9)
@@ -366,7 +374,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getInfo
 	int	nLength;
 	snd_pcm_info_t	pcmInfo;
 	snd_pcm_t*	handle = getNativeHandle(env, obj);
-	int		nReturn = snd_pcm_info(handle, &pcmInfo);
+	int		nReturn;
+	memset(&pcmInfo, 0, sizeof(pcmInfo));
+	nReturn = snd_pcm_info(handle, &pcmInfo);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_pcm_info failed");
@@ -501,11 +511,16 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_open__III
 {
 	snd_pcm_t*	handle;
 	int		nReturn = snd_pcm_open(&handle, nCard, nDevice, nMode);
+	printf("mode: %d\n", (int) nMode);
+	printf("handle: %p\n", handle);
 	if (nReturn == 0)
 	{
 		setNativeHandle(env, obj, handle);
 	}
-	// printf("org_tritonus_lowlevel_alsa_AlsaPcm.open(): returns %d\n", nReturn);
+	else
+	{
+		printf("org_tritonus_lowlevel_alsa_AlsaPcm.open(): returns %d\n", nReturn);
+	}
 	return nReturn;
 }
 
@@ -525,6 +540,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_open__IIII
 	if (nReturn == 0)
 	{
 		setNativeHandle(env, obj, handle);
+	}
+	else
+	{
+		printf("org_tritonus_lowlevel_alsa_AlsaPcm.open(): returns %d\n", nReturn);
 	}
 	return nReturn;
 }
@@ -594,8 +613,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_read
 	printf("handle: %p\n", handle);
 	printf("buffer: %p\n", buffer);
 	printf("length: %d\n", (int) nLength);
-	// printf("fd: %d\n", ((struct snd_pcm*)handle)->fd[SND_PCM_CHANNEL_CAPTURE]);
+	printf("fd: %d\n", snd_pcm_file_descriptor(handle, SND_PCM_CHANNEL_CAPTURE));
+	errno = 0;
 	nBytesRead = snd_pcm_read(handle, buffer, nLength);
+	perror("abc");
 	if (nBytesRead > 0)
 	{
 		(*env)->SetByteArrayRegion(env, abData, nOffset, nBytesRead, buffer);
