@@ -1,4 +1,4 @@
-Package saol;
+Package org.tritonus.saol.sablecc;
 
 Helpers
 	all = [0 .. 127];
