@@ -52,7 +52,7 @@ public class ASequencer0
 	public static final int	SND_SEQ_EVENT_NOTEOFF =		7;
 	public static final int	SND_SEQ_EVENT_KEYPRESS =	8;
 /* 9-10: reserved */
-	
+
 /* 10-19: control messages (channel specific)
  * event data type = snd_seq_ev_ctrl
  */
@@ -86,8 +86,9 @@ public class ASequencer0
 	public static final int	SND_SEQ_EVENT_TEMPO =		35;	/* (SMF) Tempo event */
 	public static final int	SND_SEQ_EVENT_CLOCK =		36;	/* midi Real Time Clock message */
 	public static final int	SND_SEQ_EVENT_TICK =		37;	/* midi Real Time Tick message */
-/* 38-39: reserved */
-
+/* 38-39: sync */
+	public static final int	SND_SEQ_EVENT_SYNC =		38;
+	public static final int	SND_SEQ_EVENT_SYNC_POS =	39;
 /* 40-49: others
  * event data type = none
  */
@@ -243,6 +244,15 @@ public class ASequencer0
 	public static final long	SND_SEQ_FILTER_USE_EVENT =	(1L<<31);	/* use event filter */
 
 
+/* Flush mode flags */
+	public static final int	SND_SEQ_REMOVE_DEST =		(1<<0);	/* Restrict by destination q:client:port */
+	public static final int	SND_SEQ_REMOVE_DEST_CHANNEL =	(1<<1);	/* Restrict by channel */
+	public static final int	SND_SEQ_REMOVE_TIME_BEFORE =	(1<<2);	/* Restrict to before time */
+	public static final int	SND_SEQ_REMOVE_TIME_AFTER =	(1<<3);	/* Restrict to time or after */
+	public static final int	SND_SEQ_REMOVE_EVENT_TYPE =	(1<<4);	/* Restrict to event type */
+	public static final int	SND_SEQ_REMOVE_IGNORE_OFF = 	(1<<5);	/* Do not flush off events */
+	public static final int	SND_SEQ_REMOVE_TAG_MATCH = 	(1<<6);	/* Restrict to events with given tag */
+
 	/* known port numbers */
 	public static final int SND_SEQ_PORT_SYSTEM_TIMER =	0;
 	public static final int SND_SEQ_PORT_SYSTEM_ANNOUNCE =	1;
@@ -280,6 +290,87 @@ public class ASequencer0
 	public static final String SND_SEQ_GROUP_DEVICE =	"device";
 	public static final String SND_SEQ_GROUP_APPLICATION =	"application";
 
+/* misc. conditioning flags */
+	public static final int SND_SEQ_PORT_FLG_GIVEN_PORT =	(1<<0);
+
+/* queue flags */
+	public static final int SND_SEQ_QUEUE_FLG_SYNC =	(1<<0);	/* sync enabled */
+
+/* queue status flag */
+	public static final int SND_SEQ_QUEUE_FLG_SYNC_LOST =	1;
+
+/* synchronization types */
+/* mode */
+	public static final int SND_SEQ_SYNC_TICK =		0x80;
+	public static final int SND_SEQ_SYNC_TIME =		0x40;
+	public static final int SND_SEQ_SYNC_MODE =		0xc0;		/* mask */
+/* private format */
+	public static final int SND_SEQ_SYNC_FMT_PRIVATE_CLOCK = (SND_SEQ_SYNC_TICK|0);
+	public static final int SND_SEQ_SYNC_FMT_PRIVATE_TIME =	(SND_SEQ_SYNC_TIME|0);
+/* pre-defined format */
+	public static final int SND_SEQ_SYNC_FMT_MIDI_CLOCK =	(SND_SEQ_SYNC_TICK|1);
+	public static final int SND_SEQ_SYNC_FMT_MTC =		(SND_SEQ_SYNC_TIME|1);
+	public static final int SND_SEQ_SYNC_FMT_DTL =		(SND_SEQ_SYNC_TIME|2);
+	public static final int SND_SEQ_SYNC_FMT_SMPTE =	(SND_SEQ_SYNC_TIME|3);
+	public static final int SND_SEQ_SYNC_FMT_MIDI_TICK =	(SND_SEQ_SYNC_TIME|4);
+/* time format */
+	public static final int SND_SEQ_SYNC_FPS_24 =		0;
+	public static final int SND_SEQ_SYNC_FPS_25 =		1;
+	public static final int SND_SEQ_SYNC_FPS_30_DP =	2;
+	public static final int SND_SEQ_SYNC_FPS_30_NDP =	3;
+
+/* sequencer timer sources */
+	public static final int SND_SEQ_TIMER_ALSA =		0;	/* ALSA timer */
+	public static final int SND_SEQ_TIMER_MIDI_CLOCK =	1;	/* Midi Clock (CLOCK event) */
+	public static final int SND_SEQ_TIMER_MIDI_TICK =	2;	/* Midi Timer Tick (TICK event) */
+
+/* type of query subscription */
+	public static final int SND_SEQ_QUERY_SUBS_READ =	0;
+	public static final int SND_SEQ_QUERY_SUBS_WRITE =	1;
+
+/* instrument types */
+	public static final int SND_SEQ_INSTR_ATYPE_DATA =	0;	/* instrument data */
+	public static final int SND_SEQ_INSTR_ATYPE_ALIAS =	1;	/* instrument alias */
+
+/* instrument ASCII identifiers */
+	public static final String SND_SEQ_INSTR_ID_DLS1 =	"DLS1";
+	public static final String SND_SEQ_INSTR_ID_DLS2 =	"DLS2";
+	public static final String SND_SEQ_INSTR_ID_SIMPLE =	"Simple Wave";
+	public static final String SND_SEQ_INSTR_ID_SOUNDFONT =	"SoundFont";
+	public static final String SND_SEQ_INSTR_ID_GUS_PATCH =	"GUS Patch";
+	public static final String SND_SEQ_INSTR_ID_INTERWAVE =	"InterWave FFFF";
+	public static final String SND_SEQ_INSTR_ID_OPL2_3 =	"OPL2/3 FM";
+	public static final String SND_SEQ_INSTR_ID_OPL4 =	"OPL4";
+
+/* instrument types */
+	public static final int SND_SEQ_INSTR_TYPE0_DLS1 =	(1<<0);	/* MIDI DLS v1 */
+	public static final int SND_SEQ_INSTR_TYPE0_DLS2 =	(1<<1);	/* MIDI DLS v2 */
+	public static final int SND_SEQ_INSTR_TYPE1_SIMPLE =	(1<<0);	/* Simple Wave */
+	public static final int SND_SEQ_INSTR_TYPE1_SOUNDFONT =	(1<<1);	/* EMU SoundFont */
+	public static final int SND_SEQ_INSTR_TYPE1_GUS_PATCH =	(1<<2);	/* Gravis UltraSound Patch */
+	public static final int SND_SEQ_INSTR_TYPE1_INTERWAVE =	(1<<3);	/* InterWave FFFF */
+	public static final int SND_SEQ_INSTR_TYPE2_OPL2_3 =	(1<<0);	/* Yamaha OPL2/3 FM */
+	public static final int SND_SEQ_INSTR_TYPE2_OPL4 =	(1<<1);	/* Yamaha OPL4 */
+
+/* put commands */
+	public static final int SND_SEQ_INSTR_PUT_CMD_CREATE =	0;
+	public static final int SND_SEQ_INSTR_PUT_CMD_REPLACE =	1;
+	public static final int SND_SEQ_INSTR_PUT_CMD_MODIFY =	2;
+	public static final int SND_SEQ_INSTR_PUT_CMD_ADD =	3;
+	public static final int SND_SEQ_INSTR_PUT_CMD_REMOVE =	4;
+
+/* get commands */
+	public static final int SND_SEQ_INSTR_GET_CMD_FULL =	0;
+	public static final int SND_SEQ_INSTR_GET_CMD_PARTIAL =	1;
+
+/* query flags */
+	public static final int SND_SEQ_INSTR_QUERY_FOLLOW_ALIAS = (1<<0);
+
+/* free commands */
+	public static final int SND_SEQ_INSTR_FREE_CMD_ALL =		0;
+	public static final int SND_SEQ_INSTR_FREE_CMD_PRIVATE =	1;
+	public static final int SND_SEQ_INSTR_FREE_CMD_CLUSTER =	2;
+	public static final int SND_SEQ_INSTR_FREE_CMD_SINGLE =		3;
 
 
 	static
