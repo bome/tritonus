@@ -23,6 +23,7 @@ general
 3 - check freetts/Tritonus interaction
 
 lowlevel, native
+2 - initialize all variables
 3 - use libtritonuscommon in all native libs
 3 - rename DEBUG to debug_flag for all native libs
 3 - separate static inner classes in all native/lowlevel classes
