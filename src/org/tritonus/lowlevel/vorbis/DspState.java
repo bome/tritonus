@@ -77,9 +77,10 @@ public class DspState
 	public native void free();
 
 
-	/** Calls vorbis_analysis_init().
+	/** Initialize for encoding.
+	    Calls vorbis_analysis_init().
 	 */
-	public native int init(Info info);
+	public native int initAnalysis(Info info);
 
 
 	/** Calls vorbis_analysis_headerout().
@@ -105,6 +106,12 @@ public class DspState
 	/** Calls vorbis_bitrate_flushpacket().
 	 */
 	public native int flushPacket(Packet packet);
+
+
+	/** Initialize for decoding.
+	    Calls vorbis_synthesis_init().
+	 */
+	public native int initSynthesis(Info info);
 
 
 	/** Calls vorbis_synthesis_blockin().

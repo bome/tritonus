@@ -91,22 +91,22 @@ Java_org_tritonus_lowlevel_vorbis_DspState_free
 
 /*
  * Class:     org_tritonus_lowlevel_vorbis_DspState
- * Method:    init
+ * Method:    initAnalysis
  * Signature: (Lorg/tritonus/lowlevel/vorbis/Info;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_vorbis_DspState_init
+Java_org_tritonus_lowlevel_vorbis_DspState_initAnalysis
 (JNIEnv* env, jobject obj, jobject info)
 {
 	vorbis_dsp_state*	handle;
 	vorbis_info*		infoHandle;
 	int			nReturn;
 
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_init(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_initAnalysis(): begin\n"); }
 	handle = getHandle(env, obj);
 	infoHandle = getInfoNativeHandle(env, info);
 	nReturn = vorbis_analysis_init(handle, infoHandle);
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_init(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_initAnalysis(): end\n"); }
 	return nReturn;
 }
 
@@ -230,6 +230,29 @@ Java_org_tritonus_lowlevel_vorbis_DspState_flushPacket
 	packetHandle = getPacketNativeHandle(env, packet);
 	nReturn = vorbis_bitrate_flushpacket(handle, packetHandle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_flushPacket(): end\n"); }
+	return nReturn;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_vorbis_DspState
+ * Method:    initSynthesis
+ * Signature: (Lorg/tritonus/lowlevel/vorbis/Info;)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_vorbis_DspState_initSynthesis
+(JNIEnv* env, jobject obj, jobject info)
+{
+	vorbis_dsp_state*	handle;
+	vorbis_info*		infoHandle;
+	int			nReturn;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_initSynthesis(): begin\n"); }
+	handle = getHandle(env, obj);
+	infoHandle = getInfoNativeHandle(env, info);
+	nReturn = vorbis_synthesis_init(handle, infoHandle);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_vorbis_DspState_initSynthesis(): end\n"); }
 	return nReturn;
 }
 
