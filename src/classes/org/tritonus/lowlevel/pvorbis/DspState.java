@@ -56,6 +56,8 @@ public class DspState
 	private long	m_lNativeHandle;
 
 
+	private Info	m_info;
+
 
 	public DspState()
 	{
@@ -87,6 +89,7 @@ public class DspState
 	 */
 	public int initAnalysis(Info info)
 	{
+		m_info = info;
 		return initAnalysis_native(info);
 	}
 
@@ -97,27 +100,38 @@ public class DspState
 	public native int initAnalysis_native(Info info);
 
 
+	private Info getInfo()
+	{
+		return m_info;
+	}
+
+
 	/** Calls vorbis_analysis_headerout().
 	 */
 	public int headerOut(
 		Comment comment,
-		Packet packet,
+		Packet infoPacket,
 		Packet commentPacket,
 		Packet codePacket)
 	{
-		// for testing, write the comment header here, too
-		//Packet testCommentPacket = new Packet();
+		// for testing, write the info header here, too
+		//Packet testInfoPacket = new Packet();
 		Buffer buffer = new Buffer();
 		buffer.writeInit();
+
+		getInfo().pack(buffer);
+		infoPacket.setData(buffer.getBuffer(), buffer.bytes());
+		infoPacket.setFlags(true, false, 0);
+
+		buffer.reset();
 		comment.pack(buffer);
-		//TDebug.out("Buffer bytes: " + buffer.bytes());
 		commentPacket.setData(buffer.getBuffer(), buffer.bytes());
-		int nReturn = headerOut_native(
-			packet,
-			codePacket);
+		commentPacket.setFlags(false, false, 0);
+
+		int nReturn = headerOut_native(codePacket);
 /*
-		byte[] buffer1 = commentPacket.getData();
-		byte[] buffer2 = testCommentPacket.getData();
+		byte[] buffer1 = infoPacket.getData();
+		byte[] buffer2 = testInfoPacket.getData();
 		TDebug.out("comment buffers: " + buffer1.length + ", " + buffer2.length);
 		String s = "";
 		for (int i = 0; i < buffer1.length; i++)
@@ -131,18 +145,17 @@ public class DspState
 			s += "" + buffer2[i] + ", ";
 		}
 		TDebug.out("buffer2: " + s);
+		testInfoPacket.free();
 */
+		buffer.writeClear();
 		buffer.free();
-		//testCommentPacket.free();
 		return nReturn;
 	}
 
 
 	/** Calls vorbis_analysis_headerout().
 	 */
-	public native int headerOut_native(
-		Packet packet,
-		Packet codePacket);
+	public native int headerOut_native(Packet codePacket);
 
 
 	/** Calls vorbis_analysis_buffer() and

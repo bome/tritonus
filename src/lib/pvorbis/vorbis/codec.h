@@ -164,7 +164,6 @@ extern double   vorbis_granule_time(vorbis_dsp_state *v,
 
 extern int      vorbis_analysis_init(vorbis_dsp_state *v,vorbis_info *vi);
 extern int      vorbis_analysis_headerout(vorbis_dsp_state *v,
-										  ogg_packet *op,
 										  ogg_packet *op_code);
 extern float  **vorbis_analysis_buffer(vorbis_dsp_state *v,int vals);
 extern int      vorbis_analysis_wrote(vorbis_dsp_state *v,int vals);

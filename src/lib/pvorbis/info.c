@@ -32,15 +32,6 @@
 #include "os.h"
 
 /* helpers */
-static int ilog2(unsigned int v){
-  int ret=0;
-  if(v)--v;
-  while(v){
-    ret++;
-    v>>=1;
-  }
-  return(ret);
-}
 
 static void _v_writestring(oggpack_buffer *o,char *s, int bytes){
 
@@ -103,36 +94,6 @@ void vorbis_info_clear(vorbis_info *vi){
 }
 
 /* Header packing/unpacking ********************************************/
-
-static int _vorbis_unpack_info(vorbis_info *vi,oggpack_buffer *opb){
-  codec_setup_info     *ci=vi->codec_setup;
-  if(!ci)return(OV_EFAULT);
-
-  vi->version=oggpack_read(opb,32);
-  if(vi->version!=0)return(OV_EVERSION);
-
-  vi->channels=oggpack_read(opb,8);
-  vi->rate=oggpack_read(opb,32);
-
-  vi->bitrate_upper=oggpack_read(opb,32);
-  vi->bitrate_nominal=oggpack_read(opb,32);
-  vi->bitrate_lower=oggpack_read(opb,32);
-
-  ci->blocksizes[0]=1<<oggpack_read(opb,4);
-  ci->blocksizes[1]=1<<oggpack_read(opb,4);
-  
-  if(vi->rate<1)goto err_out;
-  if(vi->channels<1)goto err_out;
-  if(ci->blocksizes[0]<8)goto err_out; 
-  if(ci->blocksizes[1]<ci->blocksizes[0])goto err_out;
-  
-  if(oggpack_read(opb,1)!=1)goto err_out; /* EOP check */
-
-  return(0);
- err_out:
-  vorbis_info_clear(vi);
-  return(OV_EBADHEADER);
-}
 
 
 /* all of the real encoding details are here.  The modes, books,
@@ -227,18 +188,6 @@ int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype,
     /* Also verify header-ness, vorbis */
     {
       switch(packtype){
-      case 0x01: /* least significant *bit* is read first */
-	if(!op->b_o_s){
-	  /* Not the initial packet */
-	  return(OV_EBADHEADER);
-	}
-	if(vi->rate!=0){
-	  /* previously initialized info header */
-	  return(OV_EBADHEADER);
-	}
-
-	return(_vorbis_unpack_info(vi,opb));
-
       case 0x05: /* least significant *bit* is read first */
 		  if(vi->rate==0 /*|| vc->vendor==NULL*/){
 	  /* um... we didn;t get the initial header or comments yet */
@@ -259,31 +208,6 @@ int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype,
 
 /* pack side **********************************************************/
 
-static int _vorbis_pack_info(oggpack_buffer *opb,vorbis_info *vi){
-  codec_setup_info     *ci=vi->codec_setup;
-  if(!ci)return(OV_EFAULT);
-
-  /* preamble */  
-  oggpack_write(opb,0x01,8);
-  _v_writestring(opb,"vorbis", 6);
-
-  /* basic information about the stream */
-  oggpack_write(opb,0x00,32);
-  oggpack_write(opb,vi->channels,8);
-  oggpack_write(opb,vi->rate,32);
-
-  oggpack_write(opb,vi->bitrate_upper,32);
-  oggpack_write(opb,vi->bitrate_nominal,32);
-  oggpack_write(opb,vi->bitrate_lower,32);
-
-  oggpack_write(opb,ilog2(ci->blocksizes[0]),4);
-  oggpack_write(opb,ilog2(ci->blocksizes[1]),4);
-  oggpack_write(opb,1,1);
-
-  return(0);
-}
-
- 
 static int _vorbis_pack_books(oggpack_buffer *opb,vorbis_info *vi){
   codec_setup_info     *ci=vi->codec_setup;
   int i;
@@ -342,7 +266,6 @@ err_out:
 
 
 int vorbis_analysis_headerout(vorbis_dsp_state *v,
-							  ogg_packet *op,
 							  ogg_packet *op_code)
 {
   int ret=OV_EIMPL;
@@ -355,20 +278,7 @@ int vorbis_analysis_headerout(vorbis_dsp_state *v,
     goto err_out;
   }
 
-  /* first header packet **********************************************/
-
   oggpack_writeinit(&opb);
-  if(_vorbis_pack_info(&opb,vi))goto err_out;
-
-  /* build the packet */
-  if(b->header)_ogg_free(b->header);
-  b->header=_ogg_malloc(oggpack_bytes(&opb));
-  memcpy(b->header,opb.buffer,oggpack_bytes(&opb));
-  op->packet=b->header;
-  op->bytes=oggpack_bytes(&opb);
-  op->b_o_s=1;
-  op->e_o_s=0;
-  op->granulepos=0;
 
   /* third header packet (modes/codebooks) ****************************/
 
@@ -388,12 +298,9 @@ int vorbis_analysis_headerout(vorbis_dsp_state *v,
   return(0);
  err_out:
   oggpack_writeclear(&opb);
-  memset(op,0,sizeof(*op));
   memset(op_code,0,sizeof(*op_code));
 
-  if(b->header)_ogg_free(b->header);
   if(b->header2)_ogg_free(b->header2);
-  b->header=NULL;
   b->header2=NULL;
   return(ret);
 }

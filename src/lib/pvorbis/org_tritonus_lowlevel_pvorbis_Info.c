@@ -26,7 +26,7 @@
 
 #include "common.h"
 #include "org_tritonus_lowlevel_pvorbis_Info.h"
-
+#include "codec_internal.h"
 
 HandleFieldHandlerDeclaration(handler, vorbis_info*)
 
@@ -122,6 +122,77 @@ Java_org_tritonus_lowlevel_pvorbis_Info_clear_1native
 }
 
 
+/*
+ * Class:     org_tritonus_lowlevel_pvorbis_Info
+ * Method:    getVersion_native
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_pvorbis_Info_getVersion_1native
+(JNIEnv* env, jobject obj)
+{
+	vorbis_info*	handle;
+	int		nReturn;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_getVersion_1native(): begin\n"); }
+	handle = getHandle(env, obj);
+	nReturn = handle->version;
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_getVersion_1native(): end\n"); }
+	return nReturn;
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pvorbis_Info
+ * Method:    setValues_native
+ * Signature: (IIIIIIII)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_pvorbis_Info_setValues_1native
+(JNIEnv* env, jobject obj,
+ jint nVersion, jint nChannels, jint nRate,
+ jint nBitrateUpper, jint nBitrateNominal, jint nBitrateLower,
+ jint nBlocksize0, jint nBlocksize1)
+{
+	vorbis_info*	handle;
+	codec_setup_info* ci;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_setValues_1native(): begin\n"); }
+	handle = getHandle(env, obj);
+	handle->version = nVersion;
+	handle->channels = nChannels;
+	handle->rate = nRate;
+	handle->bitrate_upper = nBitrateUpper;
+	handle->bitrate_nominal = nBitrateNominal;
+	handle->bitrate_lower = nBitrateLower;
+	ci = handle->codec_setup;
+	ci->blocksizes[0] = nBlocksize0;
+	ci->blocksizes[1] = nBlocksize1;
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_setValues_1native(): end\n"); }
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pvorbis_Info
+ * Method:    getBlocksize_native
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_pvorbis_Info_getBlocksize_1native
+(JNIEnv* env, jobject obj, jint nIndex)
+{
+	vorbis_info*	handle;
+	int		nReturn;
+	codec_setup_info* ci;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_getBlocksize_1native(): begin\n"); }
+	handle = getHandle(env, obj);
+	ci = handle->codec_setup;
+	nReturn = ci->blocksizes[nIndex];
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_getBlocksize_1native(): end\n"); }
+	return nReturn;
+}
+
 
 /*
  * Class:     org_tritonus_lowlevel_pvorbis_Info
@@ -161,6 +232,48 @@ Java_org_tritonus_lowlevel_pvorbis_Info_getRate_1native
 	nReturn = handle->rate;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_getRate(): end\n"); }
 	return nReturn;
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pvorbis_Info
+ * Method:    getBitrateUpper_native
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_pvorbis_Info_getBitrateUpper_1native
+(JNIEnv* env, jobject obj)
+{
+	vorbis_info*	handle = getHandle(env, obj);
+	return handle->bitrate_upper;
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pvorbis_Info
+ * Method:    getBitrateNominal_native
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_pvorbis_Info_getBitrateNominal_1native
+(JNIEnv* env, jobject obj)
+{
+	vorbis_info*	handle = getHandle(env, obj);
+	return handle->bitrate_nominal;
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pvorbis_Info
+ * Method:    getBitrateLower_native
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_pvorbis_Info_getBitrateLower_1native
+(JNIEnv* env, jobject obj)
+{
+	vorbis_info*	handle = getHandle(env, obj);
+	return handle->bitrate_lower;
 }
 
 

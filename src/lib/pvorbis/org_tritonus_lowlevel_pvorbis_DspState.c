@@ -113,26 +113,20 @@ Java_org_tritonus_lowlevel_pvorbis_DspState_initAnalysis_1native
 /*
  * Class:     org_tritonus_lowlevel_pvorbis_DspState
  * Method:    headerOut_native
- * Signature: (Lorg/tritonus/lowlevel/ogg/Packet;Lorg/tritonus/lowlevel/ogg/Packet;)I
+ * Signature: (Lorg/tritonus/lowlevel/ogg/Packet;)I
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_pvorbis_DspState_headerOut_1native
-(JNIEnv* env, jobject obj,
- jobject packet,
- jobject codePacket)
+(JNIEnv* env, jobject obj, jobject codePacket)
 {
 	vorbis_dsp_state*	handle;
-	ogg_packet*		packetHandle;
 	ogg_packet*		codePacketHandle;
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_DspState_headerOut(): begin\n"); }
 	handle = getHandle(env, obj);
-	packetHandle = getPacketNativeHandle(env, packet);
 	codePacketHandle = getPacketNativeHandle(env, codePacket);
-	nReturn = vorbis_analysis_headerout(handle,
-										packetHandle,
-										codePacketHandle);
+	nReturn = vorbis_analysis_headerout(handle, codePacketHandle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_DspState_headerOut(): end\n"); }
 	return nReturn;
 }

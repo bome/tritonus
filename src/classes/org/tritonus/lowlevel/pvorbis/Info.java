@@ -58,6 +58,14 @@ implements VorbisConstants
 	private long	m_lNativeHandle;
 
 
+	private int m_nVersion;
+	private int m_nChannels;
+	private int m_nRate;
+	private int m_nBitrateUpper;
+	private int m_nBitrateNominal;
+	private int m_nBitrateLower;
+
+
 
 	public Info()
 	{
@@ -89,6 +97,14 @@ implements VorbisConstants
 	 */
 	public void init()
 	{
+		m_nVersion = 0;
+		m_nChannels = 0;
+		m_nRate = 0;
+		m_nBitrateUpper = 0;
+		m_nBitrateNominal = 0;
+		m_nBitrateLower = 0;
+
+		// TODO: allocate codec_setup_info
 		init_native();
 	}
 
@@ -102,6 +118,15 @@ implements VorbisConstants
 	 */
 	public void clear()
 	{
+		// TODO: lots of stuff in codec_setup_info
+
+		m_nVersion = 0;
+		m_nChannels = 0;
+		m_nRate = 0;
+		m_nBitrateUpper = 0;
+		m_nBitrateNominal = 0;
+		m_nBitrateLower = 0;
+
 		clear_native();
 	}
 
@@ -111,19 +136,83 @@ implements VorbisConstants
 	public native void clear_native();
 
 
-// blocksize?
+	public int getVersion()
+	{
+		return getVersion_native();
+	}
+
+
+	private native int getVersion_native();
+
+
+	public void setValues(int nVersion,
+						  int nChannels,
+						  int nRate,
+						  int nBitrateUpper,
+						  int nBitrateNominal,
+						  int nBitrateLower,
+						  int nBlocksize0,
+						  int nBlocksize1)
+	{
+		m_nVersion = nVersion;
+		m_nChannels = nChannels;
+		m_nRate = nRate;
+		m_nBitrateUpper = nBitrateUpper;
+		m_nBitrateNominal = nBitrateNominal;
+		m_nBitrateLower = nBitrateLower;
+
+		setValues_native(nVersion,
+						 nChannels,
+						 nRate,
+						 nBitrateUpper,
+						 nBitrateNominal,
+						 nBitrateLower,
+						 nBlocksize0,
+						 nBlocksize1);
+	}
+
+
+	private native void setValues_native(int nVersion,
+										 int nChannels,
+										 int nRate,
+										 int nBitrateUpper,
+										 int nBitrateNominal,
+										 int nBitrateLower,
+										 int nBlocksize0,
+										 int nBlocksize1);
+
+
+	public int getBlocksize0()
+	{
+		return getBlocksize_native(0);
+	}
+
+
+	public int getBlocksize1()
+	{
+		return getBlocksize_native(1);
+	}
+
+
+	/**
+	   @param nIndex which blocksize is desired. Has to be either 0 or
+	   1.
+	 */
+	private native int getBlocksize_native(int nIndex);
+
 
 	/** Accesses channels.
 	 */
 	public int getChannels()
 	{
+		// return m_nChannels;
 		return getChannels_native();
 	}
 
 
 	/** Accesses channels.
 	 */
-	public native int getChannels_native();
+	private native int getChannels_native();
 
 
 
@@ -131,15 +220,45 @@ implements VorbisConstants
 	 */
 	public int getRate()
 	{
+		//return m_nRate;
 		return getRate_native();
 	}
 
 
 	/** Accesses rate.
 	 */
-	public native int getRate_native();
+	private native int getRate_native();
 
 
+	public int getBitrateUpper()
+	{
+		//return m_nBitrateUpper;
+		return getBitrateUpper_native();
+	}
+
+
+	private native int getBitrateUpper_native();
+
+
+	public int getBitrateNominal()
+	{
+		//return m_nBitrateNominal;
+		return getBitrateNominal_native();
+	}
+
+
+	private native int getBitrateNominal_native();
+
+
+	public int getBitrateLower()
+	{
+		//return m_nBitrateLower;
+		return getBitrateLower_native();
+	}
+
+
+
+	private native int getBitrateLower_native();
 
 
 	/** Calls vorbis_encode_init().
@@ -162,7 +281,7 @@ implements VorbisConstants
 
 	/** Calls vorbis_encode_init().
 	 */
-	public native int encodeInit_native(
+	private native int encodeInit_native(
 		int nChannels,
 		int nRate,
 		int nMaxBitrate,
@@ -187,7 +306,7 @@ implements VorbisConstants
 
 	/** Calls vorbis_encode_init_vbr().
 	 */
-	public native int encodeInitVBR_native(
+	private native int encodeInitVBR_native(
 		int nChannels,
 		int nRate,
 		float fQuality);
@@ -233,10 +352,9 @@ implements VorbisConstants
 				buffer.free();
 				return OV_EBADHEADER;
 			}
-			r = headerIn_native(buffer, packtype, packet);
+			r = unpack(buffer);
 			buffer.free();
 			return r;
-			//return(_vorbis_unpack_info(vi,&buffer));
 
 		case 0x03: /* least significant *bit* is read first */
 			if (getRate() == 0)
@@ -248,7 +366,6 @@ implements VorbisConstants
 			r = comment.unpack(buffer);
 			buffer.free();
 			return r;
-			//return(_vorbis_unpack_comment(vc,&buffer));
 
 		case 0x05: /* least significant *bit* is read first */
 			if (getRate() == 0 || comment.getVendor() == null)
@@ -272,11 +389,91 @@ implements VorbisConstants
 
 	/** Calls vorbis_synthesis_headerin().
 	 */
-	public native int headerIn_native(Buffer buffer, int nPacketType,
+	private native int headerIn_native(Buffer buffer, int nPacketType,
 									  Packet packet);
 
 
+	public int pack(Buffer buffer)
+	{
+		/* preamble */  
+		buffer.write(0x01, 8);
+		buffer.write("vorbis");
+
+		buffer.write(0x00, 32); // version
+		buffer.write(getChannels(), 8);
+		buffer.write(getRate(), 32);
+
+		buffer.write(getBitrateUpper(), 32);
+		buffer.write(getBitrateNominal(), 32);
+		buffer.write(getBitrateLower(), 32);
+
+		buffer.write(ilog2(getBlocksize0()), 4);
+		buffer.write(ilog2(getBlocksize1()), 4);
+
+		/* end of packet */
+		buffer.write(1, 1);
+
+		return 0;
+	}
+
+
+	public int unpack(Buffer buffer)
+	{
+		int nVersion = buffer.read(32);
+		if (nVersion != 0)
+		{
+			return OV_EVERSION;
+		}
+		int nChannels = buffer.read(8);
+		int nRate = buffer.read(32);
+		int nBitrateUpper = buffer.read(32);
+		int nBitrateNominal = buffer.read(32);
+		int nBitrateLower = buffer.read(32);
+		int nBlocksize0 = 1 << buffer.read(4);
+		int nBlocksize1 = 1 << buffer.read(4);
+
+		if (nChannels < 1 || nRate < 1 ||
+			nBlocksize0 < 8 || nBlocksize1 < nBlocksize0)
+		{
+			clear();
+			return OV_EBADHEADER;
+		}
+
+		/* EOP check */
+		if (buffer.read(1) != 1)
+		{
+			clear();
+			return OV_EBADHEADER;
+		}
+
+		setValues(nVersion,
+				  nChannels,
+				  nRate,
+				  nBitrateUpper,
+				  nBitrateNominal,
+				  nBitrateLower,
+				  nBlocksize0,
+				  nBlocksize1);
+		// everything ok.
+		return 0;
+	}
+
+
 	private static native void setTrace(boolean bTrace);
+
+
+	private static int ilog2(int v)
+	{
+		int ret = 0;
+		if (v != 0)
+			--v;
+		while (v != 0)
+		{
+			ret++;
+			v >>= 1;
+		}
+		return ret;
+	}
 }
 
 
