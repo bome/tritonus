@@ -14,7 +14,7 @@
     <property name="javadoc.dir"  value="${basedir}/doc/apidoc" />
     <property name="src.classes" value="${src}/classes" />
     <property name="src.misc" value="${src}/misc" />
-    <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar tritonus_src.jar tritonus_aos.jar tritonus_jorbis.jar tritonus_vorbis.jar tritonus_dsp.jar ../../javalayer/dist/javalayer.jar" />
+    <property name="plugins"  value="tritonus_share.jar tritonus_remaining.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar tritonus_src.jar tritonus_aos.jar tritonus_jorbis.jar tritonus_vorbis.jar tritonus_dsp.jar ../../javalayer/dist/javalayer.jar" />
   <property name="debug" value="on"/>
     <available
 	       classname="grame.midishare.Midi"
