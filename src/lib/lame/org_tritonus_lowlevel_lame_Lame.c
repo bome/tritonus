@@ -40,11 +40,13 @@
 
 typedef struct tagLameConf {
 	lame_global_flags* gf;
+	int channels;
 	int swapbytes;
 } LameConf;
 
 
 static int debug=0;
+
 
 //todo: this is BUGGY ! seg fault...
 static void throwRuntimeException(JNIEnv *env, char* pStrMessage) {
@@ -153,6 +155,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 	
 	//set parameters
 	lame_set_num_channels(conf->gf, (int) channels);
+	conf->channels=channels;
 	lame_set_in_samplerate(conf->gf, (int) sampleRate);
 	/*if (mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
 		lame_set_mode(conf->gf, (int) mode);
@@ -216,17 +219,16 @@ typedef struct tagTwoChar {
  */
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 (JNIEnv *env, jobject obj, jbyteArray pcm, jint offset, jint length, jbyteArray encoded) {
-	lame_global_flags* gf;
 	LameConf* conf;
 	int i; //hack
 	twoChar* s; //hack
 	int result=0;
-	char* encodedBytes;
+	char* encodedBytes, *pcmSamplesOrig;
 	short* pcmSamples;
 	int pcmSamplesLength;
 	//jsize pcmArrayByteSize=(*env)->GetArrayLength(env, pcm);
 	// todo: consistency check for pcm array ?
-	jsize encodedArrayByteSize=(*env)->GetArrayLength(env, encoded);
+	int encodedArrayByteSize=(int) ((*env)->GetArrayLength(env, encoded));
 	if (debug) {
 		printf("Java_org_tritonus_lowlevel_lame_Lame_encodeBuffer: \n");
 		printf("   offset: %d, length:%d\n", (int) offset, (int) length);
@@ -235,9 +237,9 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 	}
 	conf=getNativeGlobalFlags(env, obj);
 	if (conf!=NULL && conf->gf!=NULL) {
-		gf=conf->gf;
-		pcmSamplesLength=length/(gf->num_channels*2); // always 16 bit
-		pcmSamples=(short*) ((*env)->GetByteArrayElements(env, pcm, NULL));
+		pcmSamplesLength=length/(conf->channels*2); // always 16 bit
+		pcmSamplesOrig=(*env)->GetByteArrayElements(env, pcm, NULL);
+		pcmSamples=(short*) pcmSamplesOrig;
 		pcmSamples+=(offset/2); // 16bit
 		// start swapbyte hack
 		if (conf->swapbytes) {
@@ -255,8 +257,23 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 		}
 		// end swapbyte hack
 		encodedBytes=(*env)->GetByteArrayElements(env, encoded, NULL);
-		result=lame_encode_buffer_interleaved(gf, pcmSamples, pcmSamplesLength, 
+		
+		if (debug) {
+			printf("   Encoding %d samples at %p into buffer %p of size %d bytes.\n", 
+			       pcmSamplesLength, pcmSamples, encodedBytes, encodedArrayByteSize);
+			printf("   Sample1=%d Sample2=%d\n", pcmSamples[0], pcmSamples[1]);
+		}
+
+		result=lame_encode_buffer_interleaved(conf->gf, pcmSamples, pcmSamplesLength, 
 						      encodedBytes, encodedArrayByteSize);
+		if (debug) {
+			printf("   MP3-1=%d MP3-2=%d\n", (int) encodedBytes[0], (int) encodedBytes[1]);
+		}
+		// clean up:
+		// discard any changes in pcmArray
+		(*env)->ReleaseByteArrayElements(env, pcm, pcmSamplesOrig, JNI_ABORT);
+		// commit the encoded bytes
+		(*env)->ReleaseByteArrayElements(env, encoded, encodedBytes, 0);
 	} else {
 		if (debug) {
 			printf("Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer: \n");
@@ -265,7 +282,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 		//throwRuntimeException(env, "not initialized");
 		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
 	}
-	return result;
+	return (jint) result;
 }
 
 /*
@@ -293,9 +310,11 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_encodeFinish
 		if (debug) {
 			printf("   %d bytes returned\n", (int) result);
 		}
+		(*env)->ReleaseByteArrayElements(env, buffer, charBuffer, 0);
 		lame_close(conf->gf);
 		conf->gf=NULL;
 		setNativeGlobalFlags(env, obj, 0);
+		free(conf);
 	} 
 	else if (debug) {
 		printf("Java_org_tritonus_lowlevel_lame_Lame_encodeFinish: \n");
@@ -321,6 +340,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_close(JNIEnv * env, 
 			lame_close(conf->gf);
 		}
 		setNativeGlobalFlags(env, obj, 0);
+		free(conf);
 	}
 }
 
