@@ -77,19 +77,19 @@ public interface DataLine
 
 
 	public static class Info
-		extends		Line.Info
+	extends Line.Info
 	{
 		private AudioFormat[]	EMPTY_AUDIO_FORMAT_ARRAY = new AudioFormat[0];
 
-		private List		m_audioFormats;
-		private int		m_nMinBufferSize;
-		private int		m_nMaxBufferSize;
+		private List<AudioFormat>	m_audioFormats;
+		private int					m_nMinBufferSize;
+		private int					m_nMaxBufferSize;
 
 
 		public Info(Class lineClass,
-			    AudioFormat[] aAudioFormats,
-			    int nMinBufferSize,
-			    int nMaxBufferSize)
+					AudioFormat[] aAudioFormats,
+					int nMinBufferSize,
+					int nMaxBufferSize)
 		{
 			super(lineClass);
 			m_audioFormats = Arrays.asList(aAudioFormats);
@@ -123,17 +123,17 @@ public interface DataLine
 
 		public AudioFormat[] getFormats()
 		{
-			return (AudioFormat[]) m_audioFormats.toArray(EMPTY_AUDIO_FORMAT_ARRAY);
+			return m_audioFormats.toArray(EMPTY_AUDIO_FORMAT_ARRAY);
 		}
 
 
 
 		public boolean isFormatSupported(AudioFormat audioFormat)
 		{
-			Iterator	formats = m_audioFormats.iterator();
+			Iterator<AudioFormat>	formats = m_audioFormats.iterator();
 			while (formats.hasNext())
 			{
-				AudioFormat	format = (AudioFormat) formats.next();
+				AudioFormat	format = formats.next();
 				if (AudioFormats.matches(format, audioFormat))
 				{
 					return true;
@@ -168,10 +168,11 @@ public interface DataLine
 			}
 			if (!super.matches(info))
 			{
-				if (TDebug.TraceDataLine)
-				{
-					TDebug.out("<DataLine.Info.matches(): super.matches does not match()");
-				}
+				if (TDebug.TraceDataLine) TDebug.out("<DataLine.Info.matches(): super.matches() does not match()");
+				return false;
+			}
+			if (! (info instanceof DataLine.Info))
+			{
 				return false;
 			}
 			DataLine.Info	dataLineInfo = (DataLine.Info) info;
@@ -184,26 +185,20 @@ public interface DataLine
 			      && dataLineInfo.getMaxBufferSize()!=AudioSystem.NOT_SPECIFIED
 			      && getMaxBufferSize() > dataLineInfo.getMaxBufferSize()) )
 			{
-				TDebug.out("<DataLine.Info.matches(): buffer sizes do not match");
+				if (TDebug.TraceDataLine) TDebug.out("<DataLine.Info.matches(): buffer sizes do not match");
 				return false;
 			}
 			// $$fb2000-12-02: it's the other way round !!!
 			//                 all of this classes formats must match at least one of
 			//                 dataLineInfo's formats.
-			Iterator	formats = m_audioFormats.iterator();
+			Iterator<AudioFormat>	formats = m_audioFormats.iterator();
 			while (formats.hasNext())
 			{
-				AudioFormat	format = (AudioFormat) formats.next();
-				if (TDebug.TraceDataLine)
-				{
-					TDebug.out("checking if supported: " + format);
-				}
+				AudioFormat	format = formats.next();
+				if (TDebug.TraceDataLine) TDebug.out("checking if supported: " + format);
 				if (!dataLineInfo.isFormatSupported(format))
 				{
-					if (TDebug.TraceDataLine)
-					{
-						TDebug.out("< format doesn't match");
-					}
+					if (TDebug.TraceDataLine) TDebug.out("< format doesn't match");
 					return false;
 				}
 			}
