@@ -8,15 +8,12 @@ AC_CONFIG_AUX_DIR(util)
 
 JAR_INDEX=
 
-case "$JAVA_VERSION" in
-yes) JAVA_VERSION=118;;
-esac
-
-
 # JDK Version Check automatic checker.
 # This is Sun JVM specific when looking the 
 # release number at least
 # Peter Pilgrim Wed Jan 12 00:20:42 GMT 2000
+
+AC_MSG_CHECKING(JDK version)
 
 # Temporary directory
 : ${TMPDIR:=/tmp}
@@ -26,56 +23,60 @@ esac
 TEMPFILE=${TMPDIR}/javaver.lst
 /bin/rm -f $TEMPFILE
 ${JAVA} -version 2> $TEMPFILE
-JdkVersion=`cat $TEMPFILE | cut -d" " -f3 | sed 's!"!!g'`
+JdkVersion=`cat $TEMPFILE | head -n 1 | cut -d" " -f3 | sed 's!"!!g'`
+JAVA_VERSION=${JdkVersion}
 
-dnl AC_MSG_RESULT(version: x${JdkVersion}x)
+AC_MSG_RESULT($JAVA_VERSION)
 
-case $JdkVersion in
+JDK_OK=yes
+case $JAVA_VERSION in
     1.6* )
-	echo "JDK 1.6 detected"
 	;;
     1.5* )
-	echo "JDK 1.5 detected"
 	;;
     1.4* )
-	echo "JDK 1.4 detected"
+	JDK_OK=no
 	;;
     1.3* )
-	echo "JDK 1.3 detected"
 	#bug in jar -i ...
 	#JAR_INDEX=jar_index
+	JDK_OK=no
 	;;
     1.2* )
-	echo "JDK 1.2 detected" ;;
-    1.1.8* )
-	echo "JDK 1.1.8 detected" ;;
-    1.1.7* )
-	echo "JDK 1.1.7 detected" ;;
+	JDK_OK=no
+	;;
     1.1* )
-	echo "JDK 1.1.x detected" ;;
+	JDK_OK=no
+	;;
     1.0* )
-	echo "JDK 1.0.x detected (impossible)" ;;
+	JDK_OK=no
+	;;
     *)
 	echo "No JDK Version detected. "
 	echo "Please make sure a J2SDK is in your CLASSPATH."
 	echo "For more information read the file INSTALL"
+	JDK_OK=no
 	;;
 esac
 # fini
 
-JAVA_VERSION=${JdkVersion}
-dnl AC_MSG_RESULT(version: x${JAVA_VERSION}x)
+# We only support 1.5 or higher now
+if test $JDK_OK != "yes" ; then
+	AC_MSG_ERROR(Need JDK 1.5 or higher!)
+	exit 1
+fi
 
+
+# need to convert targets for 1.1? (legacy)
 AC_SUBST(JAVAH)
 AC_SUBST(CONVERTTARGETS)
+JAVAH='javah -force -classpath $(OBJDIR)'
+CONVERTTARGETS=
 
-case "$JAVA_VERSION" in
-1.1*) JAVAH='javah -classpath $(OBJDIR):$(CLASSPATH)'; CONVERTTARGETS=convert;;
-*) JAVAH='javah -force -classpath $(OBJDIR)'; CONVERTTARGETS= ;;
-esac
-
-
-
+dnl case "$JAVA_VERSION" in
+dnl 1.1*) JAVAH='javah -classpath $(OBJDIR):$(CLASSPATH)'; CONVERTTARGETS=convert;;
+dnl *) JAVAH='javah -force -classpath $(OBJDIR)'; CONVERTTARGETS= ;;
+dnl esac
 
 
 AC_SUBST(OSNAME)
