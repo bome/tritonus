@@ -177,6 +177,7 @@ install-link:
 clean:
 	rm -rf $(LIBDEST) org javax javazoom
 	find . -name '*~' -exec rm '{}' ';'
+	find . -name '*.class' -exec rm '{}' ';'
 	find . -name '.directory' -exec rm '{}' ';'
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d clean; done
 
