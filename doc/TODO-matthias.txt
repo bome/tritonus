@@ -5,6 +5,8 @@ IDEAS
 -----
 
 - use speex (open source speech compression, http://speex.sourceforge.net/)
+- check to shadow META-INF/services/javax.sound.* by means of prepending to boot class path.
+
 
 TODO
 ----
