@@ -56,7 +56,7 @@ public class MidiSystem
 
 	public static MidiDevice.Info[] getMidiDeviceInfo()
 	{
-		List	deviceInfos = new ArrayList();
+		List<MidiDevice.Info>	deviceInfos = new ArrayList<MidiDevice.Info>();
 		Iterator	providers = TMidiConfig.getMidiDeviceProviders();
 		while (providers.hasNext())
 		{
@@ -64,7 +64,7 @@ public class MidiSystem
 			MidiDevice.Info[]	infos = provider.getDeviceInfo();
 			deviceInfos.addAll(Arrays.asList(infos));
 		}
-		return (MidiDevice.Info[]) deviceInfos.toArray(EMPTY_MIDIDEVICE_INFO_ARRAY);
+		return deviceInfos.toArray(EMPTY_MIDIDEVICE_INFO_ARRAY);
 	}
 
 
@@ -89,7 +89,7 @@ public class MidiSystem
 	public static Receiver getReceiver()
 		throws	MidiUnavailableException
 	{
-		MidiDevice.Info	info = TMidiConfig.getDefaultMidiDeviceInfo();
+		MidiDevice.Info	info = TMidiConfig.getDefaultMidiOutDeviceInfo();
 		MidiDevice	device = getMidiDevice(info);
 		// to florian: try to comment out the following block
 		if (!device.isOpen())
@@ -106,7 +106,7 @@ public class MidiSystem
 	public static Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
-		MidiDevice.Info	info = TMidiConfig.getDefaultMidiDeviceInfo();
+		MidiDevice.Info	info = TMidiConfig.getDefaultMidiInDeviceInfo();
 		MidiDevice	device = getMidiDevice(info);
 		// to florian: try to comment out the following block
 		if (!device.isOpen())
@@ -134,9 +134,23 @@ public class MidiSystem
 	public static Sequencer getSequencer()
 		throws	MidiUnavailableException
 	{
+		return getSequencer(true);
+	}
+
+
+
+	public static Sequencer getSequencer(boolean bConnected)
+		throws	MidiUnavailableException
+	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSequencerInfo();
 		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequencer(): using: " + info); }
 		Sequencer	sequencer = (Sequencer) getMidiDevice(info);
+		if (bConnected)
+		{
+			Synthesizer synth = getSynthesizer();
+			synth.open();
+			sequencer.getTransmitter().setReceiver(synth.getReceiver());
+		}
 		return sequencer;
 	}
 
