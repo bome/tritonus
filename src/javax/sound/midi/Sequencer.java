@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,11 @@ import	java.io.IOException;
 
 
 public interface Sequencer
-    extends	MidiDevice
+extends	MidiDevice
 {
+	public static final int LOOP_CONTINUOUSLY = -1;
+
+
 	public void setSequence(Sequence sequence)
 		throws	InvalidMidiDataException;
 
@@ -50,7 +53,22 @@ public interface Sequencer
 
 
 
-	// public void start(Track track);
+
+	public void setLoopStartPoint(long lTick);
+
+
+	public long getLoopStartPoint();
+
+
+	public void setLoopEndPoint(long lTick);
+
+
+	public long getLoopEndPoint();
+
+
+	public void setLoopCount(int nLoopCount);
+
+	public int getLoopCount();
 
 
 
