@@ -12,7 +12,6 @@ SOUNDFILE=../../sounds/spacemusic.au	# u-law
 #SOUNDFILE=welcome.wav
 
 JAVAC=javac
-# JAVAC=guavac
 
 %.class: %.java
 	$(JAVAC) -d $(DESTDIR) $<
@@ -56,4 +55,4 @@ testsaint2:	saint.class SourceDataLineOutputStream.class
 
 .PHONY: clean
 clean:
-	rm -rf *.class *~
+	rm -rf *.class *~ .\#*
