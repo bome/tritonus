@@ -106,7 +106,6 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/sampled/mixer/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/alsa/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/esd/*.java \
-	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
 	$(SRCDIR_PRIV)/midi/*.java \
 	$(SRCDIR_PRIV)/midi/device/*.java \
 	$(SRCDIR_PRIV)/midi/device/alsa/*.java \
@@ -114,8 +113,10 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/midi/file/*.java \
 	$(SRCDIR_PRIV)/util/*.java \
 	$(SRCDIR_JL)/*.java \
-	$(SRCDIR_JESD)/*.java \
 	)
+
+#	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
+#	$(SRCDIR_JESD)/*.java \
 
 SRC:=$(notdir $(SRCTMP))
 OBJ:=$(SRC:.java=.class)

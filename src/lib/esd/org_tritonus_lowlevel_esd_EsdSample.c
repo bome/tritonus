@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -24,10 +24,8 @@
 
 
 #include	<assert.h>
-//#include	<iostream>
 #include	<unistd.h>
 #include	<errno.h>
-// #include	<jni.h>
 #include	<esd.h>
 #include	"org_tritonus_lowlevel_esd_EsdSample.h"
 
@@ -45,7 +43,7 @@ static void	setNativeFd(JNIEnv *env, jobject obj, int nFd)
 {
 	jclass	cls = (*env)->GetObjectClass(env, obj);
 	jfieldID	fid = (*env)->GetFieldID(env, cls, "m_lNativeFd", "J");
-	return (*env)->SetIntField(env, obj, fid, nFd);
+	(*env)->SetIntField(env, obj, fid, nFd);
 }
 
 
@@ -61,7 +59,7 @@ static void	setNativeId(JNIEnv *env, jobject obj, int nId)
 {
 	jclass	cls = (*env)->GetObjectClass(env, obj);
 	jfieldID	fid = (*env)->GetFieldID(env, cls, "m_lNativeId", "J");
-	return (*env)->SetLongField(env, obj, fid, nId);
+	(*env)->SetLongField(env, obj, fid, nId);
 }
 
 

@@ -81,6 +81,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read
 	int		nFd = getNativeFd(env, obj);
 	// signed char*	data;
 	int		nBytesRead;
+	// TODO: variable-sized arrays are not allowed in ANSI C
 	jbyte		buffer[nLength];
 	// data = (*env)->GetByteArrayElements(env, abData, NULL);
 	// TODO: check data for != NULL
