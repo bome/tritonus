@@ -65,7 +65,7 @@ import	org.tritonus.share.ArraySet;
  *         to profit of dithering.
  *     <li>All other conversions are done using the FloatSampleBuffer.<br>
  *         Mixdown of channels (x channels -> 1 channel) is done by 
- *         plain adding all channels together.
+ *         plainly adding all channels together.
  *         Thus, up mixing and down mixing will not result in the same audio, 
  *         as downmixing does NOT lower the volume and clippings are very 
  *         probable. To avoid that, the volume of the channels
@@ -74,11 +74,12 @@ import	org.tritonus.share.ArraySet;
  *         1 channel -> x channels. This is done by
  *         copying the channel to the other channels <b>after</b>
  *         conversion of the format (if necessary).
- 
  * </ol>
  * <p>SampleRate CANNOT be converted.
  *
  * @author Florian Bomers
+ * @see org.tritonus.share.sampled.FloatSampleBuffer
+ * @see org.tritonus.share.sampled.TConversionTool
  */
 
 public class PCM2PCMConversionProvider
@@ -135,7 +136,7 @@ public class PCM2PCMConversionProvider
 	private static final int CONVERT_8UTO16L=11;
 	private static final int CONVERT_8UTO16B=12;
 	private static final int CONVERT_ONLY_EXPAND_CHANNELS=13;
-	private static final int CONVERT_FLOAT=100; // all other conversions
+	private static final int CONVERT_FLOAT=100;   // all other conversions
 	private static final int CONVERT_NONE=101;    // no conversion necessary
 
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream) {
@@ -165,11 +166,8 @@ public class PCM2PCMConversionProvider
 			if (conversionType==CONVERT_NOT_POSSIBLE) {
 				throw new IllegalArgumentException("format conversion not supported");
 			}
-			//if (conversionType==CONVERT_FLOAT) {
 			return new PCM2PCMStream(sourceStream, targetFormat,
 			                         sourceType, targetType, conversionType);
-			//sourceType, targetType, CONVERT_FLOAT);
-			//}
 		}
 
 		throw new IllegalArgumentException("format conversion not supported");
