@@ -145,7 +145,7 @@
 	       dir="${src}/packaging/tritonus_mp3" />
     </jar>
 
-    <jar	jarfile="${dist}/tritonus_gsm.jar" >
+    <jar jarfile="${dist}/tritonus_gsm.jar" >
       <fileset
 	       dir="${build}" >
 	<include name="org/tritonus/lowlevel/gsm/" />
@@ -156,7 +156,16 @@
 	       dir="${src}/packaging/tritonus_gsm" />
     </jar>
 
-    <jar	jarfile="${dist}/tritonus_saint.jar" >
+    <jar jarfile="${dist}/tritonus_vorbis.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/sampled/convert/vorbis/" />
+	<include name="org/tritonus/sampled/file/vorbis/" />
+      </fileset>
+      <fileset
+	       dir="${src}/packaging/tritonus_vorbis" />
+    </jar>
+
+    <jar jarfile="${dist}/tritonus_saint.jar" >
       <fileset
 	       dir="${build}" >
 	<include name="org/tritonus/lowlevel/saint/" />
