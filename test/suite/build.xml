@@ -378,6 +378,18 @@
     </junit>
   </target>
 
+  <target name="test-pogg"
+		  depends="compile-tritonus">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.tritonus.lowlevel.pogg.BufferTestCase"/>
+      <test name="org.tritonus.test.tritonus.lowlevel.pogg.PacketTestCase"/>
+      <test name="org.tritonus.test.tritonus.lowlevel.pogg.PageTestCase"/>
+      <test name="org.tritonus.test.tritonus.lowlevel.pogg.FramingTestCase"/>
+    </junit>
+  </target>
+
 
 
   <target name="clean" depends="init-base">
