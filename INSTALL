@@ -8,8 +8,7 @@ What you need
 =============
 
 - jdk 1.4.x, 1.3.x or jdk1.2.x for Linux. Testing was done with the
-Blackdown jdk1.3.0-FCS.
-(http://www.blackdown.org/). Other versions may work.
+Sun jdk1.4.0. Other versions may work.
 If you only want to build pure-java (not Linux specific)components, you
 can use a jdk with the above versions on any platform.
 Tritonus does not work with jdk1.1.X.
@@ -49,7 +48,7 @@ For MIDI:
 
 For the build process:
 - make (Testing done with GNU make 3.79)
-- ant (get it from http://jakarta.apache.org/ant/ if not present in your distribution)
+- ant (Testing done with Apache Ant 1.5; get it from http://jakarta.apache.org/ant/ if not present in your distribution)
 - g++
 - libtool (currently not needed)
 - m4
@@ -111,19 +110,24 @@ files. The important files are:
 - tritonus-x.y.z/tritonus.jar - this contains the java classes and
 should be in your CLASSPATH
 
-- tritonus-x.y.z/javalayer.jar - this contains the java classes for the mp3 decoder (seperated because of legal reasons). They should be in your CLASSPATH, too.
+- tritonus-x.y.z/javalayer.jar - this contains the java classes for
+the mp3 decoder (seperated because of legal reasons). They should be
+in your CLASSPATH, too.
 
--  tritonus-x.y.z/src/lib/alsa/libtritonusalsa.so.1.0 (if you use the MIDI stuff)
+- tritonus-x.y.z/src/lib/alsa/libtritonusalsa.so.1.0 (if you use the
+MIDI stuff)
 
--  tritonus-x.y.z/src/lib/esd/libtritonusesd.so.1.0
+- tritonus-x.y.z/src/lib/esd/libtritonusesd.so.1.0
 
 this contains the native 
 code and should be in your LD_LIBRARY_PATH
 
+
 USING TRITONUS WITH SUN/IBM/BLACKDOWN JDK 1.3/1.4
 
 If you are using Tritonus with a jdk/jre that already has an
-implementation of the Java Sound API, you have two choices:
+implementation of the Java Sound API (this is true for 1.3/1.4), you
+have two choices:
 
 1. Use only the components of Tritonus that are not available/not
 working correctely in the native Java Sound implementation.
@@ -159,7 +163,7 @@ considered implicitely (by AudioSystem.getTargetEncodings(),
 AudioSystem.getTargetFormats(), AudioSystem.isConversionSupported(),
 AudioSystem.getAudioInputStream()).
 
-With jdk 1.3.X, the pitfal is that making the providers available does
+With jdk 1.3.X, the pitfall is that making the providers available does
 NOT automatically change the default devices (as returned/used by
 AudioSystem.getLine(), MidiSystem.getSynthesizer(),
 MidiSystem.getReceiver(), MidiSystem.getTransmitter(),
@@ -167,47 +171,73 @@ MidiSystem.getSequencer(), MidiSystem.getSynthesizer()). The jdk
 searches the class paths for available providers in this order: boot
 class path, extension class path, user class path. Since the
 'built-in' providers appear in rt.jar, which appears in the boot class
-path, its devices de facto act as default. Devices provided by
+path, its devices act as defaults. Devices provided by
 additionally installed providers are available on explicit request
 (AudioSystem.getMixer(), MidiSystem.getMidiDevice()).
 
 With jdk 1.4, the defaults change without asking you, and exactely
-this can be a pitfal, too. This is due to the fact the the search
+this can be a pitfal, too. This is due to the fact that the the search
 order for provider is reversed. Here, it is: user class path,
 extension class path, boot class path. So devices provided by
 additional providers can act as default devices.
 
-So with jdk1.4, yor job is easy, while with jdk1.3 you have to
+So with jdk1.4, your job is easy, while with jdk1.3 you have to
 explicitely name alternative Mixers and MidiDevices. Note that it is
-not a good idea to hard-code Tritonus' Mixer/MidiDevice names. The
+not a good idea to hard-code Tritonus' Mixer or MidiDevice names. The
 recommanded practice (anyway) is to give the user a list of available
-Mixers/MidiDevices and let her/him select an appropriate one. These
-choices may be stored as preferences. If the user doesn't explicitely
-select devices, default devices (as provided by the Java Sound
-implementation, not hard-coded ones) should be used.
+Mixers and MidiDevices and let her/him select an appropriate
+one. These choices may be stored as preferences. If the user doesn't
+explicitely select devices, default devices should be used (as
+provided by the Java Sound implementation, not hard-coded ones).
+
+You may want to opt to completely replace the jdk's Java Sound
+implementation by Tritonus. There are not many cases where this does
+make sense. It can be necessary to shadow severe bugs, but there are
+few of them. For now, it's mainly an option for testing Tritonus. It
+is not recommanded for normal users. Here is how it works:
+
+Since the native versions of the javax.sound.* classes are in the boot
+class path, it is necessary to alter the boot class path. Start the VM
+with the following options:
+
+java -Xbootclasspath/p:/path/to/tritonus_core.jar:/path/to/tritonus_share.jar
+
+This prepends some of the Tritonus .jars to the boot class path,
+resulting in Tritonus' versions of javax.sound.* shadowing the native
+ones. Note that this still does not remove the native service
+providers. To remove them, you have to edit or remove configuration
+files packaged in rt.jar. The easiest way is to just remove them. So,
+remove the following files from rt.jar:
+
+META-INF/services/javax.sound.midi.spi.MidiDeviceProvider
+META-INF/services/javax.sound.midi.spi.MidiFileReader
+META-INF/services/javax.sound.midi.spi.MidiFileWriter
+META-INF/services/javax.sound.midi.spi.SoundbankReader
+META-INF/services/javax.sound.sampled.spi.AudioFileReader
+META-INF/services/javax.sound.sampled.spi.AudioFileWriter
+META-INF/services/javax.sound.sampled.spi.FormatConversionProvider
+META-INF/services/javax.sound.sampled.spi.MixerProvider
+
+Be sure to keep a copy of the original rt.jar, so that you can easily
+restore the original state.
+
+And again: Be warned that this is a guru-level option. Don't dare to
+ask for help on a mailing list if something fails. You have to know
+what you are doing.
 
 
+TODO
 
 [table: which provider in which .jar]
 
-    <sect2><title>I installed Tritonus on a Sun jdk1.3.0 and I still
-    get the behaviour of Sun's Java Sound implementation.</title>
-
-      <para>Using Tritonus under jdk1.3.0 is a bit tricky. The point
-      is that installing Tritonus you are just adding Tritonus'
-      mixers, converters and other service providers to ones of Sun's
-      Java Sound implementation. Especially, Sun's mixing engine is
-      still the default mixer. To use Tritonus' mixers, you have to
-      select the mixer in your program manually: get the respective
-      Mixer object from AudioSystem, and allocate the lines from this
-      Mixer object. The same is true for MidiDevices. It's possible
+    It's possible
       to use Tritonus' javax.sound.* classes by putting them into the
       boot classpath *before* rt.jar. But this still leaves you with
       Sun's service providers. Getting rid of them required to change
       the service provider configuration files inside rt.jar or other,
       even more fancy measures. The alternative way out of the hell is
       to use a jdk1.2.X, where Tritonus is the only Java Sound
-      implementation.  (Matthias)</para>
+      implementation.
 
 
 
