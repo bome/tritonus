@@ -30,8 +30,7 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioSystem;
 
 
-/**
- * Common constants and methods for handling au files.
+/** Common constants and methods for handling au files.
  *
  * @author Florian Bomers
  */
