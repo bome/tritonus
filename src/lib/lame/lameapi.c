@@ -38,20 +38,15 @@ int doInit(LameConf* conf) {
 	
 	lame_set_num_channels(conf->gf, conf->channels);
 	lame_set_in_samplerate(conf->gf, conf->sampleRate);
-	/*if (conf->mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
+	if (conf->mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
 		lame_set_mode(conf->gf, conf->mode);
-	}*/
+	}
 	if (conf->VBR) {
-		// not implemented yet
-		//lame_set_VBR(conf->gf, vbr_default);
-		//lame_set_VBR_q(conf->gf, conf->quality);
-		conf->gf->VBR=vbr_default;
-		conf->gf->VBR_q=conf->quality;
+		lame_set_VBR(conf->gf, vbr_default);
+		lame_set_VBR_q(conf->gf, conf->quality);
 	} else {
-		// not implemented yet
-		//lame_set_brate(conf->gf, conf->bitrate);
 		if (conf->bitrate!=org_tritonus_lowlevel_lame_Lame_BITRATE_AUTO) {
-			conf->gf->brate=conf->bitrate;
+		    lame_set_brate(conf->gf, conf->bitrate);
 		}
 	}
 	lame_set_quality(conf->gf, conf->quality);
@@ -59,14 +54,10 @@ int doInit(LameConf* conf) {
 
 	// return effective values
 	conf->sampleRate=lame_get_out_samplerate(conf->gf);
-	//conf->bitrate=lame_get_brate(conf->gf);
-	conf->bitrate=conf->gf->brate;
-	//conf->mode=lame_get_mode(conf->gf);
-	conf->mode=conf->gf->mode;
-	//conf->VBR=lame_get_VBR(conf->gf);
-	conf->VBR=conf->gf->VBR;
-	conf->quality=conf->VBR?conf->gf->VBR_q:lame_get_quality(conf->gf);
-	//conf->quality=conf->VBR??lame_get_VBR_q(conf->gf):lame_get_quality(conf->gf);
+	conf->bitrate=lame_get_brate(conf->gf);
+	conf->mode=lame_get_mode(conf->gf);
+	conf->VBR=lame_get_VBR(conf->gf);
+	conf->quality=(conf->VBR)?lame_get_VBR_q(conf->gf):lame_get_quality(conf->gf);
 	conf->mpegVersion=lame_get_version(conf->gf);
 
 	return result;
