@@ -31,6 +31,7 @@ import	java.io.PrintStream;
 
 public class TDebug
 {
+	public static boolean		SHOW_ACCESS_CONTROL_EXCEPTIONS = false;
 	private static final String	PROPERTY_PREFIX = "tritonus.";
 	// The stream we output to
 	public static PrintStream	m_printStream = System.out;
@@ -120,7 +121,18 @@ public class TDebug
 	private static boolean getBooleanProperty(String strName)
 	{
 		String	strPropertyName = PROPERTY_PREFIX + strName;
-		String	strValue = System.getProperty(strPropertyName, "false");
+		String	strValue = "false";
+		try
+		{
+			strValue = System.getProperty(strPropertyName, "false");
+		}
+		catch (Exception e)
+		{
+			if (SHOW_ACCESS_CONTROL_EXCEPTIONS)
+			{
+				out(e);
+			}
+		}
 		// TDebug.out("property: " + strPropertyName + "=" + strValue);
 		boolean	bValue = strValue.toLowerCase().equals("true");
 		// TDebug.out("bValue: " + bValue);

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 package	org.tritonus.sampled.convert;
 
 
+import	java.io.ByteArrayInputStream;
 import	java.io.IOException;
 
 import	javax.sound.sampled.AudioFormat;
@@ -45,7 +46,8 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	extends		AudioInputStream
 	implements	TCircularBuffer.Trigger
 {
-	private static int	DEFAULT_BUFFER_SIZE = 327670;
+	private static int		DEFAULT_BUFFER_SIZE = 327670;
+	private static final byte[]	EMPTY_BYTE_ARRAY = new byte[0];
 
 	// ausnahmsweise ;-)
 	protected TCircularBuffer	m_circularBuffer;
@@ -62,7 +64,19 @@ public abstract class TAsynchronousFilteredAudioInputStream
 
 	public TAsynchronousFilteredAudioInputStream(AudioFormat outputFormat, long lLength, int nBufferSize)
 	{
-		super(null, outputFormat, lLength);
+		/*	The usage of a ByteArrayInputStream is a hack.
+		 *	(the infamous "JavaOne hack", because I did it on june
+		 *	6th 2000 in San Francisco, only hours before a
+		 *	JavaOne session where I wanted to show mp3 playback
+		 *	with Java Sound.) It is necessary because in the FCS
+		 *	version of the Sun jdk1.3, the constructor of
+		 *	AudioInputStream throws an exception if its first
+		 *	argument is null. So we have to pass a dummy non-null
+		 *	value.
+		 */
+		super(new ByteArrayInputStream(EMPTY_BYTE_ARRAY),
+		      outputFormat,
+		      lLength);
 		m_circularBuffer = new TCircularBuffer(nBufferSize, false, true, this);
 	}
 

@@ -163,7 +163,7 @@ convert:
 	@if [ ! -f .converted ]; then ./ConvertJDK117; echo "" > .converted; fi
 
 $(LIBDEST):	$(OBJ) $(CONFIGFILE2)
-	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN)
+	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN) -C src META-INF/services/
 
 $(CONFIGFILE2): $(CONFIGFILE)
 	mkdir -p $(OBJDIR_PRIV)
@@ -205,7 +205,7 @@ install-link:
 
 .PHONY: clean
 clean:
-	rm -rf $(LIBDEST) org javax javazoom
+	rm -rf $(LIBDEST) $(LIBDEST_JL) $(LIBDEST_MP3SP) org javax javazoom
 	find . -name '*~' -exec rm '{}' ';'
 	find . -name '*.class' -exec rm '{}' ';'
 	find . -name '.directory' -exec rm '{}' ';'
