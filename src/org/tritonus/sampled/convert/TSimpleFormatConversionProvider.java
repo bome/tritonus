@@ -71,7 +71,17 @@ public abstract class TSimpleFormatConversionProvider
 		collectEncodings(m_targetFormats, m_targetEncodings);
 	}
 
-
+	/**
+	 * Disables this FormatConversionProvider.
+	 * This may be useful when e.g. native libraries are not present.
+	 * TODO: enable method
+	 */
+	public void disable() {
+		m_sourceEncodings = new ArraySet();
+		m_targetEncodings = new ArraySet();
+		m_sourceFormats = new ArraySet();
+		m_targetFormats = new ArraySet();
+	}		
 
 	private static void collectEncodings(Collection formats,
 				      Collection encodings)
@@ -244,7 +254,7 @@ public abstract class TSimpleFormatConversionProvider
 	 * Utility method, replaces all occurences of AudioSystem.NOT_SPECIFIED
 	 * in <code>targetFormat</code> with the corresponding value in <code>sourceFormat</code>.
 	 * If <code>targetFormat</code> does not contain any fields with AudioSystem.NOT_SPECIFIED,
-	 * it is returned unmodified. The endian-ness and encoding remains the same in all cases.
+	 * it is returned unmodified. The endian-ness and encoding remain the same in all cases.
 	 * <p>
 	 * If any of the fields is AudioSystem.NOT_SPECIFIED in both <code>sourceFormat</code> and 
 	 * <code>targetFormat</code>, it will remain not specified.

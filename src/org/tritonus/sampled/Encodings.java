@@ -97,6 +97,16 @@ public class Encodings extends AudioFormat.Encoding {
 	  object that is not supported. Instead, some indication of an error should be
 	  signaled to the user program. And, there should be a second interface for
 	  service providers allowing them to register encodings supported by themselves.
+	  
+	  $$fb2000/09/26:
+	  The problem is what you see as second issue: it can never be assured
+	  that this class knows all available encodings. So at the moment, there
+	  is no choice than to allow users to create any Encoding they wish.
+	  The encodings database will simplify things.
+	  A problem with an interface to retrieve supported encodings (or API 
+	  function in spi.FormatConversionProvider) is that this requires
+	  loading of all providers very early. Hmmm, maybe this is necessary in any
+	  case when the user issues something like AudioSystem.isConversionSupported.
 	 */
 	public static AudioFormat.Encoding getEncoding(String name) {
 		AudioFormat.Encoding res=(AudioFormat.Encoding) encodings.get(name);
@@ -108,6 +118,20 @@ public class Encodings extends AudioFormat.Encoding {
 		}
 		return res;
 	}
+
+	/**
+	 * Tests for equality of 2 encodings. They are equal when their strings match.
+	 * <p>
+	 * This function should be AudioFormat.Encoding.equals and must
+	 * be considered as a temporary work around until it flows into the
+	 * JavaSound API.
+	 */
+	// IDEA: create a special "NOT_SPECIFIED" encoding
+	// and a AudioFormat.Encoding.matches method.
+	public static boolean equals(AudioFormat.Encoding e1, AudioFormat.Encoding e2) {
+		return e2.toString().equals(e1.toString());
+	}
+
 
 	/**
 	 * Returns all &quot;supported&quot; encodings. 

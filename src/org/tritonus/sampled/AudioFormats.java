@@ -33,12 +33,6 @@ import	javax.sound.sampled.AudioSystem;
 
 public class AudioFormats
 {
-	//$$fb 19 Dec 99: added
-	//$$fb ohh, I just read the documentation - it must indeed match exactly.
-	//I think it would be much better that a pair of values also matches
-	//when at least one is NOT_SPECIFIED.
-	// support for NOT_SPECIFIED should be consistent in JavaSound...
-	// As a "workaround" I implemented it like this in TFormatConversionProvider
 	private static boolean doMatch(int i1, int i2)
 	{
 		return i1 == AudioSystem.NOT_SPECIFIED
@@ -57,6 +51,25 @@ public class AudioFormats
 
 
 
+	/**
+	 * Tests whether 2 AudioFormats have matching formats.
+	 * A field matches when it is AudioSystem.NOT_SPECIFIED in
+	 * at least one of the formats or the field is the same
+	 * in both formats.<br>
+	 * Exceptions:
+	 * <ul>
+	 * <li>Encoding must always be equal for a match.
+	 * <li> For a match, endianness must be equal if SampleSizeInBits is not
+	 * AudioSystem.NOT_SPECIFIED and greater than 8bit in both formats.<br>
+	 * In other words: If SampleSizeInBits is AudioSystem.NOT_SPECIFIED
+	 * in either format or both formats have a SampleSizeInBits<8, 
+	 * endianness does not matter.
+	 * </ul>
+	 * This is a proposition to be used as AudioFormat.matches.
+	 * It can therefore be considered as a temporary workaround.
+	 */
+	// IDEA: create a special "NOT_SPECIFIED" encoding
+	// and a AudioFormat.Encoding.matches method.
 	public static boolean matches(AudioFormat format1,
 				      AudioFormat format2)
 	{
@@ -74,16 +87,13 @@ public class AudioFormats
 		// As a workaround of this issue I return in the converters
 		// all combinations, e.g. for ULAW I return bigEndian and !bigEndian formats.
 /* old version
-   return getEncoding().equals(format.getEncoding())
-   && getChannels() == format.getChannels()
-   && getSampleSizeInBits() == format.getSampleSizeInBits()
-   && getFrameSize() == format.getFrameSize()
-   && (Math.abs(getSampleRate() - format.getSampleRate()) < 1.0e-9 || format.getSampleRate() == AudioSystem.NOT_SPECIFIED)
-   && (Math.abs(getFrameRate() - format.getFrameRate()) < 1.0e-9 || format.getFrameRate() == AudioSystem.NOT_SPECIFIED);
 */
 		// as proposed by florian
-		return format1.getEncoding().equals(format2.getEncoding())
-			&& (format2.getSampleSizeInBits()<=8 || format2.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED || format1.isBigEndian()==format2.isBigEndian())
+		return Encodings.equals(format1.getEncoding(), format2.getEncoding())
+			&& (format2.getSampleSizeInBits()<=8 
+			    || format1.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED 
+			    || format2.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED 
+			    || format1.isBigEndian()==format2.isBigEndian())
 			&& doMatch(format1.getChannels(),format2.getChannels())
 			&& doMatch(format1.getSampleSizeInBits(), format2.getSampleSizeInBits())
 			&& doMatch(format1.getFrameSize(), format2.getFrameSize())
@@ -91,6 +101,23 @@ public class AudioFormats
 			&& doMatch(format1.getFrameRate(),format2.getFrameRate());
 	}
 
+	/**
+	 * Tests for exact equality of 2 AudioFormats.
+	 * This is the behaviour of AudioFormat.matches in JavaSound 1.0.
+	 * <p>
+	 * This is a proposition to be used as AudioFormat.equals.
+	 * It can therefore be considered as a temporary workaround.
+	 */
+	public static boolean equals(AudioFormat format1,
+				      AudioFormat format2)
+	{
+		return Encodings.equals(format1.getEncoding(), format2.getEncoding())
+			&& format1.getChannels() == format2.getChannels()
+			&& format1.getSampleSizeInBits() == format2.getSampleSizeInBits()
+			&& format1.getFrameSize() == format2.getFrameSize()
+			&& (Math.abs(format1.getSampleRate() - format2.getSampleRate()) < 1.0e-9)
+			&& (Math.abs(format1.getFrameRate() - format2.getFrameRate()) < 1.0e-9);
+	}
 
 }
 

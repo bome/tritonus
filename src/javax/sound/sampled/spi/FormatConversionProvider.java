@@ -65,7 +65,10 @@ public abstract class FormatConversionProvider
 		AudioFormat sourceFormat);
 
 
-
+	/**
+	 * WARNING: this method uses <code>getTargetEncodings(AudioFormat);</code>
+	 * which may create infinite loops if the latter is overwritten.
+	 */
 	public boolean isConversionSupported(
 		AudioFormat.Encoding targetEncoding,
 		AudioFormat sourceFormat)
@@ -94,6 +97,10 @@ public abstract class FormatConversionProvider
 
 
 
+	/**
+	 * WARNING: this method uses <code>getTargetFormats(AudioFormat.Encoding, AudioFormat)</code>
+	 * which may create infinite loops if the latter is overwritten.
+	 */
 	public boolean isConversionSupported(
 		AudioFormat targetFormat,
 		AudioFormat sourceFormat)
