@@ -38,14 +38,11 @@ import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
 import	org.tritonus.share.sampled.file.TAudioFileReader;
 
+import	com.jcraft.jogg.Buffer;
 import	com.jcraft.jogg.SyncState;
 import	com.jcraft.jogg.StreamState;
 import	com.jcraft.jogg.Page;
 import	com.jcraft.jogg.Packet;
-import	com.jcraft.jorbis.Info;
-import	com.jcraft.jorbis.Comment;
-import	com.jcraft.jorbis.DspState;
-import	com.jcraft.jorbis.Block;
 
 
 
@@ -55,8 +52,8 @@ import	com.jcraft.jorbis.Block;
 public class VorbisAudioFileReader
 extends TAudioFileReader
 {
-	// Note: this value is only an estimate
-	private static final int	MARK_LIMIT = 100000;
+	private static final int	INITAL_READ_LENGTH = 4096;
+	private static final int	MARK_LIMIT = INITAL_READ_LENGTH + 1;
 
 
 
@@ -68,12 +65,8 @@ extends TAudioFileReader
 
 
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): begin"); }
-		int	convsize = 4096 * 2;
-		byte[]	convbuffer = new byte[convsize];
-
 		// sync and verify incoming physical bitstream
 		SyncState	oggSyncState = new SyncState();
 
@@ -86,27 +79,11 @@ extends TAudioFileReader
 		// one raw packet of data for decode
 		Packet		oggPacket = new Packet();
 
-		// struct that stores all the static vorbis bitstream settings
-		Info		vi = new Info();
-
-		// struct that stores all the bitstream user comments
-		Comment		vc = new Comment();
-
-		// central working state for the packet->PCM decoder
-		DspState	vd = new DspState();
-
-		// local working space for packet->PCM decode
-		Block		vb = new Block(vd);
-
-		byte[]		buffer;
 		int		bytes = 0;
 
 		// Decode setup
 
 		oggSyncState.init(); // Now we can read pages
-
-		// while(true){ // we repeat if the bitstream is chained
-		int eos=0;
 
 		// grab some data at the head of the stream.  We want the first page
 		// (which is guaranteed to be small and only contain the Vorbis
@@ -114,9 +91,8 @@ extends TAudioFileReader
 		// serialno.
 
 		// submit a 4k block to libvorbis' Ogg layer
-		int	index = oggSyncState.buffer(4096);
-		buffer = oggSyncState.data;
-		bytes = inputStream.read(buffer, index, 4096);
+		int	index = oggSyncState.buffer(INITAL_READ_LENGTH);
+		bytes = inputStream.read(oggSyncState.data, index, INITAL_READ_LENGTH);
 		oggSyncState.wrote(bytes);
     
 		// Get the first page.
@@ -128,9 +104,7 @@ extends TAudioFileReader
 				// IDEA: throw EOFException?
 				throw new UnsupportedAudioFileException("not a Vorbis stream: ended prematurely");
 			}
-      
-			// error case.  Must not be Vorbis data
-			throw new UnsupportedAudioFileException("not a Vorbis stream: not in Ogg bitstream format");
+      			throw new UnsupportedAudioFileException("not a Vorbis stream: not in Ogg bitstream format");
 		}
 
 		// Get the serial number and set up the rest of decode.
@@ -145,8 +119,6 @@ extends TAudioFileReader
 		// header is an easy way to identify a Vorbis bitstream and it's
 		// useful to see that functionality seperated out.
 
-		vi.init();
-		vc.init();
 		if (oggStreamState.pagein(oggPage) < 0)
 		{
 			// error; stream version mismatch perhaps
@@ -159,87 +131,54 @@ extends TAudioFileReader
 			throw new UnsupportedAudioFileException("not a Vorbis stream: can't read initial header packet");
 		}
 
-		if (vi.synthesis_headerin(vc,oggPacket) < 0)
+		Buffer	oggPacketBuffer = new Buffer();
+		oggPacketBuffer.readinit(oggPacket.packet_base, oggPacket.packet, oggPacket.bytes);
+
+		int nPacketType = oggPacketBuffer.read(8);
+		byte[] buf = new byte[6];
+		oggPacketBuffer.read(buf, 6);
+		if(buf[0]!='v' || buf[1]!='o' || buf[2]!='r' ||
+		   buf[3]!='b' || buf[4]!='i' || buf[5]!='s')
 		{
-			// error case; not a vorbis header
-			throw new UnsupportedAudioFileException("not a Vorbis stream: does not contain Vorbis audio data");
+			throw new UnsupportedAudioFileException("not a Vorbis stream: not a vorbis header packet");
+		}
+		if (nPacketType != 1)
+		{
+			throw new UnsupportedAudioFileException("not a Vorbis stream: first packet is not the identification header");
+		}
+		if(oggPacket.b_o_s == 0)
+		{
+			throw new UnsupportedAudioFileException("not a Vorbis stream: initial packet not marked as beginning of stream");
+		}
+		int	nVersion = oggPacketBuffer.read(32);
+		if (nVersion != 0)
+		{
+			throw new UnsupportedAudioFileException("not a Vorbis stream: wrong vorbis version");
+		}
+		int	nChannels = oggPacketBuffer.read(8);
+		float	fSampleRate = oggPacketBuffer.read(32);
+
+		// These are only used for error checking.
+		int bitrate_upper = oggPacketBuffer.read(32);
+		int bitrate_nominal = oggPacketBuffer.read(32);
+		int bitrate_lower = oggPacketBuffer.read(32);
+
+		int[] blocksizes = new int[2];
+		blocksizes[0] = 1 << oggPacketBuffer.read(4);
+		blocksizes[1] = 1 << oggPacketBuffer.read(4);
+
+		if (fSampleRate < 1.0F ||
+		    nChannels < 1 ||
+		    blocksizes[0] < 8||
+		    blocksizes[1] < blocksizes[0] ||
+		    oggPacketBuffer.read(1) != 1)
+		{
+			throw new UnsupportedAudioFileException("not a Vorbis stream: illegal values in initial header");
 		}
 
-		// At this point, we're sure we're Vorbis.  We've set up the logical
-		// (Ogg) bitstream decoder.  Get the comment and codebook headers and
-		// set up the Vorbis decoder
-    
-		// The next two packets in order are the comment and codebook headers.
-		// They're likely large and may span multiple pages.  Thus we reead
-		// and submit data until we get our two pacakets, watching that no
-		// pages are missing.  If a page is missing, error out; losing a
-		// header page is the only place where missing data is fatal. */
-    
-		int	i = 0;
-		while (i < 2)
-		    {
-			while (i < 2)
-			{
-				int	result = oggSyncState.pageout(oggPage);
-				if (result == 0)
-				{
-					break; // Need more data
-				}
-				// Don't complain about missing or corrupt data yet.  We'll
-				// catch it at the packet output phase
 
-				if (result == 1)
-				{
-					oggStreamState.pagein(oggPage); // we can ignore any errors here
-					// as they'll also become apparent
-					// at packetout
-					while (i < 2)
-					{
-						result = oggStreamState.packetout(oggPacket);
-						if (result == 0)
-						{
-							break;
-						}
-						if (result == -1)
-						{
-							// Uh oh; data at some point was corrupted or missing!
-							// We can't tolerate that in a header.  Die.
-							throw new UnsupportedAudioFileException("not a Vorbis stream: corrupt secondary header");
-						}
-						vi.synthesis_headerin(vc,oggPacket);
-						i++;
-					}
-				}
-			}
-			// no harm in not checking before adding more
-			index = oggSyncState.buffer(4096);
-			buffer = oggSyncState.data; 
-			bytes = inputStream.read(buffer, index, 4096);
-			if(bytes == 0 && i < 2)
-			{
-				// IDEA: throw EOFException?
-				throw new UnsupportedAudioFileException("not a Vorbis stream: ended before finding all Vorbis headers");
-			}
-			oggSyncState.wrote(bytes);
-		    }
-
-		if (TDebug.TraceAudioFileReader)
-		{
-			// Throw the comments plus a few lines about the bitstream we're
-			// decoding
-			byte[][]	ptr = vc.user_comments;
-			for (int j = 0; j < ptr.length; j++)
-			{
-				if (ptr[j] == null)
-					break;
-				TDebug.out(new String(ptr[j], 0, ptr[j].length - 1));
-			}
-		}
-		int	nChannels = vi.channels;
-		float	fSampleRate = vi.rate;
-		if (TDebug.TraceAudioFileReader) { TDebug.out("\n"); }
-		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): Bitstream is " + vi.channels + " channel, " + vi.rate + "Hz"); }
-		if (TDebug.TraceAudioFileReader) { TDebug.out("Encoded by: " + new String(vc.vendor, 0, vc.vendor.length - 1) + "\n"); }
+		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): channels: " + nChannels); }
+		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): rate: " + fSampleRate); }
 
 		/*
 		  If the file size is known, we derive the number of frames
@@ -250,18 +189,18 @@ extends TAudioFileReader
 		*/
 		// [fb] not specifying it causes Sun's Wave file writer to write rubbish
 		int	nByteSize = AudioSystem.NOT_SPECIFIED;
-		int	nFrameSize = AudioSystem.NOT_SPECIFIED;
 		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED
 		    && lFileSizeInBytes <= Integer.MAX_VALUE)
 		{
 			nByteSize = (int) lFileSizeInBytes;
-			/* Can we calculate a useful size?
-			   Peeking into ogginfo gives the insight that the only
-			   way seems to be reading through the file. This is
-			   something we do not want, at least not by default.
-			*/
-			// nFrameSize = (int) (lFileSizeInBytes / ...;
 		}
+		int	nFrameSize = AudioSystem.NOT_SPECIFIED;
+		/* Can we calculate a useful size?
+		   Peeking into ogginfo gives the insight that the only
+		   way seems to be reading through the file. This is
+		   something we do not want, at least not by default.
+		*/
+		// nFrameSize = (int) (lFileSizeInBytes / ...;
 
 		AudioFormat	format = new AudioFormat(
 			Encodings.getEncoding("VORBIS"),
@@ -272,13 +211,13 @@ extends TAudioFileReader
 			AudioSystem.NOT_SPECIFIED,
 			true);	// this value is chosen arbitrarily
 		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): AudioFormat: " + format); }
+		AudioFileFormat.Type	type = AudioFileTypes.getType("Ogg","ogg");
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
-				AudioFileTypes.getType("Ogg","ogg"),
+				type,
 				format,
 				nFrameSize,
 				nByteSize);
-		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): end"); }
 		return audioFileFormat;
 	}
 }
