@@ -43,6 +43,7 @@ public class TDebug
 
 	// meta-general
 	public static boolean	TraceAllExceptions = getBooleanProperty("TraceAllExceptions");
+	public static boolean	TraceAllWarnings = getBooleanProperty("TraceAllWarnings");
 
 	// general
 	public static boolean	TraceInit = getBooleanProperty("TraceInit");
