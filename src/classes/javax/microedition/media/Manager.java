@@ -17,6 +17,7 @@ import org.tritonus.mmapi.SystemTimeBase;
 import org.tritonus.mmapi.URLDataSource;
 import org.tritonus.mmapi.PcmAudioPlayer;
 import org.tritonus.mmapi.Mp3AudioPlayer;
+import org.tritonus.mmapi.JavaSoundAudioPlayer;
 import org.tritonus.mmapi.MidiPlayer;
 import org.tritonus.mmapi.ToneGenerator;
 import org.tritonus.share.TDebug;
@@ -123,7 +124,13 @@ public final class Manager
 		{
 			throw new MediaException();
 		}
-		return null;
+		Player	player = null;
+
+		// !!!! HACK !!!!
+		player = new JavaSoundAudioPlayer(source);
+		// !!!! HACK !!!!
+
+		return player;
 	}
 
 
