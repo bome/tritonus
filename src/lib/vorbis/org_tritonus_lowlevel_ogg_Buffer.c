@@ -203,8 +203,12 @@ Java_org_tritonus_lowlevel_ogg_Buffer_readInit
 	jbyte*		buffer;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): nBytes: %d\n", nBytes); }
 	handle = getHandle(env, obj);
 	buffer = (*env)->GetByteArrayElements(env, abBuffer, NULL);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): buffer[0]: %d\n", buffer[0]); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): buffer[1]: %d\n", buffer[1]); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): buffer[2]: %d\n", buffer[2]); }
 	oggpack_readinit(handle, buffer, nBytes);
 	(*env)->ReleaseByteArrayElements(env, abBuffer, buffer, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): end\n"); }
