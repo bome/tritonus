@@ -8,6 +8,7 @@
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<sys/ioctl.h>
+#include	<endian.h>
 #include	<cdda_interface.h>
 #include	<cdda_paranoia.h>
 
@@ -328,8 +329,11 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame
 	{
 		throwRuntimeException(env, "cdparanoia_Cdparanoia: read failed");
 	}
-	// (void) memcpy(pbData, psBuffer, CD_FRAMESIZE_RAW);
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+	(void) memcpy(pbData, psBuffer, CD_FRAMESIZE_RAW);
+#else
 	swab(psBuffer, pbData, CD_FRAMESIZE_RAW);
+#endif
 	(*env)->ReleaseByteArrayElements(env, abData, pbData, 0);
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame(): end\n"); }
 	return 0;
