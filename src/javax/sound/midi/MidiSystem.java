@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,9 +18,7 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
 
 package	javax.sound.midi;
 
@@ -49,6 +46,7 @@ import	javax.sound.midi.spi.SoundbankReader;
 import	org.tritonus.core.TMidiConfig;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.ArraySet;
+
 
 
 public class MidiSystem
@@ -82,10 +80,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new MidiUnavailableException("no device found for " + info);
@@ -129,10 +124,7 @@ public class MidiSystem
 		throws	MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSynthesizerInfo();
-		if (TDebug.TraceMidiSystem)
-		{
-			TDebug.out("MidiSystem.getSynthesizer(): using default synthesizer info: " + info);
-		}
+		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSynthesizer(): using default synthesizer info: " + info); }
 		return (Synthesizer) getMidiDevice(info);
 	}
 
@@ -142,10 +134,7 @@ public class MidiSystem
 		throws	MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSequencerInfo();
-		if (TDebug.TraceMidiSystem)
-		{
-			TDebug.out("MidiSystem.getSequencer(): using: " + info);
-		}
+		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequencer(): using: " + info); }
 		return (Sequencer) getMidiDevice(info);
 	}
 
@@ -190,10 +179,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -214,10 +200,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -238,10 +221,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -262,10 +242,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -286,10 +263,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -301,33 +275,21 @@ public class MidiSystem
 		throws	InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
-		if (TDebug.TraceMidiSystem)
-		{
-			TDebug.out("MidiSystem.getSequence(File): got readers: " + readers);
-		}
+		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequence(File): got readers: " + readers); }
 		while (readers.hasNext())
 		{
 			MidiFileReader	reader = (MidiFileReader) readers.next();
-			if (TDebug.TraceMidiSystem)
-			{
-				TDebug.out("MidiSystem.getSequence(File): Trying MidiFileReader " + reader);
-			}
+			if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequence(File): Trying MidiFileReader " + reader); }
 			try
 			{
 				return reader.getSequence(file);
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
-		if (TDebug.TraceMidiSystem)
-		{
-			TDebug.out("MidiSystem.getSequence(File): no appropriate MidiFileReader found, throwing exception");
-		}
+		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequence(File): no appropriate MidiFileReader found, throwing exception"); }
 		throw new InvalidMidiDataException();
 	}
 
@@ -482,10 +444,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceMidiSystem || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceMidiSystem || TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			// continue the iteration
 			return false;
@@ -564,10 +523,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new IllegalArgumentException ();
@@ -590,10 +546,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		throw new IllegalArgumentException ();
@@ -625,10 +578,7 @@ public class MidiSystem
 		while (audioFileReaders.hasNext() && ! bCompleted)
 		{
 			MidiFileReader	audioFileReader = (MidiFileReader) audioFileReaders.next();
-			if (TDebug.TraceMidiSystem)
-			{
-				TDebug.out("MidiSystem.doMidiFileReaderIteration(): handling MidiFileReader: " + audioFileReader);
-			}
+			if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.doMidiFileReaderIteration(): handling MidiFileReader: " + audioFileReader); }
 			bCompleted = action.handleMidiFileReader(audioFileReader);
 		}
 	}
@@ -657,10 +607,7 @@ public class MidiSystem
 		while (audioFileWriters.hasNext() && ! bCompleted)
 		{
 			MidiFileWriter	audioFileWriter = (MidiFileWriter) audioFileWriters.next();
-			if (TDebug.TraceMidiSystem)
-			{
-				TDebug.out("MidiSystem.doMidiFileWriterIteration(): handling MidiFileWriter: " + audioFileWriter);
-			}
+			if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.doMidiFileWriterIteration(): handling MidiFileWriter: " + audioFileWriter); }
 			bCompleted = action.handleMidiFileWriter(audioFileWriter);
 		}
 	}
