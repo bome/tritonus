@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -39,16 +39,42 @@ import	javax.sound.midi.Transmitter;
 import	org.tritonus.TDebug;
 
 
-
+/**	Base class for MidiDevice implementations.
+ *	The goal of this class is to supply the common functionality for
+ *	classes that implement the interface MidiDevice.
+ */
 public abstract class TMidiDevice
 	implements	MidiDevice
 {
+	/**	The Info object for a certain instance of MidiDevice.
+	 */
 	private MidiDevice.Info		m_info;
+
+	/**	A flag to store whether the device is "open".
+	 */
 	private boolean			m_bOpen;
+
+	/**	The number of Receivers that refer to this MidiDevice.
+	 *	This is currently only maintained for information purposes.
+	 *
+	 *	@see #addReceiver
+	 *	@see #removeReceiver
+	 */
 	private int			m_nNumReceivers;
+
+	/**	The collection of Transmitter that refer to this MidiDevice.
+	 */
 	private List			m_transmitters;
 
 
+
+	/**	Initialize this class.
+	 *	This sets the info from the passed one, sets the open status
+	 *	to false, the number of Receivers to zero and the collection
+	 *	of Transmitters to be empty.
+	 *
+	 *	@param info	The info object that describes this instance.
+	 */
 	public TMidiDevice(MidiDevice.Info info)
 	{
 		m_info = info;
@@ -59,6 +85,13 @@ public abstract class TMidiDevice
 
 
 
+	/**	Retrieves a description of this instance.
+	 *	This returns the info object passed to the constructor.
+	 *
+	 *	@return the description
+	 *
+	 *	@see #TMidiDevice
+	 */
 	public MidiDevice.Info getDeviceInfo()
 	{
 		return m_info;
@@ -115,6 +148,7 @@ public abstract class TMidiDevice
 	}
 
 
+
 	public long getMicrosecondPosition()
 	{
 		return -1;
@@ -136,6 +170,10 @@ public abstract class TMidiDevice
 
 
 
+	/**	Creates a new Receiver object associated with this instance.
+	 *	In this implementation, an unlimited number of Receivers
+	 *	per MidiDevice can be created.
+	 */
 	public Receiver getReceiver()
 		throws	MidiUnavailableException
 	{
@@ -145,6 +183,10 @@ public abstract class TMidiDevice
 
 
 
+	/**	Creates a new Transmitter object associated with this instance.
+	 *	In this implementation, an unlimited number of Transmitters
+	 *	per MidiDevice can be created.
+	 */
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
@@ -155,13 +197,15 @@ public abstract class TMidiDevice
 
 	/*
 	 *	Intended for overriding by subclasses to receive messages.
+	 *	This method is called by TMidiDevice.Receiver object on
+	 *	receipt of a MidiMessage.
 	 */
 	protected void receive(MidiMessage message, long lTimeStamp)
 	{
 		if (TDebug.TraceTMidiDevice)
 		{
 			TDebug.out("### [should be overridden] TMidiDevice.receive(): message " + message);
-		}
+		}w
 	}
 
 
@@ -200,6 +244,10 @@ public abstract class TMidiDevice
 
 
 
+	/**	Send a MidiMessage to all Transmitters.
+	 *	This method should be called by subclasses when they get a
+	 *	message from a physical MIDI port.
+	 */
 	protected void sendImpl(MidiMessage message, long lTimeStamp)
 	{
 		Iterator	transmitters = m_transmitters.iterator();
@@ -216,6 +264,11 @@ public abstract class TMidiDevice
 
 /////////////////// INNER CLASSES //////////////////////////////////////
 
+
+	/**	Receiver proxy class.
+	 *	This class' objects are handed out on calls to
+	 *	TMidiDevice.getReceiver(). 
+	 */
 	public class TReceiver
 		implements	Receiver
 	{
@@ -238,6 +291,9 @@ public abstract class TMidiDevice
 
 
 
+		/**	Receive a MidiMessage.
+		 *
+		 */
 		public void send(MidiMessage message, long lTimeStamp)
 		{
 			if (TDebug.TraceTMidiDevice)
@@ -255,6 +311,11 @@ public abstract class TMidiDevice
 		}
 
 
+
+		/**	Closes the receiver.
+		 *	After a receiver has been closed, it does no longer
+		 *	propagate MidiMessages to its associated MidiDevice.
+		 */
 		public void close()
 		{
 			TMidiDevice.this.removeReceiver();
@@ -278,6 +339,7 @@ public abstract class TMidiDevice
 		}
 
 
+
 		public void setReceiver(Receiver receiver)
 		{
 			synchronized (this)
@@ -294,15 +356,22 @@ public abstract class TMidiDevice
 		}
 
 
+
 		public void send(MidiMessage message, long lTimeStamp)
 		{
 			if (getReceiver() != null)
 			{
 				getReceiver().send(message, lTimeStamp);
 			}
-		}
+		}Receiver
 
 
+
+		/**	Closes the transmitter.
+		 *	After a transmitter has been closed, it no longer
+		 *	passes MidiMessages to a Receiver previously set for
+		 *	it.
+		 */
 		public void close()
 		{
 			TMidiDevice.this.removeTransmitter(this);

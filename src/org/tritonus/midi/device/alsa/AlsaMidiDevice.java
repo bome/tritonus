@@ -43,22 +43,50 @@ import	org.tritonus.midi.device.TMidiDevice;
 
 
 
-
+/**	A representation of a physical MIDI port based on the ALSA sequencer.
+ */
 public class AlsaMidiDevice
 	extends		TMidiDevice
 	implements	AlsaMidiIn.AlsaMidiInListener, AlsaSequencerClient
 {
+	/**	ALSA client id of the physical port.
+	 */
 	private int		m_nClient;
+
+	/**	ALSA port id of the physical port.
+	 */
 	private int		m_nPort;
+
+	/**	Whether to handle input from the physical port.
+	 */
 	private boolean		m_bUseIn;
+
+	/**	Whether to handle output to the physical port.
+	 */
 	private boolean		m_bUseOut;
+
+	/**	The object interfacing to the ALSA sequencer.
+	 */
 	private ASequencer	m_aSequencer;
+
+	/**	The ALSA port id of the handler.
+	 *	This is used by m_aSequencer.
+	 */
 	private int		m_nOwnPort;
+
+	/**	Handler for input from the physical MIDI port.
+	 */
 	private AlsaMidiIn	m_alsaMidiIn;
+
+	/**	Handler for output to the physical MIDI port.
+	 */
 	private AlsaMidiOut	m_alsaMidiOut;
 
 
 
+
+	/**
+	 */
 	public AlsaMidiDevice(int nClient, int nPort)
 	{
 		this(nClient, nPort, true, true);
@@ -71,7 +99,7 @@ public class AlsaMidiDevice
 		this(new MidiDevice.Info("ALSA MIDI port (" + nClient + ":" + nPort + ")",
 					 "Tritonus is free software. See http://www.tritonus.org/",
 					 "ALSA MIDI port (" + nClient + ":" + nPort + ")",
-					 "0.0"),
+					 "0.3"),
 		     nClient, nPort, bUseIn, bUseOut);
 	}
 
@@ -108,10 +136,18 @@ public class AlsaMidiDevice
 		{
 			TDebug.out("AlsaMidiDevice.openImpl(): called");
 		}
+		// create an ALSA client...
 		m_aSequencer = new ASequencer("Tritonus Midi port handler");
+		// ...and an ALSA port
 		m_nOwnPort = m_aSequencer.createPort("handler port", ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ, 0, ASequencer.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 		if (getUseIn())
 		{
+			/*
+			 *	AlsaMidiIn listend to incoming event on the
+			 *	MIDI port.
+			 *	It calls this.dequeueEvent() if
+			 *	it receives an event.
+			 */
 			m_alsaMidiIn = new AlsaMidiIn(m_aSequencer, m_nOwnPort, getClient(), getPort(), this);
 			m_alsaMidiIn.start();
 		}
@@ -151,6 +187,8 @@ public class AlsaMidiDevice
 
 
 
+	/**	Pass MidiMessage from Receivers to physical MIDI port.
+	 */
 	protected void receive(MidiMessage message, long lTimeStamp)
 	{
 		if (isOpen())
@@ -162,7 +200,7 @@ public class AlsaMidiDevice
 
 
 	// for AlsaMidiInListener
-	// passes events read from the device to the receivers
+	// passes events read from the device to the Transmitters
 	public void dequeueEvent(MidiEvent event)
 	{
 		MidiMessage	message = event.getMessage();
@@ -170,6 +208,7 @@ public class AlsaMidiDevice
 		{
 			TDebug.out("AlsaMidiDevice.dequeueEvent(): message: " + message);
 		}
+		// send via superclass method
 		sendImpl(message, -1L);
 	}
 
