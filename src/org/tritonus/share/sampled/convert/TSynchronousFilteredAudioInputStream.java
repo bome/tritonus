@@ -116,7 +116,7 @@ public abstract class TSynchronousFilteredAudioInputStream
 	/**
 	 * Override this method to provide in-place conversion of samples.
 	 * To use it, call "enableConvertInPlace()". It will only be used when
-	 * input bytes per frame = output bytes per frame.
+	 * input bytes per frame >= output bytes per frame.
 	 * This method must always convert frameCount frames, so no return value is necessary.
 	 */
 	protected void convertInPlace(byte[] buffer, int byteOffset, int frameCount) {
@@ -158,9 +158,9 @@ public abstract class TSynchronousFilteredAudioInputStream
 
 	/**
 	 * Read nLength bytes that will be the converted samples
-	 * of the original inputStream.
-	 * When nLength*frameRateFactor is not a natural number,
-	 * this method may read less than nLength frames.
+	 * of the original InputStream.
+	 * When nLength is not an integral number of frames,
+	 * this method may read less than nLength bytes.
 	 */
 	public int read(byte[] abData, int nOffset, int nLength)
 	throws	IOException {

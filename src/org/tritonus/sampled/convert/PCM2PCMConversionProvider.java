@@ -566,7 +566,7 @@ public class PCM2PCMConversionProvider
 				buffer.mixDownChannels();
 			}
 			if (expandChannels) {
-				buffer.expandChannels(getFormat().getChannels());
+				buffer.expandChannel(getFormat().getChannels());
 			}
 		}
 
@@ -626,8 +626,6 @@ public class PCM2PCMConversionProvider
 				break;
 			case CONVERT_ONLY_EXPAND_CHANNELS:
 				// implicit: channelCount in inBuffer=1
-
-
 				System.arraycopy(inBuffer, 0, outBuffer, outByteOffset,
 				                 inFrameCount*getOriginalStream().getFormat().getFrameSize());
 				break;
