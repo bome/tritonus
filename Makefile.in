@@ -385,6 +385,14 @@ tags: TAGS
 TAGS: $(SRCTMP)
 	etags $(SRCTMP)
 
+.PHONY:tags
+tags-mmapi:
+	etags \
+	src/classes/javax/microedition/media/*.java \
+	src/classes/javax/microedition/media/control/*.java \
+	src/classes/javax/microedition/media/protocol/*.java \
+	src/classes/org/tritonus/mmapi/*.java \
+
 
 userdist:
 	echo tritonus-`cat version` >.fname
