@@ -34,6 +34,7 @@ public abstract class MixerProvider
 {
 	// TODO: check if jdk uses getMixerInfo() or getMixer() to
 	// implement this functionality (and document this officially).
+	// $$mp 2003/01/11: bug filed.
 	public boolean isMixerSupported(Mixer.Info info)
 	{
 		return false;
