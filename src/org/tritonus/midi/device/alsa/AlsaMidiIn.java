@@ -34,6 +34,9 @@ import	javax.sound.midi.SysexMessage;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
+import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import	org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
+import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
 
 
 
@@ -62,7 +65,7 @@ public class AlsaMidiIn
 
 	private AlsaMidiInListener	m_listener;
 
-	private AlsaSeq.Event		m_event = new AlsaSeq.Event();
+	private AlsaSeqEvent		m_event = new AlsaSeqEvent();
 
 	// used to query event for detailed information
 	private int[]			m_anValues = new int[5];
@@ -127,7 +130,7 @@ public class AlsaMidiIn
 		m_nDestPort = nDestPort;
 		if (nTimestampingQueue >= 0)
 		{
-			AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+			AlsaSeqPortSubscribe	portSubscribe = new AlsaSeqPortSubscribe();
 			portSubscribe.setSender(nSourceClient, nSourcePort);
 			portSubscribe.setDest(getAlsaSeq().getClientId(), nDestPort);
 			portSubscribe.setQueue(nTimestampingQueue);
@@ -139,7 +142,7 @@ public class AlsaMidiIn
 		}
 		else
 		{
-			AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+			AlsaSeqPortSubscribe	portSubscribe = new AlsaSeqPortSubscribe();
 			portSubscribe.setSender(nSourceClient, nSourcePort);
 			portSubscribe.setDest(getAlsaSeq().getClientId(), nDestPort);
 			getAlsaSeq().subscribePort(portSubscribe);

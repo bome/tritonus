@@ -39,6 +39,9 @@ import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
+import	org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
+import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
 import	org.tritonus.share.midi.TMidiDevice;
 import	org.tritonus.share.GlobalInfo;
 
@@ -64,7 +67,7 @@ public class AlsaMidiDevice
 
 	/**	The object used for getting timestamps.
 	 */
-	private AlsaSeq.QueueStatus	m_queueStatus;
+	private AlsaSeqQueueStatus	m_queueStatus;
 
 	/**	The ALSA port id of the handler.
 	 *	This is used by m_alsaSeq.
@@ -85,7 +88,7 @@ public class AlsaMidiDevice
 
 	/**	The event used for starting and stopping the queue.
 	 */
-	private AlsaSeq.Event		m_event = new AlsaSeq.Event();
+	private AlsaSeqEvent		m_event = new AlsaSeqEvent();
 
 
 
@@ -141,7 +144,7 @@ public class AlsaMidiDevice
 
 
 
-	private AlsaSeq.QueueStatus getQueueStatus()
+	private AlsaSeqQueueStatus getQueueStatus()
 	{
 		return m_queueStatus;
 	}
@@ -169,7 +172,7 @@ public class AlsaMidiDevice
 			 *	it receives an event.
 			 */
 			m_nTimestampingQueue = getAlsaSeq().allocQueue();
-			m_queueStatus = new AlsaSeq.QueueStatus();
+			m_queueStatus = new AlsaSeqQueueStatus();
 			// TODO: stop queue
 			startQueue();
 			m_alsaMidiIn = new AlsaMidiIn(
@@ -183,7 +186,7 @@ public class AlsaMidiDevice
 		{
 			// uses subscribers, immediately
 			m_alsaMidiOut = new AlsaMidiOut(getAlsaSeq(), getOwnPort());
-			AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+			AlsaSeqPortSubscribe	portSubscribe = new AlsaSeqPortSubscribe();
 			portSubscribe.setSender(getAlsaSeq().getClientId(), getOwnPort());
 			portSubscribe.setDest(getPhysicalClient(), getPhysicalPort());
 			getAlsaSeq().subscribePort(portSubscribe);
@@ -340,7 +343,7 @@ public class AlsaMidiDevice
 		{
 			try
 			{
-				AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+				AlsaSeqPortSubscribe	portSubscribe = new AlsaSeqPortSubscribe();
 				portSubscribe.setSender(nClient, nPort);
 				portSubscribe.setDest(AlsaMidiDevice.this.getPhysicalClient(), AlsaMidiDevice.this.getPhysicalPort());
 				AlsaMidiDevice.this.getAlsaSeq().subscribePort(portSubscribe);

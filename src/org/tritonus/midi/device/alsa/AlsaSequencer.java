@@ -40,6 +40,11 @@ import	javax.sound.midi.Track;
 import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
+import	org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
+import	org.tritonus.lowlevel.alsa.AlsaSeqQueueInfo;
+import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
+import	org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.midi.MidiUtils;
 import	org.tritonus.share.midi.TSequencer;
@@ -67,19 +72,19 @@ public class AlsaSequencer
 	private int			m_nRecordingPort;
 	private int			m_nPlaybackPort;
 	private int			m_nQueue;
-	private AlsaSeq.QueueInfo	m_queueInfo;
-	private AlsaSeq.QueueStatus	m_queueStatus;
-	private AlsaSeq.QueueTempo	m_queueTempo;
+	private AlsaSeqQueueInfo	m_queueInfo;
+	private AlsaSeqQueueStatus	m_queueStatus;
+	private AlsaSeqQueueTempo	m_queueTempo;
 	private AlsaMidiIn		m_playbackAlsaMidiIn;
 	private AlsaMidiOut		m_playbackAlsaMidiOut;
 	private AlsaMidiIn		m_recordingAlsaMidiIn;
 	private Thread			m_loaderThread;
 	private Thread			m_syncThread;
-	private AlsaSeq.Event		m_queueControlEvent;
-	private AlsaSeq.Event		m_clockEvent;
+	private AlsaSeqEvent		m_queueControlEvent;
+	private AlsaSeqEvent		m_clockEvent;
 	private boolean			m_bRecording;
 	private Track			m_track;
-	private AlsaSeq.Event		m_allNotesOffEvent;
+	private AlsaSeqEvent		m_allNotesOffEvent;
 	private Sequencer.SyncMode	m_oldSlaveSyncMode;
 
 
@@ -132,14 +137,14 @@ public class AlsaSequencer
 
 
 
-	private AlsaSeq.QueueStatus getQueueStatus()
+	private AlsaSeqQueueStatus getQueueStatus()
 	{
 		return m_queueStatus;
 	}
 
 
 
-	private AlsaSeq.QueueTempo getQueueTempo()
+	private AlsaSeqQueueTempo getQueueTempo()
 	{
 		return m_queueTempo;
 	}
@@ -181,9 +186,9 @@ public class AlsaSequencer
 		m_nPlaybackPort = getPlaybackAlsaSeq().createPort("playback port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
 		m_nQueue = getPlaybackAlsaSeq().allocQueue();
-		m_queueInfo = new AlsaSeq.QueueInfo();
-		m_queueStatus = new AlsaSeq.QueueStatus();
-		m_queueTempo = new AlsaSeq.QueueTempo();
+		m_queueInfo = new AlsaSeqQueueInfo();
+		m_queueStatus = new AlsaSeqQueueStatus();
+		m_queueTempo = new AlsaSeqQueueTempo();
 		getPlaybackAlsaSeq().getQueueInfo(getQueue(), m_queueInfo);
 		m_queueInfo.setLocked(false);
 		getPlaybackAlsaSeq().setQueueInfo(getQueue(), m_queueInfo);
@@ -197,8 +202,8 @@ public class AlsaSequencer
 		// start the receiving thread
 		m_playbackAlsaMidiIn.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): end"); }
-		m_queueControlEvent = new AlsaSeq.Event();
-		m_clockEvent = new AlsaSeq.Event();
+		m_queueControlEvent = new AlsaSeqEvent();
+		m_clockEvent = new AlsaSeqEvent();
 		m_clockEvent.setCommon(
 			AlsaSeq.SND_SEQ_EVENT_CLOCK,	// type
 			AlsaSeq.SND_SEQ_TIME_STAMP_TICK | AlsaSeq.SND_SEQ_TIME_MODE_ABS,
@@ -209,7 +214,7 @@ public class AlsaSequencer
 			getRecordingPort(),		// source port
 			AlsaSeq.SND_SEQ_ADDRESS_SUBSCRIBERS,	// dest client
 			AlsaSeq.SND_SEQ_ADDRESS_UNKNOWN);	// dest port
-		m_allNotesOffEvent = new AlsaSeq.Event();
+		m_allNotesOffEvent = new AlsaSeqEvent();
 		m_oldSlaveSyncMode = getSlaveSyncMode();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
@@ -774,7 +779,7 @@ public class AlsaSequencer
 		{
 			try
 			{
-				AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+				AlsaSeqPortSubscribe	portSubscribe = new AlsaSeqPortSubscribe();
 				portSubscribe.setSender(nClient, nPort);
 				portSubscribe.setDest(AlsaSequencer.this.getRecordingClient(), AlsaSequencer.this.getRecordingPort());
 				portSubscribe.setQueue(AlsaSequencer.this.getQueue());

@@ -33,6 +33,8 @@ import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
+import	org.tritonus.lowlevel.alsa.AlsaSeqClientInfo;
+import	org.tritonus.lowlevel.alsa.AlsaSeqPortInfo;
 
 import	org.tritonus.share.TDebug;
 
@@ -122,13 +124,13 @@ public class AlsaMidiDeviceProvider
 		Iterator	clients = m_alsaSeq.getClientInfos();
 		while (clients.hasNext())
 		{
-			AlsaSeq.ClientInfo	clientInfo = (AlsaSeq.ClientInfo) clients.next();
+			AlsaSeqClientInfo	clientInfo = (AlsaSeqClientInfo) clients.next();
 			int	nClient = clientInfo.getClient();
 			if (TDebug.TracePortScan) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): client: " + nClient); }
 			Iterator	ports = m_alsaSeq.getPortInfos(nClient);
 			while (ports.hasNext())
 			{
-				AlsaSeq.PortInfo	portInfo = (AlsaSeq.PortInfo) ports.next();
+				AlsaSeqPortInfo	portInfo = (AlsaSeqPortInfo) ports.next();
 				handlePort(clientInfo, portInfo);
 			}
 		}
@@ -136,8 +138,8 @@ public class AlsaMidiDeviceProvider
 	}
 
 
-	private void handlePort(AlsaSeq.ClientInfo clientInfo,
-				AlsaSeq.PortInfo portInfo)
+	private void handlePort(AlsaSeqClientInfo clientInfo,
+				AlsaSeqPortInfo portInfo)
 	{
 		int	nClient = clientInfo.getClient();
 		int	nPort = portInfo.getPort();

@@ -436,7 +436,7 @@ public class AlsaSeq
 
 
 
-	public native int getSystemInfo(SystemInfo systemInfo);
+	public native int getSystemInfo(AlsaSeqSystemInfo systemInfo);
 
 
 
@@ -662,14 +662,14 @@ public class AlsaSeq
 	////////////////////////////////////////////////////////////////
 
 
-	public native int eventOutput(Event event);
-	public native int eventOutputBuffer(Event event);
-	public native int eventOutputDirect(Event event);
-	public native int eventInput(Event event);
+	public native int eventOutput(AlsaSeqEvent event);
+	public native int eventOutputBuffer(AlsaSeqEvent event);
+	public native int eventOutputDirect(AlsaSeqEvent event);
+	public native int eventInput(AlsaSeqEvent event);
 	public native int eventInputPending(int nFetchSequencer);
 	public native int drainOutput();
 	public native int eventOutputPending();
-	public native int extractOutput(Event event);
+	public native int extractOutput(AlsaSeqEvent event);
 	public native int dropOutput();
 	public native int dropOutputBuffer();
 	public native int dropInput();
@@ -680,228 +680,228 @@ public class AlsaSeq
 	///////////////////////////////////////////////////////////
 
 
-	/**	Event for the sequencer.
-	 *	This class encapsulates an instance of
-	 *	snd_seq_event_t.
-	 */
-	public static class Event
-	{
-		/**
-		 *	Holds the pointer to snd_seq_event_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	/**	Event for the sequencer.
+// 	 *	This class encapsulates an instance of
+// 	 *	snd_seq_event_t.
+// 	 */
+// 	public static class Event
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_event_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public Event()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.Event.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of event failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.Event.<init>(): end"); }
-		}
+// 		public Event()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.Event.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of event failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.Event.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		/** Allocates memory for a snd_seq_event_t.
+// 		/** Allocates memory for a snd_seq_event_t.
 
-		The native part of this method uses calloc() to
-		allocate the memory (so the allocated memory is
-		zero'ed).  The memory reference is stored in {@link
-		#m_lNativeHandle m_lNativeHandle}.  Memory allocated
-		with this call should be freed by calling {@link
-		#free() free()}.
+// 		The native part of this method uses calloc() to
+// 		allocate the memory (so the allocated memory is
+// 		zero'ed).  The memory reference is stored in {@link
+// 		#m_lNativeHandle m_lNativeHandle}.  Memory allocated
+// 		with this call should be freed by calling {@link
+// 		#free() free()}.
 
-		 */
-		private native int malloc();
+// 		 */
+// 		private native int malloc();
 
-		/** Frees memory for a snd_seq_event_t.
-		 */
-		public native void free();
+// 		/** Frees memory for a snd_seq_event_t.
+// 		 */
+// 		public native void free();
 
-		// TODO: implement natively
-		public native int getLength();
+// 		// TODO: implement natively
+// 		public native int getLength();
 
-		public native int getType();
-		public native int getFlags();
-		public native int getTag();
-		public native int getQueue();
-		public native long getTimestamp();
-		public native int getSourceClient();
-		public native int getSourcePort();
-		public native int getDestClient();
-		public native int getDestPort();
-
-
-
-		/*	Retrieves the parameters of a note event.
-		 *	This method is suitable for the following event types:
-		 *	SND_SEQ_EVENT_NOTE
-		 *	SND_SEQ_EVENT_NOTEON
-		 *	SND_SEQ_EVENT_NOTEOFF
-		 *	SND_SEQ_EVENT_KEYPRESS
-		 *
-		 *	After return, the array will contain:
-		 *	anValues[0]	channel
-		 *	anValues[1]	note
-		 *	anValues[2]	velocity
-		 *	anValues[3]	off_velocity
-		 *	anValues[4]	duration
-		 */
-		public native void getNote(int[] anValues);
+// 		public native int getType();
+// 		public native int getFlags();
+// 		public native int getTag();
+// 		public native int getQueue();
+// 		public native long getTimestamp();
+// 		public native int getSourceClient();
+// 		public native int getSourcePort();
+// 		public native int getDestClient();
+// 		public native int getDestPort();
 
 
 
-		/*	Retrieves the parameters of a control event.
-		 *	This method is suitable for the following event types:
-		 *	SND_SEQ_EVENT_CONTROLLER
-		 *	SND_SEQ_EVENT_PGMCHANGE
-		 *	SND_SEQ_EVENT_CHANPRESS
-		 *	SND_SEQ_EVENT_PITCHBEND
-		 *	SND_SEQ_EVENT_CONTROL14
-		 *	SND_SEQ_EVENT_NONREGPARAM
-		 *	SND_SEQ_EVENT_REGPARAM
-		 *	SND_SEQ_EVENT_SONGPOS
-		 *	SND_SEQ_EVENT_SONGSEL
-		 *	SND_SEQ_EVENT_QFRAME
-		 *	SND_SEQ_EVENT_TIMESIGN
-		 *	SND_SEQ_EVENT_KEYSIGN
-		 *
-		 *	After return, the array will contain:
-		 *	anValues[0]	channel
-		 *	anValues[1]	param
-		 *	anValues[2]	value
-		 */
-		public native void getControl(int[] anValues);
+// 		/*	Retrieves the parameters of a note event.
+// 		 *	This method is suitable for the following event types:
+// 		 *	SND_SEQ_EVENT_NOTE
+// 		 *	SND_SEQ_EVENT_NOTEON
+// 		 *	SND_SEQ_EVENT_NOTEOFF
+// 		 *	SND_SEQ_EVENT_KEYPRESS
+// 		 *
+// 		 *	After return, the array will contain:
+// 		 *	anValues[0]	channel
+// 		 *	anValues[1]	note
+// 		 *	anValues[2]	velocity
+// 		 *	anValues[3]	off_velocity
+// 		 *	anValues[4]	duration
+// 		 */
+// 		public native void getNote(int[] anValues);
 
 
 
-		/*	Retrieves the parameters of a queue control event.
-		 *	This method is suitable for the following event types:
-		 *	SND_SEQ_EVENT_START
-		 *	SND_SEQ_EVENT_CONTINUE
-		 *	SND_SEQ_EVENT_STOP
-		 *	SND_SEQ_EVENT_SETPOS_TICK
-		 *	SND_SEQ_EVENT_SETPOS_TIME
-		 *	SND_SEQ_EVENT_TEMPO
-		 *	SND_SEQ_EVENT_CLOCK
-		 *	SND_SEQ_EVENT_TICK
-		 *	SND_SEQ_EVENT_SYNC
-		 *	SND_SEQ_EVENT_SYNC_POS
-		 *
-		 *	After return, the array will contain:
-		 *	anValues[0]	queue
-		 *	anValues[1]	value
-		 *	alValues[0]	time
-		 */
-		public native void getQueueControl(int[] anValues, long[] alValues);
+// 		/*	Retrieves the parameters of a control event.
+// 		 *	This method is suitable for the following event types:
+// 		 *	SND_SEQ_EVENT_CONTROLLER
+// 		 *	SND_SEQ_EVENT_PGMCHANGE
+// 		 *	SND_SEQ_EVENT_CHANPRESS
+// 		 *	SND_SEQ_EVENT_PITCHBEND
+// 		 *	SND_SEQ_EVENT_CONTROL14
+// 		 *	SND_SEQ_EVENT_NONREGPARAM
+// 		 *	SND_SEQ_EVENT_REGPARAM
+// 		 *	SND_SEQ_EVENT_SONGPOS
+// 		 *	SND_SEQ_EVENT_SONGSEL
+// 		 *	SND_SEQ_EVENT_QFRAME
+// 		 *	SND_SEQ_EVENT_TIMESIGN
+// 		 *	SND_SEQ_EVENT_KEYSIGN
+// 		 *
+// 		 *	After return, the array will contain:
+// 		 *	anValues[0]	channel
+// 		 *	anValues[1]	param
+// 		 *	anValues[2]	value
+// 		 */
+// 		public native void getControl(int[] anValues);
 
 
 
-		/*	Retrieves the parameters of a variable-length event.
-		 *	This method is suitable for the following event types:
-		 *	SND_SEQ_EVENT_SYSEX
-		 *	SND_SEQ_EVENT_BOUNCE
-		 *	SND_SEQ_EVENT_USR_VAR0
-		 *	SND_SEQ_EVENT_USR_VAR1
-		 *	SND_SEQ_EVENT_USR_VAR2
-		 *	SND_SEQ_EVENT_USR_VAR3
-		 *	SND_SEQ_EVENT_USR_VAR4
-		 *
-		 */
-		public native byte[] getVar();
-
-
-		public native void setCommon(int nType, int nFlags, int nTag, int nQueue, long lTimestamp, int nSourceClient, int nSourcePort, int nDestClient, int nDestPort);
-
-		public native void setTimestamp(long lTimestamp);
-
-		public native void setNote(int nChannel, int nKey, int nVelocity, int nOffVelocity, int nDuration);
-		public native void setControl(int nChannel, int nParam, int nValue);
-		public native void setQueueControl(int nControlQueue, int nControlValue, long lControlTime);
-		public native void setVar(byte[] abData, int nOffset, int nLength);
-	}
+// 		/*	Retrieves the parameters of a queue control event.
+// 		 *	This method is suitable for the following event types:
+// 		 *	SND_SEQ_EVENT_START
+// 		 *	SND_SEQ_EVENT_CONTINUE
+// 		 *	SND_SEQ_EVENT_STOP
+// 		 *	SND_SEQ_EVENT_SETPOS_TICK
+// 		 *	SND_SEQ_EVENT_SETPOS_TIME
+// 		 *	SND_SEQ_EVENT_TEMPO
+// 		 *	SND_SEQ_EVENT_CLOCK
+// 		 *	SND_SEQ_EVENT_TICK
+// 		 *	SND_SEQ_EVENT_SYNC
+// 		 *	SND_SEQ_EVENT_SYNC_POS
+// 		 *
+// 		 *	After return, the array will contain:
+// 		 *	anValues[0]	queue
+// 		 *	anValues[1]	value
+// 		 *	alValues[0]	time
+// 		 */
+// 		public native void getQueueControl(int[] anValues, long[] alValues);
 
 
 
-	/**	General information about the sequencer.
-	 *	This class encapsulates the information of
-	 *	snd_seq_system_info_t.
-	 */
-	public static class SystemInfo
-	{
-		/**
-		 *	Holds the pointer to snd_seq_system_info_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 		/*	Retrieves the parameters of a variable-length event.
+// 		 *	This method is suitable for the following event types:
+// 		 *	SND_SEQ_EVENT_SYSEX
+// 		 *	SND_SEQ_EVENT_BOUNCE
+// 		 *	SND_SEQ_EVENT_USR_VAR0
+// 		 *	SND_SEQ_EVENT_USR_VAR1
+// 		 *	SND_SEQ_EVENT_USR_VAR2
+// 		 *	SND_SEQ_EVENT_USR_VAR3
+// 		 *	SND_SEQ_EVENT_USR_VAR4
+// 		 *
+// 		 */
+// 		public native byte[] getVar();
+
+
+// 		public native void setCommon(int nType, int nFlags, int nTag, int nQueue, long lTimestamp, int nSourceClient, int nSourcePort, int nDestClient, int nDestPort);
+
+// 		public native void setTimestamp(long lTimestamp);
+
+// 		public native void setNote(int nChannel, int nKey, int nVelocity, int nOffVelocity, int nDuration);
+// 		public native void setControl(int nChannel, int nParam, int nValue);
+// 		public native void setQueueControl(int nControlQueue, int nControlValue, long lControlTime);
+// 		public native void setVar(byte[] abData, int nOffset, int nLength);
+// 	}
 
 
 
-		public SystemInfo()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.SystemInfo.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of system_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.SystemInfo.<init>(): end"); }
-		}
+// 	/**	General information about the sequencer.
+// 	 *	This class encapsulates the information of
+// 	 *	snd_seq_system_info_t.
+// 	 */
+// 	public static class SystemInfo
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_system_info_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public SystemInfo()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.SystemInfo.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of system_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.SystemInfo.<init>(): end"); }
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		public native int getQueues();
+// 		private native int malloc();
+// 		public native void free();
 
 
 
-		public native int getClients();
+// 		public native int getQueues();
 
 
 
-		public native int getPorts();
+// 		public native int getClients();
 
 
 
-		public native int getChannels();
+// 		public native int getPorts();
 
 
 
-		public native int getCurrentClients();
+// 		public native int getChannels();
 
 
 
-		public native int getCurrentQueues();
-	}
+// 		public native int getCurrentClients();
+
+
+
+// 		public native int getCurrentQueues();
+// 	}
 
 
 

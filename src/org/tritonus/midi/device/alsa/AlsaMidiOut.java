@@ -35,6 +35,7 @@ import	javax.sound.midi.MetaMessage;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
+import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
 
 
 /**
@@ -64,7 +65,7 @@ public class AlsaMidiOut
 
 	private boolean		m_bHandleMetaMessages;
 
-	private AlsaSeq.Event	m_event = new AlsaSeq.Event();
+	private AlsaSeqEvent	m_event = new AlsaSeqEvent();
 
 
 
