@@ -37,6 +37,10 @@ import	org.tritonus.share.TDebug;
  */
 public class Alsa
 {
+	private static boolean	sm_bIsLibraryAvailable = false;
+
+
+
 	static
 	{
 		Alsa.loadNativeLibrary();
@@ -50,12 +54,21 @@ public class Alsa
 		try
 		{
 			System.loadLibrary("tritonusalsa");
+			sm_bIsLibraryAvailable = true;
 		}
 		catch (Throwable t)
 		{
 			if (TDebug.TraceAlsaNative) { TDebug.out(t); }
 		}
 		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibrary(): loaded"); }
+	}
+
+
+	/**	Returns whether the libraries are installed correctly.
+	 */
+	public static boolean isLibraryAvailable()
+	{
+		return sm_bIsLibraryAvailable;
 	}
 
 
