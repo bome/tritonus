@@ -70,11 +70,10 @@ LIBDEST_SHARE=tritonus_share.jar
 LIBDEST_REMAINING=tritonus_remaining.jar
 LIBDEST_MP3=tritonus_mp3.jar
 LIBDEST_GSM=tritonus_gsm.jar
-LIBDEST_JL=@JL_LIB@
 
-PLUGINS=$(LIBDEST_MP3) $(LIBDEST_GSM) $(LIBDEST_SHARE) $(LIBDEST_JL)
+PLUGINS=$(LIBDEST_MP3) $(LIBDEST_GSM) $(LIBDEST_SHARE) tritonus_aos.jar
 
-LIBS=$(LIBDEST_CORE) $(LIBDEST_SHARE) $(LIBDEST_REMAINING) $(LIBDEST_MP3) $(LIBDEST_JL) $(LIBDEST_GSM)
+LIBS=$(LIBDEST_CORE) $(LIBDEST_SHARE) $(LIBDEST_REMAINING) $(LIBDEST_MP3) $(LIBDEST_GSM)
 
 LIBDEST_ABSOLUTE_PREFIX=@SRC_ABSOLUTE_PATH@/$(DISTDIR)
 META_INF_DIR=$(DESTDIR)/META-INF/services
@@ -214,7 +213,7 @@ CONVERTTARGETS = @CONVERTTARGETS@
 #----------------- rules -------------------
 
 .PHONY: all
-all: check_javalayer builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
+all: builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
 	@rm -rf $(DESTDIR)/META-INF
 
@@ -222,26 +221,9 @@ all: check_javalayer builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
 compileinitial: $(CONVERTTARGETS) compileinitialimpl
 
 .PHONY: compileinitialimpl
-compileinitialimpl: check_javalayer builddir $(SRC)
+compileinitialimpl: builddir $(SRC)
 	export CLASSPATH=$(DESTDIR):$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $(SRCTMP)
 	$(MAKE) all
-
-.PHONY: check_javalayer
-check_javalayer:
-	@if test ".@JL_DIR@" = "." ; then \
-	echo "*********************************************************" ; \
-	echo "** You haven't downloaded the javalayer MP3 decoder.   **" ; \
-	echo "** MP3 decoding will not be possible.                  **" ; \
-	echo "** Download the mp3 decoder with the following         **" ; \
-	echo "** commands:                                           **" ; \
-	echo "** SERVER=anonymous@cvs.javalayer.sourceforge.net      **" ; \
-	echo "** SERVERPATH=/cvsroot/javalayer                       **" ; \
-	echo "** cvs -d:pserver:\$$SERVER:\$$SERVERPATH login            **" ; \
-	echo "** (press ENTER key for password)                      **" ; \
-	echo "** cvs -z3 -d:pserver:\$$SERVER:\$$SERVERPATH co javalayer **" ; \
-	echo "*********************************************************" ; \
-	exit 1 ; \
-	fi
 
 .PHONY: convert
 convert:
@@ -309,13 +291,6 @@ $(LIBDEST_GSM):	$(OBJ)
 	@cp src/packaging/tritonus_gsm/META-INF/services/javax* $(META_INF_DIR)/
 	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_gsm/manifest.mf \
 		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_GSM) $(PACKSRCDIR_GSM) META-INF/services/
-
-#.PHONY: javalayer.jar
-javalayer.jar:	$(OBJ)
-	@echo Creating $(LIBDEST_JL)
-	@$(MKDIR_P) $(DISTDIR)
-	@cp $(SRCDIR_JL)/*.ser $(DESTDIR)/javazoom/jl/decoder/
-	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_JL) $(PACKSRCDIR_JL)
 
 .PHONY: jar_index
 jar_index: $(LIBS)
