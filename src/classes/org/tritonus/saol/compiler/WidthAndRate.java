@@ -36,6 +36,9 @@ public class WidthAndRate
 	public static final int		RATE_K = 2;
 	public static final int		RATE_A = 3;
 	public static final int		RATE_X = 4;
+	// not really rates...
+	public static final int		RATE_TABLE = 5;
+	public static final int		RATE_OPARRAY = 6;
 
 
 

@@ -1,5 +1,5 @@
 /*
- *	InstrumentTable.java
+ *	NodeSemanticsTable.java
  */
 
 /*
@@ -25,25 +25,27 @@ package	org.tritonus.saol.compiler;
 
 import	java.util.HashMap;
 
+import	org.tritonus.saol.sablecc.node.Node;
+
 
 
 /**	The instrument table.
  */
-public class InstrumentTable
+public class NodeSemanticsTable
 extends HashMap
 {
-	public void add(InstrumentEntry instrumentEntry)
+	public void setNodeSemantics(Node node, NodeSemantics nodeSemantics)
 	{
-		put(instrumentEntry.getInstrumentName(), instrumentEntry);
+		put(node, nodeSemantics);
 	}
 
 
-	public InstrumentEntry getEntry(String strInstrumentName)
+	public NodeSemantics getNodeSemantics(Node node)
 	{
-		return (InstrumentEntry) get(strInstrumentName);
+		return (NodeSemantics) get(node);
 	}
 }
 
 
 
-/*** InstrumentTable.java ***/
+/*** NodeSemanticsTable.java ***/

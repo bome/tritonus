@@ -1,5 +1,5 @@
 /*
- *	InstrumentTable.java
+ *	NodeSemantics.java
  */
 
 /*
@@ -23,27 +23,44 @@
 package	org.tritonus.saol.compiler;
 
 
-import	java.util.HashMap;
 
-
-
-/**	The instrument table.
- */
-public class InstrumentTable
-extends HashMap
+public class NodeSemantics
+extends WidthAndRate
 {
-	public void add(InstrumentEntry instrumentEntry)
+	/**	Auxiliary information.
+	 */
+	private Object		m_aux;
+
+
+
+	public NodeSemantics(int nWidth, int nRate)
 	{
-		put(instrumentEntry.getInstrumentName(), instrumentEntry);
+		this(nWidth, nRate, null);
 	}
 
 
-	public InstrumentEntry getEntry(String strInstrumentName)
+
+	public NodeSemantics(Object aux)
 	{
-		return (InstrumentEntry) get(strInstrumentName);
+		this(WidthAndRate.WIDTH_UNKNOWN, WidthAndRate.RATE_UNKNOWN, aux);
+	}
+
+
+
+	public NodeSemantics(int nWidth, int nRate, Object aux)
+	{
+		super(nWidth, nRate);
+		m_aux = aux;
+	}
+
+
+
+	public Object getAux()
+	{
+		return m_aux;
 	}
 }
 
 
 
-/*** InstrumentTable.java ***/
+/*** NodeSemantics.java ***/

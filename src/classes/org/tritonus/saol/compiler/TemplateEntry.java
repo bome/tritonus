@@ -1,5 +1,5 @@
 /*
- *	InstrumentTable.java
+ *	TemplateEntry.java
  */
 
 /*
@@ -22,28 +22,39 @@
 
 package	org.tritonus.saol.compiler;
 
-
-import	java.util.HashMap;
-
+import	org.tritonus.saol.sablecc.node.ATemplatedeclTemplatedecl;
 
 
-/**	The instrument table.
- */
-public class InstrumentTable
-extends HashMap
+
+public class TemplateEntry
 {
-	public void add(InstrumentEntry instrumentEntry)
+	private String				m_strTemplateName;
+	private ATemplatedeclTemplatedecl	m_startNode;
+
+
+
+	public TemplateEntry(String strTemplateName,
+			       ATemplatedeclTemplatedecl startNode)
 	{
-		put(instrumentEntry.getInstrumentName(), instrumentEntry);
+		m_strTemplateName = strTemplateName;
+		m_startNode = startNode;
 	}
 
 
-	public InstrumentEntry getEntry(String strInstrumentName)
+
+	public String getTemplateName()
 	{
-		return (InstrumentEntry) get(strInstrumentName);
+		return m_strTemplateName;
+	}
+
+
+
+	public ATemplatedeclTemplatedecl getStartNode()
+	{
+		return m_startNode;
 	}
 }
 
 
 
-/*** InstrumentTable.java ***/
+/*** TemplateEntry.java ***/

@@ -1,5 +1,5 @@
 /*
- *	InstrumentTable.java
+ *	VariableEntry.java
  */
 
 /*
@@ -22,28 +22,52 @@
 
 package	org.tritonus.saol.compiler;
 
-
-import	java.util.HashMap;
-
+import	org.tritonus.saol.sablecc.node.AInstrdeclInstrdecl;
 
 
-/**	The instrument table.
- */
-public class InstrumentTable
-extends HashMap
+
+public class VariableEntry
+extends WidthAndRate
 {
-	public void add(InstrumentEntry instrumentEntry)
+	private String			m_strVariableName;
+	private boolean			m_bImports;
+	private boolean			m_bExports;
+
+
+	public VariableEntry(String strVariableName,
+			     int nWidth,
+			     int nRate,
+			     boolean bImports,
+			     boolean bExports)
 	{
-		put(instrumentEntry.getInstrumentName(), instrumentEntry);
+		super(nWidth, nRate);
+		m_strVariableName = strVariableName;
+		m_bImports = bImports;
+		m_bExports = bExports;
 	}
 
 
-	public InstrumentEntry getEntry(String strInstrumentName)
+
+	public String getVariableName()
 	{
-		return (InstrumentEntry) get(strInstrumentName);
+		return m_strVariableName;
+	}
+
+
+
+	public boolean getImports()
+	{
+		return m_bImports;
+	}
+
+
+
+	public boolean getExports()
+	{
+		return m_bExports;
 	}
 }
 
 
 
-/*** InstrumentTable.java ***/
+/*** VariableEntry.java ***/

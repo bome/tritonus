@@ -30,6 +30,7 @@ public class InstrumentEntry
 {
 	private String			m_strInstrumentName;
 	private AInstrdeclInstrdecl	m_startNode;
+	VariableTable			m_localVariableTable;
 
 
 
@@ -38,6 +39,7 @@ public class InstrumentEntry
 	{
 		m_strInstrumentName = strInstrumentName;
 		m_startNode = startNode;
+		m_localVariableTable = new VariableTable();
 	}
 
 
@@ -52,6 +54,12 @@ public class InstrumentEntry
 	public AInstrdeclInstrdecl getStartNode()
 	{
 		return m_startNode;
+	}
+
+
+	public VariableTable getLocalVariableTable()
+	{
+		return m_localVariableTable;
 	}
 }
 

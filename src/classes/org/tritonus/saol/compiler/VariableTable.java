@@ -1,5 +1,5 @@
 /*
- *	InstrumentTable.java
+ *	VariableTable.java
  */
 
 /*
@@ -27,23 +27,23 @@ import	java.util.HashMap;
 
 
 
-/**	The instrument table.
+/**	The variable table.
  */
-public class InstrumentTable
+public class VariableTable
 extends HashMap
 {
-	public void add(InstrumentEntry instrumentEntry)
+	public void add(VariableEntry variableEntry)
 	{
-		put(instrumentEntry.getInstrumentName(), instrumentEntry);
+		put(variableEntry.getVariableName(), variableEntry);
 	}
 
 
-	public InstrumentEntry getEntry(String strInstrumentName)
+	public VariableEntry getEntry(String strVariableName)
 	{
-		return (InstrumentEntry) get(strInstrumentName);
+		return (VariableEntry) get(strVariableName);
 	}
 }
 
 
 
-/*** InstrumentTable.java ***/
+/*** VariableTable.java ***/

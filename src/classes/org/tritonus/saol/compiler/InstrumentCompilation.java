@@ -95,94 +95,6 @@ extends DepthFirstAdapter
 
 
 
-	public void defaultIn(Node node)
-	{
-	}
-
-	public void defaultOut(Node node)
-	{
-	}
-
-
-	public void inAInstrdeclProc(AInstrdeclProc node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAInstrdeclProc(AInstrdeclProc node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAInstrdeclProc(AInstrdeclProc node)
-//     {
-//         inAInstrdeclProc(node);
-//         if(node.getInstrdecl() != null)
-//         {
-//             node.getInstrdecl().apply(this);
-//         }
-//         outAInstrdeclProc(node);
-//     }
-
-	public void inAOpcodedeclProc(AOpcodedeclProc node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAOpcodedeclProc(AOpcodedeclProc node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAOpcodedeclProc(AOpcodedeclProc node)
-//     {
-//         inAOpcodedeclProc(node);
-//         if(node.getOpcodedecl() != null)
-//         {
-//             node.getOpcodedecl().apply(this);
-//         }
-//         outAOpcodedeclProc(node);
-//     }
-
-	public void inAGlobaldeclProc(AGlobaldeclProc node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAGlobaldeclProc(AGlobaldeclProc node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAGlobaldeclProc(AGlobaldeclProc node)
-//     {
-//         inAGlobaldeclProc(node);
-//         if(node.getGlobaldecl() != null)
-//         {
-//             node.getGlobaldecl().apply(this);
-//         }
-//         outAGlobaldeclProc(node);
-//     }
-
-	public void inATemplatedeclProc(ATemplatedeclProc node)
-	{
-		defaultIn(node);
-	}
-
-	public void outATemplatedeclProc(ATemplatedeclProc node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseATemplatedeclProc(ATemplatedeclProc node)
-//     {
-//         inATemplatedeclProc(node);
-//         if(node.getTemplatedecl() != null)
-//         {
-//             node.getTemplatedecl().apply(this);
-//         }
-//         outATemplatedeclProc(node);
-//     }
 
 	public void inAInstrdeclInstrdecl(AInstrdeclInstrdecl node)
 	{
@@ -277,798 +189,17 @@ extends DepthFirstAdapter
 //         outAInstrdeclInstrdecl(node);
 //     }
 
-	public void inAIntListIntList(AIntListIntList node)
-	{
-		defaultIn(node);
-	}
 
-	public void outAIntListIntList(AIntListIntList node)
-	{
-		defaultOut(node);
-	}
 
-//     public void caseAIntListIntList(AIntListIntList node)
-//     {
-//         inAIntListIntList(node);
-//         {
-//             Object temp[] = node.getInteger().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((TInteger) temp[i]).apply(this);
-//             }
-//         }
-//         outAIntListIntList(node);
-//     }
 
-	public void inAOpcodedeclOpcodedecl(AOpcodedeclOpcodedecl node)
-	{
-		defaultIn(node);
-	}
 
-	public void outAOpcodedeclOpcodedecl(AOpcodedeclOpcodedecl node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAOpcodedeclOpcodedecl(AOpcodedeclOpcodedecl node)
-//     {
-//         inAOpcodedeclOpcodedecl(node);
-//         if(node.getOptype() != null)
-//         {
-//             node.getOptype().apply(this);
-//         }
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getLPar() != null)
-//         {
-//             node.getLPar().apply(this);
-//         }
-//         if(node.getParamlist() != null)
-//         {
-//             node.getParamlist().apply(this);
-//         }
-//         if(node.getRPar() != null)
-//         {
-//             node.getRPar().apply(this);
-//         }
-//         if(node.getLBrace() != null)
-//         {
-//             node.getLBrace().apply(this);
-//         }
-//         {
-//             Object temp[] = node.getOpvardecl().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((POpvardecl) temp[i]).apply(this);
-//             }
-//         }
-//         if(node.getBlock() != null)
-//         {
-//             node.getBlock().apply(this);
-//         }
-//         if(node.getRBrace() != null)
-//         {
-//             node.getRBrace().apply(this);
-//         }
-//         outAOpcodedeclOpcodedecl(node);
-//     }
-
-	public void inAGlobaldeclGlobaldecl(AGlobaldeclGlobaldecl node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAGlobaldeclGlobaldecl(AGlobaldeclGlobaldecl node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAGlobaldeclGlobaldecl(AGlobaldeclGlobaldecl node)
-//     {
-//         inAGlobaldeclGlobaldecl(node);
-//         if(node.getGlobal() != null)
-//         {
-//             node.getGlobal().apply(this);
-//         }
-//         if(node.getLBrace() != null)
-//         {
-//             node.getLBrace().apply(this);
-//         }
-//         {
-//             Object temp[] = node.getGlobaldef().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((PGlobaldef) temp[i]).apply(this);
-//             }
-//         }
-//         if(node.getRBrace() != null)
-//         {
-//             node.getRBrace().apply(this);
-//         }
-//         outAGlobaldeclGlobaldecl(node);
-//     }
-
-	public void inATemplatedeclTemplatedecl(ATemplatedeclTemplatedecl node)
-	{
-		defaultIn(node);
-	}
-
-	public void outATemplatedeclTemplatedecl(ATemplatedeclTemplatedecl node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseATemplatedeclTemplatedecl(ATemplatedeclTemplatedecl node)
-//     {
-//         inATemplatedeclTemplatedecl(node);
-//         if(node.getTemplate() != null)
-//         {
-//             node.getTemplate().apply(this);
-//         }
-//         if(node.getLt() != null)
-//         {
-//             node.getLt().apply(this);
-//         }
-//         if(node.getIdentlist1() != null)
-//         {
-//             node.getIdentlist1().apply(this);
-//         }
-//         if(node.getGt() != null)
-//         {
-//             node.getGt().apply(this);
-//         }
-//         if(node.getPresetClause() != null)
-//         {
-//             node.getPresetClause().apply(this);
-//         }
-//         if(node.getLPar() != null)
-//         {
-//             node.getLPar().apply(this);
-//         }
-//         if(node.getIdentlist2() != null)
-//         {
-//             node.getIdentlist2().apply(this);
-//         }
-//         if(node.getRPar() != null)
-//         {
-//             node.getRPar().apply(this);
-//         }
-//         if(node.getMap() != null)
-//         {
-//             node.getMap().apply(this);
-//         }
-//         if(node.getLBrace1() != null)
-//         {
-//             node.getLBrace1().apply(this);
-//         }
-//         if(node.getIdentlist3() != null)
-//         {
-//             node.getIdentlist3().apply(this);
-//         }
-//         if(node.getRBrace1() != null)
-//         {
-//             node.getRBrace1().apply(this);
-//         }
-//         if(node.getWith() != null)
-//         {
-//             node.getWith().apply(this);
-//         }
-//         if(node.getLBrace2() != null)
-//         {
-//             node.getLBrace2().apply(this);
-//         }
-//         if(node.getMapblock() != null)
-//         {
-//             node.getMapblock().apply(this);
-//         }
-//         if(node.getRBrace2() != null)
-//         {
-//             node.getRBrace2().apply(this);
-//         }
-//         if(node.getLBrace3() != null)
-//         {
-//             node.getLBrace3().apply(this);
-//         }
-//         {
-//             Object temp[] = node.getVardecl().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((PVardecl) temp[i]).apply(this);
-//             }
-//         }
-//         if(node.getBlock() != null)
-//         {
-//             node.getBlock().apply(this);
-//         }
-//         if(node.getRBrace3() != null)
-//         {
-//             node.getRBrace3().apply(this);
-//         }
-//         outATemplatedeclTemplatedecl(node);
-//     }
-
-	public void inAPresetClausePresetClause(APresetClausePresetClause node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAPresetClausePresetClause(APresetClausePresetClause node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAPresetClausePresetClause(APresetClausePresetClause node)
-//     {
-//         inAPresetClausePresetClause(node);
-//         if(node.getPreset() != null)
-//         {
-//             node.getPreset().apply(this);
-//         }
-//         if(node.getMapblock() != null)
-//         {
-//             node.getMapblock().apply(this);
-//         }
-//         outAPresetClausePresetClause(node);
-//     }
-
-	public void inAMapblockMapblock(AMapblockMapblock node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAMapblockMapblock(AMapblockMapblock node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAMapblockMapblock(AMapblockMapblock node)
-//     {
-//         inAMapblockMapblock(node);
-//         if(node.getLt() != null)
-//         {
-//             node.getLt().apply(this);
-//         }
-//         if(node.getTerminalList() != null)
-//         {
-//             node.getTerminalList().apply(this);
-//         }
-//         if(node.getGt() != null)
-//         {
-//             node.getGt().apply(this);
-//         }
-//         {
-//             Object temp[] = node.getMapblockTail().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((PMapblockTail) temp[i]).apply(this);
-//             }
-//         }
-//         outAMapblockMapblock(node);
-//     }
-
-	public void inAMapblockTailMapblockTail(AMapblockTailMapblockTail node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAMapblockTailMapblockTail(AMapblockTailMapblockTail node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAMapblockTailMapblockTail(AMapblockTailMapblockTail node)
-//     {
-//         inAMapblockTailMapblockTail(node);
-//         if(node.getComma() != null)
-//         {
-//             node.getComma().apply(this);
-//         }
-//         if(node.getLt() != null)
-//         {
-//             node.getLt().apply(this);
-//         }
-//         if(node.getTerminalList() != null)
-//         {
-//             node.getTerminalList().apply(this);
-//         }
-//         if(node.getGt() != null)
-//         {
-//             node.getGt().apply(this);
-//         }
-//         outAMapblockTailMapblockTail(node);
-//     }
-
-	public void inATerminalListTerminalList(ATerminalListTerminalList node)
-	{
-		defaultIn(node);
-	}
-
-	public void outATerminalListTerminalList(ATerminalListTerminalList node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseATerminalListTerminalList(ATerminalListTerminalList node)
-//     {
-//         inATerminalListTerminalList(node);
-//         if(node.getTerminal() != null)
-//         {
-//             node.getTerminal().apply(this);
-//         }
-//         {
-//             Object temp[] = node.getTerminalListTail().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((PTerminalListTail) temp[i]).apply(this);
-//             }
-//         }
-//         outATerminalListTerminalList(node);
-//     }
-
-	public void inATerminalListTailTerminalListTail(ATerminalListTailTerminalListTail node)
-	{
-		defaultIn(node);
-	}
-
-	public void outATerminalListTailTerminalListTail(ATerminalListTailTerminalListTail node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseATerminalListTailTerminalListTail(ATerminalListTailTerminalListTail node)
-//     {
-//         inATerminalListTailTerminalListTail(node);
-//         if(node.getComma() != null)
-//         {
-//             node.getComma().apply(this);
-//         }
-//         if(node.getTerminal() != null)
-//         {
-//             node.getTerminal().apply(this);
-//         }
-//         outATerminalListTailTerminalListTail(node);
-//     }
-
-	public void inAIdentifierTerminal(AIdentifierTerminal node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAIdentifierTerminal(AIdentifierTerminal node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAIdentifierTerminal(AIdentifierTerminal node)
-//     {
-//         inAIdentifierTerminal(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         outAIdentifierTerminal(node);
-//     }
-
-	public void inAConstantTerminal(AConstantTerminal node)
-	{
-	}
-
-	public void outAConstantTerminal(AConstantTerminal node)
-	{
-	}
-
-//     public void caseAConstantTerminal(AConstantTerminal node)
-//     {
-//         inAConstantTerminal(node);
-//         if(node.getConst() != null)
-//         {
-//             node.getConst().apply(this);
-//         }
-//         outAConstantTerminal(node);
-//     }
-
-	public void inAStringTerminal(AStringTerminal node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAStringTerminal(AStringTerminal node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAStringTerminal(AStringTerminal node)
-//     {
-//         inAStringTerminal(node);
-//         if(node.getString() != null)
-//         {
-//             node.getString().apply(this);
-//         }
-//         outAStringTerminal(node);
-//     }
-
-	public void inARtparamGlobaldef(ARtparamGlobaldef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outARtparamGlobaldef(ARtparamGlobaldef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseARtparamGlobaldef(ARtparamGlobaldef node)
-//     {
-//         inARtparamGlobaldef(node);
-//         if(node.getRtparam() != null)
-//         {
-//             node.getRtparam().apply(this);
-//         }
-//         outARtparamGlobaldef(node);
-//     }
-
-	public void inAVardeclGlobaldef(AVardeclGlobaldef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAVardeclGlobaldef(AVardeclGlobaldef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAVardeclGlobaldef(AVardeclGlobaldef node)
-//     {
-//         inAVardeclGlobaldef(node);
-//         if(node.getVardecl() != null)
-//         {
-//             node.getVardecl().apply(this);
-//         }
-//         outAVardeclGlobaldef(node);
-//     }
-
-	public void inARoutedefGlobaldef(ARoutedefGlobaldef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outARoutedefGlobaldef(ARoutedefGlobaldef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseARoutedefGlobaldef(ARoutedefGlobaldef node)
-//     {
-//         inARoutedefGlobaldef(node);
-//         if(node.getRoutedef() != null)
-//         {
-//             node.getRoutedef().apply(this);
-//         }
-//         outARoutedefGlobaldef(node);
-//     }
-
-	public void inASenddefGlobaldef(ASenddefGlobaldef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outASenddefGlobaldef(ASenddefGlobaldef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseASenddefGlobaldef(ASenddefGlobaldef node)
-//     {
-//         inASenddefGlobaldef(node);
-//         if(node.getSenddef() != null)
-//         {
-//             node.getSenddef().apply(this);
-//         }
-//         outASenddefGlobaldef(node);
-//     }
-
-	public void inASeqdefGlobaldef(ASeqdefGlobaldef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outASeqdefGlobaldef(ASeqdefGlobaldef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseASeqdefGlobaldef(ASeqdefGlobaldef node)
-//     {
-//         inASeqdefGlobaldef(node);
-//         if(node.getSeqdef() != null)
-//         {
-//             node.getSeqdef().apply(this);
-//         }
-//         outASeqdefGlobaldef(node);
-//     }
-
-	public void inASrateRtparam(ASrateRtparam node)
-	{
-		defaultIn(node);
-	}
-
-	public void outASrateRtparam(ASrateRtparam node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseASrateRtparam(ASrateRtparam node)
-//     {
-//         inASrateRtparam(node);
-//         if(node.getSrate() != null)
-//         {
-//             node.getSrate().apply(this);
-//         }
-//         if(node.getInteger() != null)
-//         {
-//             node.getInteger().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outASrateRtparam(node);
-//     }
-
-	public void inAKrateRtparam(AKrateRtparam node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAKrateRtparam(AKrateRtparam node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAKrateRtparam(AKrateRtparam node)
-//     {
-//         inAKrateRtparam(node);
-//         if(node.getKrate() != null)
-//         {
-//             node.getKrate().apply(this);
-//         }
-//         if(node.getInteger() != null)
-//         {
-//             node.getInteger().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outAKrateRtparam(node);
-//     }
-
-	public void inAInchannelsRtparam(AInchannelsRtparam node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAInchannelsRtparam(AInchannelsRtparam node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAInchannelsRtparam(AInchannelsRtparam node)
-//     {
-//         inAInchannelsRtparam(node);
-//         if(node.getInchannels() != null)
-//         {
-//             node.getInchannels().apply(this);
-//         }
-//         if(node.getInteger() != null)
-//         {
-//             node.getInteger().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outAInchannelsRtparam(node);
-//     }
-
-	public void inAOutchannelsRtparam(AOutchannelsRtparam node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAOutchannelsRtparam(AOutchannelsRtparam node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAOutchannelsRtparam(AOutchannelsRtparam node)
-//     {
-//         inAOutchannelsRtparam(node);
-//         if(node.getOutchannels() != null)
-//         {
-//             node.getOutchannels().apply(this);
-//         }
-//         if(node.getInteger() != null)
-//         {
-//             node.getInteger().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outAOutchannelsRtparam(node);
-//     }
-
-	public void inAInterpRtparam(AInterpRtparam node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAInterpRtparam(AInterpRtparam node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAInterpRtparam(AInterpRtparam node)
-//     {
-//         inAInterpRtparam(node);
-//         if(node.getInterp() != null)
-//         {
-//             node.getInterp().apply(this);
-//         }
-//         if(node.getInteger() != null)
-//         {
-//             node.getInteger().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outAInterpRtparam(node);
-//     }
-
-	public void inARoutedefRoutedef(ARoutedefRoutedef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outARoutedefRoutedef(ARoutedefRoutedef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseARoutedefRoutedef(ARoutedefRoutedef node)
-//     {
-//         inARoutedefRoutedef(node);
-//         if(node.getRoute() != null)
-//         {
-//             node.getRoute().apply(this);
-//         }
-//         if(node.getLPar() != null)
-//         {
-//             node.getLPar().apply(this);
-//         }
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getComma() != null)
-//         {
-//             node.getComma().apply(this);
-//         }
-//         if(node.getIdentlist() != null)
-//         {
-//             node.getIdentlist().apply(this);
-//         }
-//         if(node.getRPar() != null)
-//         {
-//             node.getRPar().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outARoutedefRoutedef(node);
-//     }
-
-	public void inASenddefSenddef(ASenddefSenddef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outASenddefSenddef(ASenddefSenddef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseASenddefSenddef(ASenddefSenddef node)
-//     {
-//         inASenddefSenddef(node);
-//         if(node.getSend() != null)
-//         {
-//             node.getSend().apply(this);
-//         }
-//         if(node.getLPar() != null)
-//         {
-//             node.getLPar().apply(this);
-//         }
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getSemicolon1() != null)
-//         {
-//             node.getSemicolon1().apply(this);
-//         }
-//         if(node.getExprlist() != null)
-//         {
-//             node.getExprlist().apply(this);
-//         }
-//         if(node.getSemicolon2() != null)
-//         {
-//             node.getSemicolon2().apply(this);
-//         }
-//         if(node.getIdentlist() != null)
-//         {
-//             node.getIdentlist().apply(this);
-//         }
-//         if(node.getRPar() != null)
-//         {
-//             node.getRPar().apply(this);
-//         }
-//         if(node.getSemicolon3() != null)
-//         {
-//             node.getSemicolon3().apply(this);
-//         }
-//         outASenddefSenddef(node);
-//     }
-
-	public void inASeqdefSeqdef(ASeqdefSeqdef node)
-	{
-		defaultIn(node);
-	}
-
-	public void outASeqdefSeqdef(ASeqdefSeqdef node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseASeqdefSeqdef(ASeqdefSeqdef node)
-//     {
-//         inASeqdefSeqdef(node);
-//         if(node.getSequence() != null)
-//         {
-//             node.getSequence().apply(this);
-//         }
-//         if(node.getLPar() != null)
-//         {
-//             node.getLPar().apply(this);
-//         }
-//         if(node.getIdentlist() != null)
-//         {
-//             node.getIdentlist().apply(this);
-//         }
-//         if(node.getRPar() != null)
-//         {
-//             node.getRPar().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outASeqdefSeqdef(node);
-//     }
 
 	public void inABlockBlock(ABlockBlock node)
 	{
-		defaultIn(node);
 	}
 
 	public void outABlockBlock(ABlockBlock node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseABlockBlock(ABlockBlock node)
@@ -1100,12 +231,10 @@ extends DepthFirstAdapter
 
 	public void inAExpressionStatement(AExpressionStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAExpressionStatement(AExpressionStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAExpressionStatement(AExpressionStatement node)
@@ -1173,12 +302,10 @@ extends DepthFirstAdapter
 
 	public void inAIfElseStatement(AIfElseStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAIfElseStatement(AIfElseStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAIfElseStatement(AIfElseStatement node)
@@ -1233,12 +360,10 @@ extends DepthFirstAdapter
 
 	public void inAWhileStatement(AWhileStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAWhileStatement(AWhileStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAWhileStatement(AWhileStatement node)
@@ -1277,12 +402,10 @@ extends DepthFirstAdapter
 
 	public void inAInstrumentStatement(AInstrumentStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAInstrumentStatement(AInstrumentStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAInstrumentStatement(AInstrumentStatement node)
@@ -1317,12 +440,10 @@ extends DepthFirstAdapter
 
 	public void inAOutputStatement(AOutputStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAOutputStatement(AOutputStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAOutputStatement(AOutputStatement node)
@@ -1353,12 +474,10 @@ extends DepthFirstAdapter
 
 	public void inASpatializeStatement(ASpatializeStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outASpatializeStatement(ASpatializeStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseASpatializeStatement(ASpatializeStatement node)
@@ -1389,12 +508,10 @@ extends DepthFirstAdapter
 
 	public void inAOutbusStatement(AOutbusStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAOutbusStatement(AOutbusStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAOutbusStatement(AOutbusStatement node)
@@ -1433,12 +550,10 @@ extends DepthFirstAdapter
 
 	public void inAExtendStatement(AExtendStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAExtendStatement(AExtendStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAExtendStatement(AExtendStatement node)
@@ -1469,12 +584,10 @@ extends DepthFirstAdapter
 
 	public void inATurnoffStatement(ATurnoffStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outATurnoffStatement(ATurnoffStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseATurnoffStatement(ATurnoffStatement node)
@@ -1493,12 +606,10 @@ extends DepthFirstAdapter
 
 	public void inAReturnStatement(AReturnStatement node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAReturnStatement(AReturnStatement node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAReturnStatement(AReturnStatement node)
@@ -1588,12 +699,10 @@ extends DepthFirstAdapter
 
 	public void inAIdentlistIdentlist(AIdentlistIdentlist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAIdentlistIdentlist(AIdentlistIdentlist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAIdentlistIdentlist(AIdentlistIdentlist node)
@@ -1615,12 +724,10 @@ extends DepthFirstAdapter
 
 	public void inAIdentlistTailIdentlistTail(AIdentlistTailIdentlistTail node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAIdentlistTailIdentlistTail(AIdentlistTailIdentlistTail node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAIdentlistTailIdentlistTail(AIdentlistTailIdentlistTail node)
@@ -1639,12 +746,10 @@ extends DepthFirstAdapter
 
 	public void inAParamlistParamlist(AParamlistParamlist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAParamlistParamlist(AParamlistParamlist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAParamlistParamlist(AParamlistParamlist node)
@@ -1666,12 +771,10 @@ extends DepthFirstAdapter
 
 	public void inAParamlistTailParamlistTail(AParamlistTailParamlistTail node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAParamlistTailParamlistTail(AParamlistTailParamlistTail node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAParamlistTailParamlistTail(AParamlistTailParamlistTail node)
@@ -1690,12 +793,10 @@ extends DepthFirstAdapter
 
 	public void inASigvarVardecl(ASigvarVardecl node)
 	{
-		defaultIn(node);
 	}
 
 	public void outASigvarVardecl(ASigvarVardecl node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseASigvarVardecl(ASigvarVardecl node)
@@ -1722,12 +823,10 @@ extends DepthFirstAdapter
 
 	public void inATablemapVardecl(ATablemapVardecl node)
 	{
-		defaultIn(node);
 	}
 
 	public void outATablemapVardecl(ATablemapVardecl node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseATablemapVardecl(ATablemapVardecl node)
@@ -1797,12 +896,10 @@ extends DepthFirstAdapter
 
 	public void inAParamdeclParamdecl(AParamdeclParamdecl node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAParamdeclParamdecl(AParamdeclParamdecl node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAParamdeclParamdecl(AParamdeclParamdecl node)
@@ -1821,12 +918,10 @@ extends DepthFirstAdapter
 
 	public void inANamelistNamelist(ANamelistNamelist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outANamelistNamelist(ANamelistNamelist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseANamelistNamelist(ANamelistNamelist node)
@@ -1848,12 +943,10 @@ extends DepthFirstAdapter
 
 	public void inANamelistTailNamelistTail(ANamelistTailNamelistTail node)
 	{
-		defaultIn(node);
 	}
 
 	public void outANamelistTailNamelistTail(ANamelistTailNamelistTail node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseANamelistTailNamelistTail(ANamelistTailNamelistTail node)
@@ -1958,12 +1051,10 @@ extends DepthFirstAdapter
 
 	public void inATabledeclTabledecl(ATabledeclTabledecl node)
 	{
-		defaultIn(node);
 	}
 
 	public void outATabledeclTabledecl(ATabledeclTabledecl node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseATabledeclTabledecl(ATabledeclTabledecl node)
@@ -2002,12 +1093,10 @@ extends DepthFirstAdapter
 
 	public void inAImportsTaglist(AImportsTaglist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAImportsTaglist(AImportsTaglist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAImportsTaglist(AImportsTaglist node)
@@ -2022,12 +1111,10 @@ extends DepthFirstAdapter
 
 	public void inAExportsTaglist(AExportsTaglist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAExportsTaglist(AExportsTaglist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAExportsTaglist(AExportsTaglist node)
@@ -2042,12 +1129,10 @@ extends DepthFirstAdapter
 
 	public void inAImportsexportsTaglist(AImportsexportsTaglist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAImportsexportsTaglist(AImportsexportsTaglist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAImportsexportsTaglist(AImportsexportsTaglist node)
@@ -2066,12 +1151,10 @@ extends DepthFirstAdapter
 
 	public void inAExportsimportsTaglist(AExportsimportsTaglist node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAExportsimportsTaglist(AExportsimportsTaglist node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAExportsimportsTaglist(AExportsimportsTaglist node)
@@ -2090,12 +1173,10 @@ extends DepthFirstAdapter
 
 	public void inAAopcodeOptype(AAopcodeOptype node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAAopcodeOptype(AAopcodeOptype node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAAopcodeOptype(AAopcodeOptype node)
@@ -2110,12 +1191,10 @@ extends DepthFirstAdapter
 
 	public void inAKopcodeOptype(AKopcodeOptype node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAKopcodeOptype(AKopcodeOptype node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAKopcodeOptype(AKopcodeOptype node)
@@ -2130,12 +1209,10 @@ extends DepthFirstAdapter
 
 	public void inAIopcodeOptype(AIopcodeOptype node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAIopcodeOptype(AIopcodeOptype node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAIopcodeOptype(AIopcodeOptype node)
@@ -2150,12 +1227,10 @@ extends DepthFirstAdapter
 
 	public void inAOpcodeOptype(AOpcodeOptype node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAOpcodeOptype(AOpcodeOptype node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseAOpcodeOptype(AOpcodeOptype node)
@@ -2241,7 +1316,6 @@ extends DepthFirstAdapter
 
 	public void inAGtRelationalexpr(AGtRelationalexpr node)
 	{
-		defaultIn(node);
 	}
 
 	public void outAGtRelationalexpr(AGtRelationalexpr node)
@@ -2374,12 +1448,10 @@ extends DepthFirstAdapter
 
 	public void inASasbfTerm(ASasbfTerm node)
 	{
-		defaultIn(node);
 	}
 
 	public void outASasbfTerm(ASasbfTerm node)
 	{
-		defaultOut(node);
 	}
 
 //     public void caseASasbfTerm(ASasbfTerm node)
@@ -2406,12 +1478,10 @@ extends DepthFirstAdapter
 
     public void inAFunctionTerm(AFunctionTerm node)
     {
-        defaultIn(node);
     }
 
     public void outAFunctionTerm(AFunctionTerm node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAFunctionTerm(AFunctionTerm node)
@@ -2438,12 +1508,10 @@ extends DepthFirstAdapter
 
     public void inAIndexedfunctionTerm(AIndexedfunctionTerm node)
     {
-        defaultIn(node);
     }
 
     public void outAIndexedfunctionTerm(AIndexedfunctionTerm node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAIndexedfunctionTerm(AIndexedfunctionTerm node)
@@ -2483,13 +1551,11 @@ extends DepthFirstAdapter
 
     public void inAExprlistExprlist(AExprlistExprlist node)
     {
-        defaultIn(node);
     }
 
 
     public void outAExprlistExprlist(AExprlistExprlist node)
     {
-        defaultOut(node);
     }
 
 
@@ -2512,12 +1578,10 @@ extends DepthFirstAdapter
 
     public void inAExprlistTailExprlistTail(AExprlistTailExprlistTail node)
     {
-        defaultIn(node);
     }
 
     public void outAExprlistTailExprlistTail(AExprlistTailExprlistTail node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAExprlistTailExprlistTail(AExprlistTailExprlistTail node)
@@ -2536,12 +1600,10 @@ extends DepthFirstAdapter
 
     public void inAExprstrlistExprstrlist(AExprstrlistExprstrlist node)
     {
-        defaultIn(node);
     }
 
     public void outAExprstrlistExprstrlist(AExprstrlistExprstrlist node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAExprstrlistExprstrlist(AExprstrlistExprstrlist node)
@@ -2563,12 +1625,10 @@ extends DepthFirstAdapter
 
     public void inAExprstrlistTailExprstrlistTail(AExprstrlistTailExprstrlistTail node)
     {
-        defaultIn(node);
     }
 
     public void outAExprstrlistTailExprstrlistTail(AExprstrlistTailExprstrlistTail node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAExprstrlistTailExprstrlistTail(AExprstrlistTailExprstrlistTail node)
@@ -2587,12 +1647,10 @@ extends DepthFirstAdapter
 
     public void inAExprExprOrString(AExprExprOrString node)
     {
-        defaultIn(node);
     }
 
     public void outAExprExprOrString(AExprExprOrString node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAExprExprOrString(AExprExprOrString node)
@@ -2607,12 +1665,10 @@ extends DepthFirstAdapter
 
     public void inAStringExprOrString(AStringExprOrString node)
     {
-        defaultIn(node);
     }
 
     public void outAStringExprOrString(AStringExprOrString node)
     {
-        defaultOut(node);
     }
 
 //     public void caseAStringExprOrString(AStringExprOrString node)

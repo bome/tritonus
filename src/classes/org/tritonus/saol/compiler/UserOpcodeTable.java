@@ -45,13 +45,13 @@ public class UserOpcodeTable
 	}
 
 
-	public void addEntry(UserOpcodeEntry opcodeEntry)
+	public void add(UserOpcodeEntry opcodeEntry)
 	{
 		m_opcodeMap.put(opcodeEntry.getOpcodeName(), opcodeEntry);
 	}
 
 
-	public UserOpcodeEntry getOpcode(String strOpcodeName)
+	public UserOpcodeEntry get(String strOpcodeName)
 	{
 		return (UserOpcodeEntry) m_opcodeMap.get(strOpcodeName);
 	}

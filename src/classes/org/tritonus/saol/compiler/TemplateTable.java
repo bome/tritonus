@@ -1,5 +1,5 @@
 /*
- *	InstrumentTable.java
+ *	TemplateTable.java
  */
 
 /*
@@ -24,26 +24,39 @@ package	org.tritonus.saol.compiler;
 
 
 import	java.util.HashMap;
+import	java.util.Map;
 
 
 
-/**	The instrument table.
+/**	The template table.
  */
-public class InstrumentTable
-extends HashMap
+public class TemplateTable
 {
-	public void add(InstrumentEntry instrumentEntry)
+	/**	Map that holds the template entries.
+		Key: the name of the template.
+		Value: a TemplateEntry instance.
+	*/
+	private Map		m_templateMap;
+
+
+	public TemplateTable()
 	{
-		put(instrumentEntry.getInstrumentName(), instrumentEntry);
+		m_templateMap = new HashMap();
 	}
 
 
-	public InstrumentEntry getEntry(String strInstrumentName)
+	public void add(TemplateEntry templateEntry)
 	{
-		return (InstrumentEntry) get(strInstrumentName);
+		m_templateMap.put(templateEntry.getTemplateName(), templateEntry);
+	}
+
+
+	public TemplateEntry get(String strTemplateName)
+	{
+		return (TemplateEntry) m_templateMap.get(strTemplateName);
 	}
 }
 
 
 
-/*** InstrumentTable.java ***/
+/*** TemplateTable.java ***/

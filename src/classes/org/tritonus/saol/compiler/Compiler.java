@@ -107,13 +107,32 @@ public class Compiler
 
 	/**
 	   Returns a Map: instrument names (String) -> instrument classes (Class)
-	 */
+	*/
 	private static Map compileInstruments(Start tree)
 	{
+		InstrumentTable	instrumentTable = new InstrumentTable();
+		UserOpcodeTable	opcodeTable = new UserOpcodeTable();
+		TemplateTable	templateTable = new TemplateTable();
 		Map		instrumentMap = new HashMap();
+		NodeSemanticsTable	nodeSemanticsTable = new NodeSemanticsTable();
+
+		/*	Divide the AST into sections. There is one section
+			for global, and one for each instrument, opcode or template.
+		*/
+		TreeDivider	treeDivider = new TreeDivider(instrumentTable,
+							      opcodeTable,
+							      templateTable);
+		tree.apply(treeDivider);
+		AGlobaldeclGlobaldecl	globalNode = treeDivider.getGlobalNode();
+
+		/*	Process the global section.
+		 */
 		SAOLGlobals	saolGlobals = new SAOLGlobals();
-		GlobalsSearcher	gsearcher = new GlobalsSearcher(saolGlobals);
-		tree.apply(gsearcher);
+		if (globalNode != null)
+		{
+			GlobalsSearcher	gsearcher = new GlobalsSearcher(saolGlobals);
+			globalNode.apply(gsearcher);
+		}
 		if (DEBUG)
 		{
 			TDebug.out("a-rate: " + saolGlobals.getARate());
@@ -122,13 +141,40 @@ public class Compiler
 			TDebug.out("outchannels: " + saolGlobals.getOutChannels());
 			TDebug.out("interp: " + saolGlobals.getInterp());
 		}
-		// TODO: collection of variable tables, semantic checks
-		InstrumentCompilation	ic = new InstrumentCompilation(saolGlobals, instrumentMap);
-		tree.apply(ic);
-		Iterator	it = instrumentMap.keySet().iterator();
-		while (it.hasNext())
+
+		VariableTable	globalVariableTable = new VariableTable();
+
+		/*	Semantic check on instruments.
+		 */
+		Iterator	instruments = instrumentTable.values().iterator();
+		while (instruments.hasNext())
 		{
-			TDebug.out("" + it.next());
+			InstrumentEntry	entry = (InstrumentEntry) instruments.next();
+			AInstrdeclInstrdecl	startNode = entry.getStartNode();
+			VariableTable		localVariableTable = entry.getLocalVariableTable();
+			InstrumentSemanticsCheck	isc = new InstrumentSemanticsCheck(globalVariableTable, localVariableTable, nodeSemanticsTable);
+			startNode.apply(isc);
+		}
+		// TODO: collection of variable tables, semantic checks
+
+		/*	Compiling the instruments.
+		 */
+		InstrumentCompilation	ic = new InstrumentCompilation(saolGlobals, instrumentMap);
+		instruments = instrumentTable.values().iterator();
+		while (instruments.hasNext())
+		{
+			InstrumentEntry	entry = (InstrumentEntry) instruments.next();
+			AInstrdeclInstrdecl	node = entry.getStartNode();
+			node.apply(ic);
+		}
+
+		if (DEBUG)
+		{
+			Iterator	it = instrumentMap.keySet().iterator();
+			while (it.hasNext())
+			{
+				TDebug.out("" + it.next());
+			}
 		}
 		return instrumentMap;
 	}
