@@ -1,6 +1,7 @@
 /*
  *	ASequencer0.java
  */
+// TODO: rename to AlsaSeq.java
 
 /*
  *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
@@ -377,18 +378,22 @@ public class ASequencer0
 
 	static
 	{
-		if (TDebug.TraceASequencer)
+		if (TDebug.TraceAlsaNative)
 		{
 			TDebug.out("ASequencer0.<clinit>(): loading native library tritonusalsa");
 		}
 		System.loadLibrary("tritonusalsa");
-		if (TDebug.TraceASequencer)
+		if (TDebug.TraceAlsaNative)
 		{
 			TDebug.out("ASequencer0.<clinit>(): loaded");
 		}
-		// TODO: ????
-		setTrace(TDebug.TraceASequencerNative);
+		if (TDebug.TraceAlsaSeqNative)
+		{
+			setTrace(true);
+		}
 	}
+
+
 
 	/*
 	 *	This holds a pointer for the native code - do not touch!
