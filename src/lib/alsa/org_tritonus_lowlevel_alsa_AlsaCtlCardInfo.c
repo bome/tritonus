@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaCtlCardInfo.cc
+ *	org_tritonus_lowlevel_alsa_AlsaCtlCardInfo.c
  */
 
 /*
@@ -24,14 +24,14 @@
 #include "org_tritonus_lowlevel_alsa_AlsaCtlCardInfo.h"
 
 
-static HandleFieldHandler<snd_ctl_card_info_t*>	handler;
+HandleFieldHandler(snd_ctl_card_info_t*)
 
 
 
 snd_ctl_card_info_t*
 getAlsaCtlCardInfoNativeHandle(JNIEnv *env, jobject obj)
 {
-	return handler.getHandle(env, obj);
+	return getHandle(env, obj);
 }
 
 
@@ -50,7 +50,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): begin\n"); }
 	nReturn = snd_ctl_card_info_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): handle: %p\n", handle); }
-	handler.setHandle(env, obj, handle);
+	setHandle(env, obj, handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): end\n"); }
 	return nReturn;
 }
@@ -68,7 +68,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free
 	snd_ctl_card_info_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_ctl_card_info_free(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free(): end\n"); }
 }
@@ -87,7 +87,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getCard
 	snd_ctl_card_info_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_ctl_card_info_get_card(handle);
 	return nReturn;
 }
@@ -107,13 +107,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getId
 	jstring			strResult;
 	const char*		result;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	result = snd_ctl_card_info_get_id(handle);
 	if (result == NULL)
 	{
 		throwRuntimeException(env, "snd_card_get_id() failed");
 	}
-	strResult = env->NewStringUTF(result);
+	strResult = (*env)->NewStringUTF(env, result);
 	if (strResult == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -136,13 +136,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getDriver
 	jstring			strResult;
 	const char*		result;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	result = snd_ctl_card_info_get_driver(handle);
 	if (result == NULL)
 	{
 		throwRuntimeException(env, "snd_card_get_driver() failed");
 	}
-	strResult = env->NewStringUTF(result);
+	strResult = (*env)->NewStringUTF(env, result);
 	if (strResult == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -165,13 +165,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getName
 	jstring			strResult;
 	const char*		result;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	result = snd_ctl_card_info_get_name(handle);
 	if (result == NULL)
 	{
 		throwRuntimeException(env, "snd_card_get_name() failed");
 	}
-	strResult = env->NewStringUTF(result);
+	strResult = (*env)->NewStringUTF(env, result);
 	if (strResult == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -194,13 +194,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getLongname
 	jstring			strResult;
 	const char*		result;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	result = snd_ctl_card_info_get_longname(handle);
 	if (result == NULL)
 	{
 		throwRuntimeException(env, "snd_card_get_longname() failed");
 	}
-	strResult = env->NewStringUTF(result);
+	strResult = (*env)->NewStringUTF(env, result);
 	if (strResult == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -223,13 +223,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getMixername
 	jstring			strResult;
 	const char*		result;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	result = snd_ctl_card_info_get_mixername(handle);
 	if (result == NULL)
 	{
 		throwRuntimeException(env, "snd_card_get_mixername() failed");
 	}
-	strResult = env->NewStringUTF(result);
+	strResult = (*env)->NewStringUTF(env, result);
 	if (strResult == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -252,13 +252,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getComponents
 	jstring			strResult;
 	const char*		result;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	result = snd_ctl_card_info_get_components(handle);
 	if (result == NULL)
 	{
 		throwRuntimeException(env, "snd_card_get_components() failed");
 	}
-	strResult = env->NewStringUTF(result);
+	strResult = (*env)->NewStringUTF(env, result);
 	if (strResult == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -267,4 +267,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_getComponents
 }
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaCtlCardInfo.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaCtlCardInfo.c ***/

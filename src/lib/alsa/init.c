@@ -1,5 +1,5 @@
 /*
- *	init.cc
+ *	init.c
  */
 
 /*
@@ -20,8 +20,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include	<stdio.h>
-#include	<dlfcn.h>
+#include <stdio.h>
+#include <dlfcn.h>
 
 
 static bool debug_flag = false;
@@ -36,7 +36,7 @@ static void*	asound_dl_handle = NULL;
   properly. Making the symbols of libasound.so global here (RTLD_GLOBAL)
   solves the problem.
  */
-extern "C" void _init(void)
+void _init(void)
 {
 	if (debug_flag) { (void) printf("_init(): begin\n"); }
 	asound_dl_handle = dlopen("libasound.so", RTLD_LAZY | RTLD_GLOBAL);
@@ -46,7 +46,7 @@ extern "C" void _init(void)
 
 
 
-extern "C" void _fini(void)
+void _fini(void)
 {
 	if (debug_flag) { (void) printf("_fini(): begin\n"); }
 	if (asound_dl_handle != NULL)
@@ -59,4 +59,4 @@ extern "C" void _fini(void)
 
 
 
-/*** init.cc ***/
+/*** init.c ***/

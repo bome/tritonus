@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaCtl.cc
+ *	org_tritonus_lowlevel_alsa_AlsaCtl.c
  */
 
 /*
@@ -20,12 +20,12 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include	"common.h"
-#include	"org_tritonus_lowlevel_alsa_AlsaCtl.h"
+#include "common.h"
+#include "org_tritonus_lowlevel_alsa_AlsaCtl.h"
 
 
-static HandleFieldHandler<snd_ctl_t*>	handler;
-
+// static HandleFieldHandler<snd_ctl_t*>	handler;
+HandleFieldHandlerDeclaration(handler,snd_ctl_t*);
 
 snd_ctl_card_info_t*
 getAlsaCtlCardInfoNativeHandle(JNIEnv *env, jobject obj);
@@ -68,12 +68,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCards
 		nCardCount++;
 		nError = snd_card_next(&nCard);
 	}
-	cardsArray = env->NewIntArray(nCardCount);
+	cardsArray = (*env)->NewIntArray(env, nCardCount);
 	if (cardsArray == NULL)
 	{
 		throwRuntimeException(env, "cannot allocate int array");
 	}
-	env->SetIntArrayRegion(cardsArray, 0, nCardCount, (jint*) anCards);
+	(*env)->SetIntArrayRegion(env, cardsArray, 0, nCardCount, (jint*) anCards);
 	return cardsArray;
 }
 
@@ -90,13 +90,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardIndex
 {
 	int	nCard;
 	const char*	name = NULL;
-	name = env->GetStringUTFChars(strCardName, NULL);
+	name = (*env)->GetStringUTFChars(env, strCardName, NULL);
 	if (name == NULL)
 	{
 		throwRuntimeException(env, "cannot get characters from string argument");
 	}
 	nCard = snd_card_get_index(name);
-	env->ReleaseStringUTFChars(strCardName, name);
+	(*env)->ReleaseStringUTFChars(env, strCardName, name);
 	return nCard;
 }
 
@@ -119,7 +119,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardName
 	{
 		throwRuntimeException(env, "snd_card_get_name() failed");
 	}
-	strName = env->NewStringUTF(name);
+	strName = (*env)->NewStringUTF(env, name);
 	if (strName == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -146,7 +146,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardLongName
 	{
 		throwRuntimeException(env, "snd_card_get_longname() failed");
 	}
-	strName = env->NewStringUTF(name);
+	strName = (*env)->NewStringUTF(env, name);
 	if (strName == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
@@ -170,7 +170,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_open
 	const char*	name;
 
 	// printf("1");
-	name = env->GetStringUTFChars(strName, NULL);
+	name = (*env)->GetStringUTFChars(env, strName, NULL);
 	// printf("2");
 	if (name == NULL)
 	{
@@ -180,12 +180,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_open
 	// printf("4");
 	nResult = snd_ctl_open(&handle, name, nMode);
 	// printf("5");
-	env->ReleaseStringUTFChars(strName, name);
+	(*env)->ReleaseStringUTFChars(env, strName, name);
 	// printf("6");
 	if (nResult >= 0)
 	{
 		// printf("7");
-		handler.setHandle(env, obj, handle);
+		setHandle(env, obj, handle);
 	}
 	return nResult;
 }
@@ -205,7 +205,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_close
 	int		nResult;
 
 	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nResult = snd_ctl_close(handle);
 	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): end\n"); }
 	return nResult;
@@ -226,7 +226,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardInfo
 	snd_ctl_card_info_t*	cardInfo;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	cardInfo = getAlsaCtlCardInfoNativeHandle(env, cardInfoObj);
 	nReturn = snd_ctl_card_info(handle, cardInfo);
 	return (jint) nReturn;
@@ -250,7 +250,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getPcmDevices
 	int		nError;
 	jintArray	devicesArray;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nError = snd_ctl_pcm_next_device(handle, &nDevice);
 	while (nDevice >= 0 && nError >= 0)
 	{
@@ -258,12 +258,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getPcmDevices
 		nDeviceCount++;
 		nError = snd_ctl_pcm_next_device(handle, &nDevice);
 	}
-	devicesArray = env->NewIntArray(nDeviceCount);
+	devicesArray = (*env)->NewIntArray(env, nDeviceCount);
 	if (devicesArray == NULL)
 	{
 		throwRuntimeException(env, "cannot allocate int array");
 	}
-	env->SetIntArrayRegion(devicesArray, 0, nDeviceCount, (jint*) anDevices);
+	(*env)->SetIntArrayRegion(env, devicesArray, 0, nDeviceCount, (jint*) anDevices);
 	return devicesArray;
 }
 
@@ -296,4 +296,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_setTrace
 	debug_file = stderr;
 }
 
-/*** org_tritonus_lowlevel_alsa_AlsaCtl.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaCtl.c ***/
