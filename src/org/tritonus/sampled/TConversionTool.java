@@ -38,20 +38,20 @@ For convenience, a list of available methods is maintained here.
 Some hints:
 - buffers: always byte arrays
 - offsets: always in bytes
-- sampleCount: number of SAMPLES to read/write, as opposed to FRAMES !
+- sampleCount: number of SAMPLES to read/write, as opposed to FRAMES or BYTES!
 - when in buffer and out buffer are given, the data is copied,
   otherwise it is replaced in the same buffer (buffer size is not checked!)
 - a number (except "2") gives the number of bits in which format
   the samples have to be.
 - >8 bits per sample is always treated signed.
 - all functions are tried to be optimized - hints welcome !
-
-
+ 
+ 
 ** "high level" methods **
 changeOrderOrSign(buffer, nOffset, nByteLength, nBytesPerSample)
 changeOrderOrSign(inBuffer, nInOffset, outBuffer, nOutOffset, nByteLength, nBytesPerSample)
-
-
+ 
+ 
 ** PCM byte order and sign conversion **
 void 	convertSign8(buffer, byteOffset, sampleCount)
 void 	swapOrder16(buffer, byteOffset, sampleCount)
@@ -61,12 +61,21 @@ void 	convertSign8(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount
 void 	swapOrder16(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
 void 	swapOrder24(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
 void 	swapOrder32(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
-
-short 	convertBytesToShort(highByte, lowByte)
-void 	convertShortToLittleEndianBytes(sample, buffer, byteOffset)
-void 	convertShortToBigEndianBytes(sample, buffer, byteOffset)
-
-
+ 
+ 
+** conversion functions for byte arrays **
+** these are for reference to see how to implement these conversions **
+short 	bytesToShort16(highByte, lowByte)
+short 	bytesToShort16(buffer, byteOffset, bigEndian)
+short 	bytesToInt16(highByte, lowByte)
+short 	bytesToInt16(buffer, byteOffset, bigEndian)
+short 	bytesToInt24(buffer, byteOffset, bigEndian)
+short 	bytesToInt32(buffer, byteOffset, bigEndian)
+void 	shortToBytes16(sample, buffer, byteOffset, bigEndian)
+void 	intToBytes24(sample, buffer, byteOffset, bigEndian)
+void 	intToBytes32(sample, buffer, byteOffset, bigEndian)
+ 
+ 
 ** ULAW <-> PCM **
 byte 	linear2ulaw(int sample)
 short 	ulaw2linear(int ulawbyte)
@@ -77,8 +86,8 @@ void 	pcm82ulaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, s
 void 	ulaw2pcm16(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, bigEndian)
 void 	ulaw2pcm8(buffer, byteOffset, sampleCount, signed)
 void 	ulaw2pcm8(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, signed)
-
-
+ 
+ 
 ** ALAW <-> PCM **
 byte linear2alaw(short pcm_val)
 short alaw2linear(byte ulawbyte)
@@ -89,8 +98,8 @@ void pcm82alaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, si
 void alaw2pcm16(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, bigEndian)
 void alaw2pcm8(buffer, byteOffset, sampleCount, signed)
 void alaw2pcm8(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, signed)
-
-
+ 
+ 
 ** ULAW <-> ALAW **
 byte 	ulaw2alaw(byte sample)
 void 	ulaw2alaw(buffer, byteOffset, sampleCount)
@@ -98,12 +107,13 @@ void 	ulaw2alaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
 byte 	alaw2ulaw(byte sample)
 void 	alaw2ulaw(buffer, byteOffset, sampleCount)
 void 	alaw2ulaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
-
+ 
 */
 
 public class TConversionTool {
 
-	/////////// sign/byte-order conversion /////////////////////////////////////////////
+	///////////////// sign/byte-order conversion ///////////////////////////////////
+
 	public static void convertSign8(byte[] buffer, int byteOffset, int sampleCount) {
 		sampleCount+=byteOffset;
 		for (int i=byteOffset; i<sampleCount; i++) {
@@ -191,27 +201,174 @@ public class TConversionTool {
 		}
 	}
 
-	public static short convertBytesToShort(byte highByte, byte lowByte) {
+
+	///////////////// conversion functions for byte arrays ////////////////////////////
+
+
+	/**
+	 * Converts 2 bytes to a signed sample of type <code>short</code>.
+	 * <p> This is a reference function.
+	 */
+	public static short bytesToShort16(byte highByte, byte lowByte) {
 		return (short) ((highByte<<8) | (lowByte & 0xFF));
 	}
 
 	/**
-	 * Fills buffer[byteOffset] with low byte of sample.
-	 * Fills buffer[byteOffset+1] with high byte of sample.
+	 * Converts 2 successive bytes starting at <code>byteOffset</code> in 
+	 * <code>buffer</code> to a signed sample of type <code>short</code>.
+	 * <p>
+	 * For little endian, buffer[byteOffset] is interpreted as low byte,
+	 * whereas it is interpreted as high byte in big endian.
+	 * <p> This is a reference function.
 	 */
-	public static void convertShortToLittleEndianBytes(short sample, byte[] buffer, int byteOffset) {
-		buffer[byteOffset++]=(byte) (sample & 0xFF);
-		buffer[byteOffset]=(byte) ((sample & 0xFF00) >> 8);
+	public static short bytesToShort16(byte[] buffer, int byteOffset, boolean bigEndian) {
+		return bigEndian?
+		       ((short) ((buffer[byteOffset]<<8) | (buffer[byteOffset+1] & 0xFF))):
+		       ((short) ((buffer[byteOffset+1]<<8) | (buffer[byteOffset] & 0xFF)));
 	}
 
 	/**
-	 * Fills buffer[byteOffset] with high byte of sample.
-	 * Fills buffer[byteOffset+1] with low byte of sample.
+	 * Converts 2 bytes to a signed integer sample with 16bit range.
+	 * <p> This is a reference function.
 	 */
-	public static void convertShortToBigEndianBytes(short sample, byte[] buffer, int byteOffset) {
-		buffer[byteOffset++]=(byte) ((sample & 0xFF00) >> 8);
-		buffer[byteOffset]=(byte) (sample & 0xFF);
+	public static int bytesToInt16(byte highByte, byte lowByte) {
+		return (highByte<<8) | (lowByte & 0xFF);
 	}
+
+	/**
+	 * Converts 2 successive bytes starting at <code>byteOffset</code> in 
+	 * <code>buffer</code> to a signed integer sample with 16bit range.
+	 * <p>
+	 * For little endian, buffer[byteOffset] is interpreted as low byte,
+	 * whereas it is interpreted as high byte in big endian.
+	 * <p> This is a reference function.
+	 */
+	public static int bytesToInt16(byte[] buffer, int byteOffset, boolean bigEndian) {
+		return bigEndian?
+		       ((buffer[byteOffset]<<8) | (buffer[byteOffset+1] & 0xFF)):
+		       ((buffer[byteOffset+1]<<8) | (buffer[byteOffset] & 0xFF));
+	}
+
+	/**
+	 * Converts 3 successive bytes starting at <code>byteOffset</code> in 
+	 * <code>buffer</code> to a signed integer sample with 24bit range.
+	 * <p>
+	 * For little endian, buffer[byteOffset] is interpreted as lowest byte,
+	 * whereas it is interpreted as highest byte in big endian.
+	 * <p> This is a reference function.
+	 */
+	public static int bytesToInt24(byte[] buffer, int byteOffset, boolean bigEndian) {
+		return bigEndian?
+		       ((buffer[byteOffset]<<16)             // let Java handle sign-bit
+		        | ((buffer[byteOffset+1] & 0xFF)<<8) // inhibit sign-bit handling
+		        | (buffer[byteOffset+2] & 0xFF)):
+		       ((buffer[byteOffset+2]<<16)           // let Java handle sign-bit
+		        | ((buffer[byteOffset+1] & 0xFF)<<8) // inhibit sign-bit handling
+		        | (buffer[byteOffset] & 0xFF));
+	}
+
+	/**
+	 * Converts a 4 successive bytes starting at <code>byteOffset</code> in 
+	 * <code>buffer</code> to a signed 32bit integer sample.
+	 * <p>
+	 * For little endian, buffer[byteOffset] is interpreted as lowest byte,
+	 * whereas it is interpreted as highest byte in big endian.
+	 * <p> This is a reference function.
+	 */
+	public static int bytesToInt32(byte[] buffer, int byteOffset, boolean bigEndian) {
+		return bigEndian?
+		       ((buffer[byteOffset]<<24)              // let Java handle sign-bit
+		        | ((buffer[byteOffset+1] & 0xFF)<<16) // inhibit sign-bit handling
+		        | ((buffer[byteOffset+2] & 0xFF)<<8)  // inhibit sign-bit handling
+		        | (buffer[byteOffset+3] & 0xFF)):
+		       ((buffer[byteOffset+3]<<24)            // let Java handle sign-bit
+		        | ((buffer[byteOffset+2] & 0xFF)<<16) // inhibit sign-bit handling
+		        | ((buffer[byteOffset+1] & 0xFF)<<8)  // inhibit sign-bit handling
+		        | (buffer[byteOffset] & 0xFF));
+	}
+
+
+	/**
+	 * Converts a sample of type <code>short</code> to 2 bytes in an array.
+	 * <code>sample</code> is interpreted as signed (as Java does).
+	 * <p>
+	 * For little endian, buffer[byteOffset] is filled with low byte of sample, 
+	 * and buffer[byteOffset+1] is filled with high byte of sample.
+	 * <p> For big endian, this is reversed.
+	 * <p> This is a reference function.
+	 */
+	public static void shortToBytes16(short sample, byte[] buffer, int byteOffset, boolean bigEndian) {
+		intToBytes16(sample, buffer, byteOffset, bigEndian);
+	}
+
+	/**
+	 * Converts a 16 bit sample of type <code>int</code> to 2 bytes in an array.
+	 * <code>sample</code> is interpreted as signed (as Java does).
+	 * <p>
+	 * For little endian, buffer[byteOffset] is filled with low byte of sample, 
+	 * and buffer[byteOffset+1] is filled with high byte of sample + sign bit.
+	 * <p> For big endian, this is reversed.
+	 * <p> Before calling this function, it should be assured that <code>sample</code>
+	 * is in the 16bit range - it will not be clipped.
+	 * <p> This is a reference function.
+	 */
+	public static void intToBytes16(int sample, byte[] buffer, int byteOffset, boolean bigEndian) {
+		if (bigEndian) {
+			buffer[byteOffset++]=(byte) (sample >> 8);
+			buffer[byteOffset]=(byte) (sample & 0xFF);
+		} else {
+			buffer[byteOffset++]=(byte) (sample & 0xFF);
+			buffer[byteOffset]=(byte) (sample >> 8);
+		}
+	}
+
+	/**
+	 * Converts a 24 bit sample of type <code>int</code> to 3 bytes in an array.
+	 * <code>sample</code> is interpreted as signed (as Java does).
+	 * <p>
+	 * For little endian, buffer[byteOffset] is filled with low byte of sample, 
+	 * and buffer[byteOffset+2] is filled with the high byte of sample + sign bit.
+	 * <p> For big endian, this is reversed.
+	 * <p> Before calling this function, it should be assured that <code>sample</code>
+	 * is in the 24bit range - it will not be clipped.
+	 * <p> This is a reference function.
+	 */
+	public static void intToBytes24(int sample, byte[] buffer, int byteOffset, boolean bigEndian) {
+		if (bigEndian) {
+			buffer[byteOffset++]=(byte) (sample >> 16);
+			buffer[byteOffset++]=(byte) ((sample >>> 8) & 0xFF);
+			buffer[byteOffset]=(byte) (sample & 0xFF);
+		} else {
+			buffer[byteOffset++]=(byte) (sample & 0xFF);
+			buffer[byteOffset++]=(byte) ((sample >>> 8) & 0xFF);
+			buffer[byteOffset]=(byte) (sample >> 16);
+		}
+	}
+
+
+	/**
+	 * Converts a 32 bit sample of type <code>int</code> to 4 bytes in an array.
+	 * <code>sample</code> is interpreted as signed (as Java does).
+	 * <p>
+	 * For little endian, buffer[byteOffset] is filled with lowest byte of sample, 
+	 * and buffer[byteOffset+3] is filled with the high byte of sample + sign bit.
+	 * <p> For big endian, this is reversed.
+	 * <p> This is a reference function.
+	 */
+	public static void intToBytes32(int sample, byte[] buffer, int byteOffset, boolean bigEndian) {
+		if (bigEndian) {
+			buffer[byteOffset++]=(byte) (sample >> 24);
+			buffer[byteOffset++]=(byte) ((sample >>> 16) & 0xFF);
+			buffer[byteOffset++]=(byte) ((sample >>> 8) & 0xFF);
+			buffer[byteOffset]=(byte) (sample & 0xFF);
+		} else {
+			buffer[byteOffset++]=(byte) (sample & 0xFF);
+			buffer[byteOffset++]=(byte) ((sample >>> 8) & 0xFF);
+			buffer[byteOffset++]=(byte) ((sample >>> 16) & 0xFF);
+			buffer[byteOffset]=(byte) (sample >> 24);
+		}
+	}
+
 
 	/////////////////////// ULAW ///////////////////////////////////////////
 
@@ -319,7 +476,7 @@ public class TConversionTool {
 		if (bigEndian) {
 			while (sampleCount>0) {
 				buffer[ulawIndex++]=linear2ulaw
-				                    (convertBytesToShort(buffer[shortIndex], buffer[shortIndex+1]));
+				                    (bytesToInt16(buffer[shortIndex], buffer[shortIndex+1]));
 				shortIndex++;
 				shortIndex++;
 				sampleCount--;
@@ -327,7 +484,7 @@ public class TConversionTool {
 		} else {
 			while (sampleCount>0) {
 				buffer[ulawIndex++]=linear2ulaw
-				                    (convertBytesToShort(buffer[shortIndex+1], buffer[shortIndex]));
+				                    (bytesToInt16(buffer[shortIndex+1], buffer[shortIndex]));
 				shortIndex++;
 				shortIndex++;
 				sampleCount--;
@@ -350,7 +507,7 @@ public class TConversionTool {
 		if (bigEndian) {
 			while (sampleCount>0) {
 				outBuffer[ulawIndex++]=linear2ulaw
-				                       (convertBytesToShort(inBuffer[shortIndex], inBuffer[shortIndex+1]));
+				                       (bytesToInt16(inBuffer[shortIndex], inBuffer[shortIndex+1]));
 				shortIndex++;
 				shortIndex++;
 				sampleCount--;
@@ -358,7 +515,7 @@ public class TConversionTool {
 		} else {
 			while (sampleCount>0) {
 				outBuffer[ulawIndex++]=linear2ulaw
-				                       (convertBytesToShort(inBuffer[shortIndex+1], inBuffer[shortIndex]));
+				                       (bytesToInt16(inBuffer[shortIndex+1], inBuffer[shortIndex]));
 				shortIndex++;
 				shortIndex++;
 				sampleCount--;
@@ -417,23 +574,15 @@ public class TConversionTool {
 	* There will be sampleCount*2 bytes written to outBuffer.
 	*/
 	public static void ulaw2pcm16(byte[] inBuffer, int inByteOffset,
-	                              byte[] outBuffer, int outByteOffset, int sampleCount, boolean bigEndian) {
+	                              byte[] outBuffer, int outByteOffset,
+	                              int sampleCount, boolean bigEndian) {
 		int shortIndex=outByteOffset;
 		int ulawIndex=inByteOffset;
-		if (bigEndian) {
-			while (sampleCount>0) {
-				convertShortToBigEndianBytes
-				(u2l[inBuffer[ulawIndex++] & 0xFF], outBuffer, shortIndex++);
-				shortIndex++;
-				sampleCount--;
-			}
-		} else {
-			while (sampleCount>0) {
-				convertShortToLittleEndianBytes
-				(u2l[inBuffer[ulawIndex++] & 0xFF], outBuffer, shortIndex++);
-				shortIndex++;
-				sampleCount--;
-			}
+		while (sampleCount>0) {
+			intToBytes16
+			(u2l[inBuffer[ulawIndex++] & 0xFF], outBuffer, shortIndex++, bigEndian);
+			shortIndex++;
+			sampleCount--;
 		}
 	}
 
@@ -601,7 +750,7 @@ public class TConversionTool {
 		if (bigEndian) {
 			while (sampleCount>0) {
 				buffer[alawIndex++]=
-				    linear2alaw(convertBytesToShort
+				    linear2alaw(bytesToShort16
 				                (buffer[shortIndex], buffer[shortIndex+1]));
 				shortIndex++;
 				shortIndex++;
@@ -610,7 +759,7 @@ public class TConversionTool {
 		} else {
 			while (sampleCount>0) {
 				buffer[alawIndex++]=
-				    linear2alaw(convertBytesToShort
+				    linear2alaw(bytesToShort16
 				                (buffer[shortIndex+1], buffer[shortIndex]));
 				shortIndex++;
 				shortIndex++;
@@ -633,7 +782,7 @@ public class TConversionTool {
 		if (bigEndian) {
 			while (sampleCount>0) {
 				outBuffer[alawIndex++]=linear2alaw
-				                       (convertBytesToShort(inBuffer[shortIndex], inBuffer[shortIndex+1]));
+				                       (bytesToShort16(inBuffer[shortIndex], inBuffer[shortIndex+1]));
 				shortIndex++;
 				shortIndex++;
 				sampleCount--;
@@ -641,7 +790,7 @@ public class TConversionTool {
 		} else {
 			while (sampleCount>0) {
 				outBuffer[alawIndex++]=linear2alaw
-				                       (convertBytesToShort(inBuffer[shortIndex+1], inBuffer[shortIndex]));
+				                       (bytesToShort16(inBuffer[shortIndex+1], inBuffer[shortIndex]));
 				shortIndex++;
 				shortIndex++;
 				sampleCount--;
@@ -747,23 +896,15 @@ public class TConversionTool {
 	 * There will be sampleCount*2 bytes written to outBuffer.
 	 */
 	public static void alaw2pcm16(byte[] inBuffer, int inByteOffset,
-	                              byte[] outBuffer, int outByteOffset, int sampleCount, boolean bigEndian) {
+	                              byte[] outBuffer, int outByteOffset,
+	                              int sampleCount, boolean bigEndian) {
 		int shortIndex=outByteOffset;
 		int alawIndex=inByteOffset;
-		if (bigEndian) {
-			while (sampleCount>0) {
-				convertShortToBigEndianBytes
-				(a2l[inBuffer[alawIndex++] & 0xFF], outBuffer, shortIndex++);
-				shortIndex++;
-				sampleCount--;
-			}
-		} else {
-			while (sampleCount>0) {
-				convertShortToLittleEndianBytes
-				(a2l[inBuffer[alawIndex++] & 0xFF], outBuffer, shortIndex++);
-				shortIndex++;
-				sampleCount--;
-			}
+		while (sampleCount>0) {
+			intToBytes16
+			(a2l[inBuffer[alawIndex++] & 0xFF], outBuffer, shortIndex++, bigEndian);
+			shortIndex++;
+			sampleCount--;
 		}
 	}
 

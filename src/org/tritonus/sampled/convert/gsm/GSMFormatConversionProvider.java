@@ -221,15 +221,8 @@ public class GSMFormatConversionProvider
 			}
 			for (int i = 0; i < 160; i++)
 			{
-				short	sSample = (short) (anDecodedData[i] & 0xFFFF);
-				if (isBigEndian())
-				{
-					TConversionTool.convertShortToBigEndianBytes(sSample, m_abBuffer, i * 2);
-				}
-				else
-				{
-					TConversionTool.convertShortToLittleEndianBytes(sSample, m_abBuffer, i * 2);
-				}
+			        //$$fb 2000-08-13: adapted to new TConversionTool functions
+			        TConversionTool.intToBytes16(anDecodedData[i], m_abBuffer, i * 2, isBigEndian());
 			}
 			m_circularBuffer.write(m_abBuffer);
 			if (TDebug.TraceAudioConverter)
@@ -328,14 +321,8 @@ public class GSMFormatConversionProvider
 			}
 			for (int i = 0; i < 160; i++)
 			{
-				if (isBigEndian())
-				{
-					m_asBuffer[i] = TConversionTool.convertBytesToShort(m_abBuffer[i * 2], m_abBuffer[i * 2 + 1]);
-				}
-				else
-				{
-					m_asBuffer[i] = TConversionTool.convertBytesToShort(m_abBuffer[i * 2 + 1], m_abBuffer[i * 2]);
-				}
+			        //$$fb 2000-08-13: adapted to new TConversionTool functions
+			        m_asBuffer[i] = TConversionTool.bytesToShort16(m_abBuffer, i * 2, isBigEndian());
 			}
 			m_encoder.encode(m_asBuffer, m_abFrameBuffer);
 			m_circularBuffer.write(m_abFrameBuffer);
