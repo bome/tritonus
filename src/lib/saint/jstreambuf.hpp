@@ -18,13 +18,13 @@ private:
 
 public:
 	jstreambuf(JNIEnv* env, jobject obj);
-	~jstreambuf();
+	virtual ~jstreambuf();
 	int sync();
 	int overflow(int ch);
-	streamsize xsputn(const char* text, streamsize n);
+	virtual streamsize xsputn(const char* text, streamsize n);
 //	int underflow();
 //	int uflow();
-	streamsize xsgetn(char* text, streamsize n);
+	virtual streamsize xsgetn(char* text, streamsize n);
 };
 
 
