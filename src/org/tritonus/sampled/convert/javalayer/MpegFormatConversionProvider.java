@@ -363,6 +363,8 @@ public class MpegFormatConversionProvider
 		super(Arrays.asList(INPUT_FORMATS),
 		      Arrays.asList(OUTPUT_FORMATS),
 		      CONVERSIONS);
+		if (TDebug.TraceAudioConverter) { TDebug.out("MpegFormatConversionProvider.<init>(): begin"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("MpegFormatConversionProvider.<init>(): end"); }
 	}
 
 
