@@ -285,15 +285,25 @@ public class AudioFormat
 
 		public final boolean equals(Object obj)
 		{
-			return toString().equals(obj.toString());
+			if (obj == this)
+			{
+				return true;
+			}
+			else if (obj == null)
+			{
+				return false;
+			}
+			else
+			{
+				return toString().equals(obj.toString());
+			}
 		}
 
 
 
-		// TODO: change to be based on the string, too?
 		public final int hashCode()
 		{
-			return super.hashCode();
+			return toString().hashCode();
 		}
 
 

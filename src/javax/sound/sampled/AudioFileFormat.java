@@ -193,19 +193,37 @@ public class AudioFileFormat
 
 
 		/*
-		 *	TODO: I requested from Sun that this should
-		 *	compare the strings
 		 */
 		public final boolean equals(Object obj)
 		{
-			return super.equals(obj);
+			if (obj == this)
+			{
+				return true;
+			}
+			else if (obj == null || (obj.getClass() != this.getClass()))
+			{
+				return false;
+			}
+			else
+			{
+				Type t = (Type) obj;
+				return toString().equals(t.toString()) &&
+					getExtension().equals(t.getExtension());
+			}
 		}
 
 
-
+		/* TODO: we have to make sure that the strings aren't null.
+		   Otherwise, we get a NullPointerException here.
+		*/
 		public final int hashCode()
 		{
-			return super.hashCode();
+			int nHash = 11;
+			nHash = 31 * nHash + toString().hashCode();
+			nHash = 31 * nHash + getExtension().hashCode();
+			// solution if we can't otherwise assure that the strings aren't null:
+			// nHash = 31 * nHash + (null == data ? 0 : data.hashCode());
+			return nHash;
 		}
 
 
@@ -215,10 +233,6 @@ public class AudioFileFormat
 			return m_strName;
 		}
 	}
-
-
-
-
 
 }
 
