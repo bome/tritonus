@@ -46,19 +46,21 @@ import org.tritonus.mmapi.ToneGenerator;
 */
 public final class Manager
 {
+	private static final String[]	EMPTY_STRING_ARRAY = new String[0];
+
 	/**	TODO:
-	*/
+	 */
 	public static final String	TONE_DEVICE_LOCATOR = "device://tone";
 
 
 	/**	TODO:
-	*/
+	 */
 	public static final String	MIDI_DEVICE_LOCATOR = "device://midi";
 
 
 	/**
-	  Table of protocol names and DataSource classes used to
-	  implement the protocols.
+	   Table of protocol names and DataSource classes used to
+	   implement the protocols.
 	*/
 	private static final Object[][]	PROTOCOL_TABLE =
 	{
@@ -72,8 +74,8 @@ public final class Manager
 
 
 	/**
-	  Table of protocol names and DataSource classes used to
-	  implement the protocols.
+	   Table of protocol names and DataSource classes used to
+	   implement the protocols.
 	*/
 	private static final Object[][]	CONTENT_TYPE_TABLE =
 	{
@@ -98,24 +100,36 @@ public final class Manager
 
 
 	/**	TODO:
-	*/
+	 */
 	private static final TimeBase	sm_systemTimeBase = new SystemTimeBase();
 
 
 	/**	TODO:
-	*/
+	 */
 	private static ToneGenerator	sm_toneGenerator = null;
 
 
 
 	/**	TODO:
-	*/
+	 */
 	public static String[] getSupportedContentTypes(String strProtocol)
 	{
-		String[]	astrContentTypes = new String[CONTENT_TYPE_TABLE.length];
-		for (int i = 0; i < CONTENT_TYPE_TABLE.length; i++)
+		String[]	astrContentTypes;
+		// TODO: test any of these
+		if (strProtocol == null ||
+		    strProtocol.equals("http") ||
+		    strProtocol.equals("ftp") ||
+		    strProtocol.equals("file"))
 		{
-			astrContentTypes[i] = (String) CONTENT_TYPE_TABLE[i][0];
+			astrContentTypes = new String[CONTENT_TYPE_TABLE.length];
+			for (int i = 0; i < CONTENT_TYPE_TABLE.length; i++)
+			{
+				astrContentTypes[i] = (String) CONTENT_TYPE_TABLE[i][0];
+			}
+		}
+		else
+		{
+			astrContentTypes = EMPTY_STRING_ARRAY;
 		}
 		return astrContentTypes;
 	}
@@ -123,13 +137,23 @@ public final class Manager
 
 
 	/**	TODO:
-	*/
+	 */
 	public static String[] getSupportedProtocols(String strContentType)
 	{
-		String[]	astrProtocols = new String[PROTOCOL_TABLE.length];
-		for (int i = 0; i < PROTOCOL_TABLE.length; i++)
+		String[]	astrProtocols;
+		// TODO: refine
+		if (strContentType == null ||
+		    strContentType.startsWith("audio/"))
 		{
-			astrProtocols[i] = (String) PROTOCOL_TABLE[i][0];
+			astrProtocols = new String[PROTOCOL_TABLE.length];
+			for (int i = 0; i < PROTOCOL_TABLE.length; i++)
+			{
+				astrProtocols[i] = (String) PROTOCOL_TABLE[i][0];
+			}
+		}
+		else
+		{
+			astrProtocols = EMPTY_STRING_ARRAY;
 		}
 		return astrProtocols;
 	}
@@ -137,7 +161,7 @@ public final class Manager
 
 
 	/**	TODO:
-	*/
+	 */
 	public static Player createPlayer(String strLocator)
 		throws IOException, MediaException
 	{
@@ -153,7 +177,7 @@ public final class Manager
 
 
 	/**	TODO:
-	*/
+	 */
 	public static Player createPlayer(DataSource dataSource)
 		throws IOException, MediaException
 	{
@@ -204,7 +228,7 @@ public final class Manager
 
 	// TODO:
 	/**	TODO:
-	*/
+	 */
 	public static Player createPlayer(InputStream stream,
 					  String strType)
 		throws IOException, MediaException
@@ -245,7 +269,7 @@ public final class Manager
 
 
 	/**	TODO:
-	*/
+	 */
 	public static TimeBase getSystemTimeBase()
 	{
 		return sm_systemTimeBase;
@@ -253,7 +277,7 @@ public final class Manager
 
 
 	/**	TODO:
-	*/
+	 */
 	private static DataSource createDataSource(String strLocator)
 		throws IOException, MediaException
 	{
