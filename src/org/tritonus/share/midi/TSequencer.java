@@ -342,8 +342,13 @@ public abstract class TSequencer
 	public long getTickLength()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTickLength(): begin"); }
+		long	lLength = 0;
+		if (getSequence() != null)
+		{
+			lLength = getSequence().getTickLength();
+		}
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTickLength(): end"); }
-		return getSequence().getTickLength();
+		return lLength;
 	}
 
 
@@ -353,8 +358,13 @@ public abstract class TSequencer
 	public long getMicrosecondLength()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMicrosecondLength(): begin"); }
+		long	lLength = 0;
+		if (getSequence() != null)
+		{
+			lLength = getSequence().getMicrosecondLength();
+		}
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMicrosecondLength(): end"); }
-		return getSequence().getMicrosecondLength();
+		return lLength;
 	}
 
 
@@ -722,6 +732,7 @@ public abstract class TSequencer
 
 	private void updateEnabled()
 	{
+		BitSet	oldEnabledBitSet = (BitSet) m_enabledBitSet.clone();
 		boolean	bSoloExists = m_soloBitSet.length() > 0;
 		if (bSoloExists)
 		{
@@ -741,6 +752,33 @@ public abstract class TSequencer
 				}
 			}
 		}
+		oldEnabledBitSet.xor(m_enabledBitSet);
+		/*	oldEnabledBitSet now has a bit set if the status for
+			this bit changed.
+		*/
+		for (int i = 0; i < oldEnabledBitSet.size(); i++)
+		{
+			if (oldEnabledBitSet.get(i))
+			{
+				setTrackEnabledImpl(i, m_enabledBitSet.get(i));
+			}
+		}
+	}
+
+
+
+	/**	Shows that a track state has changed.
+		This method is called for each track where the enabled
+		state (calculated from mute and solo) has changed.
+		The boolean value passed represents the new state.
+
+		@param nTrack The track number for which the enabled status
+		has changed.
+
+		@param bEnabled The new enabled state for this track.
+	 */
+	protected void setTrackEnabledImpl(int nTrack, boolean bEnabled)
+	{
 	}
 
 
