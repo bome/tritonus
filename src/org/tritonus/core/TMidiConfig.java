@@ -64,20 +64,23 @@ public class TMidiConfig
 
 
 
-	public static synchronized void addMidiDeviceProvider(MidiDeviceProvider reader)
+	public static synchronized void addMidiDeviceProvider(MidiDeviceProvider provider)
 	{
-		getMidiDeviceProvidersImpl().add(reader);
+		TDebug.out("MidiDeviceProvider: " + provider);
+		getMidiDeviceProvidersImpl().add(provider);
 		if (getDefaultMidiDeviceInfo() == null ||
 		    getDefaultSynthesizerInfo() == null ||
 		    getDefaultSequencerInfo() == null)
 		{
-			MidiDevice.Info[]	infos = reader.getDeviceInfo();
+			TDebug.out("hello");
+			MidiDevice.Info[]	infos = provider.getDeviceInfo();
+			TDebug.out("#infos: " + infos.length);
 			for (int i = 0; i < infos.length; i++)
 			{
 				MidiDevice	device = null;
 				try
 				{
-					device = reader.getDevice(infos[i]);
+					device = provider.getDevice(infos[i]);
 				}
 				catch (IllegalArgumentException e)
 				{
@@ -113,9 +116,9 @@ public class TMidiConfig
 
 
 
-	public static synchronized void removeMidiDeviceProvider(MidiDeviceProvider reader)
+	public static synchronized void removeMidiDeviceProvider(MidiDeviceProvider provider)
 	{
-		getMidiDeviceProvidersImpl().remove(reader);
+		getMidiDeviceProvidersImpl().remove(provider);
 		// TODO: change default infos
 	}
 
