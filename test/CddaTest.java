@@ -17,6 +17,7 @@ import	javax.sound.sampled.Line;
 import	javax.sound.sampled.LineUnavailableException;
 
 import	org.tritonus.lowlevel.cdda.CDDA;
+import	org.tritonus.lowlevel.cdda.cooked_ioctl.CookedIoctl;
 
 
 public class CddaTest
@@ -34,7 +35,7 @@ public class CddaTest
 			nTrack = Integer.parseInt(args[0]);
 			bTocOnly = false;
 		}
-		CDDA	cdda = new CDDA();
+		CDDA	cdda = new CookedIoctl();
 		int[]	anValues = new int[2];
 		int[]	anStart = new int[100];
 		int[]	anType = new int[100];
