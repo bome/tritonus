@@ -1,25 +1,51 @@
-Installing instructions for Tritonus, version 0.2.0
+Installing instructions for Tritonus, version 0.3.1
 
 What you need
 =============
 
-- jdk1.2.x or jdk1.1.x for Linux. Testing was done with the Blackdown
-jdk1.2.2 RC3, jdk1.1.7 v3 and jdk1.1.8 v1 (http://www.blackdown.org/). Other
-versions may work.  If you want to use jdk1.1.x you need the 1.1
-collections framework (it's an additional jar file) from
-http://web2.java.sun.com/beans/infobus/ (look down the page).
+- jdk 1.3.x, jdk1.2.x or jdk1.1.x for Linux. Testing was done with the
+Blackdown jdk1.3.0-FCS. Older versions were also tested with Blackdown
+jdk1.2.2 RC3, jdk1.1.7 v3 and jdk1.1.8 v1
+(http://www.blackdown.org/). Other versions may work.  If you want to
+use jdk1.1.x you need the 1.1 collections framework (it's an
+additional jar file) from http://web2.java.sun.com/beans/infobus/
+(look down the page).
 
-- the Enlightened Sound Daemon (esd or EsounD). On Debian systems,
-install the packages esound-common, esound, libesd0 and
+  NOTE: jdk1.1 support may be removed soon.
+
+- Either: the Enlightened Sound Daemon (esd or EsounD). On Debian
+systems, install the packages esound-common, esound, libesd0 and
 libesd0-dev. On Suse systems, install the package esound. If esd is
 not part of your Linux distribution, look at www.gnome.org. Make sure
 you have not only the daemon and the library, but also the header
 files for libesd.
 
-- If you want to use the MIDI stuff: the ALSA drivers (& library)
-version 0.5.1a or later (most recent version recommended). See
-http://www.alsa-project.org/.
+  NOTE: this is kept more or less as a compatibility option. Esd is
+  considered a badly designed program. Using ALSA is highly
+  recommended.
 
+- Or: ALSA 0.9.0beta6 or later or the corresponding cvs state. Get it
+from http://www.alsa-project.org/. It is recommended to use ALSA if
+you want to get high-performance, low-latency operation, or reliable
+full-duplex.
+
+  STILL ANOTHER NOTE: currently, Tritonus' ALSA handling does not do
+  software mixing. This means that for normal JS operation (multiple
+  SourceDataLines/Clips) your soundcard has to support hardware
+  mixing. Common chipsets that do this are emu10k1 (SB Life!) and
+  Trident NX (e.g. Hoontech 4DWaveNX). Otherwise, you will get only
+  one line at a time. In other words: if your soundcard does not do hw
+  mixing, you need to choose the esd options to have multiple lines.
+
+
+For MIDI:
+- Either: ALSA (see above)
+
+- Or: MidiShare. Get it from http://www.grame.fr/MidiShare/.
+
+For the build process:
+- make, ant (optional, get it from http://jakarta.apache.org/ant/), g++,
+libtool
 
 Installing steps
 ================
@@ -31,11 +57,20 @@ tritonus-<version>. cd into the top-level directory.
 top-level directory. If you are building from the cvs, you have to
 create configure from configure.in by calling 'autoconf'.
 
+THE OLD WAY
+
 3. Issue 'make' or 'make compileinitial' (the second one is
 faster). There are spurious compilation errors with some jdk1.1
 versions. Just restart with 'make' (even if you originally said 'make
 compileinitial') and they will go away. This may be necessary several
 times.
+
+
+THE NEW WAY
+
+3. Issue 'ant'.
+
+-- following needs to be updated --
 
 4. Issue 'make install'. This will copy the files tritonus.jar,
 javalayer.jar, libesdtritonus.so.1.0 and libtritonusalsa.so.1.0 into
@@ -58,8 +93,11 @@ this contains the native
 code and should be in your LD_LIBRARY_PATH
 
 If you found bugs, have suggestions, want to contribute or whatever,
-you can contact the author of this library:
-Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+you can contact the authors of this library:
+mailto:tritonus-devel@lists.sourceforge.net
+
+Further information on Tritonus:
+http://www.tritonus.org/
 
 You may also have a look at the Tritonus developer page:
 http://tritonus.sourceforge.net/developer.html
