@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 2000 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,9 +21,7 @@
  *
  */
 
-
 package	org.tritonus.sampled.convert;
-
 
 import	java.util.HashSet;
 import	java.util.Set;
@@ -81,13 +78,13 @@ public class SmartFormatConversionProvider
 	 *	exit of this method, it is removed from this data structure to indicate it is
 	 *	"free".
 	 */
-	private Set	m_blockedThreads;
+	private Set<Thread>	m_blockedThreads;
 
 
 
 	public SmartFormatConversionProvider()
 	{
-		m_blockedThreads = new HashSet();
+		m_blockedThreads = new HashSet<Thread>();
 	}
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -81,22 +81,22 @@ extends TMixer
 	public static final int		DIRECTION_CAPTURE = 2;
 
 
-	/*
+	/**
 	  For the first shot, we try to create one port line per mixer
 	  element. For now, the following two lists should have the same size
 	  and related elements at the same index position.
 	*/
-	private List			m_mixerElements;
+	private List<AlsaMixerElement>	m_mixerElements;
 
-	/*
+	/**
 	  Port.Infos are keys, Port instances are values.
 	*/
-	private Map			m_portMap;
+	private Map<Port.Info, Port>	m_portMap;
 
-	/*
+	/**
 	  Port.Infos are keys, AlsaMixerElement instances are values.
 	*/
-	private Map			m_mixerElementMap;
+	private Map<Port.Info, AlsaMixerElement>	m_mixerElementMap;
 
 
 
@@ -116,9 +116,9 @@ extends TMixer
 			      GlobalInfo.getVersion()),
 		      new Line.Info(Mixer.class));
 		if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.<init>: begin"); }
-		m_mixerElements = new ArrayList();
-		m_mixerElementMap = new HashMap();
-		m_portMap = new HashMap();
+		m_mixerElements = new ArrayList<AlsaMixerElement>();
+		m_mixerElementMap = new HashMap<Port.Info, AlsaMixerElement>();
+		m_portMap = new HashMap<Port.Info, Port>();
 		AlsaMixer	alsaMixer = null;
 		try
 		{
@@ -142,11 +142,11 @@ extends TMixer
 			{
 				break;
 			}
-			if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.<init>: increating array size for AlsaMixer.readControlList(): now " + nArraySize * 2); }
+			if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.<init>: increasing array size for AlsaMixer.readControlList(): now " + nArraySize * 2); }
 			nArraySize *= 2;
 		}
-		List	sourcePortInfos = new ArrayList();
-		List	targetPortInfos = new ArrayList();
+		List<Line.Info>	sourcePortInfos = new ArrayList<Line.Info>();
+		List<Line.Info>	targetPortInfos = new ArrayList<Line.Info>();
 		for (int i = 0; i < nControlCount; i++)
 		{
 			if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.<init>(): control " + i + ": " + anIndices[i] + " " + astrNames[i]); }
@@ -171,8 +171,8 @@ extends TMixer
 			}
 		}
 		setSupportInformation(
-			new ArrayList(),
-			new ArrayList(),
+			new ArrayList<AudioFormat>(),
+			new ArrayList<AudioFormat>(),
 			sourcePortInfos,
 			targetPortInfos);
 		if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.<init>: end."); }
@@ -263,8 +263,7 @@ extends TMixer
 		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.getPort(): begin"); }
-		Port	port = null;
-		port = (Port) m_portMap.get(info);
+		Port	port = m_portMap.get(info);
 		if (port == null)
 		{
 			port = createPort(info);
@@ -278,12 +277,12 @@ extends TMixer
 	private Port createPort(Port.Info info)
 	{
 		if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.createPort(): begin"); }
-		AlsaMixerElement	element = (AlsaMixerElement) m_mixerElementMap.get(info);
+		AlsaMixerElement	element = m_mixerElementMap.get(info);
 		if (element == null)
 		{
 			throw new IllegalArgumentException("no port for this info");
 		}
-		List	controls;
+		List<Control>	controls;
 		Control	c;
 		int	nDirection;
 		if (info.isSource())
@@ -294,7 +293,7 @@ extends TMixer
 		{
 			//nDirection = DIRECTION_CAPTURE;
 			// controls = createTargetPortControls(element);
-			controls = new ArrayList();
+			controls = new ArrayList<Control>();
 		}
 		Port	port = new TPort(this, info, controls);
 		if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.createPort(): end"); }
@@ -304,10 +303,10 @@ extends TMixer
 
 	/**	TODO:
 	 */
-	private List createSourcePortControls(AlsaMixerElement element)
+	private List<Control> createSourcePortControls(AlsaMixerElement element)
 	{
 		int	nDirection = DIRECTION_PLAYBACK;
-		List	controls = new ArrayList();
+		List<Control>	controls = new ArrayList<Control>();
 		Control	c;
 		if (element.hasPlaybackVolume() ||
 		    element.hasCommonVolume())
@@ -320,7 +319,7 @@ extends TMixer
 			}
 			else
 			{
-				List	volumeControls = new ArrayList();
+				List<Control>	volumeControls = new ArrayList<Control>();
 				for (int nChannel = AlsaMixerElement.SND_MIXER_SCHN_FRONT_LEFT; nChannel < AlsaMixerElement.SND_MIXER_SCHN_LAST; nChannel++)
 				{
 					if (element.hasPlaybackChannel(nChannel))
@@ -333,7 +332,7 @@ extends TMixer
 				}
 				// list should not be empty
 				CompoundControl.Type	type = new TCompoundControlType("test");
-				Control[]	aMemberControls = (Control[]) volumeControls.toArray(new Control[0]);
+				Control[]	aMemberControls = volumeControls.toArray(new Control[0]);
 				// System.out.println("member controls: " + aMemberControls);
 				// System.out.println("# member controls: " + aMemberControls.length);
 				c = new AlsaCompoundControl(type, aMemberControls);
@@ -351,7 +350,7 @@ extends TMixer
 			}
 			else
 			{
-				List	volumeControls = new ArrayList();
+				List<Control>	volumeControls = new ArrayList<Control>();
 				for (int nChannel = AlsaMixerElement.SND_MIXER_SCHN_FRONT_LEFT; nChannel < AlsaMixerElement.SND_MIXER_SCHN_LAST; nChannel++)
 				{
 					if (element.hasPlaybackChannel(nChannel))
@@ -364,7 +363,7 @@ extends TMixer
 				}
 				// list should not be empty
 				CompoundControl.Type	type = new TCompoundControlType("test");
-				Control[]	aMemberControls = (Control[]) volumeControls.toArray(new Control[0]);
+				Control[]	aMemberControls = volumeControls.toArray(new Control[0]);
 				// System.out.println("member controls: " + aMemberControls);
 				// System.out.println("# member controls: " + aMemberControls.length);
 				c = new AlsaCompoundControl(type, aMemberControls);

@@ -229,8 +229,8 @@ public class FloatSampleTools {
 	 * @see #byte2floatInterleaved(byte[],int,float[],int,int,AudioFormat)
 	 */
 	public static void byte2float(byte[] input, int inByteOffset,
-	                              //List<float[]> output, int outOffset, int frameCount,
-	                              List output, int outOffset, int frameCount,
+	                              List<float[]> output, int outOffset, int frameCount,
+	                              //List output, int outOffset, int frameCount,
 	                              AudioFormat format) {
 		for (int channel = 0; channel < format.getChannels(); channel++) {
 			float[] data;
@@ -238,7 +238,7 @@ public class FloatSampleTools {
 				data = new float[frameCount + outOffset];
 				output.add(data);
 			} else {
-				data = (float[]) output.get(channel);
+				data = output.get(channel);
 				if (data.length < frameCount + outOffset) {
 					data = new float[frameCount + outOffset];
 					output.set(channel, data);

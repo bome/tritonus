@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -125,16 +124,16 @@ public class AlsaDataLineMixer
 		      new Line.Info(Mixer.class));
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.<init>(String): begin."); }
 		m_strPcmName = strPcmName;
-		List	sourceFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_PLAYBACK);
-		List	targetFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_CAPTURE);
-		List	sourceLineInfos = new ArrayList();
+		List<AudioFormat>	sourceFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_PLAYBACK);
+		List<AudioFormat>	targetFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_CAPTURE);
+		List<Line.Info>	sourceLineInfos = new ArrayList<Line.Info>();
 		Line.Info	sourceLineInfo = new DataLine.Info(
 			SourceDataLine.class,
-			(AudioFormat[]) sourceFormats.toArray(EMPTY_AUDIOFORMAT_ARRAY),
+			sourceFormats.toArray(EMPTY_AUDIOFORMAT_ARRAY),
 			AudioSystem.NOT_SPECIFIED,
 			AudioSystem.NOT_SPECIFIED);
 		sourceLineInfos.add(sourceLineInfo);
-		List	targetLineInfos = new ArrayList();
+		List<Line.Info>	targetLineInfos = new ArrayList<Line.Info>();
 		Line.Info	targetLineInfo = new DataLine.Info(
 			TargetDataLine.class,
 			(AudioFormat[]) targetFormats.toArray(EMPTY_AUDIOFORMAT_ARRAY),
@@ -254,11 +253,11 @@ public class AlsaDataLineMixer
 	  nDirection: should be AlsaPcm.SND_PCM_STREAM_PLAYBACK or
 	  AlsaPcm.SND_PCM_STREAM_CAPTURE.
 	 */
-	private List getSupportedFormats(int nDirection)
+	private List<AudioFormat> getSupportedFormats(int nDirection)
 	{
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): begin"); }
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): direction: " + nDirection); }
-		List	supportedFormats = new ArrayList();
+		List<AudioFormat>	supportedFormats = new ArrayList<AudioFormat>();
 		AlsaPcm	alsaPcm = null;
 		try
 		{
@@ -312,7 +311,7 @@ public class AlsaDataLineMixer
 
 
 	private static void addChanneledAudioFormats(
-		Collection collection,
+		Collection<AudioFormat> collection,
 		AudioFormat protoAudioFormat,
 		int nMinChannels,
 		int nMaxChannels)

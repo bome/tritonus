@@ -32,40 +32,36 @@ import	java.util.ArrayList;
 import	java.util.List;
 import	java.util.Iterator;
 
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineEvent;
+
 
 
 public class TNotifier
-	extends	Thread
+extends	Thread
 {
 	public static class NotifyEntry
 	{
 		private EventObject	m_event;
-		private List		m_listeners;
+		private List<LineListener>	m_listeners;
 
 
 
-		public NotifyEntry(EventObject event, Collection listeners)
+		public NotifyEntry(EventObject event, Collection<LineListener> listeners)
 		{
 			m_event = event;
-			m_listeners = new ArrayList(listeners);
+			m_listeners = new ArrayList<LineListener>(listeners);
 		}
 
 
 		public void deliver()
 		{
 			// TDebug.out("%% TNotifier.NotifyEntry.deliver(): called.");
-			Iterator	iterator = m_listeners.iterator();
+			Iterator<LineListener>	iterator = m_listeners.iterator();
 			while (iterator.hasNext())
 			{
-				Object	listener = iterator.next();
-				if (listener instanceof javax.sound.sampled.LineListener)
-				{
-					((javax.sound.sampled.LineListener) listener).update((javax.sound.sampled.LineEvent) m_event);
-				}
-				else
-				{
-					// TODO: error message
-				}
+				LineListener	listener = iterator.next();
+				listener.update((LineEvent) m_event);
 			}
 		}
 	}
@@ -85,18 +81,18 @@ public class TNotifier
 	/**	The queue of events to deliver.
 	 *	The entries are of class NotifyEntry.
 	 */
-	private List	m_entries;
+	private List<NotifyEntry>	m_entries;
 
 
 	public TNotifier()
 	{
 		super("Tritonus Notifier");
-		m_entries = new ArrayList();
+		m_entries = new ArrayList<NotifyEntry>();
 	}
 
 
 
-	public void addEntry(EventObject event, Collection listeners)
+	public void addEntry(EventObject event, Collection<LineListener> listeners)
 	{
 		// TDebug.out("%% TNotifier.addEntry(): called.");
 		synchronized (m_entries)
@@ -129,7 +125,7 @@ public class TNotifier
 						}
 					}
 				}
-				entry = (NotifyEntry) m_entries.remove(0);
+				entry = m_entries.remove(0);
 			}
 			entry.deliver();
 		}

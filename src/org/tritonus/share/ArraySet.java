@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer
+ *  Copyright (c) 1999 -2004 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify

@@ -22,9 +22,7 @@
  *
  */
 
-
 package	org.tritonus.share.sampled.file;
-
 
 import	java.io.File;
 import	java.io.FileOutputStream;
@@ -44,7 +42,6 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.AudioUtils;
 import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.ArraySet;
 
 /**
@@ -60,12 +57,12 @@ import	org.tritonus.share.ArraySet;
  */
 
 public abstract class TAudioFileWriter
-	extends		AudioFileWriter
+extends AudioFileWriter
 {
 	protected static final int	ALL = AudioSystem.NOT_SPECIFIED;
 
-	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
-	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
+	public static AudioFormat.Encoding PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
+	public static AudioFormat.Encoding PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
 
 	/**	Buffer length for the loop in the write() method.
 	 *	This is in bytes. Perhaps it should be in frames to give an
@@ -80,7 +77,7 @@ public abstract class TAudioFileWriter
 	/**	The audio file types (AudioFileFormat.Type) that can be
 	 *	handled by the AudioFileWriter.
 	 */
-	private Collection		m_audioFileTypes;
+	private Collection<AudioFileFormat.Type>	m_audioFileTypes;
 
 
 
@@ -88,15 +85,15 @@ public abstract class TAudioFileWriter
 	 *	AudioFileWriter.
 	 */
 	// IDEA: implement a special collection that uses matches() to test whether an element is already in
-	private Collection		m_audioFormats;
+	private Collection<AudioFormat>		m_audioFormats;
 
 
 	/**
 	 * Inheriting classes should call this constructor
 	 * in order to make use of the functionality of TAudioFileWriter.
 	 */
-	protected TAudioFileWriter(Collection fileTypes,
-				   Collection audioFormats)
+	protected TAudioFileWriter(Collection<AudioFileFormat.Type> fileTypes,
+				   Collection<AudioFormat> audioFormats)
 	{
 		if (TDebug.TraceAudioFileWriter) { TDebug.out("TAudioFileWriter.<init>(): begin"); }
 		m_audioFileTypes = fileTypes;
@@ -107,7 +104,7 @@ public abstract class TAudioFileWriter
 	// implementing the interface
 	public AudioFileFormat.Type[] getAudioFileTypes()
 	{
-		return (AudioFileFormat.Type[]) m_audioFileTypes.toArray(NULL_TYPE_ARRAY);
+		return m_audioFileTypes.toArray(NULL_TYPE_ARRAY);
 	}
 
 
@@ -126,15 +123,15 @@ public abstract class TAudioFileWriter
 		//$$fb 2000-08-16: rewrote this method. We need to check for *each*
                 //                 file type, whether the format is supported !
 		AudioFormat	format = audioInputStream.getFormat();
-		ArraySet res=new ArraySet();
-		Iterator it=m_audioFileTypes.iterator();
+		ArraySet<AudioFileFormat.Type> res=new ArraySet<AudioFileFormat.Type>();
+		Iterator<AudioFileFormat.Type> it=m_audioFileTypes.iterator();
 		while (it.hasNext()) {
-			AudioFileFormat.Type thisType=(AudioFileFormat.Type) it.next();
+			AudioFileFormat.Type thisType = it.next();
 			if (isAudioFormatSupportedImpl(format, thisType)) {
 				res.add(thisType);
 			}
 		}
-		return (AudioFileFormat.Type[]) res.toArray(NULL_TYPE_ARRAY);
+		return res.toArray(NULL_TYPE_ARRAY);
 	}
 
 
@@ -337,7 +334,7 @@ public abstract class TAudioFileWriter
 	 *	handled AudioFormats depend on the file type, this method
 	 *	has to be overwritten by subclasses.
 	 */
-	protected Iterator getSupportedAudioFormats(AudioFileFormat.Type fileType)
+	protected Iterator<AudioFormat> getSupportedAudioFormats(AudioFileFormat.Type fileType)
 	{
 		return m_audioFormats.iterator();
 	}

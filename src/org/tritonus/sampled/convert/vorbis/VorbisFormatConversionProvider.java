@@ -46,7 +46,6 @@ import org.tritonus.lowlevel.vorbis.Info;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.AudioFormats;
-import org.tritonus.share.sampled.Encodings;
 import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 
@@ -62,8 +61,8 @@ public class VorbisFormatConversionProvider
 extends TEncodingFormatConversionProvider
 {
 	// only used as abbreviation
-	private static final AudioFormat.Encoding	VORBIS = Encodings.getEncoding("VORBIS");
-	private static final AudioFormat.Encoding	PCM_SIGNED = Encodings.getEncoding("PCM_SIGNED");
+	private static final AudioFormat.Encoding	VORBIS = new AudioFormat.Encoding("VORBIS");
+	private static final AudioFormat.Encoding	PCM_SIGNED = new AudioFormat.Encoding("PCM_SIGNED");
 
 
 	private static final AudioFormat[]	INPUT_FORMATS =

@@ -49,7 +49,7 @@ public class AlsaMidiDeviceProvider
 	private static final int	READ_CAPABILITY = AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ;
 	private static final int	WRITE_CAPABILITY = AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE;
 
-	private static List		m_devices;
+	private static List<MidiDevice>		m_devices;
 	private static AlsaSeq	m_alsaSeq;
 
 
@@ -61,7 +61,7 @@ public class AlsaMidiDeviceProvider
 		{
 			if (m_devices == null)
 			{
-				m_devices = new ArrayList();
+				m_devices = new ArrayList<MidiDevice>();
 				if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.<init>(): creating AlsaSeq..."); }
 				// try{
 				m_alsaSeq = new AlsaSeq("Tritonus ALSA device manager");
@@ -78,15 +78,15 @@ public class AlsaMidiDeviceProvider
 	public MidiDevice.Info[] getDeviceInfo()
 	{
 		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDeviceInfo(): begin"); }
-		List		infoList = new ArrayList();
-		Iterator	iterator = m_devices.iterator();
+		List<MidiDevice.Info>	infoList = new ArrayList<MidiDevice.Info>();
+		Iterator<MidiDevice>	iterator = m_devices.iterator();
 		while (iterator.hasNext())
 		{
-			MidiDevice	device = (MidiDevice) iterator.next();
+			MidiDevice	device = iterator.next();
 			MidiDevice.Info	info = device.getDeviceInfo();
 			infoList.add(info);
 		}
-		MidiDevice.Info[]	infos = (MidiDevice.Info[]) infoList.toArray(EMPTY_INFO_ARRAY);
+		MidiDevice.Info[]	infos = infoList.toArray(EMPTY_INFO_ARRAY);
 		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDeviceInfo(): end"); }
 		return infos;
 	}
@@ -97,10 +97,10 @@ public class AlsaMidiDeviceProvider
 	{
 		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDevice(): begin"); }
 		MidiDevice	returnedDevice = null;
-		Iterator	iterator = m_devices.iterator();
+		Iterator<MidiDevice>	iterator = m_devices.iterator();
 		while (iterator.hasNext())
 		{
-			MidiDevice	device = (MidiDevice) iterator.next();
+			MidiDevice	device = iterator.next();
 			MidiDevice.Info	info2 = device.getDeviceInfo();
 			if (info != null && info.equals(info2))
 			{

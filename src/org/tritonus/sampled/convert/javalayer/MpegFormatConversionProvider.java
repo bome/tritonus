@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,9 +21,7 @@
  *
  */
 
-
 package	org.tritonus.sampled.convert.javalayer;
-
 
 import	java.io.InputStream;
 import	java.io.IOException;
@@ -36,9 +33,8 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.convert.TMatrixFormatConversionProvider;
+import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
 import	javazoom.jl.decoder.Bitstream;
@@ -49,311 +45,130 @@ import	javazoom.jl.decoder.Header;
 import	javazoom.jl.decoder.Obuffer;
 
 /**
- * ConversionProvider for MPEG files.
+ * ConversionProvider for decoding of mp3 files.
  *
  * @author Matthias Pfisterer
  */
 
 
 public class MpegFormatConversionProvider
-	extends		TMatrixFormatConversionProvider
+extends TEncodingFormatConversionProvider
 {
+	// only used as abbreviation
+	public static final AudioFormat.Encoding	MPEG1L1 = new AudioFormat.Encoding("MPEG1L1");
+	public static final AudioFormat.Encoding	MPEG1L2 = new AudioFormat.Encoding("MPEG1L2");
+	public static final AudioFormat.Encoding	MPEG1L3 = new AudioFormat.Encoding("MPEG1L3");
+	public static final AudioFormat.Encoding	MPEG2L1 = new AudioFormat.Encoding("MPEG2L1");
+	public static final AudioFormat.Encoding	MPEG2L2 = new AudioFormat.Encoding("MPEG2L2");
+	public static final AudioFormat.Encoding	MPEG2L3 = new AudioFormat.Encoding("MPEG2L3");
+	public static final AudioFormat.Encoding	MPEG2DOT5L1 = new AudioFormat.Encoding("MPEG2DOT5L1");
+	public static final AudioFormat.Encoding	MPEG2DOT5L2 = new AudioFormat.Encoding("MPEG2DOT5L2");
+	public static final AudioFormat.Encoding	MPEG2DOT5L3 = new AudioFormat.Encoding("MPEG2DOT5L3");
 
-	public static final AudioFormat.Encoding	MPEG1L1 = Encodings.getEncoding("MPEG1L1");
-	public static final AudioFormat.Encoding	MPEG1L2 = Encodings.getEncoding("MPEG1L2");
-	public static final AudioFormat.Encoding	MPEG1L3 = Encodings.getEncoding("MPEG1L3");
-	public static final AudioFormat.Encoding	MPEG2L1 = Encodings.getEncoding("MPEG2L1");
-	public static final AudioFormat.Encoding	MPEG2L2 = Encodings.getEncoding("MPEG2L2");
-	public static final AudioFormat.Encoding	MPEG2L3 = Encodings.getEncoding("MPEG2L3");
-	public static final AudioFormat.Encoding	MPEG2DOT5L1 = Encodings.getEncoding("MPEG2DOT5L1");
-	public static final AudioFormat.Encoding	MPEG2DOT5L2 = Encodings.getEncoding("MPEG2DOT5L2");
-	public static final AudioFormat.Encoding	MPEG2DOT5L3 = Encodings.getEncoding("MPEG2DOT5L3");
+	private static final AudioFormat.Encoding	PCM_SIGNED = AudioFormat.Encoding.PCM_SIGNED;
 
-/*
-  private static final AudioFormat.Encoding[]	INPUT_ENCODINGS =
-  {
-  MPEG1L1, MPEG1L2, MPEG1L3,
-  MPEG2L1, MPEG2L2, MPEG2L3,
-  MPEG2DOT5L1, MPEG2DOT5L2, MPEG2DOT5L3
-  };
-  private static final AudioFormat.Encoding[]	OUTPUT_ENCODINGS =
-  {
-  AudioFormat.Encoding.PCM_SIGNED
-  };
-*/
 
-	// TODO: frame size, frame rate, sample size, endianess?
+	/* TODO: mechanism to make the double specification with
+	   different endianess obsolete. */
 	private static final AudioFormat[]	INPUT_FORMATS =
 	{
-		new AudioFormat(MPEG1L1, 32000.0F, -1, 1, -1, -1, false),	// 0
-		new AudioFormat(MPEG1L1, 32000.0F, -1, 2, -1, -1, false),	// 1
-		new AudioFormat(MPEG1L1, 44100.0F, -1, 1, -1, -1, false),	// 2
-		new AudioFormat(MPEG1L1, 44100.0F, -1, 2, -1, -1, false),	// 3
-		new AudioFormat(MPEG1L1, 48000.0F, -1, 1, -1, -1, false),	// 4
-		new AudioFormat(MPEG1L1, 48000.0F, -1, 2, -1, -1, false),	// 5
+		// mono
+		new AudioFormat(MPEG1L1, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG1L1, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG1L1, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG1L1, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG1L2, 32000.0F, -1, 1, -1, -1, false),	// 6
-		new AudioFormat(MPEG1L2, 32000.0F, -1, 2, -1, -1, false),	// 7
-		new AudioFormat(MPEG1L2, 44100.0F, -1, 1, -1, -1, false),	// 8
-		new AudioFormat(MPEG1L2, 44100.0F, -1, 2, -1, -1, false),	// 9
-		new AudioFormat(MPEG1L2, 48000.0F, -1, 1, -1, -1, false),	// 10
-		new AudioFormat(MPEG1L2, 48000.0F, -1, 2, -1, -1, false),	// 11
+		// mono
+		new AudioFormat(MPEG1L2, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG1L2, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG1L2, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG1L2, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG1L3, 32000.0F, -1, 1, -1, -1, false),	// 12
-		new AudioFormat(MPEG1L3, 32000.0F, -1, 2, -1, -1, false),	// 13
-		new AudioFormat(MPEG1L3, 44100.0F, -1, 1, -1, -1, false),	// 14
-		new AudioFormat(MPEG1L3, 44100.0F, -1, 2, -1, -1, false),	// 15
-		new AudioFormat(MPEG1L3, 48000.0F, -1, 1, -1, -1, false),	// 16
-		new AudioFormat(MPEG1L3, 48000.0F, -1, 2, -1, -1, false),	// 17
+		// mono
+		new AudioFormat(MPEG1L3, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG1L3, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG1L3, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG1L3, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG2L1, 16000.0F, -1, 1, -1, -1, false),	// 18
-		new AudioFormat(MPEG2L1, 16000.0F, -1, 2, -1, -1, false),	// 19
-		new AudioFormat(MPEG2L1, 22050.0F, -1, 1, -1, -1, false),	// 20
-		new AudioFormat(MPEG2L1, 22050.0F, -1, 2, -1, -1, false),	// 21
-		new AudioFormat(MPEG2L1, 24000.0F, -1, 1, -1, -1, false),	// 22
-		new AudioFormat(MPEG2L1, 24000.0F, -1, 2, -1, -1, false),	// 23
+		// mono
+		new AudioFormat(MPEG2L1, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG2L1, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG2L1, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG2L1, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG2L2, 16000.0F, -1, 1, -1, -1, false),	// 24
-		new AudioFormat(MPEG2L2, 16000.0F, -1, 2, -1, -1, false),	// 25
-		new AudioFormat(MPEG2L2, 22050.0F, -1, 1, -1, -1, false),	// 26
-		new AudioFormat(MPEG2L2, 22050.0F, -1, 2, -1, -1, false),	// 27
-		new AudioFormat(MPEG2L2, 24000.0F, -1, 1, -1, -1, false),	// 28
-		new AudioFormat(MPEG2L2, 24000.0F, -1, 2, -1, -1, false),	// 29
+		// mono
+		new AudioFormat(MPEG2L2, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG2L2, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG2L2, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG2L2, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG2L3, 16000.0F, -1, 1, -1, -1, false),	// 30
-		new AudioFormat(MPEG2L3, 16000.0F, -1, 2, -1, -1, false),	// 31
-		new AudioFormat(MPEG2L3, 22050.0F, -1, 1, -1, -1, false),	// 32
-		new AudioFormat(MPEG2L3, 22050.0F, -1, 2, -1, -1, false),	// 33
-		new AudioFormat(MPEG2L3, 24000.0F, -1, 1, -1, -1, false),	// 34
-		new AudioFormat(MPEG2L3, 24000.0F, -1, 2, -1, -1, false),	// 35
+		// mono
+		new AudioFormat(MPEG2L3, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG2L3, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG2L3, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG2L3, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG2DOT5L1, 8000.0F, -1, 1, -1, -1, false),	// 36
-		new AudioFormat(MPEG2DOT5L1, 8000.0F, -1, 2, -1, -1, false),	// 37
-		new AudioFormat(MPEG2DOT5L1, 11025.0F, -1, 1, -1, -1, false),	// 38
-		new AudioFormat(MPEG2DOT5L1, 11025.0F, -1, 2, -1, -1, false),	// 39
-		new AudioFormat(MPEG2DOT5L1, 12000.0F, -1, 1, -1, -1, false),	// 40
-		new AudioFormat(MPEG2DOT5L1, 12000.0F, -1, 2, -1, -1, false),	// 41
+		// mono
+		new AudioFormat(MPEG2DOT5L1, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG2DOT5L1, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG2DOT5L1, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG2DOT5L1, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG2DOT5L2, 8000.0F, -1, 1, -1, -1, false),	// 42
-		new AudioFormat(MPEG2DOT5L2, 8000.0F, -1, 2, -1, -1, false),	// 43
-		new AudioFormat(MPEG2DOT5L2, 11025.0F, -1, 1, -1, -1, false),	// 44
-		new AudioFormat(MPEG2DOT5L2, 11025.0F, -1, 2, -1, -1, false),	// 45
-		new AudioFormat(MPEG2DOT5L2, 12000.0F, -1, 1, -1, -1, false),	// 46
-		new AudioFormat(MPEG2DOT5L2, 12000.0F, -1, 2, -1, -1, false),	// 47
+		// mono
+		new AudioFormat(MPEG2DOT5L2, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG2DOT5L2, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG2DOT5L2, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG2DOT5L2, -1.0F, -1, 2, -1, -1.0F, true),
 
-		new AudioFormat(MPEG2DOT5L3, 8000.0F, -1, 1, -1, -1, false),	// 48
-		new AudioFormat(MPEG2DOT5L3, 8000.0F, -1, 2, -1, -1, false),	// 49
-		new AudioFormat(MPEG2DOT5L3, 11025.0F, -1, 1, -1, -1, false),	// 50
-		new AudioFormat(MPEG2DOT5L3, 11025.0F, -1, 2, -1, -1, false),	// 51
-		new AudioFormat(MPEG2DOT5L3, 12000.0F, -1, 1, -1, -1, false),	// 52
-		new AudioFormat(MPEG2DOT5L3, 12000.0F, -1, 2, -1, -1, false),	// 53
+		// mono
+		new AudioFormat(MPEG2DOT5L3, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(MPEG2DOT5L3, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(MPEG2DOT5L3, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(MPEG2DOT5L3, -1.0F, -1, 2, -1, -1.0F, true),
 	};
 
 
 	private static final AudioFormat[]	OUTPUT_FORMATS =
 	{
-		new AudioFormat(8000.0F, 16, 1, true, false),	// 0
-		new AudioFormat(8000.0F, 16, 1, true, true),	// 1
-		new AudioFormat(8000.0F, 16, 2, true, false),	// 2
-		new AudioFormat(8000.0F, 16, 2, true, true),	// 3
+		// mono, 16 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, true),
+
+		// stereo, 16 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 2, 4, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 2, 4, -1.0F, true),
+
 /*	24 and 32 bit not yet possible
-	new AudioFormat(8000.0F, 24, 1, true, false),
-	new AudioFormat(8000.0F, 24, 1, true, true),
-	new AudioFormat(8000.0F, 24, 2, true, false),
-	new AudioFormat(8000.0F, 24, 2, true, true),
-	new AudioFormat(8000.0F, 32, 1, true, false),
-	new AudioFormat(8000.0F, 32, 1, true, true),
-	new AudioFormat(8000.0F, 32, 2, true, false),
-	new AudioFormat(8000.0F, 32, 2, true, true),
-*/
-		new AudioFormat(11025.0F, 16, 1, true, false),	// 4
-		new AudioFormat(11025.0F, 16, 1, true, true),	// 5
-		new AudioFormat(11025.0F, 16, 2, true, false),	// 6
-		new AudioFormat(11025.0F, 16, 2, true, true),	// 7
-/*	24 and 32 bit not yet possible
-	new AudioFormat(11025.0F, 24, 1, true, false),
-	new AudioFormat(11025.0F, 24, 1, true, true),
-	new AudioFormat(11025.0F, 24, 2, true, false),
-	new AudioFormat(11025.0F, 24, 2, true, true),
-	new AudioFormat(11025.0F, 32, 1, true, false),
-	new AudioFormat(11025.0F, 32, 1, true, true),
-	new AudioFormat(11025.0F, 32, 2, true, false),
-	new AudioFormat(11025.0F, 32, 2, true, true),
-*/
-		new AudioFormat(12000.0F, 16, 1, true, false),	// 8
-		new AudioFormat(12000.0F, 16, 1, true, true),	// 9
-		new AudioFormat(12000.0F, 16, 2, true, false),	// 10
-		new AudioFormat(12000.0F, 16, 2, true, true),	// 11
-/*	24 and 32 bit not yet possible
-	new AudioFormat(12000.0F, 24, 1, true, false),
-	new AudioFormat(12000.0F, 24, 1, true, true),
-	new AudioFormat(12000.0F, 24, 2, true, false),
-	new AudioFormat(12000.0F, 24, 2, true, true),
-	new AudioFormat(12000.0F, 32, 1, true, false),
-	new AudioFormat(12000.0F, 32, 1, true, true),
-	new AudioFormat(12000.0F, 32, 2, true, false),
-	new AudioFormat(12000.0F, 32, 2, true, true),
-*/
-		new AudioFormat(16000.0F, 16, 1, true, false),	// 12
-		new AudioFormat(16000.0F, 16, 1, true, true),	// 13
-		new AudioFormat(16000.0F, 16, 2, true, false),	// 14
-		new AudioFormat(16000.0F, 16, 2, true, true),	// 15
-/*	24 and 32 bit not yet possible
-	new AudioFormat(16000.0F, 24, 1, true, false),
-	new AudioFormat(16000.0F, 24, 1, true, true),
-	new AudioFormat(16000.0F, 24, 2, true, false),
-	new AudioFormat(16000.0F, 24, 2, true, true),
-	new AudioFormat(16000.0F, 32, 1, true, false),
-	new AudioFormat(16000.0F, 32, 1, true, true),
-	new AudioFormat(16000.0F, 32, 2, true, false),
-	new AudioFormat(16000.0F, 32, 2, true, true),
-*/
-		new AudioFormat(22050.0F, 16, 1, true, false),	// 16
-		new AudioFormat(22050.0F, 16, 1, true, true),	// 17
-		new AudioFormat(22050.0F, 16, 2, true, false),	// 18
-		new AudioFormat(22050.0F, 16, 2, true, true),	// 19
-/*	24 and 32 bit not yet possible
-	new AudioFormat(22050.0F, 24, 1, true, false),
-	new AudioFormat(22050.0F, 24, 1, true, true),
-	new AudioFormat(22050.0F, 24, 2, true, false),
-	new AudioFormat(22050.0F, 24, 2, true, true),
-	new AudioFormat(22050.0F, 32, 1, true, false),
-	new AudioFormat(22050.0F, 32, 1, true, true),
-	new AudioFormat(22050.0F, 32, 2, true, false),
-	new AudioFormat(22050.0F, 32, 2, true, true),
-*/
-		new AudioFormat(24000.0F, 16, 1, true, false),	// 20
-		new AudioFormat(24000.0F, 16, 1, true, true),	// 21
-		new AudioFormat(24000.0F, 16, 2, true, false),	// 22
-		new AudioFormat(24000.0F, 16, 2, true, true),	// 23
-/*	24 and 32 bit not yet possible
-	new AudioFormat(24000.0F, 24, 1, true, false),
-	new AudioFormat(24000.0F, 24, 1, true, true),
-	new AudioFormat(24000.0F, 24, 2, true, false),
-	new AudioFormat(24000.0F, 24, 2, true, true),
-	new AudioFormat(24000.0F, 32, 1, true, false),
-	new AudioFormat(24000.0F, 32, 1, true, true),
-	new AudioFormat(24000.0F, 32, 2, true, false),
-	new AudioFormat(24000.0F, 32, 2, true, true),
-*/
-		new AudioFormat(32000.0F, 16, 1, true, false),	// 24
-		new AudioFormat(32000.0F, 16, 1, true, true),	// 25
-		new AudioFormat(32000.0F, 16, 2, true, false),	// 26
-		new AudioFormat(32000.0F, 16, 2, true, true),	// 27
-/*	24 and 32 bit not yet possible
-	new AudioFormat(32000.0F, 24, 1, true, false),
-	new AudioFormat(32000.0F, 24, 1, true, true),
-	new AudioFormat(32000.0F, 24, 2, true, false),
-	new AudioFormat(32000.0F, 24, 2, true, true),
-	new AudioFormat(32000.0F, 32, 1, true, false),
-	new AudioFormat(32000.0F, 32, 1, true, true),
-	new AudioFormat(32000.0F, 32, 2, true, false),
-	new AudioFormat(32000.0F, 32, 2, true, true),
-*/
-		new AudioFormat(44100.0F, 16, 1, true, false),	// 28
-		new AudioFormat(44100.0F, 16, 1, true, true),	// 29
-		new AudioFormat(44100.0F, 16, 2, true, false),	// 30
-		new AudioFormat(44100.0F, 16, 2, true, true),	// 31
-/*	24 and 32 bit not yet possible
-	new AudioFormat(44100.0F, 24, 1, true, false),
-	new AudioFormat(44100.0F, 24, 1, true, true),
-	new AudioFormat(44100.0F, 24, 2, true, false),
-	new AudioFormat(44100.0F, 24, 2, true, true),
-	new AudioFormat(44100.0F, 32, 1, true, false),
-	new AudioFormat(44100.0F, 32, 1, true, true),
-	new AudioFormat(44100.0F, 32, 2, true, false),
-	new AudioFormat(44100.0F, 32, 2, true, true),
-*/
-		new AudioFormat(48000.0F, 16, 1, true, false),	// 32
-		new AudioFormat(48000.0F, 16, 1, true, true),	// 33
-		new AudioFormat(48000.0F, 16, 2, true, false),	// 34
-		new AudioFormat(48000.0F, 16, 2, true, true),	// 35
-/*	24 and 32 bit not yet possible
-	new AudioFormat(48000.0F, 24, 1, true, false),
-	new AudioFormat(48000.0F, 24, 1, true, true),
-	new AudioFormat(48000.0F, 24, 2, true, false),
-	new AudioFormat(48000.0F, 24, 2, true, true),
-	new AudioFormat(48000.0F, 32, 1, true, false),
-	new AudioFormat(48000.0F, 32, 1, true, true),
-	new AudioFormat(48000.0F, 32, 2, true, false),
-	new AudioFormat(48000.0F, 32, 2, true, true),
+		// mono, 24 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 24, 1, 3, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 24, 1, 3, -1.0F, true),
+
+		// stereo, 24 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 24, 2, 6, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 24, 2, 6, -1.0F, true),
+
+		// mono, 32 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 32, 1, 4, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 32, 1, 4, -1.0F, true),
+
+		// stereo, 32 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 32, 2, 8, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 32, 2, 8, -1.0F, true),
 */
 	};
 
 
-	private static final boolean	t = true;
-	private static final boolean	f = false;
-
-	/*
-	 *	One row for each source format.
-	 */
-	private static final boolean[][]	CONVERSIONS =
-	{
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f},	// 0
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f},	// 1
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f},	// 2
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f},	// 3
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f},	// 4
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t},	// 5
-
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f},	// 6
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f},	// 7
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f},	// 8
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f},	// 9
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f},	// 10
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t},	// 11
-
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f},	// 12
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f},	// 13
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f},	// 14
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f},	// 15
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f},	// 16
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t},	// 17
-
-		{f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 18
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 19 
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 20
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 21
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 22
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f},	// 23
-
-		{f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 24
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 25
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 26
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 27
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 28
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f},	// 29
-
-		{f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 30
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 31
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 32
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 33
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 34
-		{f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f},	// 35
-
-		{t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 36
-		{f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 37
-		{f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 38
-		{f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 39
-		{f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 40
-		{f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 41
-
-		{t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 42
-		{f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 43
-		{f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 44
-		{f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 45
-		{f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 46
-		{f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 47
-
-		{t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 48
-		{f,f,t,t,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 49
-		{f,f,f,f,t,t,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 50
-		{f,f,f,f,f,f,t,t,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 51
-		{f,f,f,f,f,f,f,f,t,t, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 52
-		{f,f,f,f,f,f,f,f,f,f, t,t,f,f,f,f,f,f,f,f, f,f,f,f,f,f,f,f,f,f, f,f,f,f,f,f},	// 53
-
-	};
-
+// 	private static final boolean	t = true;
+// 	private static final boolean	f = false;
 
 
 	/**	Constructor.
@@ -361,8 +176,10 @@ public class MpegFormatConversionProvider
 	public MpegFormatConversionProvider()
 	{
 		super(Arrays.asList(INPUT_FORMATS),
-		      Arrays.asList(OUTPUT_FORMATS),
-		      CONVERSIONS);
+		      Arrays.asList(OUTPUT_FORMATS)/*,
+						     true, // new behaviour
+						     false*/);
+		// bidirectional .. constants UNIDIR../BIDIR..?
 		if (TDebug.TraceAudioConverter) { TDebug.out("MpegFormatConversionProvider.<init>(): begin"); }
 		if (TDebug.TraceAudioConverter) { TDebug.out("MpegFormatConversionProvider.<init>(): end"); }
 	}

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,7 +21,6 @@
  */
 
 package	javax.sound.midi;
-
 
 import	java.io.File;
 import	java.io.InputStream;
@@ -313,23 +312,23 @@ public class MidiSystem
 
 	public static int[] getMidiFileTypes()
 	{
-		Set	fileTypes = new ArraySet();
-		Iterator	writers = TMidiConfig.getMidiFileWriters();
+		Set<Integer> fileTypes = new ArraySet<Integer>();
+		Iterator<MidiFileWriter>	writers = TMidiConfig.getMidiFileWriters();
 		while (writers.hasNext())
 		{
-			MidiFileWriter	writer = (MidiFileWriter) writers.next();
+			MidiFileWriter	writer = writers.next();
 			int[]	anTypes = writer.getMidiFileTypes();
 			for (int i = 0; i < anTypes.length; i++)
 			{
-				fileTypes.add(new Integer(anTypes[i]));
+				fileTypes.add(anTypes[i]);
 			}
 		}
 		int[]	anTypes = new int[fileTypes.size()];
-		Iterator	types = fileTypes.iterator();
+		Iterator<Integer>	types = fileTypes.iterator();
 		int	nIndex = 0;
 		while (types.hasNext())
 		{
-			Integer	type = (Integer) types.next();
+			Integer	type = types.next();
 			anTypes[nIndex] = type.intValue();
 			nIndex++;
 		}
@@ -340,10 +339,10 @@ public class MidiSystem
 
 	public static boolean isFileTypeSupported(int nFileType)
 	{
-		Iterator	writers = TMidiConfig.getMidiFileWriters();
+		Iterator<MidiFileWriter>	writers = TMidiConfig.getMidiFileWriters();
 		while (writers.hasNext())
 		{
-			MidiFileWriter	writer = (MidiFileWriter) writers.next();
+			MidiFileWriter	writer = writers.next();
 			boolean	bIsSupported = writer.isFileTypeSupported(nFileType);
 			if (bIsSupported)
 			{
@@ -356,23 +355,23 @@ public class MidiSystem
 
 	public static int[] getMidiFileTypes(Sequence sequence)
 	{
-		Set	fileTypes = new ArraySet();
-		Iterator	writers = TMidiConfig.getMidiFileWriters();
+		Set<Integer> fileTypes = new ArraySet<Integer>();
+		Iterator<MidiFileWriter>	writers = TMidiConfig.getMidiFileWriters();
 		while (writers.hasNext())
 		{
-			MidiFileWriter	writer = (MidiFileWriter) writers.next();
+			MidiFileWriter	writer = writers.next();
 			int[]	anTypes = writer.getMidiFileTypes(sequence);
 			for (int i = 0; i < anTypes.length; i++)
 			{
-				fileTypes.add(new Integer(anTypes[i]));
+				fileTypes.add(anTypes[i]);
 			}
 		}
 		int[]	anTypes = new int[fileTypes.size()];
-		Iterator	types = fileTypes.iterator();
+		Iterator<Integer> types = fileTypes.iterator();
 		int	nIndex = 0;
 		while (types.hasNext())
 		{
-			Integer	type = (Integer) types.next();
+			Integer	type = types.next();
 			anTypes[nIndex] = type.intValue();
 			nIndex++;
 		}
@@ -383,10 +382,10 @@ public class MidiSystem
 
 	public static boolean isFileTypeSupported(int nFileType, Sequence sequence)
 	{
-		Iterator	writers = TMidiConfig.getMidiFileWriters();
+		Iterator<MidiFileWriter>	writers = TMidiConfig.getMidiFileWriters();
 		while (writers.hasNext())
 		{
-			MidiFileWriter	writer = (MidiFileWriter) writers.next();
+			MidiFileWriter	writer = writers.next();
 			boolean	bIsSupported = writer.isFileTypeSupported(nFileType, sequence);
 			if (bIsSupported)
 			{
@@ -589,11 +588,11 @@ public class MidiSystem
 		MidiFileReaderAction action)
 		throws	IOException
 	{
-		Iterator	audioFileReaders = TMidiConfig.getMidiFileReaders();
+		Iterator<MidiFileReader>	audioFileReaders = TMidiConfig.getMidiFileReaders();
 		boolean bCompleted = false;
 		while (audioFileReaders.hasNext() && ! bCompleted)
 		{
-			MidiFileReader	audioFileReader = (MidiFileReader) audioFileReaders.next();
+			MidiFileReader	audioFileReader = audioFileReaders.next();
 			if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.doMidiFileReaderIteration(): handling MidiFileReader: " + audioFileReader); }
 			bCompleted = action.handleMidiFileReader(audioFileReader);
 		}
@@ -618,21 +617,16 @@ public class MidiSystem
 		MidiFileWriterAction action)
 		throws	IOException
 	{
-		Iterator	audioFileWriters = TMidiConfig.getMidiFileWriters();
+		Iterator<MidiFileWriter>	audioFileWriters = TMidiConfig.getMidiFileWriters();
 		boolean bCompleted = false;
 		while (audioFileWriters.hasNext() && ! bCompleted)
 		{
-			MidiFileWriter	audioFileWriter = (MidiFileWriter) audioFileWriters.next();
+			MidiFileWriter	audioFileWriter = audioFileWriters.next();
 			if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.doMidiFileWriterIteration(): handling MidiFileWriter: " + audioFileWriter); }
 			bCompleted = action.handleMidiFileWriter(audioFileWriter);
 		}
 	}
-
-
-
-
 }
-
 
 
 /*** MidiSystem.java ***/

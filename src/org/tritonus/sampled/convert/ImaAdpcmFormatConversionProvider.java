@@ -60,7 +60,6 @@ import javax.sound.sampled.AudioInputStream;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.AudioFormats;
-import org.tritonus.share.sampled.Encodings;
 import org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
 import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 
@@ -74,8 +73,8 @@ public class ImaAdpcmFormatConversionProvider
 extends TEncodingFormatConversionProvider
 {
 	// only used as abbreviation
-	private static final AudioFormat.Encoding	IMA_ADPCM = Encodings.getEncoding("IMA_ADPCM");
-	private static final AudioFormat.Encoding	PCM_SIGNED = Encodings.getEncoding("PCM_SIGNED");
+	private static final AudioFormat.Encoding	IMA_ADPCM = new AudioFormat.Encoding("IMA_ADPCM");
+	private static final AudioFormat.Encoding	PCM_SIGNED = new AudioFormat.Encoding("PCM_SIGNED");
 
 
 	private static final AudioFormat[]	INPUT_FORMATS =

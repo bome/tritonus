@@ -40,7 +40,7 @@ public abstract class EnumControl
 
 
 	private Object		m_value;
-	private Collection	m_values;
+	private Collection<Object>	m_values;
 
 
 
@@ -86,7 +86,7 @@ public abstract class EnumControl
 
 	public Object[] getValues()
 	{
-		return (Object[]) m_values.toArray(EMPTY_OBJECT_ARRAY);
+		return m_values.toArray(EMPTY_OBJECT_ARRAY);
 	}
 
 

@@ -33,8 +33,6 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 
 
@@ -49,13 +47,13 @@ public class GSMAudioFileWriter
 {
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{
-		AudioFileTypes.getType("GSM", "gsm")
+		new AudioFileFormat.Type("GSM", "gsm")
 	};
 
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	{
-		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, ALL, 1, 33, 50.0F, false),
-		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, ALL, 1, 33, 50.0F, true),
+		new AudioFormat(new AudioFormat.Encoding("GSM0610"), 8000.0F, ALL, 1, 33, 50.0F, false),
+		new AudioFormat(new AudioFormat.Encoding("GSM0610"), 8000.0F, ALL, 1, 33, 50.0F, true),
 	};
 
 

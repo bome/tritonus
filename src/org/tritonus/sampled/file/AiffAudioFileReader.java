@@ -40,7 +40,6 @@ import	javax.sound.sampled.UnsupportedAudioFileException;
 
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
 import	org.tritonus.share.sampled.file.TAudioFileReader;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.TDebug;
 
 
@@ -106,7 +105,7 @@ public class AiffAudioFileReader extends TAudioFileReader
 				nSampleSize=8;
 			}
 			else if (nEncoding==AiffTool.AIFF_COMM_IMA_ADPCM) {
-				encoding = Encodings.getEncoding("IMA_ADPCM");
+				encoding = new AudioFormat.Encoding("IMA_ADPCM");
 				nSampleSize=4;
 			}
 			else {

@@ -35,7 +35,6 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.FloatSampleBuffer;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
 import	org.tritonus.share.ArraySet;
@@ -88,8 +87,8 @@ public class PCM2PCMConversionProvider
 	// if true, always use FloatSampleBuffer
 	private static final boolean ONLY_FLOAT_CONVERSION = false;
 
-	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
-	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
+	public static AudioFormat.Encoding PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
+	public static AudioFormat.Encoding PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	private static final AudioFormat[]	OUTPUT_FORMATS = {
@@ -176,6 +175,7 @@ public class PCM2PCMConversionProvider
 		throw new IllegalArgumentException("format conversion not supported");
 	}
 
+
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
 	                                      AudioFormat sourceFormat) {
 		if (TDebug.TraceAudioConverter) {
@@ -186,10 +186,10 @@ public class PCM2PCMConversionProvider
 		}
 		if (isConversionSupported(targetEncoding, sourceFormat)) {
 			// TODO: check that no duplicates may occur...
-			ArraySet result=new ArraySet();
-			Iterator iterator=getCollectionTargetFormats().iterator();
+			ArraySet<AudioFormat> result=new ArraySet<AudioFormat>();
+			Iterator<AudioFormat> iterator=getCollectionTargetFormats().iterator();
 			while (iterator.hasNext()) {
-				AudioFormat targetFormat = (AudioFormat) iterator.next();
+				AudioFormat targetFormat = iterator.next();
 				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
 				if (isConversionSupported(targetFormat, sourceFormat)) {
 					result.add(targetFormat);
@@ -198,7 +198,7 @@ public class PCM2PCMConversionProvider
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("<found "+result.size()+" matching formats.");
 			}
-			return (AudioFormat[]) result.toArray(EMPTY_FORMAT_ARRAY);
+			return result.toArray(EMPTY_FORMAT_ARRAY);
 		} else {
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("<returning empty array.");

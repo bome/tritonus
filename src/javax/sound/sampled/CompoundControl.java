@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -26,19 +26,19 @@
 package	javax.sound.sampled;
 
 
-import	java.util.Arrays;
-import	java.util.Collection;
+import java.util.Arrays;
+import java.util.Collection;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public abstract class CompoundControl
-	extends		Control
+extends Control
 {
 	private static final Control[]	EMPTY_CONTROL_ARRAY = new Control[0];
 
-	private Collection	m_memberControls;
+	private Collection<Control>	m_memberControls;
 
 
 
@@ -46,22 +46,16 @@ public abstract class CompoundControl
 				 Control[] aMemberControls)
 	{
 		super(type);
-		if (TDebug.TraceControl)
-		{
-			TDebug.out("CompoundControl.<init>: begin");
-		}
+		if (TDebug.TraceControl) TDebug.out("CompoundControl.<init>: begin");
 		m_memberControls = Arrays.asList(aMemberControls);
-		if (TDebug.TraceControl)
-		{
-			TDebug.out("CompoundControl.<init>: end");
-		}
+		if (TDebug.TraceControl) TDebug.out("CompoundControl.<init>: end");
 	}
 
 
 
 	public Control[] getMemberControls()
 	{
-		return (Control[]) m_memberControls.toArray(EMPTY_CONTROL_ARRAY);
+		return m_memberControls.toArray(EMPTY_CONTROL_ARRAY);
 	}
 
 

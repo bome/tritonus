@@ -35,7 +35,6 @@ import	javax.sound.sampled.AudioInputStream;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
 
@@ -58,10 +57,10 @@ public class UlawFormatConversionProvider
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 
-	public static AudioFormat.Encoding ENC_PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
-	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
-	public static AudioFormat.Encoding ENC_ULAW=Encodings.getEncoding("ULAW");
-	public static AudioFormat.Encoding ENC_ALAW=Encodings.getEncoding("ALAW");
+	public static AudioFormat.Encoding ENC_PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
+	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
+	public static AudioFormat.Encoding ENC_ULAW=new AudioFormat.Encoding("ULAW");
+	public static AudioFormat.Encoding ENC_ALAW=new AudioFormat.Encoding("ALAW");
 
 	// TODO:
 	// make a superclass that takes 2 arrays in the constructor

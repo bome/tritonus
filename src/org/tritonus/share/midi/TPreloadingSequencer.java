@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2003 by Matthias Pfisterer
+ *  Copyright (c) 2003 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -70,8 +70,8 @@ extends TSequencer
 	   Sets the latency to the default value.
 	 */
 	protected TPreloadingSequencer(MidiDevice.Info info,
-			     Collection masterSyncModes,
-			     Collection slaveSyncModes)
+								   Collection<SyncMode> masterSyncModes,
+								   Collection<SyncMode> slaveSyncModes)
 	{
 		super(info, masterSyncModes,
 			  slaveSyncModes);

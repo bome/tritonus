@@ -38,7 +38,6 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.TCircularBuffer;
 import	org.tritonus.share.sampled.AudioFormatSet;
 import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
@@ -70,10 +69,10 @@ public class Mp3LameFormatConversionProvider
 	private static final int MPEG_FRAME_RATE=ALL; // TODO
 	private static final int MPEG_FRAME_SIZE=ALL; // TODO
 
-	public static final AudioFormat.Encoding MPEG1L3 = Encodings.getEncoding("MPEG1L3");
+	public static final AudioFormat.Encoding MPEG1L3 = new AudioFormat.Encoding("MPEG1L3");
 	// Lame converts automagically to MPEG2 or MPEG2.5, if necessary.
-	public static final AudioFormat.Encoding MPEG2L3 = Encodings.getEncoding("MPEG2L3");
-	public static final AudioFormat.Encoding MPEG2DOT5L3 = Encodings.getEncoding("MPEG2DOT5L3");
+	public static final AudioFormat.Encoding MPEG2L3 = new AudioFormat.Encoding("MPEG2L3");
+	public static final AudioFormat.Encoding MPEG2DOT5L3 = new AudioFormat.Encoding("MPEG2DOT5L3");
 
 	/*
 	 * Lame provides these formats:

@@ -36,7 +36,6 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.FloatSampleBuffer;
-import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioUtils;
 import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
@@ -128,7 +127,8 @@ public class SampleRateConversionProvider
 	};
 
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
-	                                      AudioFormat sourceFormat) {
+	                                      AudioFormat sourceFormat)
+	{
 		if (TDebug.TraceAudioConverter) {
 			TDebug.out(">SampleRateConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
 			TDebug.out("checking out possible target formats");
@@ -141,10 +141,10 @@ public class SampleRateConversionProvider
 		//          we want to convert that !
 		sourceFormat=replaceSampleRate(sourceFormat, AudioSystem.NOT_SPECIFIED);
 		if (isConversionSupported(targetEncoding, sourceFormat)) {
-			ArraySet result=new ArraySet();
-			Iterator iterator=getCollectionTargetFormats().iterator();
+			ArraySet<AudioFormat> result=new ArraySet<AudioFormat>();
+			Iterator<AudioFormat> iterator=getCollectionTargetFormats().iterator();
 			while (iterator.hasNext()) {
-				AudioFormat targetFormat = (AudioFormat) iterator.next();
+				AudioFormat targetFormat = iterator.next();
 				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
 				if (isConversionSupported(targetFormat, sourceFormat)) {
 					result.add(targetFormat);
@@ -156,7 +156,7 @@ public class SampleRateConversionProvider
 				&& sourceSampleRate!=AudioSystem.NOT_SPECIFIED) {
 				int count=result.size();
 				for (int i=0; i<count; i++) {
-					AudioFormat format=(AudioFormat) result.get(i);
+					AudioFormat format = result.get(i);
 					for (int j=0; j<commonSampleRates.length; j++) {
 						if (!doMatch(sourceSampleRate, commonSampleRates[j])) {
 							result.add(replaceSampleRate(format, commonSampleRates[j]));
@@ -167,7 +167,7 @@ public class SampleRateConversionProvider
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("<found "+result.size()+" matching formats.");
 			}
-			return (AudioFormat[]) result.toArray(EMPTY_FORMAT_ARRAY);
+			return result.toArray(EMPTY_FORMAT_ARRAY);
 		} else {
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("<returning empty array.");
@@ -175,6 +175,7 @@ public class SampleRateConversionProvider
 			return EMPTY_FORMAT_ARRAY;
 		}
 	}
+
 
 	// overriden
 	public boolean isConversionSupported(AudioFormat targetFormat,

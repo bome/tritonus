@@ -56,26 +56,26 @@ import	org.tritonus.share.sampled.AudioFormats;
  * be integrated into AudioFormat.
  */
 
-public class AudioFormatSet extends ArraySet {
-
+public class AudioFormatSet extends ArraySet<AudioFormat>
+{
 	protected static final AudioFormat[]		EMPTY_FORMAT_ARRAY = new AudioFormat[0];
 
 	public AudioFormatSet() {
 		super();
 	}
 
-	public AudioFormatSet(Collection c) {
+	public AudioFormatSet(Collection<AudioFormat> c) {
 		super(c);
 	}
 
-	public boolean add(Object elem) {
+	public boolean add(AudioFormat elem) {
 		if (elem==null || !(elem instanceof AudioFormat)) {
 			return false;
 		}
 		return super.add(elem);
 	}
 
-	public boolean contains(Object elem) {
+	public boolean contains(AudioFormat elem) {
 		if (elem==null || !(elem instanceof AudioFormat)) {
 			return false;
 		}
@@ -89,7 +89,7 @@ public class AudioFormatSet extends ArraySet {
 		return false;
 	}
 
-	public Object get(Object elem) {
+	public AudioFormat get(AudioFormat elem) {
 		if (elem==null || !(elem instanceof AudioFormat)) {
 			return null;
 		}
@@ -130,19 +130,20 @@ public class AudioFormatSet extends ArraySet {
 		return null;
 	}
 
+
+	// $$mp: TODO: remove; should be obsolete
 	public AudioFormat[] toAudioFormatArray() {
 		return (AudioFormat[]) toArray(EMPTY_FORMAT_ARRAY);
 	}
 
 
-	public void add(int index, Object element) {
+	public void add(int index, AudioFormat element) {
 		throw new UnsupportedOperationException("unsupported");
 	}
 
-	public Object set(int index, Object element) {
+	public AudioFormat set(int index, AudioFormat element) {
 		throw new UnsupportedOperationException("unsupported");
 	}
-
 }
 
 /*** AudioFormatSet.java ***/

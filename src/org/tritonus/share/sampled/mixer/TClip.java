@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,9 +21,7 @@
  *
  */
 
-
 package	org.tritonus.share.sampled.mixer;
-
 
 import	java.io.IOException;
 import	java.io.ByteArrayInputStream;
@@ -33,6 +30,7 @@ import	java.util.Collection;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.Clip;
+import	javax.sound.sampled.Control;
 import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.AudioInputStream;
@@ -45,16 +43,11 @@ import	org.tritonus.share.sampled.mixer.TDataLine;
 
 
 public class TClip
-	extends	TDataLine
-	implements	Clip
+extends	TDataLine
+implements	Clip
 {
 	private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
 	private static final int	BUFFER_FRAMES = 16384;
-
-
-	// private Mixer			m_mixer;
-	// private SourceDataLine		m_line;
-
 
 
 	public TClip(DataLine.Info info)
@@ -66,7 +59,7 @@ public class TClip
 
 
 	public TClip(DataLine.Info info,
-		     Collection controls)
+		     Collection<Control> controls)
 	{
 		super(null,	// TMixer
 		      info,

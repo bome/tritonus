@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,9 +21,7 @@
  *
  */
 
-
 package	org.tritonus.core;
-
 
 import	java.util.Set;
 import	java.util.Iterator;
@@ -45,10 +42,10 @@ import	org.tritonus.core.TInit.ProviderRegistrationAction;
  */
 public class TAudioConfig
 {
-	private static Set		sm_audioFileWriters = null;
-	private static Set		sm_audioFileReaders = null;
-	private static Set		sm_formatConversionProviders = null;
-	private static Set		sm_mixerProviders = null;
+	private static Set<AudioFileWriter>		sm_audioFileWriters = null;
+	private static Set<AudioFileReader>		sm_audioFileReaders = null;
+	private static Set<FormatConversionProvider>	sm_formatConversionProviders = null;
+	private static Set<MixerProvider>		sm_mixerProviders = null;
 
 	private static Mixer.Info	sm_defaultMixerInfo;
 
@@ -59,6 +56,7 @@ public class TAudioConfig
 	private TAudioConfig()
 	{
 	}
+
 
 	private static void registerAudioFileReaders()
 	{
@@ -144,18 +142,18 @@ public class TAudioConfig
 
 
 
-	public static synchronized Iterator getAudioFileReaders()
+	public static synchronized Iterator<AudioFileReader> getAudioFileReaders()
 	{
 		return getAudioFileReadersImpl().iterator();
 	}
 
 
 
-	private static synchronized Set getAudioFileReadersImpl()
+	private static synchronized Set<AudioFileReader> getAudioFileReadersImpl()
 	{
 		if (sm_audioFileReaders == null)
 		{
-			sm_audioFileReaders = new ArraySet();
+			sm_audioFileReaders = new ArraySet<AudioFileReader>();
 			registerAudioFileReaders();
 		}
 		return sm_audioFileReaders;
@@ -177,18 +175,18 @@ public class TAudioConfig
 
 
 
-	public static synchronized Iterator getAudioFileWriters()
+	public static synchronized Iterator<AudioFileWriter> getAudioFileWriters()
 	{
 		return getAudioFileWritersImpl().iterator();
 	}
 
 
 
-	private static synchronized Set getAudioFileWritersImpl()
+	private static synchronized Set<AudioFileWriter> getAudioFileWritersImpl()
 	{
 		if (sm_audioFileWriters == null)
 		{
-			sm_audioFileWriters = new ArraySet();
+			sm_audioFileWriters = new ArraySet<AudioFileWriter>();
 			registerAudioFileWriters();
 		}
 		return sm_audioFileWriters;
@@ -210,18 +208,18 @@ public class TAudioConfig
 
 
 
-	public static synchronized Iterator getFormatConversionProviders()
+	public static synchronized Iterator<FormatConversionProvider> getFormatConversionProviders()
 	{
 		return getFormatConversionProvidersImpl().iterator();
 	}
 
 
 
-	private static synchronized Set getFormatConversionProvidersImpl()
+	private static synchronized Set<FormatConversionProvider> getFormatConversionProvidersImpl()
 	{
 		if (sm_formatConversionProviders == null)
 		{
-			sm_formatConversionProviders = new ArraySet();
+			sm_formatConversionProviders = new ArraySet<FormatConversionProvider>();
 			registerFormatConversionProviders();
 		}
 		return sm_formatConversionProviders;
@@ -243,17 +241,17 @@ public class TAudioConfig
 
 
 
-	public static synchronized Iterator getMixerProviders()
+	public static synchronized Iterator<MixerProvider> getMixerProviders()
 	{
 		return getMixerProvidersImpl().iterator();
 	}
 
 
-	private static synchronized Set getMixerProvidersImpl()
+	private static synchronized Set<MixerProvider> getMixerProvidersImpl()
 	{
 		if (sm_mixerProviders == null)
 		{
-			sm_mixerProviders = new ArraySet();
+			sm_mixerProviders = new ArraySet<MixerProvider>();
 			registerMixerProviders();
 		}
 		return sm_mixerProviders;

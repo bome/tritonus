@@ -61,11 +61,12 @@ import	org.tritonus.share.ArraySet;
  * @author Florian Bomers
  */
 public abstract class TEncodingFormatConversionProvider
-	extends		TSimpleFormatConversionProvider {
-
+extends TSimpleFormatConversionProvider
+{
 	protected TEncodingFormatConversionProvider(
-	    Collection sourceFormats,
-	    Collection targetFormats) {
+	    Collection<AudioFormat> sourceFormats,
+	    Collection<AudioFormat> targetFormats)
+	{
 		super(sourceFormats, targetFormats);
 	}
 
@@ -100,17 +101,17 @@ public abstract class TEncodingFormatConversionProvider
 		}
 		if (isConversionSupported(targetEncoding, sourceFormat)) {
 			// TODO: check that no duplicates may occur...
-			ArraySet	result=new ArraySet();
-			Iterator	iterator = getCollectionTargetFormats().iterator();
+			ArraySet<AudioFormat>	result=new ArraySet<AudioFormat>();
+			Iterator<AudioFormat>	iterator = getCollectionTargetFormats().iterator();
 			while (iterator.hasNext()) {
-				AudioFormat	targetFormat = (AudioFormat) iterator.next();
+				AudioFormat	targetFormat = iterator.next();
 				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
 				result.add(targetFormat);
 			}
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("< returning "+result.size()+" elements.");
 			}
-			return (AudioFormat[]) result.toArray(EMPTY_FORMAT_ARRAY);
+			return result.toArray(EMPTY_FORMAT_ARRAY);
 		} else {
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("< returning empty array.");

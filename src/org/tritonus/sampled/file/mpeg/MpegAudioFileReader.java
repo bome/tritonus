@@ -34,8 +34,6 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
 import	org.tritonus.share.sampled.file.TAudioFileReader;
 
@@ -50,18 +48,18 @@ public class MpegAudioFileReader
 	private static final int	SYNC = 0xFFE00000;
 	private static final AudioFormat.Encoding[][]	sm_aEncodings =
 	{ 
-		{Encodings.getEncoding("MPEG2DOT5L3"), 
-		 Encodings.getEncoding("MPEG2DOT5L2"), 
-		 Encodings.getEncoding("MPEG2DOT5L1")},
+		{new AudioFormat.Encoding("MPEG2DOT5L3"), 
+		 new AudioFormat.Encoding("MPEG2DOT5L2"), 
+		 new AudioFormat.Encoding("MPEG2DOT5L1")},
 		{null,
 		 null,
 		 null},	/* reserved */
-		{Encodings.getEncoding("MPEG2L3"),
-		 Encodings.getEncoding("MPEG2L2"),
-		 Encodings.getEncoding("MPEG2L1")},
-		{Encodings.getEncoding("MPEG1L3"),
-		 Encodings.getEncoding("MPEG1L2"),
-		 Encodings.getEncoding("MPEG1L1")},
+		{new AudioFormat.Encoding("MPEG2L3"),
+		 new AudioFormat.Encoding("MPEG2L2"),
+		 new AudioFormat.Encoding("MPEG2L1")},
+		{new AudioFormat.Encoding("MPEG1L3"),
+		 new AudioFormat.Encoding("MPEG1L2"),
+		 new AudioFormat.Encoding("MPEG1L1")},
 	};
 	private static final float[][]	sm_afSamplingRates =
 	{
@@ -134,10 +132,10 @@ public class MpegAudioFileReader
 			true);
 		//$$fb 2000-08-15: workaround for the fixed extension problem in AudioFileFormat.Type
 		// see org.tritonus.share.sampled.AudioFileTypes.java
-		AudioFileFormat.Type type = AudioFileTypes.getType("MPEG", "mpeg");
-		if (encoding.equals(Encodings.getEncoding("MPEG1L3")))
+		AudioFileFormat.Type type = new AudioFileFormat.Type("MPEG", "mpeg");
+		if (encoding.equals(new AudioFormat.Encoding("MPEG1L3")))
 		{
-			type = AudioFileTypes.getType("MP3", "mp3");
+			type = new AudioFileFormat.Type("MP3", "mp3");
 		}
 
 		/*

@@ -39,8 +39,6 @@ import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
 import	org.tritonus.share.sampled.file.TAudioFileReader;
 
@@ -113,7 +111,7 @@ public class GSMAudioFileReader
 		Map<String, Object> afProperties = new HashMap<String, Object>();
 		afProperties.put("bitrate", 13200L);
 		AudioFormat	format = new AudioFormat(
-			Encodings.getEncoding("GSM0610"),
+			new AudioFormat.Encoding("GSM0610"),
 			8000.0F,
 			AudioSystem.NOT_SPECIFIED /* ??? [sample size in bits] */,
 			1,
@@ -123,7 +121,7 @@ public class GSMAudioFileReader
 			afProperties);
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
-				AudioFileTypes.getType("GSM","gsm"),
+				new AudioFileFormat.Type("GSM","gsm"),
 				format,
 				nFrameSize,
 				nByteSize,

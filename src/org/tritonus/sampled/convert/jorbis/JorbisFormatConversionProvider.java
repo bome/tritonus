@@ -41,7 +41,6 @@ import javax.sound.sampled.AudioSystem;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.AudioFormats;
-import org.tritonus.share.sampled.Encodings;
 import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 
@@ -66,8 +65,8 @@ public class JorbisFormatConversionProvider
 extends TEncodingFormatConversionProvider
 {
 	// only used as abbreviation
-	private static final AudioFormat.Encoding	VORBIS = Encodings.getEncoding("VORBIS");
-	private static final AudioFormat.Encoding	PCM_SIGNED = Encodings.getEncoding("PCM_SIGNED");
+	private static final AudioFormat.Encoding	VORBIS = new AudioFormat.Encoding("VORBIS");
+	private static final AudioFormat.Encoding	PCM_SIGNED = new AudioFormat.Encoding("PCM_SIGNED");
 
 
 	private static final AudioFormat[]	INPUT_FORMATS =
@@ -221,8 +220,8 @@ extends TEncodingFormatConversionProvider
 		// actually is an ogg structure
   		private Block			m_vorbisBlock = null;
 
-  		private List			m_songComments = new ArrayList();
-		// is altered lated in a dubious way
+  		private List<String>	m_songComments = new ArrayList<String>();
+		// is altered later in a dubious way
   		private int			convsize = -1; // BUFFER_SIZE * 2;
 		// TODO: further checking
   		private byte[]			convbuffer = new byte[CONVSIZE];

@@ -65,7 +65,7 @@ public abstract class TSequencer
 
 	/**	The listeners that want to be notified of MetaMessages.
 	 */
-	private Set		m_metaListeners;
+	private Set<MetaEventListener>	m_metaListeners;
 
 	/**	The listeners that want to be notified of control change events.
 	 *	They are organized as follows: this array is indexed with
@@ -74,12 +74,12 @@ public abstract class TSequencer
 	 *	contains a reference to a Set containing the listeners.
 	 *	These sets are allocated on demand.
 	 */
-	private Set[]		m_aControllerListeners;
+	private Set<ControllerEventListener>[]		m_aControllerListeners;
 
 	private float		m_fNominalTempoInMPQ;
 	private float		m_fTempoFactor;
-	private Collection	m_masterSyncModes;
-	private Collection	m_slaveSyncModes;
+	private Collection<SyncMode>	m_masterSyncModes;
+	private Collection<SyncMode>	m_slaveSyncModes;
 	private SyncMode	m_masterSyncMode;
 	private SyncMode	m_slaveSyncMode;
 	private BitSet		m_muteBitSet;
@@ -107,16 +107,17 @@ public abstract class TSequencer
 	/**
 	 */
 	protected TSequencer(MidiDevice.Info info,
-			     Collection masterSyncModes,
-			     Collection slaveSyncModes)
+			     Collection<SyncMode> masterSyncModes,
+			     Collection<SyncMode> slaveSyncModes)
 	{
 		super(info);
 		m_bRunning = false;
 		m_sequence = null;
-		m_metaListeners = new ArraySet();
-		m_aControllerListeners = new Set[128];
+		m_metaListeners = new ArraySet<MetaEventListener>();
+		m_aControllerListeners = (Set<ControllerEventListener>[]) new Set[128];
 		setTempoFactor(1.0F);
 		setTempoInMPQ(500000);
+		// TODO: make a copy
 		m_masterSyncModes = masterSyncModes;
 		m_slaveSyncModes = slaveSyncModes;
 		if (getMasterSyncModes().length > 0)
@@ -430,7 +431,7 @@ public abstract class TSequencer
 	}
 
 
-	protected Iterator getMetaEventListeners()
+	protected Iterator<MetaEventListener> getMetaEventListeners()
 	{
 		synchronized (m_metaListeners)
 		{
@@ -442,10 +443,10 @@ public abstract class TSequencer
 
 	protected void sendMetaMessage(MetaMessage message)
 	{
-		Iterator	iterator = getMetaEventListeners();
+		Iterator<MetaEventListener>	iterator = getMetaEventListeners();
 		while (iterator.hasNext())
 		{
-			MetaEventListener	metaEventListener = (MetaEventListener) iterator.next();
+			MetaEventListener	metaEventListener = iterator.next();
 			MetaMessage	copiedMessage = (MetaMessage) message.clone();
 			metaEventListener.meta(copiedMessage);
 		}
@@ -483,11 +484,11 @@ public abstract class TSequencer
 
 
 	private void addControllerListener(int i,
-					   ControllerEventListener listener)
+									   ControllerEventListener listener)
 	{
 		if (m_aControllerListeners[i] == null)
 		{
-			m_aControllerListeners[i] = new ArraySet();
+			m_aControllerListeners[i] = new ArraySet<ControllerEventListener>();
 		}
 		m_aControllerListeners[i].add(listener);
 	}
@@ -558,10 +559,10 @@ public abstract class TSequencer
 		int	nController = message.getData1();
 		if (m_aControllerListeners[nController] != null)
 		{
-			Iterator	iterator = m_aControllerListeners[nController].iterator();
+			Iterator<ControllerEventListener>	iterator = m_aControllerListeners[nController].iterator();
 			while (iterator.hasNext())
 			{
-				ControllerEventListener	controllerEventListener = (ControllerEventListener) iterator.next();
+				ControllerEventListener	controllerEventListener = iterator.next();
 				ShortMessage	copiedMessage = (ShortMessage) message.clone();
 				controllerEventListener.controlChange(copiedMessage);
 			}
@@ -621,7 +622,7 @@ public abstract class TSequencer
 
 	public SyncMode[] getMasterSyncModes()
 	{
-		SyncMode[]	syncModes = (SyncMode[]) m_masterSyncModes.toArray(EMPTY_SYNCMODE_ARRAY);
+		SyncMode[]	syncModes = m_masterSyncModes.toArray(EMPTY_SYNCMODE_ARRAY);
 		return syncModes;
 	}
 
@@ -664,7 +665,7 @@ public abstract class TSequencer
 
 	public SyncMode[] getSlaveSyncModes()
 	{
-		SyncMode[]	syncModes = (SyncMode[]) m_slaveSyncModes.toArray(EMPTY_SYNCMODE_ARRAY);
+		SyncMode[]	syncModes = m_slaveSyncModes.toArray(EMPTY_SYNCMODE_ARRAY);
 		return syncModes;
 	}
 

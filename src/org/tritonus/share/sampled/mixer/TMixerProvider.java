@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,9 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
 package	org.tritonus.share.sampled.mixer;
-
 
 import	java.util.ArrayList;
 import	java.util.HashMap;
@@ -40,11 +38,11 @@ import	org.tritonus.share.TDebug;
 
 
 public abstract class TMixerProvider
-	extends	MixerProvider
+extends	MixerProvider
 {
 	private static final Mixer.Info[]	EMPTY_MIXER_INFO_ARRAY = new Mixer.Info[0];
 
-	private static Map	sm_mixerProviderStructs = new HashMap();
+	private static Map<Class, MixerProviderStruct>	sm_mixerProviderStructs = new HashMap<Class, MixerProviderStruct>();
 
 	private boolean		m_bDisabled = false;
 
@@ -77,7 +75,7 @@ public abstract class TMixerProvider
 			// Thread.dumpStack();
 		synchronized (TMixerProvider.class)
 		{
-			MixerProviderStruct	struct = (MixerProviderStruct) sm_mixerProviderStructs.get(cls);
+			MixerProviderStruct	struct = sm_mixerProviderStructs.get(cls);
 			if (struct == null)
 			{
 				if (TDebug.TraceMixerProvider) { TDebug.out("TMixerProvider.getMixerProviderStruct(): creating new MixerProviderStruct for " + cls); }
@@ -199,33 +197,33 @@ public abstract class TMixerProvider
 	public Mixer.Info[] getMixerInfo()
 	{
 		if (TDebug.TraceMixerProvider) { TDebug.out("TMixerProvider.getMixerInfo(): begin"); }
-		Set	mixerInfos = new HashSet();
+		Set<Mixer.Info>	mixerInfos = new HashSet<Mixer.Info>();
 		MixerProviderStruct	struct = getMixerProviderStruct();
 		synchronized (struct)
 		{
-			Iterator	mixers = struct.m_mixers.iterator();
+			Iterator<Mixer>	mixers = struct.m_mixers.iterator();
 			while (mixers.hasNext())
 			{
-				Mixer	mixer = (Mixer) mixers.next();
+				Mixer	mixer = mixers.next();
 				mixerInfos.add(mixer.getMixerInfo());
 			}
 		}
 		if (TDebug.TraceMixerProvider) { TDebug.out("TMixerProvider.getMixerInfo(): end"); }
-		return (Mixer.Info[]) mixerInfos.toArray(EMPTY_MIXER_INFO_ARRAY);
+		return mixerInfos.toArray(EMPTY_MIXER_INFO_ARRAY);
 	}
 
 
 
 	private class MixerProviderStruct
 	{
-		public List	m_mixers;
+		public List<Mixer>	m_mixers;
 		public Mixer	m_defaultMixer;
 
 
 
 		public MixerProviderStruct()
 		{
-			m_mixers = new ArrayList();
+			m_mixers = new ArrayList<Mixer>();
 			m_defaultMixer = null;
 		}
 	}

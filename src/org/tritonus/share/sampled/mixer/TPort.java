@@ -6,7 +6,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -52,11 +52,11 @@ import	org.tritonus.share.TDebug;
 /**	Base class for Ports.
  */
 public class TPort
-	extends TLine
-	implements	Port
+extends TLine
+implements	Port
 {
 	public TPort(TMixer mixer,
-			Line.Info info)
+				 Line.Info info)
 	{
 		super(mixer, info);
 	}
@@ -64,8 +64,8 @@ public class TPort
 
 
 	public TPort(TMixer mixer,
-			Line.Info info,
-			Collection controls)
+				 Line.Info info,
+				 Collection<Control> controls)
 	{
 		super(mixer, info, controls);
 	}

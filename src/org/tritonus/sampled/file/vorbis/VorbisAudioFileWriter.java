@@ -31,8 +31,6 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 
 
@@ -47,13 +45,13 @@ public class VorbisAudioFileWriter
 {
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{
-		AudioFileTypes.getType("Vorbis", "ogg")
+		new AudioFileFormat.Type("Vorbis", "ogg")
 	};
 
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	{
-		new AudioFormat(Encodings.getEncoding("VORBIS"), ALL, ALL, ALL, ALL, ALL, false),
-		new AudioFormat(Encodings.getEncoding("VORBIS"), ALL, ALL, ALL, ALL, ALL, true),
+		new AudioFormat(new AudioFormat.Encoding("VORBIS"), ALL, ALL, ALL, ALL, ALL, false),
+		new AudioFormat(new AudioFormat.Encoding("VORBIS"), ALL, ALL, ALL, ALL, ALL, true),
 	};
 
 

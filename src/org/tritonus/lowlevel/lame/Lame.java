@@ -31,7 +31,6 @@ import java.io.UnsupportedEncodingException;
 import javax.sound.sampled.AudioFormat;
 
 import org.tritonus.share.TDebug;
-import org.tritonus.share.sampled.Encodings;
 
 public class Lame {
 
@@ -355,14 +354,14 @@ public class Lame {
 	public AudioFormat.Encoding getEffectiveEncoding() {
 		if (effEncoding==MPEG_VERSION_2) {
 			if (getEffectiveSampleRate()<16000) {
-				return Encodings.getEncoding("MPEG2DOT5L3");
+				return new AudioFormat.Encoding("MPEG2DOT5L3");
 			}
-			return Encodings.getEncoding("MPEG2L3");
+			return new AudioFormat.Encoding("MPEG2L3");
 		}
 		else if (effEncoding==MPEG_VERSION_2DOT5) {
-			return Encodings.getEncoding("MPEG2DOT5L3");
+			return new AudioFormat.Encoding("MPEG2DOT5L3");
 		}
-		return Encodings.getEncoding("MPEG1L3");
+		return new AudioFormat.Encoding("MPEG1L3");
 	}
 
 	/**

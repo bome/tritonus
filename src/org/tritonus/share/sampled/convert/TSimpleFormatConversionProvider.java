@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,9 +21,7 @@
  *
  */
 
-
 package	org.tritonus.share.sampled.convert;
-
 
 import	java.util.Collection;
 import	java.util.Iterator;
@@ -40,8 +37,7 @@ import	org.tritonus.share.TDebug;
 /**
  *	This is a base class for FormatConversionProviders that can convert
  *	from each source encoding/format to each target encoding/format.
- *	If this is not the case, use TEncodingFormatConversionProvider or
- *	TMatrixFormatConversionProvider.
+ *	If this is not the case, use TEncodingFormatConversionProvider.
  *
  *	<p>Overriding classes must 
  *      provide a constructor that calls the protected constructor of this class and override
@@ -59,20 +55,19 @@ import	org.tritonus.share.TDebug;
 public abstract class TSimpleFormatConversionProvider
 	extends		TFormatConversionProvider
 {
-	private Collection	m_sourceEncodings;
-	private Collection	m_targetEncodings;
-	private Collection	m_sourceFormats;
-	private Collection	m_targetFormats;
-
+	private Collection<AudioFormat.Encoding>	m_sourceEncodings;
+	private Collection<AudioFormat.Encoding>	m_targetEncodings;
+	private Collection<AudioFormat>	m_sourceFormats;
+	private Collection<AudioFormat>	m_targetFormats;
 
 
 
 	protected TSimpleFormatConversionProvider(
-		Collection sourceFormats,
-		Collection targetFormats)
+		Collection<AudioFormat> sourceFormats,
+		Collection<AudioFormat> targetFormats)
 	{
-		m_sourceEncodings = new ArraySet();
-		m_targetEncodings = new ArraySet();
+		m_sourceEncodings = new ArraySet<AudioFormat.Encoding>();
+		m_targetEncodings = new ArraySet<AudioFormat.Encoding>();
 		m_sourceFormats = sourceFormats;
 		m_targetFormats = targetFormats;
 		collectEncodings(m_sourceFormats, m_sourceEncodings);
@@ -88,21 +83,21 @@ public abstract class TSimpleFormatConversionProvider
 	protected void disable()
 	{
 		if (TDebug.TraceAudioConverter) { TDebug.out("TSimpleFormatConversionProvider.disable(): disabling " + getClass().getName()); }
-		m_sourceEncodings = new ArraySet();
-		m_targetEncodings = new ArraySet();
-		m_sourceFormats = new ArraySet();
-		m_targetFormats = new ArraySet();
+		m_sourceEncodings = new ArraySet<AudioFormat.Encoding>();
+		m_targetEncodings = new ArraySet<AudioFormat.Encoding>();
+		m_sourceFormats = new ArraySet<AudioFormat>();
+		m_targetFormats = new ArraySet<AudioFormat>();
 	}		
 
 
 
-	private static void collectEncodings(Collection formats,
-				      Collection encodings)
+	private static void collectEncodings(Collection<AudioFormat> formats,
+										 Collection<AudioFormat.Encoding> encodings)
 	{
-		Iterator	iterator = formats.iterator();
+		Iterator<AudioFormat>	iterator = formats.iterator();
 		while (iterator.hasNext())
 		{
-			AudioFormat	format = (AudioFormat) iterator.next();
+			AudioFormat	format = iterator.next();
 			encodings.add(format.getEncoding());
 		}
 	}
@@ -111,14 +106,14 @@ public abstract class TSimpleFormatConversionProvider
 
 	public AudioFormat.Encoding[] getSourceEncodings()
 	{
-		return (AudioFormat.Encoding[]) m_sourceEncodings.toArray(EMPTY_ENCODING_ARRAY);
+		return m_sourceEncodings.toArray(EMPTY_ENCODING_ARRAY);
 	}
 
 
 
 	public AudioFormat.Encoding[] getTargetEncodings()
 	{
-		return (AudioFormat.Encoding[]) m_targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
+		return m_targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
 	}
 
 
@@ -169,7 +164,7 @@ public abstract class TSimpleFormatConversionProvider
 	{
 		if (isConversionSupported(targetEncoding, sourceFormat))
 		{
-			return (AudioFormat[]) m_targetFormats.toArray(EMPTY_FORMAT_ARRAY);
+			return m_targetFormats.toArray(EMPTY_FORMAT_ARRAY);
 		}
 		else
 		{
@@ -195,10 +190,10 @@ public abstract class TSimpleFormatConversionProvider
 
 	protected boolean isAllowedSourceFormat(AudioFormat sourceFormat)
 	{
-		Iterator	iterator = m_sourceFormats.iterator();
+		Iterator<AudioFormat>	iterator = m_sourceFormats.iterator();
 		while (iterator.hasNext())
 		{
-			AudioFormat	format = (AudioFormat) iterator.next();
+			AudioFormat	format = iterator.next();
 			if (AudioFormats.matches(format, sourceFormat))
 			{
 				return true;
@@ -211,10 +206,10 @@ public abstract class TSimpleFormatConversionProvider
 
 	protected boolean isAllowedTargetFormat(AudioFormat targetFormat)
 	{
-		Iterator	iterator = m_targetFormats.iterator();
+		Iterator<AudioFormat>	iterator = m_targetFormats.iterator();
 		while (iterator.hasNext())
 		{
-			AudioFormat	format = (AudioFormat) iterator.next();
+			AudioFormat	format = iterator.next();
 			if (AudioFormats.matches(format, targetFormat))
 			{
 				return true;
@@ -224,19 +219,21 @@ public abstract class TSimpleFormatConversionProvider
 	}
 	
 	// $$fb 2000-04-02 added some convenience methods for overriding classes
-	protected Collection getCollectionSourceEncodings() {
+	protected Collection<AudioFormat.Encoding> getCollectionSourceEncodings()
+	{
 		return m_sourceEncodings;
 	}
 	
-	protected Collection getCollectionTargetEncodings() {
+	protected Collection<AudioFormat.Encoding> getCollectionTargetEncodings()
+	{
 		return m_targetEncodings;
 	}
 	
-	protected Collection getCollectionSourceFormats() {
+	protected Collection<AudioFormat> getCollectionSourceFormats() {
 		return m_sourceFormats;
 	}
 	
-	protected Collection getCollectionTargetFormats() {
+	protected Collection<AudioFormat> getCollectionTargetFormats() {
 		return m_targetFormats;
 	}
 	

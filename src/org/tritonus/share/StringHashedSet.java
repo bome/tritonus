@@ -51,29 +51,33 @@ import	org.tritonus.share.ArraySet;
  * It is not possible to add <code>null</code> elements.
  */
 
-public class StringHashedSet extends ArraySet {
-
-	public StringHashedSet() {
+public class StringHashedSet<E> extends ArraySet<E>
+{
+	public StringHashedSet()
+	{
 		super();
 	}
 
-	public StringHashedSet(Collection c) {
+	public StringHashedSet(Collection<E> c)
+	{
 		super(c);
 	}
 
-	public boolean add(Object elem) {
+	public boolean add(E elem)
+	{
 		if (elem==null) {
 			return false;
 		}
 		return super.add(elem);
 	}
 
-	public boolean contains(Object elem) {
+	public boolean contains(Object elem)
+	{
 		if (elem==null) {
 			return false;
 		}
 		String comp=elem.toString();
-		Iterator it=iterator();
+		Iterator<E> it=iterator();
 		while (it.hasNext()) {
 			if (comp.equals(it.next().toString())) {
 				return true;
@@ -82,14 +86,14 @@ public class StringHashedSet extends ArraySet {
 		return false;
 	}
 
-	public Object get(Object elem) {
+	public E get(E elem) {
 		if (elem==null) {
 			return null;
 		}
 		String comp=elem.toString();
-		Iterator it=iterator();
+		Iterator<E> it=iterator();
 		while (it.hasNext()) {
-			Object thisElem=it.next();
+			E thisElem=it.next();
 			if (comp.equals(thisElem.toString())) {
 				return thisElem;
 			}

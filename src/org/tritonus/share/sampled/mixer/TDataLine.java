@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,7 @@
  *
  */
 
-
 package	org.tritonus.share.sampled.mixer;
-
 
 import	java.util.Collection;
 import	java.util.EventListener;
@@ -34,6 +32,7 @@ import	java.util.Set;
 
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
+import	javax.sound.sampled.Control;
 import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.LineEvent;
 import	javax.sound.sampled.Line;
@@ -69,8 +68,8 @@ public abstract class TDataLine
 
 
 	public TDataLine(TMixer mixer,
-			 DataLine.Info info,
-			 Collection controls)
+					 DataLine.Info info,
+					 Collection<Control> controls)
 	{
 		super(mixer,
 		      info,

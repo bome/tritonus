@@ -57,7 +57,7 @@ public class AlsaSynthesizer
 	private static final MidiChannel[]	EMPTY_MIDICHANNEL_ARRAY = new MidiChannel[0];
 	private static final VoiceStatus[]	EMPTY_VOICESTATUS_ARRAY = new VoiceStatus[0];
 
-	private List		m_channels;
+	private List<MidiChannel>		m_channels;
 	private int		m_nVoices;
 
 
@@ -72,7 +72,7 @@ public class AlsaSynthesizer
 				GlobalInfo.getVersion()),
 			nClient, nPort, false, true);
 		m_nVoices = nVoices;
-		m_channels = new ArrayList();
+		m_channels = new ArrayList<MidiChannel>();
 	}
 
 
@@ -128,7 +128,7 @@ public class AlsaSynthesizer
 
 	public MidiChannel[] getChannels()
 	{
-		return (MidiChannel[]) m_channels.toArray(EMPTY_MIDICHANNEL_ARRAY);
+		return m_channels.toArray(EMPTY_MIDICHANNEL_ARRAY);
 	}
 
 

@@ -33,8 +33,6 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
 import	org.tritonus.share.sampled.file.TAudioFileReader;
 
@@ -203,7 +201,7 @@ extends TAudioFileReader
 		// nFrameSize = (int) (lFileSizeInBytes / ...;
 
 		AudioFormat	format = new AudioFormat(
-			Encodings.getEncoding("VORBIS"),
+			new AudioFormat.Encoding("VORBIS"),
 			fSampleRate,
 			AudioSystem.NOT_SPECIFIED,
 			nChannels,
@@ -211,7 +209,7 @@ extends TAudioFileReader
 			AudioSystem.NOT_SPECIFIED,
 			true);	// this value is chosen arbitrarily
 		if (TDebug.TraceAudioFileReader) { TDebug.out("JorbisAudioFileReader.getAudioFileFormat(): AudioFormat: " + format); }
-		AudioFileFormat.Type	type = AudioFileTypes.getType("Ogg","ogg");
+		AudioFileFormat.Type	type = new AudioFileFormat.Type("Ogg","ogg");
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
 				type,

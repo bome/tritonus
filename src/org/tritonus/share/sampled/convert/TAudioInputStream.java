@@ -46,8 +46,8 @@ import javax.sound.sampled.AudioInputStream;
 public class TAudioInputStream
 extends AudioInputStream
 {
-	private Map	m_properties;
-	private Map	m_unmodifiableProperties;
+	private Map<String, Object>	m_properties;
+	private Map<String, Object>	m_unmodifiableProperties;
 
 
 	/** Constructor without properties.
@@ -58,7 +58,7 @@ extends AudioInputStream
 							 long lLengthInFrames)
 	{
 		super(inputStream, audioFormat, lLengthInFrames);
-		initMaps(new HashMap());
+		initMaps(new HashMap<String, Object>());
 	}
 
 
@@ -70,14 +70,14 @@ extends AudioInputStream
 	public TAudioInputStream(InputStream inputStream,
 							 AudioFormat audioFormat,
 							 long lLengthInFrames,
-							 Map properties)
+							 Map<String, Object> properties)
 	{
 		super(inputStream, audioFormat, lLengthInFrames);
 		initMaps(properties);
 	}
 
 
-	private void initMaps(Map properties)
+	private void initMaps(Map<String, Object> properties)
 	{
 		/* Here, we make a shallow copy of the map. It's unclear if this
 		   is sufficient (of if a deep copy should be made).
@@ -93,7 +93,7 @@ extends AudioInputStream
 
 		@return a map containing the properties.
 	*/
-	public Map properties()
+	public Map<String, Object> properties()
 	{
 		return m_unmodifiableProperties;
 	}

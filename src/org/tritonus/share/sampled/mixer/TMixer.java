@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,7 @@
  *
  */
 
-
 package	org.tritonus.share.sampled.mixer;
-
 
 import	java.util.ArrayList;
 import	java.util.Collection;
@@ -56,12 +54,12 @@ public abstract class TMixer
 	private static Line[]		EMPTY_LINE_ARRAY = new Line[0];
 
 	private Mixer.Info	m_mixerInfo;
-	private Collection	m_supportedSourceFormats;
-	private Collection	m_supportedTargetFormats;
-	private Collection	m_supportedSourceLineInfos;
-	private Collection	m_supportedTargetLineInfos;
-	private Set		m_openSourceDataLines;
-	private Set		m_openTargetDataLines;
+	private Collection<AudioFormat>	m_supportedSourceFormats;
+	private Collection<AudioFormat>	m_supportedTargetFormats;
+	private Collection<Line.Info>	m_supportedSourceLineInfos;
+	private Collection<Line.Info>	m_supportedTargetLineInfos;
+	private Set<SourceDataLine>		m_openSourceDataLines;
+	private Set<TargetDataLine>		m_openTargetDataLines;
 
 
 	/**	Constructor for mixers that use setSupportInformation().
@@ -71,10 +69,10 @@ public abstract class TMixer
 	{
 		this(mixerInfo,
 		     lineInfo,
-		     new ArrayList(),
-		     new ArrayList(),
-		     new ArrayList(),
-		     new ArrayList());
+		     new ArrayList<AudioFormat>(),
+		     new ArrayList<AudioFormat>(),
+		     new ArrayList<Line.Info>(),
+		     new ArrayList<Line.Info>());
 	}
 
 
@@ -83,10 +81,10 @@ public abstract class TMixer
 	 */
 	protected TMixer(Mixer.Info mixerInfo,
 			 Line.Info lineInfo,
-			 Collection supportedSourceFormats,
-			 Collection supportedTargetFormats,
-			 Collection supportedSourceLineInfos,
-			 Collection supportedTargetLineInfos)
+			 Collection<AudioFormat> supportedSourceFormats,
+			 Collection<AudioFormat> supportedTargetFormats,
+			 Collection<Line.Info> supportedSourceLineInfos,
+			 Collection<Line.Info> supportedTargetLineInfos)
 	{
 		super(null,	// TMixer
 		      lineInfo);
@@ -97,18 +95,18 @@ public abstract class TMixer
 			supportedTargetFormats,
 			supportedSourceLineInfos,
 			supportedTargetLineInfos);
-		m_openSourceDataLines = new ArraySet();
-		m_openTargetDataLines = new ArraySet();
+		m_openSourceDataLines = new ArraySet<SourceDataLine>();
+		m_openTargetDataLines = new ArraySet<TargetDataLine>();
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.<init>(): end"); }
 	}
 
 
 
 	protected void setSupportInformation(
-			 Collection supportedSourceFormats,
-			 Collection supportedTargetFormats,
-			 Collection supportedSourceLineInfos,
-			 Collection supportedTargetLineInfos)
+			 Collection<AudioFormat> supportedSourceFormats,
+			 Collection<AudioFormat> supportedTargetFormats,
+			 Collection<Line.Info> supportedSourceLineInfos,
+			 Collection<Line.Info> supportedTargetLineInfos)
 	{
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.setSupportInformation(): begin"); }
 		m_supportedSourceFormats = supportedSourceFormats;
@@ -423,10 +421,10 @@ public abstract class TMixer
 	protected boolean isSourceFormatSupported(AudioFormat format)
 	{
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.isSourceFormatSupported(): format to test: " + format); }
-		Iterator	iterator = m_supportedSourceFormats.iterator();
+		Iterator<AudioFormat> iterator = m_supportedSourceFormats.iterator();
 		while (iterator.hasNext())
 		{
-			AudioFormat	supportedFormat = (AudioFormat) iterator.next();
+			AudioFormat	supportedFormat = iterator.next();
 			if (AudioFormats.matches(supportedFormat, format))
 			{
 				return true;
@@ -440,10 +438,10 @@ public abstract class TMixer
 	protected boolean isTargetFormatSupported(AudioFormat format)
 	{
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.isTargetFormatSupported(): format to test: " + format); }
-		Iterator	iterator = m_supportedTargetFormats.iterator();
+		Iterator<AudioFormat> iterator = m_supportedTargetFormats.iterator();
 		while (iterator.hasNext())
 		{
-			AudioFormat	supportedFormat = (AudioFormat) iterator.next();
+			AudioFormat	supportedFormat = iterator.next();
 			if (AudioFormats.matches(supportedFormat, format))
 			{
 				return true;
@@ -462,14 +460,14 @@ public abstract class TMixer
 		{
 			synchronized (m_openSourceDataLines)
 			{
-				m_openSourceDataLines.add(line);
+				m_openSourceDataLines.add((SourceDataLine) line);
 			}
 		}
 		else if (line instanceof TargetDataLine)
 		{
 			synchronized (m_openSourceDataLines)
 			{
-				m_openTargetDataLines.add(line);
+				m_openTargetDataLines.add((TargetDataLine) line);
 			}
 		}
 	}
@@ -483,14 +481,14 @@ public abstract class TMixer
 		{
 			synchronized (m_openSourceDataLines)
 			{
-				m_openSourceDataLines.remove(line);
+				m_openSourceDataLines.remove((SourceDataLine) line);
 			}
 		}
 		else if (line instanceof TargetDataLine)
 		{
 			synchronized (m_openTargetDataLines)
 			{
-				m_openTargetDataLines.remove(line);
+				m_openTargetDataLines.remove((TargetDataLine) line);
 			}
 		}
 	}

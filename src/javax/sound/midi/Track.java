@@ -36,14 +36,15 @@ public class Track
 {
 	// not used; only to confirm with official API
 	protected Vector	events;
+
 	// this is the actual store
-	private List		m_events;
+	private List<MidiEvent>		m_events;
 
 
 
 	public Track()
 	{
-		m_events = new ArrayList();
+		m_events = new ArrayList<MidiEvent>();
 	}
 
 
@@ -79,7 +80,7 @@ public class Track
 	public synchronized MidiEvent get(int nIndex)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return (MidiEvent) m_events.get(nIndex);
+		return m_events.get(nIndex);
 	}
 
 

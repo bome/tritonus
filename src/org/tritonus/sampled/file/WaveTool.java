@@ -29,7 +29,6 @@ package	org.tritonus.sampled.file;
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
-import	org.tritonus.share.sampled.Encodings;
 
 /**
  * Common constants and methods for handling wave files.
@@ -69,8 +68,8 @@ public class WaveTool {
 	public static final int DATA_OFFSET=RIFF_CONTAINER_CHUNK_SIZE
 	                                    +CHUNK_HEADER_SIZE+FMT_CHUNK_SIZE+CHUNK_HEADER_SIZE;
 
-	public static AudioFormat.Encoding GSM0610 = Encodings.getEncoding("GSM0610");
-	public static AudioFormat.Encoding IMA_ADPCM = Encodings.getEncoding("IMA_ADPCM");
+	public static AudioFormat.Encoding GSM0610 = new AudioFormat.Encoding("GSM0610");
+	public static AudioFormat.Encoding IMA_ADPCM = new AudioFormat.Encoding("IMA_ADPCM");
 
 	public static short getFormatCode(AudioFormat format) {
 		AudioFormat.Encoding encoding = format.getEncoding();
@@ -95,7 +94,7 @@ public class WaveTool {
 		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
 		           && frameSizeOK) {
 			return WAVE_FORMAT_ALAW;
-		} else if (encoding.equals(Encodings.getEncoding("IMA_ADPCM"))
+		} else if (encoding.equals(new AudioFormat.Encoding("IMA_ADPCM"))
 		           && nSampleSize == 4)
 		{
 			return WAVE_FORMAT_IMA_ADPCM;

@@ -185,7 +185,7 @@ public class FloatSampleBuffer {
 	/** Whether the functions without lazy parameter are lazy or not. */
 	private static final boolean LAZY_DEFAULT=true;
 
-	private ArrayList channels=new ArrayList(); // contains for each channel a float array
+	private ArrayList<float[]> channels = new ArrayList<float[]>(); // contains for each channel a float array
 	private int sampleCount=0;
 	private int channelCount=0;
 	private float sampleRate=0;

@@ -23,7 +23,6 @@
 
 package	org.tritonus.share.sampled.file;
 
-
 import	java.io.IOException;
 import	java.util.Collection;
 
@@ -46,8 +45,8 @@ import	org.tritonus.share.TDebug;
 public class THeaderlessAudioFileWriter
 	extends TAudioFileWriter
 {
-	protected THeaderlessAudioFileWriter(Collection fileTypes,
-					     Collection audioFormats)
+	protected THeaderlessAudioFileWriter(Collection<AudioFileFormat.Type> fileTypes,
+										 Collection<AudioFormat> audioFormats)
 	{
 		super(fileTypes, audioFormats);
 		if (TDebug.TraceAudioFileWriter) { TDebug.out("THeaderlessAudioFileWriter.<init>(): begin"); }

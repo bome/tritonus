@@ -394,3 +394,16 @@
     <arg line="-arvC ${javadoc.dir} tritonus.sourceforge.net:/home/groups/t/tr/tritonus/htdocs/" />
   </exec>
 </target>
+
+
+<target name="tags" depends="init"
+	description="Create TAGS file for emacs">
+  <fileset dir="${src}" id="src.files">
+    <include name="**/*.java"/>
+  </fileset>
+  <pathconvert pathsep=" " property="src.files.expanded" refid="src.files"/>
+  <!--echo message = "files: ${src.files.expanded}" /-->
+  <exec executable="etags">
+    <arg line="-o ${src}/TAGS ${src.files.expanded}" />
+  </exec>
+</target>

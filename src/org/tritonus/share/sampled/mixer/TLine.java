@@ -6,7 +6,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -25,9 +25,7 @@
  *
  */
 
-
 package	org.tritonus.share.sampled.mixer;
-
 
 import	java.util.Collection;
 import	java.util.ArrayList;
@@ -58,8 +56,8 @@ public abstract class TLine
 
 	private Line.Info	m_info;
 	private boolean		m_bOpen;
-	private List		m_controls;
-	private Set		m_lineListeners;
+	private List<Control>	m_controls;
+	private Set<LineListener>	m_lineListeners;
 	private TMixer		m_mixer;
 
 
@@ -69,16 +67,16 @@ public abstract class TLine
 	{
 		setLineInfo(info);
 		setOpen(false);
-		m_controls = new ArrayList();
-		m_lineListeners = new HashSet();
+		m_controls = new ArrayList<Control>();
+		m_lineListeners = new HashSet<LineListener>();
 		m_mixer = mixer;
 	}
 
 
 
 	protected TLine(TMixer mixer,
-			Line.Info info,
-			Collection controls)
+					Line.Info info,
+					Collection<Control> controls)
 	{
 		this (mixer, info);
 		m_controls.addAll(controls);
@@ -265,7 +263,7 @@ public abstract class TLine
 	{
 		synchronized (m_controls)
 		{
-			return (Control[]) m_controls.toArray(EMPTY_CONTROL_ARRAY);
+			return m_controls.toArray(EMPTY_CONTROL_ARRAY);
 		}
 	}
 
@@ -275,10 +273,10 @@ public abstract class TLine
 	{
 		synchronized (m_controls)
 		{
-			Iterator	it = m_controls.iterator();
+			Iterator<Control>	it = m_controls.iterator();
 			while (it.hasNext())
 			{
-				Control	control = (Control) it.next();
+				Control	control = it.next();
 				if (control.getType().equals(controlType))
 				{
 					return control;
@@ -331,11 +329,11 @@ public abstract class TLine
 
 
 
-	private Set getLineListeners()
+	private Set<LineListener> getLineListeners()
 	{
 		synchronized (m_lineListeners)
 		{
-			return new HashSet(m_lineListeners);
+			return new HashSet<LineListener>(m_lineListeners);
 		}
 	}
 

@@ -63,7 +63,7 @@ public class AudioSystem
 	private static class GetMixerInfoMixerProviderAction
 	implements	MixerProviderAction
 	{
-		private Collection	m_mixerInfos = new ArrayList();
+		private Collection<Mixer.Info>	m_mixerInfos = new ArrayList<Mixer.Info>();
 
 
 
@@ -109,7 +109,7 @@ public class AudioSystem
 
 		public Mixer.Info[] getMixerInfos()
 		{
-			return (Mixer.Info[]) m_mixerInfos.toArray(EMPTY_MIXER_INFO_ARRAY);
+			return m_mixerInfos.toArray(EMPTY_MIXER_INFO_ARRAY);
 		}
 	}
 
@@ -204,14 +204,14 @@ public class AudioSystem
 	implements	MixerAction
 	{
 		private Line.Info	m_info = null;
-		private Set		m_infos;
+		private Set<Line.Info>		m_infos;
 
 
 
 		public GetSourceLineInfoMixerAction(Line.Info info)
 		{
 			m_info = info;
-			m_infos = new ArraySet();
+			m_infos = new ArraySet<Line.Info>();
 		}
 
 
@@ -229,7 +229,7 @@ public class AudioSystem
 
 		public Line.Info[] getInfos()
 		{
-			return (Line.Info[]) m_infos.toArray(EMPTY_LINE_INFO_ARRAY);
+			return m_infos.toArray(EMPTY_LINE_INFO_ARRAY);
 		}
 	}
 
@@ -250,14 +250,14 @@ public class AudioSystem
 	implements	MixerAction
 	{
 		private Line.Info	m_info = null;
-		private Set		m_infos;
+		private Set<Line.Info>		m_infos;
 
 
 
 		public GetTargetLineInfoMixerAction(Line.Info info)
 		{
 			m_info = info;
-			m_infos = new ArraySet();
+			m_infos = new ArraySet<Line.Info>();
 		}
 
 
@@ -275,7 +275,7 @@ public class AudioSystem
 
 		public Line.Info[] getInfos()
 		{
-			return (Line.Info[]) m_infos.toArray(EMPTY_LINE_INFO_ARRAY);
+			return m_infos.toArray(EMPTY_LINE_INFO_ARRAY);
 		}
 	}
 
@@ -424,7 +424,7 @@ public class AudioSystem
 	implements	FormatConversionProviderAction
 	{
 		private Object		m_sourceDescription;
-		private Collection	m_targetEncodings;
+		private Collection<AudioFormat.Encoding>	m_targetEncodings;
 
 
 		//$$fb 2000-08-15: added for workaround below
@@ -436,7 +436,7 @@ public class AudioSystem
 			Object sourceDescription)
 		{
 			m_sourceDescription = sourceDescription;
-			m_targetEncodings = new ArraySet();
+			m_targetEncodings = new ArraySet<AudioFormat.Encoding>();
 		}
 
 
@@ -471,7 +471,7 @@ public class AudioSystem
 
 		public AudioFormat.Encoding[] getEncodings()
 		{
-			return (AudioFormat.Encoding[]) m_targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
+			return m_targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
 		}
 
 		//$$fb 2000-08-15: added for workaround below
@@ -1025,7 +1025,7 @@ public class AudioSystem
 
 	public static AudioFileFormat.Type[] getAudioFileTypes()
 	{
-		Set		supportedTypes = new HashSet();
+		Set<AudioFileFormat.Type>		supportedTypes = new HashSet<AudioFileFormat.Type>();
 		Iterator	audioFileWriters = TAudioConfig.getAudioFileWriters();
 		if (TDebug.TraceAudioSystem) { TDebug.out(">AudioSystem.getAudioFileTypes()"); }
 		while (audioFileWriters.hasNext())
@@ -1040,8 +1040,8 @@ public class AudioSystem
 				supportedTypes.add(aSupportedTypes[i]);
 			}
 		}
-		if (TDebug.TraceAudioSystem) { TDebug.out("< returning "+supportedTypes.size()+" types."); }
-		return (AudioFileFormat.Type[]) supportedTypes.toArray(EMPTY_TYPE_ARRAY);
+		if (TDebug.TraceAudioSystem) { TDebug.out("< returning " + supportedTypes.size() + " types."); }
+		return supportedTypes.toArray(EMPTY_TYPE_ARRAY);
 	}
 
 
@@ -1109,7 +1109,7 @@ public class AudioSystem
 	public static AudioFileFormat.Type[] getAudioFileTypes(
 		AudioInputStream audioInputStream)
 	{
-		Set		supportedTypes = new HashSet();
+		Set<AudioFileFormat.Type>		supportedTypes = new HashSet<AudioFileFormat.Type>();
 		Iterator	audioFileWriters = TAudioConfig.getAudioFileWriters();
 		if (TDebug.TraceAudioSystem) { TDebug.out(">AudioSystem.getAudioFileTypes()"); }
 		while (audioFileWriters.hasNext())
@@ -1127,8 +1127,8 @@ public class AudioSystem
 				supportedTypes.add(aSupportedTypes[i]);
 			}
 		}
-		if (TDebug.TraceAudioSystem) { TDebug.out("< returning "+supportedTypes.size()+" types."); }
-		return (AudioFileFormat.Type[]) supportedTypes.toArray(EMPTY_TYPE_ARRAY);
+		if (TDebug.TraceAudioSystem) { TDebug.out("< returning " + supportedTypes.size() + " types."); }
+		return supportedTypes.toArray(EMPTY_TYPE_ARRAY);
 	}
 
 

@@ -75,10 +75,10 @@ public class Service
 
 
 
-	private static List createInstancesList(String strFullName)
+	private static List<Object> createInstancesList(String strFullName)
 	{
 		if (TDebug.TraceService) { TDebug.out("Service.createInstancesList(): begin"); }
-		List	providers = new ArrayList();
+		List<Object>	providers = new ArrayList<Object>();
 		Iterator	classNames = createClassNames(strFullName);
 		if (classNames != null)
 		{
@@ -125,10 +125,10 @@ public class Service
 
 
 
-	private static Iterator createClassNames(String strFullName)
+	private static Iterator<String> createClassNames(String strFullName)
 	{
-		if (TDebug.TraceService) { TDebug.out("Service.createClassNames(): begin"); }
-		Set	providers = new ArraySet();
+		if (TDebug.TraceService) TDebug.out("Service.createClassNames(): begin");
+		Set<String>	providers = new ArraySet<String>();
 		Enumeration	configs = null;
 		try
 		{
@@ -182,8 +182,8 @@ public class Service
 				}
 			}
 		}
-		Iterator	iterator = providers.iterator();
-		if (TDebug.TraceService) { TDebug.out("Service.createClassNames(): end"); }
+		Iterator<String> iterator = providers.iterator();
+		if (TDebug.TraceService) TDebug.out("Service.createClassNames(): end");
 		return iterator;
 	}
 }

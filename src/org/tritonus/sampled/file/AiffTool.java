@@ -29,7 +29,6 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioSystem;
 
-import org.tritonus.share.sampled.Encodings;
 
 /**
  * Common constants and methods for handling aiff and aiff-c files.
@@ -66,7 +65,7 @@ public class AiffTool {
 			return AIFF_COMM_PCM;
 		} else if (encoding.equals(AudioFormat.Encoding.ULAW) && nSampleSize == 8 && frameSizeOK) {
 			return AIFF_COMM_ULAW;
-		} else if (encoding.equals(Encodings.getEncoding("IMA_ADPCM")) && nSampleSize == 4) {
+		} else if (encoding.equals(new AudioFormat.Encoding("IMA_ADPCM")) && nSampleSize == 4) {
 			return AIFF_COMM_IMA_ADPCM;
 		} else {
 			return AIFF_COMM_UNSPECIFIED;
