@@ -447,7 +447,7 @@ implements Runnable
 
 	public synchronized long getTickPosition()
 	{
-		if (m_nPhase == 2) {
+		if (m_nPhase == STATE_STARTED) {
 			return Math.max(m_lTickPosition, (getTimeInMicroseconds() - m_lStartTime) / m_lMicroSecondsPerTick);
 		} else {
 			return m_lTickPosition;
