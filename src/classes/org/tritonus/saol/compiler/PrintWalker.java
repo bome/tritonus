@@ -25,8 +25,8 @@
 package	org.tritonus.saol.compiler;
 
 
-import saol.analysis.DepthFirstAdapter;
-import saol.node.*;
+import	org.tritonus.saol.sablecc.analysis.DepthFirstAdapter;
+import	org.tritonus.saol.sablecc.node.*;
 
 
 

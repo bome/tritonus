@@ -23,8 +23,10 @@
 package	org.tritonus.saol.compiler;
 
 
-import saol.analysis.*;
-import saol.node.*;
+import	org.tritonus.saol.sablecc.analysis.*;
+import	org.tritonus.saol.sablecc.node.*;
+
+
 
 public class GlobalsSearcher
 extends DepthFirstAdapter
