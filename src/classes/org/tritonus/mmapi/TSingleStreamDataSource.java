@@ -35,7 +35,6 @@ import	javax.microedition.media.MediaException;
 import	javax.microedition.media.protocol.ContentDescriptor;
 import	javax.microedition.media.protocol.DataSource;
 import	javax.microedition.media.protocol.SourceStream;
-import org.tritonus.share.TDebug;
 
 
 

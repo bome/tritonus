@@ -28,7 +28,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import javax.microedition.media.MediaException;
 
-import org.tritonus.share.TDebug;
+
 
 /**	TODO:
 */
@@ -45,7 +45,6 @@ implements ToneGenerator
 	public JavaSoundToneGenerator()
 		throws MediaException
 	{
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.<init>(): begin"); }
 		Synthesizer	synth = null;
 		try
 		{
@@ -56,11 +55,9 @@ implements ToneGenerator
 		{
 			throw new MediaException("Java Sound Synthesizer not available");
 		}
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.<init>(): Synthesizer: " + synth); }
 		m_midiChannel = synth.getChannels()[0];
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.<init>(): MidiChannel: " + m_midiChannel); }
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.<init>(): end"); }
 	}
+
 
 
 	/**	TODO:
@@ -70,13 +67,11 @@ implements ToneGenerator
 			     int nVolume)
 		throws MediaException
 	{
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.playTone(): begin"); }
 		// scale from [0..100] to [0..127]
 		int	nVelocity = (nVolume * 127) / 100;
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.playTone(): velocity: " + nVelocity); }
+		// if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.playTone(): velocity: " + nVelocity); }
 		Thread	thread = new ToneThread(nNote, nDuration, nVelocity);
 		thread.start();
-		if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.playTone(): end"); }
 	}
 
 
@@ -98,7 +93,6 @@ implements ToneGenerator
 
 		public void run()
 		{
-			if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.ToneThread.run(): begin"); }
 			JavaSoundToneGenerator.this.m_midiChannel.noteOn(m_nNote, m_nVelocity);
 			try
 			{
@@ -106,10 +100,9 @@ implements ToneGenerator
 			}
 			catch (InterruptedException e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				// IGNORED
 			}
 			JavaSoundToneGenerator.this.m_midiChannel.noteOff(m_nNote);
-			if (TDebug.TraceToneGenerator) { TDebug.out("JavaSoundToneGenerator.ToneThread.run(): end"); }
 		}
 	}
 }

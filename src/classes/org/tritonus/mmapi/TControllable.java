@@ -26,7 +26,6 @@ package	org.tritonus.mmapi;
 import javax.microedition.media.Control;
 import javax.microedition.media.Controllable;
 
-import org.tritonus.share.TDebug;
 
 
 public abstract class TControllable
@@ -116,7 +115,7 @@ implements Controllable
 		}
 		catch (ClassNotFoundException e)
 		{
-			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+			// IGNORED; null will be returned.
 		}
 		return cls;
 	}
