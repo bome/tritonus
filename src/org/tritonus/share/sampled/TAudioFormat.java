@@ -33,8 +33,8 @@ import javax.sound.sampled.AudioFormat;
 public class TAudioFormat
 extends AudioFormat
 {
-	private Map	m_properties;
-	private Map	m_unmodifiableProperties;
+	private Map<String, Object>	m_properties;
+	private Map<String, Object>	m_unmodifiableProperties;
 
 
 	public TAudioFormat(AudioFormat.Encoding encoding,
@@ -44,7 +44,7 @@ extends AudioFormat
 						int frameSize,
 						float frameRate,
 						boolean bigEndian,
-						Map properties)
+						Map<String, Object> properties)
 	{
 		super(encoding,
 			  sampleRate,
@@ -62,7 +62,7 @@ extends AudioFormat
 						int channels,
 						boolean signed,
 						boolean bigEndian,
-						Map properties)
+						Map<String, Object> properties)
 	{
 		super(sampleRate,
 			  sampleSizeInBits,
@@ -74,19 +74,19 @@ extends AudioFormat
 
 
 
-	private void initMaps(Map properties)
+	private void initMaps(Map<String, Object> properties)
 	{
 		/* Here, we make a shallow copy of the map. It's unclear if this
-		   is sufficient (of if a deep copy should be made).
+		   is sufficient (or if a deep copy should be made).
 		*/
-		m_properties = new HashMap();
+		m_properties = new HashMap<String, Object>();
 		m_properties.putAll(properties);
 		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
 	}
 
 
 
-	public Map properties()
+	public Map<String, Object> properties()
 	{
 		return m_unmodifiableProperties;
 	}
