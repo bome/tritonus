@@ -88,7 +88,7 @@ public class VorbisEncoder
 		vc.addTag("ENCODER","encoder_example.c");
 
 		/* set up the analysis state and auxiliary encoding storage */
-		vd.init(vi);
+		vd.initAnalysis(vi);
 		vb.init(vd);
   
 		/* set up our packet->stream encoder */
