@@ -1006,7 +1006,7 @@ sendEvent(JNIEnv *env,
 		nReturn = snd_seq_flush_output(seq);
 		// printf("after flushing output\n");
 	}
-	while (nReturn == -1 && errno == EINTR);
+	while ((nReturn == -1 && errno == EINTR) || nReturn == -EINTR);
 	if (nReturn < 0)
 	{
 		printf("return: %d\n", nReturn);

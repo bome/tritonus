@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,9 @@ import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.ControllerEventListener;
 import	javax.sound.midi.MidiDevice;
 
+import	org.tritonus.TDebug;
 import	org.tritonus.util.ArraySet;
+
 
 
 
@@ -233,7 +235,7 @@ public abstract class TSequencer
 
 
 	private void removeControllerListener(int i,
-					   ControllerEventListener listener)
+					      ControllerEventListener listener)
 	{
 		if (m_aControllerListeners[i] != null)
 		{
@@ -265,13 +267,17 @@ public abstract class TSequencer
 
 	protected void sendControllerEvent(ShortMessage message)
 	{
+		// TDebug.out("TSequencer.sendControllerEvent(): called");
 		int	nController = message.getData1();
-		Iterator	iterator = m_aControllerListeners[nController].iterator();
-		while (iterator.hasNext())
+		if (m_aControllerListeners[nController] != null)
 		{
-			ControllerEventListener	controllerEventListener = (ControllerEventListener) iterator.next();
-			ShortMessage	copiedMessage = (ShortMessage) message.clone();
-			controllerEventListener.controlChange(copiedMessage);
+			Iterator	iterator = m_aControllerListeners[nController].iterator();
+			while (iterator.hasNext())
+			{
+				ControllerEventListener	controllerEventListener = (ControllerEventListener) iterator.next();
+				ShortMessage	copiedMessage = (ShortMessage) message.clone();
+				controllerEventListener.controlChange(copiedMessage);
+			}
 		}
 	}
 }
