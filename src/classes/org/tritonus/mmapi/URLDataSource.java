@@ -62,8 +62,8 @@ extends TSingleStreamDataSource
 		InputStream	inputStream = connection.getInputStream();
 		setInputStream(inputStream);
 		long	lContentLength = connection.getContentLength();
-		SourceStream	sourceStream = new InputStreamSourceStream(inputStream,
-									   lContentLength);
+		SourceStream	sourceStream = new URLSourceStream(inputStream,
+								   lContentLength);
 		setSourceStream(sourceStream);
 	}
 
@@ -74,6 +74,38 @@ extends TSingleStreamDataSource
 	{
 		super.doDisconnect();
 		m_url = null;
+	}
+
+
+
+	private URL getURL()
+	{
+		return m_url;
+	}
+
+
+	///////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////
+
+
+
+
+	protected class URLSourceStream
+	extends InputStreamSourceStream
+	{
+		public URLSourceStream(InputStream inputStream,
+					       long lContentLength)
+		{
+			super(inputStream,
+			      lContentLength);
+		}
+
+
+
+		public URL getURL()
+		{
+			return URLDataSource.this.getURL();
+		}
 	}
 }
 
