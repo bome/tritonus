@@ -47,8 +47,7 @@
 		if="midishare-present">
 		<javac srcdir="${src}"
 			destdir="${build}"
-			includes="org/tritonus/midi/device/midishare/**"
-			filtering="off"/>
+			includes="org/tritonus/midi/device/midishare/**" />
 	</target>
 
 	<target name="compile-libs"
