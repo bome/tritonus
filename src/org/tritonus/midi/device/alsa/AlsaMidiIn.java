@@ -191,7 +191,7 @@ public class AlsaMidiIn
 
 	private MidiEvent getEvent()
 	{
-		if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): before getEvent(int[], long[])"); }
+		if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): before eventInput()"); }
 		while (true)
 		{
 			int	nReturn = getAlsaSeq().eventInput(m_event);
