@@ -25,8 +25,10 @@
 
 package	org.tritonus.lowlevel.esd;
 
+import java.io.IOException;
 
-import	java.io.IOException;
+import org.tritonus.share.TDebug;
+
 
 
 public class EsdRecordingStream
@@ -44,6 +46,10 @@ extends	Esd
 	static
 	{
 		Esd.loadNativeLibrary();
+		if (TDebug.TraceEsdRecordingStreamNative)
+		{
+			setTrace(true);
+		}
 	}
 
 
@@ -80,6 +86,8 @@ extends	Esd
 	 */
 	public native void close();
 
+
+	private static native void setTrace(boolean bTrace);
 }
 
 
