@@ -20,22 +20,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-#include	<alsa/asoundlib.h>
-#include	<errno.h>
-#include	"org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.h"
 #include	"common.h"
-#include	"HandleFieldHandler.hh"
-
-
-static int	DEBUG = 0;
-static FILE*	debug_file = NULL;
+#include	"org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.h"
 
 
 static HandleFieldHandler<snd_pcm_format_mask_t*>	handler;
-
-
-
 
 
 

@@ -20,18 +20,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-#include	<alsa/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaSeq_QueueInfo.h"
-#include	"HandleFieldHandler.hh"
 
-static int DEBUG = 0;
-static FILE*	debug_file = NULL;
 
 static HandleFieldHandler<snd_seq_queue_info_t*>	handler;
 
 
+// TODO: used in ...
 snd_seq_queue_info_t*
 getQueueInfoNativeHandle(JNIEnv *env, jobject obj)
 {

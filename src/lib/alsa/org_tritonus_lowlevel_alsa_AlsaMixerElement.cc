@@ -20,21 +20,17 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-#include	<alsa/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaMixerElement.h"
-#include	"HandleFieldHandler.hh"
-
-
-static int	DEBUG = 0;
-static FILE*	debug_file = NULL;
-
-static HandleFieldHandler<snd_mixer_elem_t*>	handler;
 
 
 snd_mixer_t*
 getMixerNativeHandle(JNIEnv *env, jobject obj);
+
+
+static HandleFieldHandler<snd_mixer_elem_t*>	handler;
+
+
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaMixerElement

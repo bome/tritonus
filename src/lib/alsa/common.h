@@ -21,6 +21,17 @@
  */
 
 
+/* CONVENIENCE section */
+
+#include	<alsa/asoundlib.h>
+#include	"HandleFieldHandler.hh"
+
+static int	DEBUG = 0;
+static FILE*	debug_file = NULL;
+
+/* end CONVENIENCE section */
+
+
 #include	<jni.h>
 
 void

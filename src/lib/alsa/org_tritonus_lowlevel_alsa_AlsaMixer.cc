@@ -20,19 +20,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-#include	<alsa/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaMixer.h"
-#include	"HandleFieldHandler.hh"
-
 
 #define checkExceptionSpecial()	if (env->ExceptionOccurred()) { env->ExceptionClear(); return -1; }
 
-static int	DEBUG = 0;
-static FILE*	debug_file = NULL;
 
 static HandleFieldHandler<snd_mixer_t*>	handler;
+
 
 
 snd_mixer_t*
