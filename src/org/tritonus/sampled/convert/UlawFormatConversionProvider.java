@@ -51,10 +51,9 @@ import	org.tritonus.sampled.TConversionTool;
  */
 
 public class UlawFormatConversionProvider
-	extends TEncodingFormatConversionProvider
-{
+	extends TEncodingFormatConversionProvider {
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
-	
+
 	// TODO:
 	// make a superclass that takes 2 arrays in the constructor
 	// then, it checks whether conversion from the first array to the second
@@ -63,39 +62,38 @@ public class UlawFormatConversionProvider
 	// for e.g. source=ALAW and target=PCM_SIGNED
 	// when the converted stream is actually requested, an exception occurs for these cases
 	// this new superclass wouldn't distinguish between source and target formats.
-	
+
 	/*private static final AudioFormat[]	INPUT_FORMATS =
-	{
+{
 		// encoding, sampleRate, sampleSize, channels, frameSize, frameRate, bigEndian
 		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
 		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true)
-	};*/
-	
-	private static final AudioFormat[]	OUTPUT_FORMATS =
-	{
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
-		new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, true),
+};*/
 
-		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true)
-	};
+	private static final AudioFormat[]	OUTPUT_FORMATS =
+	    {
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, true),
+
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true)
+	    };
 
 	/**	Constructor.
 	 */
-	public UlawFormatConversionProvider()
-	{
+	public UlawFormatConversionProvider() {
 		//super(Arrays.asList(INPUT_FORMATS),
 		//      Arrays.asList(OUTPUT_FORMATS));
 		super(Arrays.asList(OUTPUT_FORMATS),
@@ -103,102 +101,112 @@ public class UlawFormatConversionProvider
 	}
 
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream) {
-    	AudioFormat sourceFormat=sourceStream.getFormat();
-    	// the non-conversion case
-    	// TODO: does this work OK when some fields are AudioSystem.NOT_SPECIFIED ?
-    	if (sourceFormat.matches(targetFormat)) {
-    		return sourceStream;
+		AudioFormat sourceFormat=sourceStream.getFormat();
+		// the non-conversion case
+		// TODO: does this work OK when some fields are AudioSystem.NOT_SPECIFIED ?
+		if (sourceFormat.matches(targetFormat)) {
+			return sourceStream;
 		}
-   		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
-   				&& doMatch(targetFormat.getChannels(), sourceFormat.getChannels())) {
-    		if (doMatch(targetFormat.getSampleSizeInBits(),8)
-    			&& targetFormat.getEncoding()==AudioFormat.Encoding.ULAW) {
-    			// OK, the targetFormat seems fine, so we convert it to ULAW
-    			// let the remaining checks be done by ToUlawStream
-    			return new ToUlawStream(sourceStream);
-    		} else
-    		if (doMatch(sourceFormat.getSampleSizeInBits(),8)
-    			&& sourceFormat.getEncoding()==AudioFormat.Encoding.ULAW) {
-    			// convert ULAW to the target format
-    			return new FromUlawStream(sourceStream, targetFormat);
-    		}
-    	}
+		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
+		        && doMatch(targetFormat.getChannels(), sourceFormat.getChannels())) {
+			if (doMatch(targetFormat.getSampleSizeInBits(),8)
+			        && targetFormat.getEncoding()==AudioFormat.Encoding.ULAW) {
+				// OK, the targetFormat seems fine, so we convert it to ULAW
+				// let the remaining checks be done by ToUlawStream
+				return new ToUlawStream(sourceStream);
+			} else
+				if (doMatch(sourceFormat.getSampleSizeInBits(),8)
+				        && sourceFormat.getEncoding()==AudioFormat.Encoding.ULAW) {
+					// convert ULAW to the target format
+					return new FromUlawStream(sourceStream, targetFormat);
+				}
+		}
 		throw new IllegalArgumentException("format conversion not supported");
-    }
+	}
 
 	private static final int UNSIGNED8=1;
 	private static final int SIGNED8=2;
 	private static final int BIG_ENDIAN16=3;
 	private static final int LITTLE_ENDIAN16=4;
 	private static final int ALAW=5;
-	
+
 	private boolean isSupportedFormat(AudioFormat format) {
 		return getConvertType(format)!=0;
 	}
-	
+
 	private int getConvertType(AudioFormat af) {
-	   	int result=0;
-	   	AudioFormat.Encoding encoding=af.getEncoding();
-    	boolean bigEndian=af.isBigEndian();
-    	int ssib=af.getSampleSizeInBits();
-    	// now set up the convert type
-    	if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
-    		if (ssib==16) {
-    			if (bigEndian) {
-    				result=BIG_ENDIAN16;
-    			} else {
-    				result=LITTLE_ENDIAN16;
-    			}
-    		} else
-    		if (ssib==8) {
-    			result=SIGNED8;
-    		}
-    	} else
-    	if (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
-    		if (ssib==8) {
-   				result=UNSIGNED8;
-   			}
-   		} else
-    	if (encoding.equals(AudioFormat.Encoding.ALAW)) {
-    		result=ALAW;
-    	}
-    	return result;
+		int result=0;
+		AudioFormat.Encoding encoding=af.getEncoding();
+		boolean bigEndian=af.isBigEndian();
+		int ssib=af.getSampleSizeInBits();
+		// now set up the convert type
+		if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
+			if (ssib==16) {
+				if (bigEndian) {
+					result=BIG_ENDIAN16;
+				} else {
+					result=LITTLE_ENDIAN16;
+				}
+			} else
+				if (ssib==8) {
+					result=SIGNED8;
+				}
+		} else
+			if (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
+				if (ssib==8) {
+					result=UNSIGNED8;
+				}
+			} else
+				if (encoding.equals(AudioFormat.Encoding.ALAW)) {
+					result=ALAW;
+				}
+		return result;
 	}
 
 	class ToUlawStream extends TSynchronousFilteredAudioInputStream {
 		private int convertType;
-		
+
 		public ToUlawStream(AudioInputStream sourceStream) {
-			// transform the targetFormat so that 
+			// transform the targetFormat so that
 			// FrameRate, SampleRate, and Channels match the sourceFormat
 			// we only retain encoding, samplesize and endian of targetFormat.
 			super (sourceStream, new AudioFormat(
-				AudioFormat.Encoding.ULAW,
-				sourceStream.getFormat().getSampleRate(),
-				8,
-				sourceStream.getFormat().getChannels(),
-				sourceStream.getFormat().getChannels(), // sampleSize
-				sourceStream.getFormat().getFrameRate(),
-				sourceStream.getFormat().isBigEndian()));
-	    	convertType=getConvertType(sourceStream.getFormat());
-		enableConvertInPlace();
+			           AudioFormat.Encoding.ULAW,
+			           sourceStream.getFormat().getSampleRate(),
+			           8,
+			           sourceStream.getFormat().getChannels(),
+			           sourceStream.getFormat().getChannels(), // sampleSize
+			           sourceStream.getFormat().getFrameRate(),
+			           sourceStream.getFormat().isBigEndian()));
+			convertType=getConvertType(sourceStream.getFormat());
+			enableConvertInPlace();
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}
-		
+
 		protected int convert(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int inFrameCount) {
 			int sampleCount=inFrameCount*getFormat().getChannels();
 			switch (convertType) {
-				case UNSIGNED8:		TConversionTool.pcm8Unsigned2ulaw(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case SIGNED8:		TConversionTool.pcm8Signed2ulaw(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case BIG_ENDIAN16: 	TConversionTool.pcm16BigEndian2ulaw(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case LITTLE_ENDIAN16:TConversionTool.pcm16LittleEndian2ulaw(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case ALAW:			TConversionTool.alaw2ulaw(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
+			case UNSIGNED8:
+				TConversionTool.pcm82ulaw
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, false);
+				break;
+			case SIGNED8:
+				TConversionTool.pcm82ulaw
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, true);
+				break;
+			case BIG_ENDIAN16:
+				TConversionTool.pcm162ulaw
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, true);
+				break;
+			case LITTLE_ENDIAN16:
+				TConversionTool.pcm162ulaw
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, false);
+				break;
+			case ALAW:
+				TConversionTool.alaw2ulaw
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
 			}
 			return inFrameCount;
 		}
@@ -206,51 +214,69 @@ public class UlawFormatConversionProvider
 		protected void convertInPlace(byte[] buffer, int byteOffset, int frameCount) {
 			int sampleCount=frameCount*getFormat().getChannels();
 			switch (convertType) {
-				case UNSIGNED8:		TConversionTool.pcm8Unsigned2ulaw(
-										buffer, byteOffset, sampleCount); break;
-				case SIGNED8:		TConversionTool.pcm8Signed2ulaw(
-										buffer, byteOffset, sampleCount); break;
-				case ALAW:			TConversionTool.alaw2ulaw(
-										buffer, byteOffset, sampleCount); break;
-				default: throw new RuntimeException("ToUlawStream: Call to convertInPlace, but it cannot convert in place.");
+			case UNSIGNED8:
+				TConversionTool.pcm82ulaw
+				(buffer, byteOffset, sampleCount, false);
+				break;
+			case SIGNED8:
+				TConversionTool.pcm82ulaw
+				(buffer, byteOffset, sampleCount, true);
+				break;
+			case ALAW:
+				TConversionTool.alaw2ulaw
+				(buffer, byteOffset, sampleCount);
+				break;
+			default:
+				throw new RuntimeException
+				("ToUlawStream: Call to convertInPlace, but it cannot convert in place.");
 			}
 		}
 	}
 
 	class FromUlawStream extends TSynchronousFilteredAudioInputStream {
 		private int convertType;
-		
+
 		public FromUlawStream(AudioInputStream sourceStream, AudioFormat targetFormat) {
-			// transform the targetFormat so that 
+			// transform the targetFormat so that
 			// FrameRate, SampleRate, and Channels match the sourceFormat
 			// we only retain encoding, samplesize and endian of targetFormat.
 			super (sourceStream, new AudioFormat(
-				targetFormat.getEncoding(),
-				sourceStream.getFormat().getSampleRate(),
-				targetFormat.getSampleSizeInBits(),
-				sourceStream.getFormat().getChannels(),
-				targetFormat.getSampleSizeInBits()*sourceStream.getFormat().getChannels()/8,
-				sourceStream.getFormat().getFrameRate(),
-				targetFormat.isBigEndian()));
-	    	convertType=getConvertType(getFormat());
-		enableConvertInPlace();
+			           targetFormat.getEncoding(),
+			           sourceStream.getFormat().getSampleRate(),
+			           targetFormat.getSampleSizeInBits(),
+			           sourceStream.getFormat().getChannels(),
+			           targetFormat.getSampleSizeInBits()*sourceStream.getFormat().getChannels()/8,
+			           sourceStream.getFormat().getFrameRate(),
+			           targetFormat.isBigEndian()));
+			convertType=getConvertType(getFormat());
+			enableConvertInPlace();
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}
-		
+
 		protected int convert(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int inFrameCount) {
 			int sampleCount=inFrameCount*getFormat().getChannels();
 			switch (convertType) {
-				case UNSIGNED8:		TConversionTool.ulaw2pcm8Unsigned(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case SIGNED8:		TConversionTool.ulaw2pcm8Signed(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case BIG_ENDIAN16: 	TConversionTool.ulaw2pcm16BigEndian(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case LITTLE_ENDIAN16:TConversionTool.ulaw2pcm16LittleEndian(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
-				case ALAW:			TConversionTool.ulaw2alaw(inBuffer, 0, 
-										outBuffer, outByteOffset, sampleCount); break;
+			case UNSIGNED8:
+				TConversionTool.ulaw2pcm8
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, false);
+				break;
+			case SIGNED8:
+				TConversionTool.ulaw2pcm8
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, true);
+				break;
+			case BIG_ENDIAN16:
+				TConversionTool.ulaw2pcm16
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, true);
+				break;
+			case LITTLE_ENDIAN16:
+				TConversionTool.ulaw2pcm16
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount, false);
+				break;
+			case ALAW:
+				TConversionTool.ulaw2alaw
+				(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
 			}
 			return inFrameCount;
 		}
@@ -258,17 +284,25 @@ public class UlawFormatConversionProvider
 		protected void convertInPlace(byte[] buffer, int byteOffset, int frameCount) {
 			int sampleCount=frameCount*format.getChannels();
 			switch (convertType) {
-				case UNSIGNED8:		TConversionTool.ulaw2pcm8Unsigned(
-										buffer, byteOffset, sampleCount); break;
-				case SIGNED8:		TConversionTool.ulaw2pcm8Signed(
-										buffer, byteOffset, sampleCount); break;
-				case ALAW:			TConversionTool.ulaw2alaw(
-										buffer, byteOffset, sampleCount); break;
-				default: throw new RuntimeException("FromUlawStream: Call to convertInPlace, but it cannot convert in place.");
+			case UNSIGNED8:
+				TConversionTool.ulaw2pcm8
+				(buffer, byteOffset, sampleCount, false);
+				break;
+			case SIGNED8:
+				TConversionTool.ulaw2pcm8
+				(buffer, byteOffset, sampleCount, true);
+				break;
+			case ALAW:
+				TConversionTool.ulaw2alaw
+				(buffer, byteOffset, sampleCount);
+				break;
+			default:
+				throw new RuntimeException
+				("FromUlawStream: Call to convertInPlace, but it cannot convert in place.");
 			}
 		}
 	}
-	
+
 }
 
 /*** UlawFormatConversionProvider.java ***/
