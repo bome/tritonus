@@ -34,7 +34,11 @@ import	org.tritonus.share.TDebug;
 
 public class AlsaMixer
 {
-	private long	m_nativeHandle;
+	/*
+	  not private because needed to be accessed by AlsaMixerElement.
+	  (Better solution: inner classes)
+	*/
+	/*private*/ long	m_lNativeHandle;
 	private List	m_controlsList;
 
 
@@ -132,7 +136,7 @@ public class AlsaMixer
 
 
 
-	private static native void setTrace(boolean bTrace);
+	public static native void setTrace(boolean bTrace);
 }
 
 
