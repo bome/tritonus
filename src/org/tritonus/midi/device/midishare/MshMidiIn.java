@@ -28,6 +28,8 @@
 package	org.tritonus.midi.device.midishare;
 
 import	javax.sound.midi.MidiEvent;
+import	javax.sound.midi.InvalidMidiDataException;
+
 import	org.tritonus.TDebug;
 
 import grame.midishare.*;
@@ -53,24 +55,28 @@ public class MshMidiIn
 		
 		while (!interrupted())
 		{
-			mshEv = Midi.GetEv(m_refNum);
+			try {
+				mshEv = Midi.GetEv(m_refNum);
 			
-			if (mshEv != 0) {
-			
-				// Convert Note in KeyOn/KeyOff pair
+				if (mshEv != 0) {
 				
-				if (Midi.GetType(mshEv) == Midi.typeNote){
-					Midi.SetType(mshEv, Midi.typeKeyOn);
-					int keyOff = Midi.CopyEv(mshEv);
-					if (keyOff != 0) {
-						Midi.SetType(keyOff, Midi.typeKeyOff);
-						Midi.SendAt(m_refNum+128, keyOff, Midi.GetDate(keyOff) + Midi.GetField(keyOff,2));
+					// Convert Note in KeyOn/KeyOff pair
+					
+					if (Midi.GetType(mshEv) == Midi.typeNote){
+						Midi.SetType(mshEv, Midi.typeKeyOn);
+						int keyOff = Midi.CopyEv(mshEv);
+						if (keyOff != 0) {
+							Midi.SetType(keyOff, Midi.typeKeyOff);
+							Midi.SendAt(m_refNum+128, keyOff, Midi.GetDate(keyOff) + Midi.GetField(keyOff,2));
+						}
 					}
+					
+					m_listener.dequeueEvent(MshEventConverter.encodeEvent(mshEv));
+					Midi.FreeEv(mshEv);
 				}
 				
-				m_listener.dequeueEvent(MshEventConverter.encodeEvent(mshEv));
-				Midi.FreeEv(mshEv);
-			}
+			}catch (InvalidMidiDataException e1) {}
+			
 		}
 	}
 

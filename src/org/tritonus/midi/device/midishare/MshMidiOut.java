@@ -27,10 +27,12 @@
 package	org.tritonus.midi.device.midishare;
 
 import	javax.sound.midi.MidiMessage;
+import	javax.sound.midi.InvalidMidiDataException;
 
 import	org.tritonus.TDebug;
 
 import	grame.midishare.Midi;
+import	grame.midishare.MidiException;
 
 
 public class MshMidiOut
@@ -47,12 +49,16 @@ public class MshMidiOut
 
 	protected void enqueueMessage(MidiMessage event, long date_micro)
 	{
-		int mshEv = MshEventConverter.decodeMessage(event,date_micro);
+		try {
+			int mshEv = MshEventConverter.decodeMessage(event,date_micro);
 		
-		if (date_micro == -1)
-			Midi.SendIm(m_refNum,mshEv);
-		else
-			Midi.SendAt(m_refNum,mshEv,(int)(date_micro/1000));
+			if (date_micro == -1)
+				Midi.SendIm(m_refNum,mshEv);
+			else
+				Midi.SendAt(m_refNum,mshEv,(int)(date_micro/1000));
+				
+		}catch (InvalidMidiDataException e1) { 
+		}catch (MidiException e2) {}
 		
 	}
 
