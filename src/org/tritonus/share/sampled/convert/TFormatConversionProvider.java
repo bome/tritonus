@@ -77,6 +77,10 @@ public abstract class TFormatConversionProvider
 	 * This method is overwritten here to make use of org.tritonus.share.sampled.AudioFormats.matches
 	 * and is considered temporary until AudioFormat.matches is corrected in the JavaSound API.
 	 */
+	/* $$mp: if we decide to use getMatchingFormat(), this method should be
+	   implemented by simply calling getMatchingFormat() and comparing the
+	   result against null.
+	*/
 	public boolean isConversionSupported(
 		AudioFormat targetFormat,
 		AudioFormat sourceFormat)
@@ -110,6 +114,49 @@ public abstract class TFormatConversionProvider
 			TDebug.out("<result=false");
 		}
 		return false;
+	}
+
+
+	/**
+	 * WARNING: this method uses <code>getTargetFormats(AudioFormat.Encoding, AudioFormat)</code>
+	 * which may create infinite loops if the latter is overwritten.
+	 * <p>
+	 * This method is overwritten here to make use of org.tritonus.share.sampled.AudioFormats.matches
+	 * and is considered temporary until AudioFormat.matches is corrected in the JavaSound API.
+	 */
+	public AudioFormat getMatchingFormat(
+		AudioFormat targetFormat,
+		AudioFormat sourceFormat)
+	{
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out(">TFormatConversionProvider.isConversionSupported(AudioFormat, AudioFormat):");
+			TDebug.out("class: "+getClass().getName());
+			TDebug.out("checking if conversion possible");
+			TDebug.out("from: " + sourceFormat);
+			TDebug.out("to: " + targetFormat);
+		}
+		AudioFormat[]	aTargetFormats = getTargetFormats(targetFormat.getEncoding(), sourceFormat);
+		for (int i = 0; i <  aTargetFormats.length; i++)
+		{
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("checking against possible target format: " + aTargetFormats[i]);
+			}
+			if (aTargetFormats[i] != null 
+			    && AudioFormats.matches(aTargetFormats[i], targetFormat))
+			{
+				if (TDebug.TraceAudioConverter) 
+				{
+					TDebug.out("<result=true");
+				}
+				return aTargetFormats[i];
+			}
+		}
+		if (TDebug.TraceAudioConverter) {
+			TDebug.out("<result=false");
+		}
+		return null;
 	}
 
 }
