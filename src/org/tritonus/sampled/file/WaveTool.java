@@ -61,10 +61,10 @@ public class WaveTool {
 	public static final int MIN_FMT_CHUNK_LENGTH=14;
 	public static final int MIN_DATA_OFFSET=12+8+MIN_FMT_CHUNK_LENGTH+8;
 
-	// we always write the sample size in bits.
+	// we always write the sample size in bits and the length of extra bytes.
 	// There are programs (CoolEdit) that rely on the
 	// additional entry for sample size in bits.
-	public static final int FMT_CHUNK_SIZE=16;
+	public static final int FMT_CHUNK_SIZE=18;
 	public static final int RIFF_CONTAINER_CHUNK_SIZE=12;
 	public static final int CHUNK_HEADER_SIZE=8;
 	public static final int DATA_OFFSET=RIFF_CONTAINER_CHUNK_SIZE
@@ -90,9 +90,13 @@ public class WaveTool {
 		        || (encoding.equals(PCM_UNSIGNED) && nSampleSize==8))
 		        && frameSizeOK) {
 			return WAVE_FORMAT_PCM;
-		} else if (encoding.equals(ULAW) && nSampleSize == 8 && frameSizeOK) {
+		} else if (encoding.equals(ULAW) 
+			   && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8) 
+			   && frameSizeOK) {
 			return WAVE_FORMAT_ULAW;
-		} else if (encoding.equals(ALAW) && nSampleSize == 8 && frameSizeOK) {
+		} else if (encoding.equals(ALAW) 
+			   && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8) 
+			   && frameSizeOK) {
 			return WAVE_FORMAT_ALAW;
 		} else if (encoding.equals(GSM0610)) {
 			return WAVE_FORMAT_GSM610;

@@ -77,12 +77,12 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		int formatChunkAdd=0;
 		if (formatCode==WaveTool.WAVE_FORMAT_GSM610) {
 			// space for extra fields
-			formatChunkAdd+=4;
+			formatChunkAdd+=2;
 		}
 		int dataOffset=WaveTool.DATA_OFFSET+formatChunkAdd;
 		if (formatCode!=WaveTool.WAVE_FORMAT_PCM) {
 			// space for fact chunk
-			dataOffset+=8;
+			dataOffset+=4+WaveTool.CHUNK_HEADER_SIZE;
 		}
 
 		// if patching the header, and the length has not been known at first
@@ -127,9 +127,9 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		dos.writeLittleEndian32(avgBytesPerSec);                 // nAvgBytesPerSec
 		dos.writeLittleEndian16((short) format.getFrameSize());  // nBlockalign
 		dos.writeLittleEndian16(sampleSizeInBits);               // wBitsPerSample
+		dos.writeLittleEndian16((short) formatChunkAdd);         // cbSize
 
 		if (formatCode==WaveTool.WAVE_FORMAT_GSM610) {
-			dos.writeLittleEndian16((short) 2);                      // cbSize
 			dos.writeLittleEndian16((short) decodedSamplesPerBlock); // wSamplesPerBlock
 		}
 
