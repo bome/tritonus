@@ -15,8 +15,10 @@
 
   <target name="compile" depends="prepare">
     <javac srcdir="${src}"
-	   debug="${debug}"
-	   destdir="${build}" >
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}">
+	  <compilerarg compiler="kjc" value="-generic"/>
       <include name="javax/sound/" />
       <include name="org/tritonus/" />
       <exclude name="org/tritonus/sampled/convert/javalayer/" />
@@ -24,6 +26,8 @@
       <exclude name="org/tritonus/sampled/file/jorbis/" />
       <exclude name="org/tritonus/midi/device/midishare/" />
       <exclude name="org/tritonus/debug/" />
+	  <!-- necessary for kaffe -->
+      <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
     </javac>
     <javac srcdir="${src.classes}"
 	   debug="${debug}"

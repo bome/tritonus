@@ -18,40 +18,29 @@
 
 
   <target name="compile" depends="prepare">
-    <!-- Here, the compilation is separated into parts due to an obscure problem. Memory shortage? -->
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
 	 usejavac="${usejavac}" >
       <include name="javax/sound/" />
       <include name="org/tritonus/core/" />
+      <include name="org/tritonus/lowlevel/" />
       <include name="org/tritonus/share/" />
+      <exclude name="org/tritonus/share/sampled/AudioSystemShadow.java" />
       <include name="org/tritonus/debug/AJDebug.java" />
       <include name="org/tritonus/debug/Utils.java" />
-      <exclude name="org/tritonus/share/sampled/AudioSystemShadow.java" />
+      <include name="org/tritonus/midi/" />
+      <exclude name="org/tritonus/midi/device/midishare/" />
+      <include name="org/tritonus/sampled/" />
+      <exclude name="org/tritonus/sampled/convert/javalayer/" />
+      <exclude name="org/tritonus/sampled/convert/vorbis/" />
+      <exclude name="org/tritonus/sampled/file/vorbis/" />
       <classpath>
 	<pathelement path="${classpath}"/>
 	<pathelement location="build"/>
       </classpath>
     </ajc>
 
-    <ajc srcdir="${src}"
-	 destdir="${build}"
-	 debug="on"
-	 usejavac="${usejavac}" >
-      <include name="org/tritonus/lowlevel/" />
-      <include name="org/tritonus/midi/" />
-      <include name="org/tritonus/sampled/" />
-      <exclude name="org/tritonus/sampled/convert/javalayer/" />
-      <exclude name="org/tritonus/sampled/convert/vorbis/" />
-      <exclude name="org/tritonus/sampled/file/vorbis/" />
-      <exclude name="org/tritonus/midi/device/midishare/" />
-      <classpath>
-	<pathelement path="${classpath}"/>
-	<pathelement location="build"/>
-	<pathelement location="/usr/local/java/j2sdk1.3.1/lib/tools.jar"/>
-      </classpath>
-    </ajc>
 <!--
     <javac srcdir="${src.classes}"
 	   debug="on"
