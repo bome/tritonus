@@ -31,6 +31,16 @@ import	java.io.OutputStream;
 
 public class Saint
 {
+	static
+	{
+		System.loadLibrary("tritonussaint");
+	}
+
+
+	private long	m_lNativeHandle;
+
+
+
 	public Saint(InputStream bitStream,
 		     OutputStream outputStream,
 		     int nOutputFormat)

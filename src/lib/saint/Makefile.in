@@ -43,13 +43,15 @@ JNIHEADERS:=$(OBJ:.o=.h)
 JNICLASSES=\
 	org.tritonus.lowlevel.saint.Saint
 
+OTHER_OBJ=jstreambuf.o
+
 #----------------- rules -------------------
 
 .PHONY: all
 all: $(LIBDEST)
 
-$(LIBDEST):	$(OBJ)
-	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) $(LIBS)
+$(LIBDEST):	$(OBJ) $(OTHER_OBJ)
+	$(CXX) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) $(OTHER_OBJ) $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
