@@ -72,7 +72,6 @@ public class TDebug
 	public static boolean	TraceAudioOutputStream = getBooleanProperty("TraceAudioOutputStream");
 	public static boolean	TraceAlsaMixerNative = getBooleanProperty("TraceAlsaMixerNative");
 	public static boolean	TraceAlsaPcmNative = getBooleanProperty("TraceAlsaPcmNative");
-	public static boolean	TraceCDDA = getBooleanProperty("TraceCDDA");
 
 	// midi common implementation
 	public static boolean	TraceMidiSystem = getBooleanProperty("TraceMidiSystem");
@@ -92,6 +91,7 @@ public class TDebug
 
 	// misc
 	public static boolean	TraceCdda = getBooleanProperty("TraceCdda");
+	public static boolean	TraceCddaNative = getBooleanProperty("TraceCddaNative");
 
 
 
