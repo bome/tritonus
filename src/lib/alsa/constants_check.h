@@ -1,4 +1,6 @@
-
+/*
+ *	constants_check.h
+ */
 
 #if SND_SEQ_EVENT_SYSTEM != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_EVENT_SYSTEM
 #error "constants don't match"
@@ -76,6 +78,12 @@
 #error "constants don't match"
 #endif
 #if SND_SEQ_EVENT_TICK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_EVENT_TICK
+#error "constants don't match"
+#endif
+#if SND_SEQ_EVENT_SYNC != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_EVENT_SYNC
+#error "constants don't match"
+#endif
+#if SND_SEQ_EVENT_SYNC_POS != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_EVENT_SYNC_POS
 #error "constants don't match"
 #endif
 #if SND_SEQ_EVENT_TUNE_REQUEST != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_EVENT_TUNE_REQUEST
@@ -354,6 +362,28 @@
 #if SND_SEQ_FILTER_USE_EVENT != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_FILTER_USE_EVENT
 #error "constants don't match"
 #endif
+
+#if SND_SEQ_REMOVE_DEST!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_DEST
+#error "constants don't match"
+#endif
+#if SND_SEQ_REMOVE_DEST_CHANNEL!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_DEST_CHANNEL
+#error "constants don't match"
+#endif
+#if SND_SEQ_REMOVE_TIME_BEFORE!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_TIME_BEFORE
+#error "constants don't match"
+#endif
+#if SND_SEQ_REMOVE_TIME_AFTER!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_TIME_AFTER
+#error "constants don't match"
+#endif
+#if SND_SEQ_REMOVE_EVENT_TYPE!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_EVENT_TYPE
+#error "constants don't match"
+#endif
+#if SND_SEQ_REMOVE_IGNORE_OFF!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_IGNORE_OFF
+#error "constants don't match"
+#endif
+#if SND_SEQ_REMOVE_TAG_MATCH!= org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_REMOVE_TAG_MATCH
+#error "constants don't match"
+#endif
 #if SND_SEQ_PORT_SYSTEM_TIMER != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_PORT_SYSTEM_TIMER
 #error "constants don't match"
 #endif
@@ -414,3 +444,137 @@
 #if SND_SEQ_PORT_TYPE_APPLICATION != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_PORT_TYPE_APPLICATION
 #error "constants don't match"
 #endif
+#if SND_SEQ_PORT_FLG_GIVEN_PORT != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_PORT_FLG_GIVEN_PORT
+#error "constants don't match"
+#endif
+#if SND_SEQ_QUEUE_FLG_SYNC != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_QUEUE_FLG_SYNC
+#error "constants don't match"
+#endif
+#if SND_SEQ_QUEUE_FLG_SYNC_LOST != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_QUEUE_FLG_SYNC_LOST
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_TICK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_TICK
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_TIME != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_TIME
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_MODE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_MODE
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_PRIVATE_CLOCK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_PRIVATE_CLOCK
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_PRIVATE_TIME != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_PRIVATE_TIME
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_MIDI_CLOCK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_MIDI_CLOCK
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_MTC != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_MTC
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_DTL != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_DTL
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_SMPTE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_SMPTE
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FMT_MIDI_TICK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FMT_MIDI_TICK
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FPS_24 != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FPS_24
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FPS_25 != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FPS_25
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FPS_30_DP != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FPS_30_DP
+#error "constants don't match"
+#endif
+#if SND_SEQ_SYNC_FPS_30_NDP != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_SYNC_FPS_30_NDP
+#error "constants don't match"
+#endif
+#if SND_SEQ_TIMER_ALSA != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_TIMER_ALSA
+#error "constants don't match"
+#endif
+#if SND_SEQ_TIMER_MIDI_CLOCK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_TIMER_MIDI_CLOCK
+#error "constants don't match"
+#endif
+#if SND_SEQ_TIMER_MIDI_TICK != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_TIMER_MIDI_TICK
+#error "constants don't match"
+#endif
+#if SND_SEQ_QUERY_SUBS_READ != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_QUERY_SUBS_READ
+#error "constants don't match"
+#endif
+#if SND_SEQ_QUERY_SUBS_WRITE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_QUERY_SUBS_WRITE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_ATYPE_DATA != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_ATYPE_DATA
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_ATYPE_ALIAS != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_ATYPE_ALIAS
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE0_DLS1 != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE0_DLS1
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE0_DLS2 != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE0_DLS2
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE1_SIMPLE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE1_SIMPLE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE1_SOUNDFONT != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE1_SOUNDFONT
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE1_GUS_PATCH != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE1_GUS_PATCH
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE1_INTERWAVE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE1_INTERWAVE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE2_OPL2_3 != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE2_OPL2_3
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_TYPE2_OPL4 != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_TYPE2_OPL4
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_PUT_CMD_CREATE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_PUT_CMD_CREATE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_PUT_CMD_REPLACE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_PUT_CMD_REPLACE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_PUT_CMD_MODIFY != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_PUT_CMD_MODIFY
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_PUT_CMD_ADD != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_PUT_CMD_ADD
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_PUT_CMD_REMOVE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_PUT_CMD_REMOVE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_GET_CMD_FULL != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_GET_CMD_FULL
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_GET_CMD_PARTIAL != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_GET_CMD_PARTIAL
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_QUERY_FOLLOW_ALIAS != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_QUERY_FOLLOW_ALIAS
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_FREE_CMD_ALL != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_FREE_CMD_ALL
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_FREE_CMD_PRIVATE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_FREE_CMD_PRIVATE
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_FREE_CMD_CLUSTER != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_FREE_CMD_CLUSTER
+#error "constants don't match"
+#endif
+#if SND_SEQ_INSTR_FREE_CMD_SINGLE != org_tritonus_lowlevel_alsa_ASequencer0_SND_SEQ_INSTR_FREE_CMD_SINGLE
+#error "constants don't match"
+#endif
+
+/*** constants_check.h ***/
