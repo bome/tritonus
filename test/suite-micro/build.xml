@@ -45,6 +45,7 @@
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
       <test name="ManagerTestCase" />
+      <test name="PlayerTestCase" />
     </junit>
   </target>
 
