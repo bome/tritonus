@@ -12,59 +12,103 @@ Tritonus IMPL:
   - event testing
   - rework TControllable.getControl(): use private C. getControl(Class)
 
+------------------------------------------------------------------------------------
+
 Tritonus TEST:
 	 - test Player media time methods
 	 - test DataSource Controllable methods
 	 - test TControllable (with subclass that provides controls)
 	 - test MediaException
 
+------------------------------------------------------------------------------------
+IDEA: do tests with http/ftp URLs, selectable by an ant property
+
 TEST:
 ContentDescriptor	ok
-tested in ContentDescriptorTestCase, TODO: get C.D. from a living SourceStream
+contentType property tested in ContentDescriptorTestCase
+
 
 Control			nothing to test
 
+
 Controllable		TODO
+tested in BaseControllableTestCase (-> BaseDataSourceTestCase (-> InputStreamDataSourceTestCase, URLDataSourceTestCase), PlayerTestCase, TControllableTesCase), TControllableTestCase.
+TODO: once Player has controls, modify test in PlayerTestCase
+once DataSource and SourceStream have controls, modify tests in *DataSourceTestCase
+
 
 DataSource		TODO
+DataSource (locator property) tested in DataSourceTestCase
+TDataSource (... ... ... ... ... ...) tested in TDataSourceTestCase
+
 
 FramePositioningControl	not implemented
 
+
 GUIControl		TODO
 
+
 Manager			TODO
+Constants tested in ManagerTestCase
+getSupportedContentTypes() tested in ManagerTestCase
+TODO: test getSupportedProtocols()
+TODO: test createPlayer(...)
+playTone() tested in ManagerTestCase
+getSystemTimeBase() tested in ManagerTestCase and SystemTimeBaseTestCase
+
 
 MediaException		ok
-testet in MediaExceptionTestCase.
+testet in MediaExceptionTestCase
+
 
 MetaDataControl		TODO
+TODO: test TDataSource.TMetaDataControl
+TODO: test MetaDataControl of IS/URLDataSource and their respective SourceStreams
+
 
 MIDIControl		TODO
 
+
 PitchControl		TODO
+
 
 Player			TODO
 
+
 PlayerListener		TODO
+
 
 RateControl		TODO
 
+
 RecordControl		TODO
 
+
 SourceStream		TODO
+TODO: get ContentDescriptor from a living SourceStream
+
 
 StopTimeControl		TODO
 
+
 TempoControl		TODO
+
 
 TimeBase		ok
 tested in ManagerTestCase and SystemTimeBaseTestCase.
 
+
 ToneControl		TODO
+
 
 VideoControl		not implemented
 
+
 VolumeControl		TODO
+
+
+
+------------------------------------------------------------------------------------
 
 SPEC:
 
