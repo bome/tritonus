@@ -75,16 +75,16 @@ public class VorbisAudioFileReader
 		byte[]	convbuffer = new byte[convsize];
 
 		// sync and verify incoming physical bitstream
-		SyncState	oy = new SyncState();
+		SyncState	oggSyncState = new SyncState();
 
 		// take physical pages, weld into a logical stream of packets
-		StreamState	os = new StreamState();
+		StreamState	oggStreamState = new StreamState();
 
 		// one Ogg bitstream page.  Vorbis packets are inside
-		Page		og = new Page();
+		Page		oggPage = new Page();
 
 		// one raw packet of data for decode
-		Packet		op = new Packet();
+		Packet		oggPacket = new Packet();
 
 		// struct that stores all the static vorbis bitstream settings
 		Info		vi = new Info();
@@ -103,7 +103,7 @@ public class VorbisAudioFileReader
 
 		// Decode setup
 
-		oy.init(); // Now we can read pages
+		oggSyncState.init(); // Now we can read pages
 
 		// while(true){ // we repeat if the bitstream is chained
 		int eos=0;
@@ -114,13 +114,13 @@ public class VorbisAudioFileReader
 		// serialno.
 
 		// submit a 4k block to libvorbis' Ogg layer
-		int	index = oy.buffer(4096);
-		buffer = oy.data;
+		int	index = oggSyncState.buffer(4096);
+		buffer = oggSyncState.data;
 		bytes = inputStream.read(buffer, index, 4096);
-		oy.wrote(bytes);
+		oggSyncState.wrote(bytes);
     
 		// Get the first page.
-		if (oy.pageout(og) != 1)
+		if (oggSyncState.pageout(oggPage) != 1)
 		{
 			// have we simply run out of data?  If so, we're done.
 			if (bytes < 4096)
@@ -135,7 +135,7 @@ public class VorbisAudioFileReader
 
 		// Get the serial number and set up the rest of decode.
 		// serialno first; use it to set up a logical stream
-		os.init(og.serialno());
+		oggStreamState.init(oggPage.serialno());
 
 		// extract the initial header from the first page and verify that the
 		// Ogg bitstream is in fact Vorbis data
@@ -147,19 +147,19 @@ public class VorbisAudioFileReader
 
 		vi.init();
 		vc.init();
-		if (os.pagein(og) < 0)
+		if (oggStreamState.pagein(oggPage) < 0)
 		{
 			// error; stream version mismatch perhaps
 			throw new UnsupportedAudioFileException("not a Vorbis stream: can't read first page of Ogg bitstream data");
 		}
     
-		if (os.packetout(op) != 1)
+		if (oggStreamState.packetout(oggPacket) != 1)
 		{
 			// no page? must not be vorbis
 			throw new UnsupportedAudioFileException("not a Vorbis stream: can't read initial header packet");
 		}
 
-		if (vi.synthesis_headerin(vc,op) < 0)
+		if (vi.synthesis_headerin(vc,oggPacket) < 0)
 		{
 			// error case; not a vorbis header
 			throw new UnsupportedAudioFileException("not a Vorbis stream: does not contain Vorbis audio data");
@@ -180,7 +180,7 @@ public class VorbisAudioFileReader
 		{
 			while (i < 2)
 			{
-				int	result = oy.pageout(og);
+				int	result = oggSyncState.pageout(oggPage);
 				if (result == 0)
 				{
 					break; // Need more data
@@ -190,12 +190,12 @@ public class VorbisAudioFileReader
 
 				if (result == 1)
 				{
-					os.pagein(og); // we can ignore any errors here
+					oggStreamState.pagein(oggPage); // we can ignore any errors here
 					// as they'll also become apparent
 					// at packetout
 					while (i < 2)
 					{
-						result = os.packetout(op);
+						result = oggStreamState.packetout(oggPacket);
 						if (result == 0)
 						{
 							break;
@@ -206,21 +206,21 @@ public class VorbisAudioFileReader
 							// We can't tolerate that in a header.  Die.
 							throw new UnsupportedAudioFileException("not a Vorbis stream: corrupt secondary header");
 						}
-						vi.synthesis_headerin(vc,op);
+						vi.synthesis_headerin(vc,oggPacket);
 						i++;
 					}
 				}
 			}
 			// no harm in not checking before adding more
-			index = oy.buffer(4096);
-			buffer = oy.data; 
+			index = oggSyncState.buffer(4096);
+			buffer = oggSyncState.data; 
 			bytes = inputStream.read(buffer, index, 4096);
 			if(bytes == 0 && i < 2)
 			{
 				// IDEA: throw EOFException?
 				throw new UnsupportedAudioFileException("not a Vorbis stream: ended before finding all Vorbis headers");
 			}
-			oy.wrote(bytes);
+			oggSyncState.wrote(bytes);
 		}
 
 		// Throw the comments plus a few lines about the bitstream we're
