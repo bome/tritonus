@@ -261,12 +261,16 @@ public abstract class TAudioFileWriter
 			TDebug.out("TAudioFileWriter.writeImpl(): called");
 		}
 		int	nTotalWritten = 0;
-		byte[]	abBuffer = new byte[BUFFER_LENGTH];
 		AudioFormat	inputFormat = audioInputStream.getFormat();
 		AudioFormat	outputFormat = audioOutputStream.getFormat();
+
 		// boolean	bConvert = ! inputFormat.matches(outputFormat);
 		// TODO: handle case when frame size is unknown ?
 		int	nBytesPerSample = outputFormat.getFrameSize() / outputFormat.getChannels();
+		
+		//$$fb 2000-07-18: BUFFER_LENGTH must be a multiple of frame size...
+		int nBufferSize=((int)BUFFER_LENGTH/outputFormat.getFrameSize())*outputFormat.getFrameSize();
+		byte[]	abBuffer = new byte[nBufferSize];
 		while (true)
 		{
 			if (TDebug.TraceAudioFileWriter)
