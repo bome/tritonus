@@ -437,6 +437,10 @@ public class AudioSystem
 		private Collection	m_targetEncodings;
 
 
+		//$$fb 2000-08-15: added for workaround below
+		public GetTargetEncodingsFormatConversionProviderAction() {
+			this(null);
+		}
 
 		public GetTargetEncodingsFormatConversionProviderAction(
 			Object sourceDescription)
@@ -444,7 +448,6 @@ public class AudioSystem
 			m_sourceDescription = sourceDescription;
 			m_targetEncodings = new ArraySet();
 		}
-
 
 
 		public boolean handleFormatConversionProvider(
@@ -455,6 +458,7 @@ public class AudioSystem
 			if (m_sourceDescription instanceof AudioFormat.Encoding)
 			{
 				// TODO: not directely implementable. Contact Sun.
+				//$$fb 2000-08-15: see workaround below
 				/*
 				encodings = formatConversionProvider.getTargetEncodings(
 					(AudioFormat.Encoding) m_sourceDescription);
@@ -479,14 +483,41 @@ public class AudioSystem
 		{
 			return (AudioFormat.Encoding[]) m_targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
 		}
+
+		//$$fb 2000-08-15: added for workaround below
+		public void setSourceDescription(Object sourceDescription) {
+			m_sourceDescription = sourceDescription;
+		}
+			
 	}
 
 
 
+	//$$fb 2000-08-15: added for workaround below
+	private static void doEncodingActionWorkaround(boolean bigEndian, AudioFormat.Encoding encoding, 
+					  GetTargetEncodingsFormatConversionProviderAction action) {
+		AudioFormat format=new AudioFormat(
+						   encoding, 
+						   NOT_SPECIFIED, // sample rate
+						   NOT_SPECIFIED, // sample size in bits
+						   NOT_SPECIFIED, // channels
+						   NOT_SPECIFIED, // frame size
+						   NOT_SPECIFIED, // frame rate,
+						   bigEndian);
+		action.setSourceDescription(format);
+		doFormatConversionProviderIteration(action);
+	}
+
 	public static AudioFormat.Encoding[] getTargetEncodings(
 		AudioFormat.Encoding sourceEncoding)
 	{
-		return getTargetEncodings((Object) sourceEncoding);
+		//$$fb 2000-08-15: workaround
+		//return getTargetEncodings((Object) sourceEncoding);
+		GetTargetEncodingsFormatConversionProviderAction action = 
+		new GetTargetEncodingsFormatConversionProviderAction();
+		doEncodingActionWorkaround(false, sourceEncoding, action);
+		doEncodingActionWorkaround(true, sourceEncoding, action);
+		return action.getEncodings();
 	}
 
 
