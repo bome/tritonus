@@ -41,8 +41,10 @@
 
   <target name="compile-api" depends="prepare">
     <javac srcdir="${src.dir}"
-	   destdir="${build.dir}"
-	   debug="on">
+		   destdir="${build.dir}"
+		   source="1.5"
+		   debug="on">
+	  <compilerarg value="-Xlint:unchecked"/>
 	  <exclude name="org/tritonus/test/*.java"/>
 	  <exclude name="org/tritonus/test/tritonus/"/>
 	  <exclude name="org/tritonus/test/sequencer/"/>
@@ -53,8 +55,9 @@
 
   <target name="compile-tritonus" depends="prepare, init-tritonus">
     <javac srcdir="${src.dir}"
-	   destdir="${build.dir}"
-	   debug="on">
+		   destdir="${build.dir}"
+		   source="1.5"
+		   debug="on">
 	  <exclude name="org/tritonus/test/api/"/>
       <classpath refid="compile.classpath"/>
     </javac>
@@ -72,12 +75,48 @@
 
 
   <target name="test-midi"
+	  depends="test-midi-message,test-midi-device,test-midi-misc,test-midi-spi">
+  </target>
+
+
+  <target name="test-midi-message"
 	  depends="compile-api">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath.api"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.api.midi.message.MidiMessageTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-midi-device"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <sysproperty key="tritonus.TraceAllExceptions" value="true"/>
+      <formatter type="plain" />
       <test name="org.tritonus.test.api.midi.device.MidiDeviceTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-midi-misc"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.api.midi.misc.MidiFileFormatTestCase"/>
+    </junit>
+  </target>
+
+
+  <target name="test-midi-spi"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.api.midi.spi.MidiDeviceProviderTestCase" />
+      <!--test name="org.tritonus.test.api.midi.spi.MidiFileWriterTestCase" /-->
     </junit>
   </target>
 
