@@ -15,6 +15,13 @@ static FILE*	debug_file = NULL;
 static HandleFieldHandler<snd_mixer_t*>	handler;
 
 
+snd_mixer_t*
+getMixerNativeHandle(JNIEnv *env, jobject obj)
+{
+	return handler.getHandle(env, obj);
+}
+
+
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaMixer

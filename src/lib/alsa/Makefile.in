@@ -36,11 +36,12 @@ JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaSeq0.o \
 	org_tritonus_lowlevel_alsa_Alsa.o \
 	org_tritonus_lowlevel_alsa_AlsaCtl.o \
+	org_tritonus_lowlevel_alsa_AlsaMixer.o \
+	org_tritonus_lowlevel_alsa_AlsaMixerElement.o \
 	org_tritonus_lowlevel_alsa_AlsaPcm.o \
 	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.o \
 	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.o \
-	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.o \
-	org_tritonus_lowlevel_alsa_AlsaMixer.o
+	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.o
 
 OBJ=\
 	$(JNIOBJ) \
@@ -54,6 +55,7 @@ JNICLASSFILES=\
 	Alsa.class \
 	AlsaCtl.class \
 	AlsaMixer.class \
+	AlsaMixerElement.class \
 	AlsaPcm.class \
 	AlsaPcm$$HWParams.class \
 	AlsaPcm$$HWParams$$FormatMask.class \
@@ -65,6 +67,7 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.Alsa \
 	org.tritonus.lowlevel.alsa.AlsaCtl \
 	org.tritonus.lowlevel.alsa.AlsaMixer \
+	org.tritonus.lowlevel.alsa.AlsaMixerElement \
 	org.tritonus.lowlevel.alsa.AlsaPcm \
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams \
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams\$$FormatMask \
