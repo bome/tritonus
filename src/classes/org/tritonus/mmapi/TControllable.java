@@ -31,7 +31,7 @@ import javax.microedition.media.Controllable;
 public abstract class TControllable
 implements Controllable
 {
-	private static final String		DEFAULT_PACKAGE_NAME = "javax.microedition.media.control";
+	private static final String		DEFAULT_PACKAGE_NAME = "javax.microedition.media.control.";
 
 	private Control[]	m_aControls;
 
