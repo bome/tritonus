@@ -185,6 +185,33 @@ public class WaveAudioFileReader extends TAudioFileReader
 			frameRate=((float) sampleRate)/((float) decodedSamplesPerBlock);
 			read+=6;
 			break;
+
+		case WaveTool.WAVE_FORMAT_IMA_ADPCM:
+			if (chunkLength < WaveTool.MIN_FMT_CHUNK_LENGTH + 2)
+			{
+				throw new UnsupportedAudioFileException(
+					"corrupt WAVE file: extra GSM bytes are missing");
+			}
+			sampleSizeInBits = readLittleEndianShort(dis);
+			int cbSize = readLittleEndianShort(dis);
+			if (cbSize < 2)
+			{
+				throw new UnsupportedAudioFileException(
+				    "corrupt WAVE file: extra IMA ADPCM bytes are corrupt");
+			}
+			int samplesPerBlock = readLittleEndianShort(dis) & 0xFFFF; // unsigned
+			if (TDebug.TraceAudioFileReader) {
+				debugAdd+=", wBitsPerSample="+sampleSizeInBits
+				          +", cbSize="+cbSize
+				          +", wSamplesPerBlock="+decodedSamplesPerBlock;
+			}
+			sampleSizeInBits = AudioSystem.NOT_SPECIFIED;
+			encoding = WaveTool.GSM0610;
+			frameSize=blockAlign;
+			frameRate=((float) sampleRate)/((float) decodedSamplesPerBlock);
+			read+=6;
+			break;
+
 		default:
 			throw new UnsupportedAudioFileException(
 			    "unsupported WAVE file: unknown format code "+formatCode);
@@ -222,6 +249,8 @@ public class WaveAudioFileReader extends TAudioFileReader
 		           frameRate,
 		           false);
 	}
+
+
 
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileLengthInBytes)
 	throws	UnsupportedAudioFileException, IOException {

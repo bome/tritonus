@@ -81,8 +81,8 @@ extends TEncodingFormatConversionProvider
 	private static final AudioFormat[]	INPUT_FORMATS =
 	{
 		// mono
-		new AudioFormat(IMA_ADPCM, -1.0F, -1, 1, -1, -1.0F, false),
-		new AudioFormat(IMA_ADPCM, -1.0F, -1, 1, -1, -1.0F, true),
+		new AudioFormat(IMA_ADPCM, -1.0F, 4, 1, -1, -1.0F, false),
+		new AudioFormat(IMA_ADPCM, -1.0F, 4, 1, -1, -1.0F, true),
 		// mono, 16 bit signed
 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, false),
 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, true),

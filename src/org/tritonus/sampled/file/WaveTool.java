@@ -50,7 +50,7 @@ public class WaveTool {
 	public static final short WAVE_FORMAT_MS_ADPCM = 2;
 	public static final short WAVE_FORMAT_ALAW = 6;
 	public static final short WAVE_FORMAT_ULAW = 7;
-	public static final short WAVE_FORMAT_IMA_ADPCM = 17;
+	public static final short WAVE_FORMAT_IMA_ADPCM = 17; // same as DVI_ADPCM
 	public static final short WAVE_FORMAT_G723_ADPCM = 20;
 	public static final short WAVE_FORMAT_GSM610 = 49;
 	public static final short WAVE_FORMAT_G721_ADPCM = 64;
@@ -91,7 +91,12 @@ public class WaveTool {
 		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
 		           && frameSizeOK) {
 			return WAVE_FORMAT_ALAW;
-		} else if (encoding.equals(GSM0610)) {
+		} else if (encoding.equals(Encodings.getEncoding("IMA_ADPCM"))
+		           && nSampleSize == 4)
+		{
+			return WAVE_FORMAT_IMA_ADPCM;
+		}
+		else if (encoding.equals(GSM0610)) {
 			return WAVE_FORMAT_GSM610;
 		} else {
 			return WAVE_FORMAT_UNSPECIFIED;
