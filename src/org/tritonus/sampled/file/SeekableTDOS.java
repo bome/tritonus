@@ -43,7 +43,8 @@ public class SeekableTDOS
 	extends RandomAccessFile
 	implements TDataOutputStream
 {
-	SeekableTDOS(File file) throws IOException
+	public SeekableTDOS(File file)
+		throws IOException
 	{
 		super(file, "rw");
 	}

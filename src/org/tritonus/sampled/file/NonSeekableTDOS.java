@@ -43,7 +43,7 @@ public class NonSeekableTDOS
 	extends DataOutputStream
 	implements TDataOutputStream
 {
-	NonSeekableTDOS(OutputStream outputStream)
+	public NonSeekableTDOS(OutputStream outputStream)
 	{
 		super(outputStream);
 	}
