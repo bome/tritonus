@@ -163,27 +163,6 @@
   </target>
 
 
-  <target name="test-sequencer" depends="compile">
-    <junit fork="no" printsummary="yes">
-      <classpath refid="run.classpath"/>
-      <formatter type="plain" />
-      <test name="org.tritonus.test.sequencer.IllegalStateTestCase" />
-      <test name="org.tritonus.test.sequencer.SyncModesTestCase" />
-      <test name="org.tritonus.test.sequencer.SequenceLengthTestCase" />
-      <test name="org.tritonus.test.sequencer.TempoTestCase" />
-    </junit>
-  </target>
-
-
-  <target name="test-javasequencer" depends="compile">
-    <junit fork="no" printsummary="yes">
-      <classpath refid="run.classpath"/>
-      <formatter type="plain" />
-      <test name="org.tritonus.test.sequencer.JavaSequencerClockTestCase" />
-    </junit>
-  </target>
-
-
   <target name="test-truncate"
 		  depends="compile">
 
@@ -212,6 +191,45 @@
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.VorbisTruncateTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-sequencer" depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.sequencer.IllegalStateTestCase" />
+      <test name="org.tritonus.test.sequencer.SyncModesTestCase" />
+      <test name="org.tritonus.test.sequencer.SequenceLengthTestCase" />
+      <test name="org.tritonus.test.sequencer.TempoTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-javasequencer" depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.sequencer.JavaSequencerClockTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-taudioformat" depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.TAudioFormatTestCase" />
+      <test name="org.tritonus.test.TAudioFileFormatTestCase" />
+    </junit>
+  </target>
+
+  <target name="test-audioinputstream" depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.AudioInputStreamTestCase" />
     </junit>
   </target>
 
