@@ -1,4 +1,4 @@
-<project name="tritonus_tests" default="test" basedir=".">
+<project name="mmapi_tests" default="test" basedir=".">
   <target name="init">
     <tstamp/>
     <property name="src" value="src" />
@@ -42,6 +42,7 @@
     <junit fork="no" printsummary="yes">
       <formatter type="plain" />
       <test name="ManagerTestCase" />
+      <test name="MediaExceptionTestCase" />
       <test name="PlayerTestCase" />
       <test name="DataSourceTestCase" />
       <test name="ContentDescriptorTestCase" />
