@@ -20,12 +20,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.test;
+package org.tritonus.test.api.midi.message;
 
 import junit.framework.TestCase;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.InvalidMidiDataException;
+
+import org.tritonus.test.Util;
 
 
 /**	Tests for class javax.sound.midi.MidiMessage.

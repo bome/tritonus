@@ -1,5 +1,5 @@
 /*
- *	BaseMidiDeviceTestCase.java
+ *	BaseMixerTestCase.java
  */
 
 /*
@@ -20,38 +20,38 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.test.api.midi.device;
+package org.tritonus.test.api.sampled.mixer;
 
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
-import javax.sound.midi.MidiSystem;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Mixer.Info;
+import javax.sound.sampled.AudioSystem;
 
 import junit.framework.TestCase;
 
 
-/**	Base class for tests of javax.sound.midi.MidiDevice.
+/**	Base class for tests of javax.sound.sampled.Mixer.
  */
-public abstract class BaseMidiDeviceTestCase
+public abstract class BaseMixerTestCase
 extends TestCase
 {
-	protected BaseMidiDeviceTestCase(String strName)
+	protected BaseMixerTestCase(String strName)
 	{
 		super(strName);
 	}
 
 
 
-	/**	Iterate over all available MidiDevices.
+	/**	Iterate over all available Mixers.
 	*/
-	protected void checkMidiDevice(Check check)
+	protected void checkMixer(Check check)
 		throws Exception
 	{
-		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+		Mixer.Info[] infos = AudioSystem.getMixerInfo();
 		for (int i = 0; i < infos.length; i++)
 		{
-			MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-			System.out.println("testing device: " + device);
-			check.check(device);
+			Mixer mixer = AudioSystem.getMixer(infos[i]);
+			System.out.println("testing mixer: " + mixer);
+			check.check(mixer);
 		}
 	}
 
@@ -59,19 +59,19 @@ extends TestCase
 
 	/** Get the prefix for error messages (containing the sequencer's name).
 	 */
-	protected static String getMessagePrefix(MidiDevice device)
+	protected static String getMessagePrefix(Mixer mixer)
 	{
-		return device.getDeviceInfo().getName();
+		return mixer.getMixerInfo().getName();
 	}
 
 
 	protected interface Check
 	{
-		public void check(MidiDevice device)
+		public void check(Mixer mixer)
 			throws Exception;
 	}
 }
 
 
 
-/*** BaseMidiDeviceTestCase.java ***/
+/*** BaseMixerTestCase.java ***/

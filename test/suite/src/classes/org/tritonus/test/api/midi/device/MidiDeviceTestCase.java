@@ -20,7 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.test.device;
+package org.tritonus.test.api.midi.device;
 
 import java.util.List;
 

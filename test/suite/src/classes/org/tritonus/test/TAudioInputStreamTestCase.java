@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.tritonus.share.sampled.file.TAudioInputStream;
+import org.tritonus.share.sampled.convert.TAudioInputStream;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -49,7 +49,6 @@ extends TestCase
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
 			AudioSystem.NOT_SPECIFIED,
-			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();
 		assertTrue(propReturn.isEmpty());
@@ -66,7 +65,6 @@ extends TestCase
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
 			AudioSystem.NOT_SPECIFIED,
-			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();
 		assertTrue(prop != propReturn);
@@ -81,7 +79,6 @@ extends TestCase
 		Map prop = new HashMap();
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
-			AudioSystem.NOT_SPECIFIED,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();
@@ -103,7 +100,6 @@ extends TestCase
 		prop.put("author", "Matthias Pfisterer");
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
-			AudioSystem.NOT_SPECIFIED,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();

@@ -6,16 +6,11 @@
 <!DOCTYPE project SYSTEM "../../project.dtd">
 
 <project name="tritonus_tests" default="compile" basedir=".">
-  <target name="init">
+
+  <target name="init-base">
     <property name="src.dir" value="src/classes" />
     <property name="build.dir" value=".build" />
-    <path id="compile.classpath">
-     <fileset dir="${basedir}/../../dist">
-        <include name="*.jar"/>
-      </fileset>
-      <pathelement path="${java.class.path}"/>
-    </path>
-    <path id="run.classpath">
+    <path id="run.classpath.api">
       <pathelement location="${basedir}"/>
       <pathelement location="${build.dir}"/>
       <pathelement path="${java.class.path}"/>
@@ -23,26 +18,88 @@
   </target>
 
 
-  <target name="prepare" depends="init">
+  <target name="init-tritonus"
+		  depends="init-base">
+    <path id="compile.classpath">
+     <fileset dir="${basedir}/../../dist">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement path="${java.class.path}"/>
+    </path>
+    <path id="run.classpath"><!-- ~.tritonus -->
+      <pathelement location="${basedir}"/>
+      <pathelement location="${build.dir}"/>
+      <pathelement path="${java.class.path}"/>
+    </path>
+  </target>
+
+
+  <target name="prepare" depends="init-base">
     <mkdir dir="${build.dir}" />
   </target>
 
 
-  <target name="compile" depends="prepare">
+  <target name="compile-api" depends="prepare">
     <javac srcdir="${src.dir}"
 	   destdir="${build.dir}"
 	   debug="on">
+	  <exclude name="org/tritonus/test/*.java"/>
+	  <exclude name="org/tritonus/test/tritonus/"/>
+	  <exclude name="org/tritonus/test/sequencer/"/>
+	  <exclude name="org/tritonus/test/alsa/"/>
+    </javac>
+  </target>
+
+
+  <target name="compile-tritonus" depends="prepare, init-tritonus">
+    <javac srcdir="${src.dir}"
+	   destdir="${build.dir}"
+	   debug="on">
+	  <exclude name="org/tritonus/test/api/"/>
       <classpath refid="compile.classpath"/>
     </javac>
   </target>
 
 
   <target name="test"
-	  depends="test-audiofilereader,test-dataoutputstream,test-audiooutputstream">
+	  depends="test-api,test-tritonus">
   </target>
 
+
+  <target name="test-api"
+	  depends="test-midi,test-sampled">
+  </target>
+
+
+  <target name="test-midi"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.api.midi.message.MidiMessageTestCase" />
+      <test name="org.tritonus.test.api.midi.device.MidiDeviceTestCase" />
+    </junit>
+  </target>
+
+
+  <!-- TODO: add to depends: test-audiofilereader -->
+  <target name="test-sampled"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.api.sampled.line.DataLineInfoTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-tritonus"
+	  depends="test-dataoutputstream,test-audiooutputstream">
+  </target>
+
+
   <target name="test-audiofilereader"
-	  depends="compile">
+	  depends="compile-api">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true"/-->
@@ -59,7 +116,7 @@
 
 
   <target name="test-audiooutputstream"
-	  depends="compile">
+	  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -69,7 +126,7 @@
 
 
   <target name="test-dataoutputstream"
-	  depends="compile">
+	  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -79,7 +136,7 @@
 
 
   <target name="test-converter"
-	  depends="compile">
+	  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -95,17 +152,8 @@
   </target>
 
 
-  <target name="test-midi"
-	  depends="compile">
-    <junit fork="no" printsummary="yes">
-      <classpath refid="run.classpath"/>
-      <formatter type="plain" />
-      <test name="org.tritonus.test.MidiMessageTestCase" />
-    </junit>
-  </target>
-
-
-  <target name="test-control" depends="compile">
+  <target name="test-control"
+		  depends="compile-api">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -114,7 +162,8 @@
   </target>
 
 
-  <target name="test-circularbuffer" depends="compile">
+  <target name="test-circularbuffer"
+		  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -123,7 +172,8 @@
   </target>
 
 
-  <target name="test-encodings" depends="compile">
+  <target name="test-encodings"
+		  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -133,7 +183,7 @@
 
 
   <target name="test-silence"
-	  depends="compile">
+		  depends="compile-tritonus">
 
     <junit fork="no" printsummary="yes">
       <classpath>
@@ -164,7 +214,7 @@
 
 
   <target name="test-truncate"
-		  depends="compile">
+		  depends="compile-tritonus">
 
     <junit fork="no" printsummary="yes"
 		   haltonfailure="true" haltonerror="true">
@@ -195,7 +245,8 @@
   </target>
 
 
-  <target name="test-sequencer" depends="compile">
+  <target name="test-sequencer"
+		  depends="compile-api">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -207,7 +258,8 @@
   </target>
 
 
-  <target name="test-javasequencer" depends="compile">
+  <target name="test-javasequencer"
+		  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -216,7 +268,8 @@
   </target>
 
 
-  <target name="test-taudioformat" depends="compile">
+  <target name="test-taudioformat"
+		  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -225,7 +278,17 @@
     </junit>
   </target>
 
-  <target name="test-audioinputstream" depends="compile">
+  <target name="test-tdirectsynthesizer"
+		  depends="compile-tritonus">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.tritonus.TDirectSynthesizerTestCase" />
+    </junit>
+  </target>
+
+  <target name="test-audioinputstream"
+		  depends="compile-api">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
@@ -235,7 +298,7 @@
 
 
 
-  <target name="clean" depends="init">
+  <target name="clean" depends="init-base">
     <delete dir="${build.dir}"/>
   </target>
 </project>
