@@ -31,23 +31,31 @@ import	java.io.DataInputStream;
 import	java.io.InputStream;
 import	java.io.IOException;
 
+import	java.util.ArrayList;
 import	java.util.Arrays;
 import	java.util.Iterator;
+import	java.util.List;
 
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.gsm.InvalidGSMFrameException;
-import	org.tritonus.lowlevel.gsm.GSMDecoder;
-import	org.tritonus.lowlevel.gsm.Encoder;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.Encodings;
+
+import com.jcraft.jogg.SyncState;
+import com.jcraft.jogg.StreamState;
+import com.jcraft.jogg.Page;
+import com.jcraft.jogg.Packet;
+import com.jcraft.jorbis.Info;
+import com.jcraft.jorbis.Comment;
+import com.jcraft.jorbis.DspState;
+import com.jcraft.jorbis.Block;
 
 
 
@@ -58,31 +66,41 @@ import	org.tritonus.share.sampled.Encodings;
 	@author Matthias Pfisterer
 */
 public class JorbisFormatConversionProvider
-	extends		TSimpleFormatConversionProvider
+	extends		TEncodingFormatConversionProvider
 {
 	/*	Debugging (profiling) hack.
 	 */
 	private static final boolean	MEASURE_DECODING_TIME = false;
 
+	// only used as abbreviation
+	private static final AudioFormat.Encoding	VORBIS = Encodings.getEncoding("VORBIS");
+	private static final AudioFormat.Encoding	PCM_SIGNED = Encodings.getEncoding("PCM_SIGNED");
 
 
-	private static final AudioFormat[]	FORMATS1 =
+	private static final AudioFormat[]	INPUT_FORMATS =
 	{
-		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, -1, 1, 33, 50.0F, false),
-		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, -1, 1, 33, 50.0F, true),
-		// temporary only
-		new AudioFormat(Encodings.getEncoding("PCM_SIGNED"), 8000.0F, 16, 1, 2, 8000.0F, false),
-		new AudioFormat(Encodings.getEncoding("PCM_SIGNED"), 8000.0F, 16, 1, 2, 8000.0F, true),
+		// mono
+		// TODO: mechanism to make the double specification with
+		// different endianess obsolete.
+		new AudioFormat(VORBIS, -1.0F, -1, 1, -1, -1.0F, false),
+		new AudioFormat(VORBIS, -1.0F, -1, 1, -1, -1.0F, true),
+		// stereo
+		new AudioFormat(VORBIS, -1.0F, -1, 2, -1, -1.0F, false),
+		new AudioFormat(VORBIS, -1.0F, -1, 2, -1, -1.0F, true),
+		// TODO: other channel configurations
 	};
 
-/*
-  private static final AudioFormat[]	FORMATS2 =
-  {
-  new AudioFormat(8000.0F, 16, 1, true, false),
-  new AudioFormat(8000.0F, 16, 1, true, true),
-  };
-*/
-	private static final AudioFormat[]	FORMATS2 = FORMATS1;
+
+	private static final AudioFormat[]	OUTPUT_FORMATS =
+	{
+		// mono, 16 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, true),
+		// stereo, 16 bit signed
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 2, 4, -1.0F, false),
+		new AudioFormat(PCM_SIGNED, -1.0F, 16, 2, 4, -1.0F, true),
+		// TODO: other channel configurations
+	};
 
 
 
@@ -91,6 +109,7 @@ public class JorbisFormatConversionProvider
 	 *	chosen so that one (decoded) GSM frame fits into the buffer.
 	 *	GSM frames contain 160 samples.
 	 */
+	// TODO: should become obsolete
 	private static final int	BUFFER_SIZE = 320;
 
 	private static final int	ENCODED_GSM_FRAME_SIZE = 33;
@@ -101,16 +120,20 @@ public class JorbisFormatConversionProvider
 	 */
 	public JorbisFormatConversionProvider()
 	{
-		super(Arrays.asList(FORMATS1),
-		      Arrays.asList(FORMATS2));
-		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.<init>(): begin"); }
-		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.<init>(): end"); }
+		super(Arrays.asList(INPUT_FORMATS),
+		      Arrays.asList(OUTPUT_FORMATS)/*,
+						     true, // new behaviour
+						     false*/); // bidirectional .. constants UNIDIR../BIDIR..?
 	}
 
 
 
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream)
 	{
+		/** The AudioInputStream to return.
+		 */
+		AudioInputStream	convertedAudioInputStream = null;
+
 		if (TDebug.TraceAudioConverter)
 		{
 			TDebug.out("JorbisFormatConversionProvider.getAudioInputStream(): begin");
@@ -120,32 +143,20 @@ public class JorbisFormatConversionProvider
 			TDebug.out("to: " + targetFormat);
 		}
 
+		// what is this ???
 		targetFormat=getDefaultTargetFormat(targetFormat, audioInputStream.getFormat());
 		if (isConversionSupported(targetFormat,
 					  audioInputStream.getFormat()))
 		{
-			if (targetFormat.getEncoding().equals(Encodings.getEncoding("PCM_SIGNED")))
+			if (TDebug.TraceAudioConverter)
 			{
-				if (TDebug.TraceAudioConverter)
-				{
-					TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
-					TDebug.out("conversion supported; trying to create DecodedGSMAudioInputStream");
-				}
-				return new DecodedGSMAudioInputStream(
+				TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
+				TDebug.out("conversion supported; trying to create DecodedJorbisAudioInputStream");
+			}
+			convertedAudioInputStream = new
+				DecodedJorbisAudioInputStream(
 					targetFormat,
 					audioInputStream);
-			}
-			else
-			{
-				if (TDebug.TraceAudioConverter)
-				{
-					TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
-					TDebug.out("conversion supported; trying to create EncodedGSMAudioInputStream");
-				}
-				return new EncodedGSMAudioInputStream(
-					targetFormat,
-					audioInputStream);
-			}
 		}
 		else
 		{
@@ -156,12 +167,13 @@ public class JorbisFormatConversionProvider
 			}
 			throw new IllegalArgumentException("conversion not supported");
 		}
-		// TODO: this is unreachable
-		//if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getAudioInputStream(): end"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getAudioInputStream(): end"); }
+		return convertedAudioInputStream;
 	}
 
 
 
+	// TODO: recheck !!
 	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat) {
 		// return first of the matching formats
 		// pre-condition: the predefined target formats (FORMATS2) must be well-defined !
@@ -177,208 +189,544 @@ public class JorbisFormatConversionProvider
 		
 
 
-	/**	AudioInputStream returned on decoding of GSM.
+	/**	AudioInputStream returned on decoding of ogg vorbis.
 		An instance of this class is returned if you call
 		AudioSystem.getAudioInputStream(AudioFormat, AudioInputStream)
-		to decode a GSM stream. This class contains the logic
+		to decode an ogg/vorbis stream. This class contains the logic
 		of maintaining buffers and calling the decoder.
-	 */
-	public static class DecodedGSMAudioInputStream
-	extends		TAsynchronousFilteredAudioInputStream
+	*/
+	private static class DecodedJorbisAudioInputStream extends TAsynchronousFilteredAudioInputStream
 	{
-		/*
-		  Seems like DataInputStream (opposite to InputStream) is only needed for
-		  readFully(). readFully-behavious should perhaps be implemented in
-		  AudioInputStream anyway (so this construct may become obsolete).
+		public static boolean		DEBUG = false;
+
+		private InputStream		oggBitStream_ = null;
+
+		// Ogg structures
+		private SyncState		oggSyncState_ = null;
+  		private StreamState		oggStreamState_ = null;
+  		private Page			oggPage_ = null;
+  		private Packet			oggPacket_ = null;
+
+		// Vorbis structures
+  		private Info			vorbisInfo = null;
+  		private Comment			vorbisComment = null;
+  		private DspState		vorbisDspState = null;
+  		private Block			vorbisBlock = null;
+
+  		private int			bufferMultiple_ = 4;
+  		private int			bufferSize_ = bufferMultiple_ * 256 * 2;
+  		private int			convsize = bufferSize_ * 2;
+  		private byte[]			convbuffer = new byte[convsize];
+  		private byte[]			buffer = null;
+  		private int			bytes = 0;
+  		private int			rate = 0;
+ 	 	private int			channels = 0;
+  		private List			songComments_ = new ArrayList();
+		private double[][][]		_pcm = null;
+		private float[][][]		_pcmf = null;
+		private int[]			_index = null;
+		private int			index = 0;
+		private int			i = 0;
+
+		private int			loopid = 1;
+		private int			eos = 0;
+		private boolean			streamStillHasData = true;
+
+
+
+		/**
+		 * Constructor.
 		 */
-		private DataInputStream		m_encodedStream;
-		private GSMDecoder		m_decoder;
-
-		/*
-		 *	Holds one encoded GSM frame.
-		 */
-		private byte[]			m_abFrameBuffer;
-		private byte[]			m_abBuffer;
-
-
-		public DecodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
+		public DecodedJorbisAudioInputStream(AudioFormat outputFormat, AudioInputStream bitStream)
 		{
-			super(outputFormat,
-			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() * 160);
-			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.<init>(): begin"); }
-			m_encodedStream = new DataInputStream(inputStream);
-			m_decoder = new GSMDecoder();
-			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
-			m_abBuffer = new byte[BUFFER_SIZE];
-			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.<init>(): end"); }
+			/*
+			 */
+			super(outputFormat, AudioSystem.NOT_SPECIFIED);
+			this.oggBitStream_ = bitStream;
+			loopid = 1;
+			init_jorbis();
+			index = 0;
 		}
 
 
 
+		/**
+		 * Initializes all the jOrbis and jOgg vars that are used for song playback.
+		 */
+		private void init_jorbis()
+		{
+			oggSyncState_ = new SyncState();
+			oggStreamState_ = new StreamState();
+			oggPage_ = new Page();
+			oggPacket_ = new Packet();
+			vorbisInfo = new Info();
+			vorbisComment = new Comment();
+			vorbisDspState = new DspState();
+			vorbisBlock = new Block(vorbisDspState);
+			buffer = null;
+			bytes = 0;
+			oggSyncState_.init();
+		}
+
+
+		/**
+		 * Main loop.
+		 */
 		public void execute()
 		{
-			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): begin"); }
-			try
+			// This code was developed by the jCraft group, slightly modifed by jOggPlayer developer
+			// and adapted by E.B from JavaZOOM to suit to JavaSound SPI.
+			// loop 1
+			if (streamStillHasData == true)
+				//while (streamStillHasData)
 			{
-				m_encodedStream.readFully(m_abFrameBuffer);
-			}
-			catch (IOException e)
-			{
-				/*
-				  Not only errors, but also EOF is caught here.
-				 */
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				m_circularBuffer.close();
-				return;
-			}
-
-			try
-			{
-				long	lTimestamp1;
-				long	lTimestamp2;
-				if (MEASURE_DECODING_TIME)
+				if (loopid == 1)
 				{
-					lTimestamp1 = System.currentTimeMillis();
+					if (DEBUG) System.err.println("loop1");
+					eos = 0;
+					// Headers (+ Comments).
+					try
+					{
+						readHeaders();
+					}	catch (IOException ioe)
+					{
+						streamStillHasData = false;
+						return;
+					}
+					loopid = 2;
 				}
-				m_decoder.decode(m_abFrameBuffer, 0,
-						 m_abBuffer, 0, isBigEndian());
-				// testing test hack
-				// m_abBuffer[0] = 0;
-				if (MEASURE_DECODING_TIME)
+				// loop 2
+				switch (eos)
+					//while (eos == 0)
 				{
-					lTimestamp2 = System.currentTimeMillis();
-					System.out.println("GSM decode (ms): " + (lTimestamp2 - lTimestamp1));
-				}
-			}
-			catch (InvalidGSMFrameException e)
+				case 0:
+					if (DEBUG) System.err.println("loop2");
+					// loop 3
+					switch (eos)
+						//while (eos == 0)
+					{
+					case 0:
+						int result = oggSyncState_.pageout(oggPage_);
+						if (DEBUG) System.err.println("loop3:"+result);
+						if (result == 0)
+						{
+							loopid = 2;
+							break;
+						} // need more data
+						if (result == -1)
+						{ // missing or corrupt data at this page position
+							if (DEBUG) System.err.println("Corrupt or missing data in bitstream; " + "continuing...");
+						}
+						else
+						{
+							oggStreamState_.pagein(oggPage_);
+							// Decoding !
+							if (DEBUG) System.err.println("Decoding");
+							while (true)
+							{
+								result = oggStreamState_.packetout(oggPacket_);
+								if (result == 0)
+								{
+									break;
+								} // need more data
+								if (result == -1)
+								{ // missing or corrupt data at this page position
+									// no reason to complain; already complained above
+								}
+								else
+								{
+									// we have a packet.  Decode it
+									int samples;
+									if (vorbisBlock.synthesis(oggPacket_) == 0)
+									{ // test for success!
+										vorbisDspState.synthesis_blockin(vorbisBlock);
+									}
+									while ((samples = vorbisDspState.synthesis_pcmout(_pcmf, _index)) > 0)
+									{
+										double[][] pcm = _pcm[0];
+										float[][] pcmf = _pcmf[0];
+										boolean clipflag = false;
+										int bout = (samples < convsize ? samples : convsize);
+										double fVal = 0.0;
+										// convert doubles to 16 bit signed ints (host order) and
+										// interleave
+										for (i = 0; i < vorbisInfo.channels; i++)
+										{
+											int pointer = i * 2;
+											//int ptr=i;
+											int mono = _index[i];
+											for (int j = 0; j < bout; j++)
+											{
+												fVal = (float) pcmf[i][mono + j] * 32767.;
+												int val = (int) (fVal);
+												if (val > 32767)
+												{
+													val = 32767;
+													clipflag = true;
+												}
+												if (val < -32768)
+												{
+													val = -32768;
+													clipflag = true;
+												}
+												if (val < 0)
+												{
+													val = val | 0x8000;
+												}
+												convbuffer[pointer] = (byte) (val);
+												convbuffer[pointer + 1] = (byte) (val >>> 8);
+												pointer += 2 * (vorbisInfo.channels);
+											}
+										}
+										m_circularBuffer.write(convbuffer, 0, 2 * vorbisInfo.channels * bout);
+										//outputLine.write(convbuffer, 0, 2 * vorbisInfo.channels * bout);
+										vorbisDspState.synthesis_read(bout);
+									}
+								}
+							}
+							if (oggPage_.eos() != 0)
+							{
+								eos = 1;
+							}
+						} // end else.
+						loopid = 3;
+						break;
+					default:
+						loopid = 2;
+						break;
+					} // end loop3 // end switch(eos)
+					if (loopid == 3) return;
+
+					if (eos == 0)
+					{
+						index = oggSyncState_.buffer(bufferSize_);
+						buffer = oggSyncState_.data;
+						bytes = readFromStream(buffer, index, bufferSize_);
+						if (DEBUG) System.err.println("More data : "+bytes);
+						if (bytes == -1)
+						{
+							if (DEBUG) System.err.println("Ogg Stream empty.");
+							streamStillHasData = false;
+							eos = 1;
+							//break;
+						}
+						else
+						{
+							oggSyncState_.wrote(bytes);
+							if (bytes == 0)
+							{
+								eos = 1;
+							}
+						}
+					}
+					loopid = 2;
+					break;
+				default:
+					loopid = 1;
+					break;
+				} // end loop 2 // end switch(eos)
+				if (loopid == 2) return;
+
+				oggStreamState_.clear();
+				vorbisBlock.clear();
+				vorbisDspState.clear();
+				vorbisInfo.clear();
+			} // end loop 1
+			else
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				m_circularBuffer.close();
-				return;
+				oggSyncState_.clear();
+				if (DEBUG) System.out.println("Done Song.");
+				try
+				{
+					if (oggBitStream_ != null)
+					{
+						oggBitStream_.close();
+					}
+					m_circularBuffer.close();
+				}
+				catch (Exception e)
+				{
+					if (DEBUG) e.printStackTrace();
+				}
+				//break;
 			}
-
-/// end new version
-
-			m_circularBuffer.write(m_abBuffer);
-			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): decoded GSM frame written"); }
-			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): end"); }
 		}
 
+		/**
+		 * Reads headers and comments.
+		 */
+		private void readHeaders() throws IOException
+		{
+			if (DEBUG) System.err.println("readHeaders()");
+			index = oggSyncState_.buffer(bufferSize_);
+			buffer = oggSyncState_.data;
+			bytes = readFromStream(buffer, index, bufferSize_);
+			if (bytes == -1)
+			{
+				if (DEBUG) System.err.println("Cannot get any data from selected Ogg bitstream.");
+				throw new IOException("Cannot get any data from selected Ogg bitstream.");
+			}
+			oggSyncState_.wrote(bytes);
+			if (oggSyncState_.pageout(oggPage_) != 1)
+			{
+				if (bytes < bufferSize_)
+				{
+					throw new IOException("EOF");
+				}
+				if (DEBUG) System.err.println("Input does not appear to be an Ogg bitstream.");
+				throw new IOException("Input does not appear to be an Ogg bitstream.");
+			}
+			oggStreamState_.init(oggPage_.serialno());
+			vorbisInfo.init();
+			vorbisComment.init();
+			if (oggStreamState_.pagein(oggPage_) < 0)
+			{
+				// error; stream version mismatch perhaps
+				if (DEBUG) System.err.println("Error reading first page of Ogg bitstream data.");
+				throw new IOException("Error reading first page of Ogg bitstream data.");
+			}
+			if (oggStreamState_.packetout(oggPacket_) != 1)
+			{
+				// no page? must not be vorbis
+				if (DEBUG) System.err.println("Error reading initial header packet.");
+				throw new IOException("Error reading initial header packet.");
+			}
+			if (vorbisInfo.synthesis_headerin(vorbisComment, oggPacket_) < 0)
+			{
+				// error case; not a vorbis header
+				if (DEBUG) System.err.println("This Ogg bitstream does not contain Vorbis audio data.");
+				throw new IOException("This Ogg bitstream does not contain Vorbis audio data.");
+			}
+			//int i = 0;
+			i = 0;
+			while (i < 2)
+			{
+				while (i < 2)
+				{
+					int result = oggSyncState_.pageout(oggPage_);
+					if (result == 0)
+					{
+						break;
+					} // Need more data
+					if (result == 1)
+					{
+						oggStreamState_.pagein(oggPage_);
+						while (i < 2)
+						{
+							result = oggStreamState_.packetout(oggPacket_);
+							if (result == 0)
+							{
+								break;
+							}
+							if (result == -1)
+							{
+								if (DEBUG) System.err.println("Corrupt secondary header.  Exiting.");
+								throw new IOException("Corrupt secondary header.  Exiting.");
+							}
+							vorbisInfo.synthesis_headerin(vorbisComment, oggPacket_);
+							i++;
+						}
+					}
+				}
+				index = oggSyncState_.buffer(bufferSize_);
+				buffer = oggSyncState_.data;
+				bytes = readFromStream(buffer, index, bufferSize_);
+				if (bytes == -1)
+				{
+					break;
+				}
+				if (bytes == 0 && i < 2)
+				{
+					if (DEBUG) System.err.println("End of file before finding all Vorbis  headers!");
+					throw new IOException("End of file before finding all Vorbis  headers!");
+				}
+				oggSyncState_.wrote(bytes);
+			}
 
+			byte[][] ptr = vorbisComment.user_comments;
+			String currComment = "";
+			songComments_.clear();
+			for (int j = 0; j < ptr.length; j++)
+			{
+				if (ptr[j] == null)
+				{
+					break;
+				}
+				currComment = (new String(ptr[j], 0, ptr[j].length - 1)).trim();
+				songComments_.add(currComment);
+				if (currComment.toUpperCase().startsWith("ARTIST"))
+				{
+					String artistLabelValue = currComment.substring(7);
+				}
+				else if (currComment.toUpperCase().startsWith("TITLE"))
+				{
+					String titleLabelValue = currComment.substring(6);
+					String miniDragLabel = currComment.substring(6);
+				}
+				if (DEBUG) System.err.println("Comment: " + currComment);
+			}
+			currComment = "Bitstream: " + vorbisInfo.channels + " channel," + vorbisInfo.rate + "Hz";
+			songComments_.add(currComment);
+			if (DEBUG) System.err.println(currComment);
+			if (DEBUG) currComment = "Encoded by: " + new String(vorbisComment.vendor, 0, vorbisComment.vendor.length - 1);
+			songComments_.add(currComment);
+			if (DEBUG) System.err.println(currComment);
+			convsize = bufferSize_ / vorbisInfo.channels;
+			vorbisDspState.synthesis_init(vorbisInfo);
+			vorbisBlock.init(vorbisDspState);
+			_pcm = new double[1][][];
+			_pcmf = new float[1][][];
+			_index = new int[vorbisInfo.channels];
+		}
 
+		/**
+		 * Reads from the oggBitStream_ a specified number of Bytes(bufferSize_) worth
+		 * starting at index and puts them in the specified buffer[].
+		 *
+		 * @param buffer
+		 * @param index
+		 * @param bufferSize_
+		 * @return             the number of bytes read or -1 if error.
+		 */
+		private int readFromStream(byte[] buffer, int index, int bufferSize_)
+		{
+			int bytes = 0;
+			try
+			{
+				bytes = oggBitStream_.read(buffer, index, bufferSize_);
+			}
+			catch (Exception e)
+			{
+				if (DEBUG) System.out.println("Cannot Read Selected Song");
+				bytes = -1;
+			}
+			return bytes;
+		}
+
+		/**
+		 *
+		 */
 		private boolean isBigEndian()
 		{
 			return getFormat().isBigEndian();
 		}
 
-
-
-		public void close()
-			throws	IOException
+		/**
+		 *
+		 */
+		public void close() throws IOException
 		{
 			super.close();
-			m_encodedStream.close();
+			oggBitStream_.close();
 		}
+
 	}
 
 
 
-	/**	AudioInputStream returned on encoding of GSM.
-		An instance of this class is returned if you call
-		AudioSystem.getAudioInputStream(AudioFormat, AudioInputStream)
-		to encode data to GSM. This class contains the logic
-		of maintaining buffers and calling the encoder.
-	 */
-	public static class EncodedGSMAudioInputStream
-	extends		TAsynchronousFilteredAudioInputStream
-	{
-		private AudioInputStream	m_decodedStream;
-		private Encoder			m_encoder;
 
-		/*
-		 *	Holds one block of decoded data.
-		 */
-		private byte[]			m_abBuffer;
+// 	public static class DecodedJorbisAudioInputStream
+// 		extends TAsynchronousFilteredAudioInputStream
+// 	{
+// 		/*
+// 		  Seems like DataInputStream (opposite to InputStream) is only needed for
+// 		  readFully(). readFully-behavious should perhaps be implemented in
+// 		  AudioInputStream anyway (so this construct may become obsolete).
+// 		 */
+// 		private DataInputStream		m_encodedStream;
+// 		// TODO: obsolete
+// 		// private GSMDecoder		m_decoder;
 
-		/*
-		 *	Holds one block of decoded data.
-		 */
-		private short[]			m_asBuffer;
-
-		/*
-		 *	Holds one encoded GSM frame.
-		 */
-		private byte[]			m_abFrameBuffer;
+// 		/*
+// 		 *	Holds one encoded GSM frame.
+// 		 */
+// 		// TODO: obsolete
+// 		private byte[]			m_abFrameBuffer;
+// 		private byte[]			m_abBuffer;
 
 
-
-		public EncodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
-		{
-			super(outputFormat,
-			      //$$fb 2001-04-16: FrameLength gives the number of 33-byte blocks !
-			      //inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 160 * 33);
-			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 160);
-			if (TDebug.TraceAudioConverter) { TDebug.out("EncodedGSMAudioInputStream.<init>(): begin"); }
-			m_decodedStream = inputStream;
-			m_encoder = new Encoder();
-			m_abBuffer = new byte[BUFFER_SIZE];
-			m_asBuffer = new short[160];
-			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
-			if (TDebug.TraceAudioConverter) { TDebug.out("EncodedGSMAudioInputStream.<init>(): end"); }
-		}
+// 		public DecodedJorbisAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
+// 		{
+// 			super(outputFormat,
+// 			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() * 160);
+// 			// if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): begin"); }
+// 			m_encodedStream = new DataInputStream(inputStream);
+// // 			m_decoder = new GSMDecoder();
+// // 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
+// // 			m_abBuffer = new byte[BUFFER_SIZE];
+// 			// if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): end"); }
+// 		}
 
 
 
-		public void execute()
-		{
-			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedGSMAudioInputStream.execute(): begin"); }
-			try
-			{
-				int	nRead = m_decodedStream.read(m_abBuffer);
-				/*
-				 *	Currently, we take all kinds of errors
-				 *	as end of stream.
-				 */
-				if (nRead != m_abBuffer.length)
-				{
-					if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedGSMAudioInputStream.execute(): not read whole 160 sample block (" + nRead + ")"); }
-					m_circularBuffer.close();
-					return;
-				}
-			}
-			catch (IOException e)
-			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				m_circularBuffer.close();
-				if (TDebug.TraceAudioConverter) { TDebug.out("<"); }
-				return;
-			}
-			for (int i = 0; i < 160; i++)
-			{
-			        m_asBuffer[i] = TConversionTool.bytesToShort16(m_abBuffer, i * 2, isBigEndian());
-			}
-			m_encoder.encode(m_asBuffer, m_abFrameBuffer);
-			m_circularBuffer.write(m_abFrameBuffer);
-			if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedGSMAudioInputStream.execute(): encoded GSM frame written"); }
-			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedGSMAudioInputStream.execute(): end"); }
-		}
+// 		public void execute()
+// 		{
+// 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.execute(): begin"); }
+// 			try
+// 			{
+// 				m_encodedStream.readFully(m_abFrameBuffer);
+// 			}
+// 			catch (IOException e)
+// 			{
+// 				/*
+// 				  Not only errors, but also EOF is caught here.
+// 				 */
+// 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+// 				m_circularBuffer.close();
+// 				return;
+// 			}
+
+// // 			try
+// // 			{
+// // 				long	lTimestamp1;
+// // 				long	lTimestamp2;
+// // 				if (MEASURE_DECODING_TIME)
+// // 				{
+// // 					lTimestamp1 = System.currentTimeMillis();
+// // 				}
+// // 				m_decoder.decode(m_abFrameBuffer, 0,
+// // 						 m_abBuffer, 0, isBigEndian());
+// // 				// testing test hack
+// // 				// m_abBuffer[0] = 0;
+// // 				if (MEASURE_DECODING_TIME)
+// // 				{
+// // 					lTimestamp2 = System.currentTimeMillis();
+// // 					System.out.println("GSM decode (ms): " + (lTimestamp2 - lTimestamp1));
+// // 				}
+// // 			}
+// // 			catch (InvalidGSMFrameException e)
+// // 			{
+// // 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+// // 				m_circularBuffer.close();
+// // 				return;
+// // 			}
+
+// 			m_circularBuffer.write(m_abBuffer);
+// 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.execute(): decoded vorbis frame written"); }
+// 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.execute(): end"); }
+// 		}
 
 
 
-		private boolean isBigEndian()
-		{
-			return m_decodedStream.getFormat().isBigEndian();
-		}
+// 		/** Returns if the stream is big-endian.
+// 		    This is only a convenience method.
+// 		    It fetches the value from the stream's
+// 		    AudioFormat.
+// 		*/
+// 		private boolean isBigEndian()
+// 		{
+// 			return getFormat().isBigEndian();
+// 		}
 
 
 
-		public void close()
-			throws	IOException
-		{
-			super.close();
-			m_decodedStream.close();
-		}
-	}
+// 		public void close()
+// 			throws	IOException
+// 		{
+// 			super.close();
+// 			m_encodedStream.close();
+// 		}
+// 	}
 }
 
 
