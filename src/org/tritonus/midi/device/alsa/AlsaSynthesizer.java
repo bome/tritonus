@@ -43,10 +43,10 @@ import	javax.sound.midi.Soundbank;
 import	javax.sound.midi.VoiceStatus;
 import	javax.sound.midi.Patch;
 
-import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.share.midi.TMidiDeviceInfo;
 import	org.tritonus.share.GlobalInfo;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.TMidiDevice;
 
 
 
@@ -64,7 +64,7 @@ public class AlsaSynthesizer
 	public AlsaSynthesizer(int nClient, int nPort)
 	{
 		super(
-			new TMidiDeviceInfo(
+			new TMidiDevice.Info(
 				"ALSA Synthesizer (" + nClient + ":" + nPort + ")",
 				GlobalInfo.getVendor(),
 				"Synthesizer based on the ALSA sequencer",
