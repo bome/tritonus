@@ -802,7 +802,7 @@ public class AlsaSeq
 
 		/*	Retrieves the parameters of a variable-length event.
 		 *	This method is suitable for the following event types:
-		 *	SND_SEQ_EVENT_SYSEX = 130
+		 *	SND_SEQ_EVENT_SYSEX
 		 *	SND_SEQ_EVENT_BOUNCE
 		 *	SND_SEQ_EVENT_USR_VAR0
 		 *	SND_SEQ_EVENT_USR_VAR1
