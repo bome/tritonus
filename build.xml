@@ -56,6 +56,12 @@
 	   destdir="${build}"
 	   includes="javax/sound/,org/tritonus/"
 	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" />
+    <!-- for jsr-135 -->
+    <javac srcdir="${src}/classes"
+	   depend="yes"
+	   destdir="${build}"
+	   includes="javax/microedition/media/,org/tritonus/micro/"
+	   excludes="org/tritonus/whatever" />
   </target>
 
   <target name="compile-javalayer-dependent"
@@ -116,56 +122,70 @@
 	  depends="compile,compile-javalayer-dependent,compile-jorbis-dependent,compile-midishare-dependent,compile-libs" >
     <mkdir dir="${dist}" />
 
-    <jar jarfile="${dist}/tritonus_core.jar"
-	 basedir="${build}"
-	 includes="javax/sound/,org/tritonus/core/" />
-
-    <jar jarfile="${dist}/tritonus_share.jar"
-	 basedir="${build}"
-	 includes="org/tritonus/share/" />
-
-    <jar	jarfile="${dist}/tritonus_remaining.jar" >
-      <fileset dir="${build}" >
-	<include name="org/tritonus/lowlevel/alsa/" />
-	<include name="org/tritonus/lowlevel/esd/" />
-	<include name="org/tritonus/midi/device/alsa/" />
-	<include name="org/tritonus/midi/file/" />
-	<include name="org/tritonus/sampled/" />
-	<exclude name="org/tritonus/sampled/cdda/" />
+    <!-- CORE: contains public classes and SPI instantiation support -->
+    <jar jarfile="${dist}/tritonus_core.jar">
+      <fileset dir="${build}">
+	<include name="javax/sound/" />
+	<include name="org/tritonus/core/" />
       </fileset>
-      <fileset dir ="${src}/packaging/tritonus_core" />
     </jar>
 
-    <jar	jarfile="${dist}/tritonus_mp3.jar" >
+    <!-- SHARE: contains base and auxiliary classes for all other jars -->
+    <jar jarfile="${dist}/tritonus_share.jar">
+      <fileset dir="${build}">
+	<include name="org/tritonus/share/" />
+      </fileset>
+    </jar>
+
+    <!-- ALSA: contains Alsa mixer and Alsa sequencer -->
+    <jar jarfile="${dist}/tritonus_alsa.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/alsa/" />
+	<include name="org/tritonus/sampled/mixer/alsa/" />
+	<include name="org/tritonus/midi/device/alsa/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_alsa" />
+    </jar>
+
+    <!-- ESD: contains Esd mixer -->
+    <jar jarfile="${dist}/tritonus_esd.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/esd/" />
+	<include name="org/tritonus/sampled/mixer/esd/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_esd" />
+    </jar>
+
+    <!-- MP3: -->
+    <jar jarfile="${dist}/tritonus_mp3.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/lowlevel/lame/" />
 	<include name="org/tritonus/sampled/convert/javalayer/" />
 	<include name="org/tritonus/sampled/convert/lame/" />
 	<include name="org/tritonus/sampled/file/mpeg/" />
       </fileset>
-      <fileset
-	       dir="${src}/packaging/tritonus_mp3" />
+      <fileset dir="${src}/packaging/tritonus_mp3" />
     </jar>
 
-    <jar	jarfile="${dist}/tritonus_midishare.jar" >
+    <!-- MIDISHARE: -->
+    <jar jarfile="${dist}/tritonus_midishare.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/midi/device/midishare/" />
       </fileset>
-      <!-- TODO: -->
-      <fileset
-	       dir="${src}/packaging/tritonus_mp3" />
+      <fileset dir="${src}/packaging/tritonus_midishare" />
     </jar>
 
+    <!-- GSM: -->
     <jar jarfile="${dist}/tritonus_gsm.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/lowlevel/gsm/" />
 	<include name="org/tritonus/sampled/convert/gsm/" />
 	<include name="org/tritonus/sampled/file/gsm/" />
       </fileset>
-      <fileset
-	       dir="${src}/packaging/tritonus_gsm" />
+      <fileset dir="${src}/packaging/tritonus_gsm" />
     </jar>
 
+    <!-- VORBIS: -->
     <jar jarfile="${dist}/tritonus_vorbis.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/sampled/convert/vorbis/" />
@@ -175,6 +195,7 @@
 	       dir="${src}/packaging/tritonus_vorbis" />
     </jar>
 
+    <!-- SAINT: -->
     <jar jarfile="${dist}/tritonus_saint.jar" >
       <fileset
 	       dir="${build}" >
@@ -184,6 +205,7 @@
       </fileset>
     </jar>
 
+    <!-- JAVASEQUENCER: -->
     <jar	jarfile="${dist}/tritonus_javasequencer.jar" >
       <fileset
 	       dir="${build}" >
@@ -193,6 +215,7 @@
 	       dir="${src}/packaging/tritonus_javasequencer" />
     </jar>
 
+    <!-- AOS: -->
     <jar	jarfile="${dist}/tritonus_audiooutputstream.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/sampled/file/*AudioOutputStream.class/" />
@@ -200,13 +223,24 @@
       </fileset>
     </jar>
 
-    <!-- midishare, SRC -->
+    <!-- TODO: SRC -->
 
+    <!-- CDDA: -->
     <jar	jarfile="${dist}/tritonus_cdda.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/lowlevel/cdda/" />
 	<include name="org/tritonus/sampled/cdda/" />
       </fileset>
+    </jar>
+
+    <!-- REMAINING:: -->
+    <jar	jarfile="${dist}/tritonus_remaining.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/midi/file/" />
+	<include name="org/tritonus/sampled/file/*.class" />
+	<include name="org/tritonus/sampled/convert/*.class" />
+      </fileset>
+      <fileset dir ="${src}/packaging/tritonus_core" />
     </jar>
   </target>
 
@@ -286,4 +320,30 @@
       <arg line="${plugins} www.tritonus.org:vtritonus/htdocs/" />
     </exec>
   </target>
+
+
+
+    <!-- for jsr-135 -->
+  <target name="compile-micro" depends="prepare">
+    <javac srcdir="${src}/classes"
+	   depend="yes"
+	   destdir="${build}"
+	   includes="javax/microedition/media/,org/tritonus/micro/"
+	   excludes="org/tritonus/whatever" />
+  </target>
+
+  <target name="dist-micro"
+	  depends="compile-micro" >
+    <mkdir dir="${dist}" />
+
+    <!-- CORE: contains public classes and SPI instantiation support -->
+    <jar jarfile="${dist}/tritonus_micro.jar">
+      <fileset dir="${build}">
+	<include name="javax/microedition/media/" />
+	<include name="org/tritonus/micro/" />
+      </fileset>
+    </jar>
+  </target>
+
+
 </project>
