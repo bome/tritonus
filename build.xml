@@ -20,12 +20,9 @@
 		   destdir="${build}">
 	  <compilerarg compiler="kjc" value="-generic"/>
 	  <compilerarg  value="-Xlint:unchecked"/>
-	  <!--compilerarg  value="-Xlint:unchecked"/-->
-      <include name="javax/sound/" />
       <include name="org/tritonus/" />
       <exclude name="org/tritonus/sampled/convert/javalayer/" />
       <exclude name="org/tritonus/midi/device/midishare/" />
-      <exclude name="org/tritonus/debug/" />
 	  <!-- necessary for kaffe -->
       <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
     </javac>
@@ -33,14 +30,16 @@
 		   debug="${debug}"
 		   source="${source}"
 		   destdir="${build}" >
+	  <compilerarg compiler="kjc" value="-generic"/>
 	  <compilerarg  value="-Xlint:unchecked"/>
-      <include name="org/tritonus/lowlevel/dsp/" />
-      <include name="org/tritonus/dsp/" />
-      <include name="org/tritonus/lowlevel/pogg/" />
-      <include name="org/tritonus/lowlevel/pvorbis/" />
-      <include name="org/tritonus/sampled/" />
+      <include name="javax/sound/" />
+      <include name="org/tritonus/" />
       <exclude name="org/tritonus/sampled/convert/jorbis/" />
       <exclude name="org/tritonus/sampled/file/jorbis/" />
+      <exclude name="org/tritonus/saol/" />
+      <exclude name="org/tritonus/debug/" />
+	  <!-- necessary for kaffe -->
+      <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
     </javac>
   </target>
 
