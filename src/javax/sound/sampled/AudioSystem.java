@@ -1400,7 +1400,7 @@ public class AudioSystem
 		}
 		if (TDebug.TraceAudioSystem)
 		{
-			TDebug.out("< found="+bCompleted);
+			TDebug.out("< completed="+bCompleted);
 		}
 	}
 
@@ -1438,7 +1438,7 @@ public class AudioSystem
 		}
 		if (TDebug.TraceAudioSystem)
 		{
-			TDebug.out("< found="+bCompleted);
+			TDebug.out("< completed="+bCompleted);
 		}
 	}
 
@@ -1478,7 +1478,7 @@ public class AudioSystem
 		}
 		if (TDebug.TraceAudioSystem)
 		{
-			TDebug.out("< found="+bCompleted);
+			TDebug.out("< completed="+bCompleted);
 		}
 	}
 
@@ -1518,7 +1518,7 @@ public class AudioSystem
 		}
 		if (TDebug.TraceAudioSystem)
 		{
-			TDebug.out("< found="+bCompleted);
+			TDebug.out("< completed="+bCompleted);
 		}
 	}
 
@@ -1558,7 +1558,7 @@ public class AudioSystem
 		}
 		if (TDebug.TraceAudioSystem)
 		{
-			TDebug.out("< found="+bCompleted);
+			TDebug.out("< completed="+bCompleted);
 		}
 	}
 

@@ -64,7 +64,11 @@ public abstract class FloatControl
 		m_fMaximum = fMaximum;
 		m_fPrecision = fPrecision;
 		m_nUpdatePeriod = nUpdatePeriod;
-		setValue(fInitialValue);
+
+		//$$fb 2000-12-02: incompatible with Sun implementation...
+		//setValue(fInitialValue);
+		m_fValue = fInitialValue;
+
 		m_nUpdatePeriod = nUpdatePeriod;
 		m_strMinLabel = strMinLabel;
 		m_strMidLabel = strMidLabel;
@@ -185,6 +189,8 @@ public abstract class FloatControl
 		public static final Type	VOLUME = new Type("VOLUME");
 		public static final Type	PAN = new Type("PAN");
 		public static final Type	BALANCE = new Type("BALANCE");
+		//$$fb 2000-12-02: SAMPLE_RATE had been missing
+		public static final Type        SAMPLE_RATE = new Type("SAMPLE RATE"); 
 
 
 

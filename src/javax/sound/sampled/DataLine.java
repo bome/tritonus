@@ -162,7 +162,7 @@ public interface DataLine
 		{
 			if (TDebug.TraceDataLine)
 			{
-				TDebug.out("DataLine.Info.matches(): called");
+				TDebug.out(">DataLine.Info.matches(): called");
 				TDebug.out("DataLine.Info.matches(): own info: " + this.toString());
 				TDebug.out("DataLine.Info.matches(): test info: " + info.toString());
 			}
@@ -170,33 +170,65 @@ public interface DataLine
 			{
 				if (TDebug.TraceDataLine)
 				{
-					TDebug.out("DataLine.Info.matches(): super.matches does not match()");
+					TDebug.out("<DataLine.Info.matches(): super.matches does not match()");
 				}
 				return false;
 			}
 			DataLine.Info	dataLineInfo = (DataLine.Info) info;
 			// TODO: check against documentation !!
-			if ( getMinBufferSize() < dataLineInfo.getMinBufferSize() ||
-			     getMaxBufferSize() > dataLineInfo.getMaxBufferSize() )
+			// $$fb2000-12-02: handle NOT_SPECIFIED
+			if ( (getMinBufferSize()!=AudioSystem.NOT_SPECIFIED 
+			      && dataLineInfo.getMinBufferSize()!=AudioSystem.NOT_SPECIFIED
+			      && getMinBufferSize() < dataLineInfo.getMinBufferSize()) ||
+			     (getMaxBufferSize()!=AudioSystem.NOT_SPECIFIED
+			      && dataLineInfo.getMaxBufferSize()!=AudioSystem.NOT_SPECIFIED
+			      && getMaxBufferSize() > dataLineInfo.getMaxBufferSize()) )
 			{
-				// TDebug.out("DataLine.Info.matches(): buffer sizes do not match");
+				TDebug.out("<DataLine.Info.matches(): buffer sizes do not match");
 				return false;
 			}
+			// $$fb2000-12-02: it's the other way round !!!
+			//                 all of this classes formats must match at least one of
+			//                 dataLineInfo's formats.
+			Iterator	formats = m_audioFormats.iterator();
+			while (formats.hasNext())
+			{
+				AudioFormat	format = (AudioFormat) formats.next();
+				if (TDebug.TraceDataLine)
+				{
+					TDebug.out("checking if supported: " + format);
+				}
+				if (!dataLineInfo.isFormatSupported(format))
+				{
+					if (TDebug.TraceDataLine)
+					{
+						TDebug.out("< format doesn't match");
+					}
+					return false;
+				}
+			}
+
+			/*
 			AudioFormat[]	infoFormats = dataLineInfo.getFormats();
 			for (int i = 0; i < infoFormats.length; i++)
 			{
 				if (TDebug.TraceDataLine)
 				{
-					TDebug.out("DataLine.Info.matches(): checking if supported: " + infoFormats[i]);
+					TDebug.out("checking if supported: " + infoFormats[i]);
 				}
-				if (! isFormatSupported(infoFormats[i]))
+				if (!isFormatSupported(infoFormats[i]))
 				{
 					if (TDebug.TraceDataLine)
 					{
-						TDebug.out("DataLine.Info.matches(): formats do not match");
+						TDebug.out("< formats do not match");
 					}
 					return false;
 				}
+			}
+			*/
+			if (TDebug.TraceDataLine)
+			{
+				TDebug.out("< matches: true");
 			}
 			return true;
 		}

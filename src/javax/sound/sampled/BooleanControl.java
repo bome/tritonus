@@ -47,7 +47,11 @@ public abstract class BooleanControl
 				 String strFalseLabel)
 	{
 		super(type);
-		setValue(bInitialValue);
+
+		//$$fb 2000-12-02: incompatible with Sun implementation...
+		//setValue(bInitialValue);
+		m_bValue = bInitialValue;
+
 		m_strTrueLabel = strTrueLabel;
 		m_strFalseLabel = strFalseLabel;
 	}
