@@ -47,50 +47,49 @@ public class AlsaMidiDeviceProvider
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];
 
 	private static List		m_devices;
-	private static AlsaSeq	m_aSequencer;
+	private static AlsaSeq	m_alsaSeq;
 
 
 
 	public AlsaMidiDeviceProvider()
 	{
-		if (TDebug.TraceMidiDeviceProvider)
-		{
-			TDebug.out("AlsaMidiDeviceProvider.<init>(): begin");
-		}
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.<init>(): begin"); }
 		synchronized (AlsaMidiDeviceProvider.class)
 		{
 			if (m_devices == null)
 			{
 				m_devices = new ArrayList();
-				m_aSequencer = new AlsaSeq("Tritonus ALSA device manager");
+				m_alsaSeq = new AlsaSeq("Tritonus ALSA device manager");
 				scanPorts();
 			}
 		}
-		if (TDebug.TraceMidiDeviceProvider)
-		{
-			TDebug.out("AlsaMidiDeviceProvider.<init>(): end");
-		}
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.<init>(): end"); }
 	}
 
 
 
 	public MidiDevice.Info[] getDeviceInfo()
 	{
-		List		infos = new ArrayList();
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDeviceInfo(): begin"); }
+		List		infoList = new ArrayList();
 		Iterator	iterator = m_devices.iterator();
 		while (iterator.hasNext())
 		{
 			MidiDevice	device = (MidiDevice) iterator.next();
 			MidiDevice.Info	info = device.getDeviceInfo();
-			infos.add(info);
+			infoList.add(info);
 		}
-		return (MidiDevice.Info[]) infos.toArray(EMPTY_INFO_ARRAY);
+		MidiDevice.Info[]	infos = (MidiDevice.Info[]) infoList.toArray(EMPTY_INFO_ARRAY);
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDeviceInfo(): end"); }
+		return infos;
 	}
 
 
 
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDevice(): begin"); }
+		MidiDevice	returnedDevice = null;
 		Iterator	iterator = m_devices.iterator();
 		while (iterator.hasNext())
 		{
@@ -98,32 +97,30 @@ public class AlsaMidiDeviceProvider
 			MidiDevice.Info	info2 = device.getDeviceInfo();
 			if (info != null && info.equals(info2))
 			{
-				return device;
+				returnedDevice = device;
+				break;
 			}
 		}
-		throw new IllegalArgumentException("no device for " + info);
+		if (returnedDevice == null)
+		{
+			throw new IllegalArgumentException("no device for " + info);
+		}
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDevice(): end"); }
+		return returnedDevice;
 	}
 
 
 
 	private void scanPorts()
 	{
-		if (TDebug.TraceMidiDeviceProvider)
-		{
-			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): begin");
-		}
-		Iterator	clients = m_aSequencer.getClientInfos();
-		// TDebug.out("" + clients);
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): begin"); }
+		Iterator	clients = m_alsaSeq.getClientInfos();
 		while (clients.hasNext())
 		{
 			AlsaSeq.ClientInfo	clientInfo = (AlsaSeq.ClientInfo) clients.next();
 			int	nClient = clientInfo.getClientId();
-			if (TDebug.TracePortScan)
-			{
-				TDebug.out("AlsaMidiDeviceProvider.scanPorts(): client: " + nClient);
-			}
-			Iterator	ports = m_aSequencer.getPortInfos(nClient);
-			// TDebug.out("" + clients);
+			if (TDebug.TracePortScan) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): client: " + nClient); }
+			Iterator	ports = m_alsaSeq.getPortInfos(nClient);
 			while (ports.hasNext())
 			{
 				AlsaSeq.PortInfo	portInfo = (AlsaSeq.PortInfo) ports.next();
@@ -148,34 +145,35 @@ public class AlsaMidiDeviceProvider
 					}
 					m_devices.add(device);
 				}
-/*
-  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
-  {
-  TDebug.out("gm");
-  }
-  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
-  {
-  TDebug.out("gs");
-  }
-  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
-  {
-  TDebug.out("xg");
-  }
-  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH) != 0)
-  {
-  TDebug.out("synth");
-  }
-  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
-  {
-  TDebug.out("direct sample");
-  }
-  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
-  {
-  TDebug.out("sample");
-  }
-*/
+
+// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
+// 				{
+// 					TDebug.out("gm");
+// 				}
+// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
+// 				{
+// 					TDebug.out("gs");
+// 				}
+// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
+// 				{
+// 					TDebug.out("xg");
+// 				}
+// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH) != 0)
+// 				{
+// 					TDebug.out("synth");
+// 				}
+// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
+// 				{
+// 					TDebug.out("direct sample");
+// 				}
+// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
+// 				{
+// 					TDebug.out("sample");
+// 				}
+
 			}
 		}
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): end"); }
 	}
 
 }
