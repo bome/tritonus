@@ -26,49 +26,18 @@
 package	org.tritonus.lowlevel.cdda;
 
 
-import	org.tritonus.share.TDebug;
+//import	org.tritonus.share.TDebug;
 
 
 
-/**	Low-level interface to reading CDs
+/**	Mid-level interface definition for reading CDs
  */
-public class CDDA
+public interface CDDA
 {
 	/**	Size of a cdda frame in bytes.
 	 */
 	public static final int		FRAME_SIZE = 2352;
 
-
-	static
-	{
-		if (TDebug.TraceCDDA) { TDebug.out("CDDA.<clinit>(): loading native library tritonuscdda"); }
-		System.loadLibrary("tritonuscdda");
-		if (TDebug.TraceCDDA) { TDebug.out("CDDA.<clinit>(): loaded"); }
-		// TODO: ????
-		setTrace(true /*TDebug.TraceCDDANative*/);
-	}
-
-
-
-	/*
-	 *	This holds a file descriptor for the native code -
-	 *	do not touch!
-	 */
-	private long		m_lNativeHandle;
-
-
-
-	// TODO: parameter strDevicename (or something else sensible)
-	public CDDA()
-	{
-		if (TDebug.TraceCDDA) { System.out.println("CDDA.<init>: begin"); }
-		int	nResult = open();
-		if (nResult < 0)
-		{
-			throw new RuntimeException("cannot open /dev/cdrom");
-		}
-		if (TDebug.TraceCDDA) { System.out.println("CDDA.<init>: end"); }
-	}
 
 
 
@@ -77,13 +46,14 @@ public class CDDA
 	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
 	 *	client id.
 	 */
-	private native int open();
+	// to become a public method?
+	// private native int open();
 
 	/**	OUTDATED!
 		Closes the sequencer.
 	 *	Calls snd_seq_close().
 	 */
-	public native void close();
+	public void close();
 
 
 	/*
@@ -93,7 +63,8 @@ public class CDDA
 	 *	anStartTrack[x]	start sector of the track x.
 	 *	anType[x]	type of track x.
 	 */
-	public native int readTOC(int[] anValues, int[] anStartTrack, int[] anType);
+	// TODO: other information (bits, channels)
+	public int readTOC(int[] anValues, int[] anStartTrack, int[] anType);
 
 
 	/**	Reads one or more raw frames from the CD.
@@ -102,9 +73,7 @@ public class CDDA
 		<CODE>abData</CODE>  has to be big enough to hold the
 		amount of data requested (<CODE>2352 * nCount</CODE> bytes).
 	 */
-	public native int readFrame(int nFrame, int nCount, byte[] abData);
-
-	private static native void setTrace(boolean bTrace);
+	public int readFrame(int nFrame, int nCount, byte[] abData);
 }
 
 
