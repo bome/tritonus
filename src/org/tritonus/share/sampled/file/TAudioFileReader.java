@@ -238,9 +238,15 @@ public abstract class TAudioFileReader
 		{
 			audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
 		}
-		finally
+		catch (UnsupportedAudioFileException e)
 		{
 			inputStream.close();
+			throw e;
+		}
+		catch (IOException e)
+		{
+			inputStream.close();
+			throw e;
 		}
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(File): end"); }
 		return audioInputStream;
@@ -270,10 +276,15 @@ public abstract class TAudioFileReader
 		{
 			audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
 		}
-		finally
+		catch (UnsupportedAudioFileException e)
 		{
-			// TODO: really? Isn't it necessary to do subsequent reads when there is data read from the AudioInputStream?
 			inputStream.close();
+			throw e;
+		}
+		catch (IOException e)
+		{
+			inputStream.close();
+			throw e;
 		}
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): end"); }
 		return audioInputStream;
