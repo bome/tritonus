@@ -71,7 +71,7 @@ jstreambuf::overflow(int ch)
 streamsize
 jstreambuf::xsputn(const char* text, streamsize n)
 {
-	cerr << "jstreambuf: xsputn(.., " << n << ") for " << m_object << "\n";
+	// cerr << "jstreambuf: xsputn(.., " << n << ") for " << m_object << "\n";
 	jbyteArray	byteArray = m_pJNIEnv->NewByteArray(n);
 	if (byteArray == NULL)
 	{

@@ -114,7 +114,8 @@ Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2Ljava_io_Inpu
 	istream*	scoreIStream = new istream(scoreStreamBuf);
 	jstreambuf*	outputStreamBuf = new jstreambuf(env, outputStream);
 	ostream*	outputOStream = new ostream(outputStreamBuf);
-	Saint*	saint = new Saint(orchestraIStream, scoreIStream, outputOStream, 0);
+	Out*		pOut = new Out(outputOStream, nOutputFormat);
+	Saint*	saint = new Saint(orchestraIStream, scoreIStream, pOut);
 	setNativeHandle(env, obj, saint);
 }
 
@@ -129,6 +130,13 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2Ljava_io_OutputStream_2I
 (JNIEnv *env, jobject obj, jobject bitStream, jobject outputStream, jint nOutputFormat)
 {
+	jstreambuf*	bitStreamBuf = new jstreambuf(env, bitStream);
+	istream*	bitIStream = new istream(bitStreamBuf);
+	jstreambuf*	outputStreamBuf = new jstreambuf(env, outputStream);
+	ostream*	outputOStream = new ostream(outputStreamBuf);
+	Out*		pOut = new Out(outputOStream, nOutputFormat);
+	Saint*	saint = new Saint(bitIStream, pOut);
+	setNativeHandle(env, obj, saint);
 }
 
 
