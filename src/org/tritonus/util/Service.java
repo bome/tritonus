@@ -74,25 +74,40 @@ public class Service
 				try
 				{
 					Class	cls = Class.forName(strClassName);
-					System.out.println("now creating instance");
+					if (TDebug.TraceService)
+					{
+						System.out.println("now creating instance");
+					}
 					Object	instance = cls.newInstance();
 					providers.add(instance);
 				}
 				catch (ClassNotFoundException e)
 				{
-					TDebug.out(e);
+					if (TDebug.TraceService)
+					{
+						TDebug.out(e);
+					}
 				}
 				catch (InstantiationException e)
 				{
-					TDebug.out(e);
+					if (TDebug.TraceService)
+					{
+						TDebug.out(e);
+					}
 				}
 				catch (IllegalAccessException e)
 				{
-					TDebug.out(e);
+					if (TDebug.TraceService)
+					{
+						TDebug.out(e);
+					}
 				}
 				catch (Throwable e)
 				{
-					TDebug.out(e);
+					if (TDebug.TraceService)
+					{
+						TDebug.out(e);
+					}
 				}
 			}
 		}

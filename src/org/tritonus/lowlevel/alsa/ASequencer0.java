@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -305,6 +305,11 @@ public class ASequencer0
 
 	public ASequencer0()
 	{
+		if (true)
+		{
+			System.out.println("ASequencer0.<init>:");
+			Thread.dumpStack();
+		}
 		m_nClientId = open();
 	}
 
