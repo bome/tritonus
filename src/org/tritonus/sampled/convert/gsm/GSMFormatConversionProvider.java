@@ -60,6 +60,12 @@ public class GSMFormatConversionProvider
 	extends		TSimpleFormatConversionProvider
 // extends		TEncodingFormatConversionProvider
 {
+	/*	Debugging (profiling) hack.
+	 */
+	private static final boolean	MEASURE_DECODING_TIME = false;
+
+
+
 	private static final AudioFormat[]	FORMATS1 =
 	{
 		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, -1, 1, 33, 50.0F, false),
@@ -168,6 +174,12 @@ public class GSMFormatConversionProvider
 		
 
 
+	/**	AudioInputStream returned on decoding of GSM.
+		An instance of this class is returned if you call
+		AudioSystem.getAudioInputStream(AudioFormat, AudioInputStream)
+		to decode a GSM stream. This class contains the logic
+		of maintaining buffers and calling the decoder.
+	 */
 	public static class DecodedGSMAudioInputStream
 	extends		TAsynchronousFilteredAudioInputStream
 	{
@@ -226,47 +238,24 @@ public class GSMFormatConversionProvider
 				m_circularBuffer.close();
 				return;
 			}
-			/*
-			int[]	anDecodedData = null;
+
 			try
 			{
-				long	l1 = System.currentTimeMillis();
-				long	l2 = System.currentTimeMillis();
-				anDecodedData = m_decoder.decode(m_abFrameBuffer);
-				long	l3 = System.currentTimeMillis();
-				// System.out.println("GSM decode [fake] (ms): " + (l2 - l1));
-				System.out.println("GSM decode (ms): " + (l3 - l1));
-			}
-			catch (InvalidGSMFrameException e)
-			{
-				if (TDebug.TraceAllExceptions)
+				long	lTimestamp1;
+				long	lTimestamp2;
+				if (MEASURE_DECODING_TIME)
 				{
-					TDebug.out(e);
+					lTimestamp1 = System.currentTimeMillis();
 				}
-				m_circularBuffer.close();
-				return;
-			}
-			long	l4 = System.currentTimeMillis();
-			for (int i = 0; i < 160; i++)
-			{
-			        //$$fb 2000-08-13: adapted to new TConversionTool functions
-			        TConversionTool.intToBytes16(anDecodedData[i], m_abBuffer, i * 2, isBigEndian());
-
-			}
-			long	l5 = System.currentTimeMillis();
-			System.out.println("GSM TConv (ms): " + (l5 - l4));
-			*/
-
-/// start new version
-			try
-			{
-				long	l1 = System.currentTimeMillis();
 				m_decoder.decode(m_abFrameBuffer, 0,
 						 m_abBuffer, 0, isBigEndian());
 				// testing test hack
 				// m_abBuffer[0] = 0;
-				long	l2 = System.currentTimeMillis();
-				System.out.println("GSM decode (ms): " + (l2 - l1));
+				if (MEASURE_DECODING_TIME)
+				{
+					lTimestamp2 = System.currentTimeMillis();
+					System.out.println("GSM decode (ms): " + (lTimestamp2 - lTimestamp1));
+				}
 			}
 			catch (InvalidGSMFrameException e)
 			{
@@ -306,6 +295,12 @@ public class GSMFormatConversionProvider
 
 
 
+	/**	AudioInputStream returned on encoding of GSM.
+		An instance of this class is returned if you call
+		AudioSystem.getAudioInputStream(AudioFormat, AudioInputStream)
+		to encode data to GSM. This class contains the logic
+		of maintaining buffers and calling the encoder.
+	 */
 	public static class EncodedGSMAudioInputStream
 	extends		TAsynchronousFilteredAudioInputStream
 	{
