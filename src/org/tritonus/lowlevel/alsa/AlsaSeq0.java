@@ -389,7 +389,7 @@ public class AlsaSeq0
 	/*
 	 *	This holds a pointer for the native code - do not touch!
 	 */
-	private long		m_lNativeSeq;
+	private long		m_lNativeHandle;
 	
 	/*
 	 *	The client Id assigned by the sequencer to this objects
