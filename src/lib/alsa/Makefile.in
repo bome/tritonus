@@ -33,7 +33,8 @@ JAVAH = @JAVAH@
 
 
 JNIOBJ=\
-	org_tritonus_lowlevel_alsa_AlsaSeq0.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_PortInfo.o \
 	org_tritonus_lowlevel_alsa_Alsa.o \
 	org_tritonus_lowlevel_alsa_AlsaCtl.o \
 	org_tritonus_lowlevel_alsa_AlsaMixer.o \
@@ -51,7 +52,6 @@ OBJ=\
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
 JNICLASSFILES=\
-	AlsaSeq0.class \
 	Alsa.class \
 	AlsaCtl.class \
 	AlsaMixer.class \
@@ -59,11 +59,12 @@ JNICLASSFILES=\
 	AlsaPcm.class \
 	AlsaPcm$$HWParams.class \
 	AlsaPcm$$HWParams$$FormatMask.class \
-	AlsaPcm$$SWParams.class
+	AlsaPcm$$SWParams.class \
+	AlsaSeq.class \
+	AlsaSeq$$PortInfo.class
 
 
 JNICLASSES=\
-	org.tritonus.lowlevel.alsa.AlsaSeq0 \
 	org.tritonus.lowlevel.alsa.Alsa \
 	org.tritonus.lowlevel.alsa.AlsaCtl \
 	org.tritonus.lowlevel.alsa.AlsaMixer \
@@ -71,7 +72,9 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaPcm \
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams \
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams\$$FormatMask \
-	org.tritonus.lowlevel.alsa.AlsaPcm\$$SWParams
+	org.tritonus.lowlevel.alsa.AlsaPcm\$$SWParams \
+	org.tritonus.lowlevel.alsa.AlsaSeq \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$PortInfo
 
 #----------------- rules -------------------
 
