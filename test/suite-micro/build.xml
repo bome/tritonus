@@ -1,0 +1,51 @@
+<project name="tritonus_tests" default="compile" basedir=".">
+  <target name="init">
+    <tstamp/>
+    <property name="src" value="src" />
+    <property name="build" value="." />
+    <property name="dist"  value="." />
+    <!--
+    Remove the next line if you don't have jikes.
+    In this case, javac will be used for compiling.
+    -->
+    <property name="build.compiler" value="jikes" />
+    <!--property name="build.compiler.fulldepend" value="true" /-->
+
+    <property
+	      name="java_ext_path"
+	      value="${java.home}/lib/ext" />
+  </target>
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${build}" />
+  </target>
+
+  <target name="build-javalayer"
+	  depends="init"
+	  if="javalayer-source-present">
+    <ant dir="${javalayer-path}" />
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src}"
+	   depend="yes"
+	   destdir="${build}" />
+  </target>
+
+
+  <target name="test"
+	  depends="test-datasource">
+  </target>
+
+  <target name="test-datasource"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
+      <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
+      <!--sysproperty key="tritonus.TraceService" value="true" /-->
+      <formatter type="plain" />
+      <test name="ManagerTestCase" />
+    </junit>
+  </target>
+
+</project>
