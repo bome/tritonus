@@ -8,6 +8,9 @@ For several common cases, this is not necessary. These cases are:
 - you want to do CD digital audio extraction (Linux i386)
 For these cases, precompiled components are available. Go to:
 http://www.tritonus.org/plugins.html
+If you want to have kaffe with Java Sound, use the cvs of kaffe
+(Tritonus has been integrated there). Go to:
+http://www.kaffe.org/
 
 
 Which components do i need?
@@ -76,9 +79,17 @@ Installing steps
 Currently, the build process is a mess.
 I'm currently building with these commands:
 
+../tritonus> autoconf
+../tritonus> ./configure
 ../tritonus> ant
 ../tritonus> make -C src/lib/alsa
 ../tritonus> make -C src/lib/...
+
+If you want ant to use jikes, issue:
+
+../tritonus> ant -Dbuild.compiler=jikes
+
+[IDEA: options to configure: build-prefix, install-prefix]
 
 Installation never worked really well. I did (by hand):
 > cd /usr/local/java/j2sdk1.4.0/jre/lib/ext
@@ -90,7 +101,7 @@ Installation never worked really well. I did (by hand):
 (Of course adapt the paths to your system.)
 
 ---------------------
-
+OLD
 
 1. Unpack the distribution. It should unpack into a directory
 tritonus-<version>. cd into the top-level directory.
