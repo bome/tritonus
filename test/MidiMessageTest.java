@@ -91,6 +91,19 @@ public class MidiMessageTest
 		{
 			out("MidiMessage.getMessage() does copy");
 		}
+		out("----------------------------------------");
+		ShortMessage	sm = new ShortMessage();
+		t1 = sm.getMessage();
+		l1 = sm.getLength();
+		out("ShortMessage() data: " + t1);
+		for (int i = 0; i < t1.length; i++)
+		{
+			out("" + t1[i]);
+		}
+		out("ShortMessage().getLength(): " + l1);
+		out("ShortMessage().getStatus(): " + sm.getStatus());
+		out("ShortMessage().getData1(): " + sm.getData1());
+		out("ShortMessage().getData2(): " + sm.getData2());
 	}
 
 
