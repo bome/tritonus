@@ -24,8 +24,6 @@
       <include name="javax/sound/" />
       <include name="org/tritonus/" />
       <exclude name="org/tritonus/sampled/convert/javalayer/" />
-      <exclude name="org/tritonus/sampled/convert/jorbis/" />
-      <exclude name="org/tritonus/sampled/file/jorbis/" />
       <exclude name="org/tritonus/midi/device/midishare/" />
       <exclude name="org/tritonus/debug/" />
 	  <!-- necessary for kaffe -->
@@ -41,6 +39,8 @@
       <include name="org/tritonus/lowlevel/pogg/" />
       <include name="org/tritonus/lowlevel/pvorbis/" />
       <include name="org/tritonus/sampled/" />
+      <exclude name="org/tritonus/sampled/convert/jorbis/" />
+      <exclude name="org/tritonus/sampled/file/jorbis/" />
     </javac>
   </target>
 
@@ -61,7 +61,7 @@
   <target name="compile-jorbis-dependent"
 	  depends="prepare"
 	  if="jorbis-present">
-    <javac srcdir="${src}"
+    <javac srcdir="${src.classes}"
 		   debug="${debug}"
 		   source="${source}"
 		   destdir="${build}" >
