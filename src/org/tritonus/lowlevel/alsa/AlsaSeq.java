@@ -615,12 +615,9 @@ public class AlsaSeq
 	public native int setQueueTimer(int nQueue, QueueTimer queueTimer);
 
 
-
-	public native void subscribePort(
-		int nSenderClient, int nSenderPort,
-		int nDestClient, int nDestPort,
-		int nQueue, boolean bExclusive, boolean bRealtime, boolean bConvertTime,
-		int nMidiChannels, int nMidiVoices, int nSynthVoices);
+	public native int getPortSubscription(PortSubscribe portSubscribe);
+	public native int subscribePort(PortSubscribe portSubscribe);
+	public native int unsubscribePort(PortSubscribe portSubscribe);
 
 
 
@@ -639,32 +636,6 @@ public class AlsaSeq
 	public Iterator getPortInfos(int nClient)
 	{
 		return new PortInfoIterator(nClient);
-	}
-
-
-
-	public void subscribePort(
-		int nSenderClient, int nSenderPort,
-		int nDestClient, int nDestPort)
-	{
-		subscribePort(
-			nSenderClient, nSenderPort,
-			nDestClient, nDestPort,
-			0, false, false, false);
-	}
-
-
-
-	public void subscribePort(
-		int nSenderClient, int nSenderPort,
-		int nDestClient, int nDestPort,
-		int nQueue, boolean bExclusive, boolean bRealtime, boolean bConvertTime)
-	{
-		subscribePort(
-			nSenderClient, nSenderPort,
-			nDestClient, nDestPort,
-			nQueue, bExclusive, bRealtime, bConvertTime,
-			0, 0, 0);
 	}
 
 
@@ -1060,6 +1031,67 @@ public class AlsaSeq
 
 
 
+	public static class PortSubscribe
+	{
+		/**
+		 *	Holds the pointer to snd_seq_port_info_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public PortSubscribe()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortSubscribe.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortSubscribe.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+
+
+		public native int getSenderClient();
+		public native int getSenderPort();
+		public native int getDestClient();
+		public native int getDestPort();
+
+		public native int getQueue();
+
+		public native boolean getExclusive();
+		public native boolean getTimeUpdate();
+		public native boolean getTimeReal();
+
+		public native void setSender(int nClient, int nPort);
+		public native void setDest(int nClient, int nPort);
+
+		public native void setQueue(int nQueue);
+
+		public native void setExclusive(boolean bExclusive);
+		public native void setTimeUpdate(boolean bUpdate);
+		public native void setTimeReal(boolean bReal);
+	}
+
+
+
 	public static class QueueInfo
 	{
 		/**
@@ -1247,6 +1279,62 @@ public class AlsaSeq
 		// TODO:
 							 // public native void setId(???);
 		public native void setResolution(int nResolution);
+	}
+
+
+
+	public static class RemoveEvents
+	{
+		/**
+		 *	Holds the pointer to snd_seq_queue_timer_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public RemoveEvents()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.RemoveEvents.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.RemoveEvents.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+		public native int getCondition();
+		public native int getQueue();
+		public native long getTime();
+		public native int getDestClient();
+		public native int getDestPort();
+		public native int getChannel();
+		public native int getEventType();
+		public native int getTag();
+
+		public native void setCondition(int nCondition);
+		public native void setQueue(int nQueue);
+		public native void setTime(long lTime);
+		public native void setDest(int nClient, int nPort);
+		public native void setChannel(int nChannel);
+		public native void setEventType(int nEventType);
+		public native void setTag(int nTag);
 	}
 
 
