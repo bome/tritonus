@@ -1,11 +1,11 @@
 /*
- *	badenc.h
+ *	bladenc.h
  *  for Windows bladenc-style DLLs
  */
 
 
 /*
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify

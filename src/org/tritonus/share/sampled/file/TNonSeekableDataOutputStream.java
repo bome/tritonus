@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
  *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
@@ -38,7 +38,7 @@ import	java.io.DataOutputStream;
  * @author Matthias Pfisterer
  */
 
-	
+
 public class TNonSeekableDataOutputStream
 	extends DataOutputStream
 	implements TDataOutputStream

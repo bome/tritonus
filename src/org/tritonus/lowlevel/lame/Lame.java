@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -34,14 +34,14 @@ import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.Encodings;
 
 public class Lame {
-	
+
 	// constants from lame.h
 	private static final int MPEG_VERSION_2 = 0; // MPEG-2
 	private static final int MPEG_VERSION_1 = 1; // MPEG-1
 	private static final int MPEG_VERSION_2DOT5 = 2; // MPEG-2.5
 
 	public static final int QUALITY_LOWEST = 9; // low mean bitrate in VBR mode
-	public static final int QUALITY_LOW = 7;    
+	public static final int QUALITY_LOW = 7;
 	public static final int QUALITY_MIDDLE = 5;
 	public static final int QUALITY_HIGH = 2;
 	// quality==0 not yet coded in LAME (3.83alpha)
@@ -114,7 +114,7 @@ public class Lame {
 		close();
 		if (resultCode==OUT_OF_MEMORY) {
 			throw new OutOfMemoryError("out of memory");
-		} 
+		}
 		else if (resultCode==NOT_INITIALIZED) {
 			throw new RuntimeException("not initialized");
 		}
@@ -126,7 +126,7 @@ public class Lame {
 	}
 
 	/**
-	 * Initializes the decoder with 
+	 * Initializes the decoder with
 	 * DEFAULT_BITRATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, and DEFAULT_VBR
 	 * Throws IllegalArgumentException when parameters are not supported
 	 * by LAME.
@@ -148,7 +148,7 @@ public class Lame {
 		readParameters();
 		initParams(sourceFormat, DEFAULT_BITRATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, DEFAULT_VBR);
 	}
-		
+
 	private void initParams(AudioFormat sourceFormat, int bitRate, int channelMode, int quality, boolean VBR) {
 		// simple check that bitrate is not too high for MPEG2 and MPEG2.5
 		// todo: exception ?
@@ -163,7 +163,7 @@ public class Lame {
 				   +"   quality="+quality2string(quality)
 				   +"   VBR="+VBR+"  bigEndian="+sourceFormat.isBigEndian());
 		}
-		int result=nInitParams(sourceFormat.getChannels(), (int) Math.round(sourceFormat.getSampleRate()), 
+		int result=nInitParams(sourceFormat.getChannels(), (int) Math.round(sourceFormat.getSampleRate()),
 				       bitRate, channelMode, quality,
 				       VBR, sourceFormat.isBigEndian());
 		if (result<0) {
@@ -173,19 +173,19 @@ public class Lame {
 		}
 		// provide effective parameters to user-space
 		try {
-			System.setProperty(PROPERTY_PREFIX + "effective.quality", 
+			System.setProperty(PROPERTY_PREFIX + "effective.quality",
 					   quality2string(getEffectiveQuality()));
-			System.setProperty(PROPERTY_PREFIX + "effective.bitrate", 
+			System.setProperty(PROPERTY_PREFIX + "effective.bitrate",
 					   String.valueOf(getEffectiveBitRate()));
-			System.setProperty(PROPERTY_PREFIX + "effective.chmode", 
+			System.setProperty(PROPERTY_PREFIX + "effective.chmode",
 					   chmode2string(getEffectiveChannelMode()));
-			System.setProperty(PROPERTY_PREFIX + "effective.vbr", 
+			System.setProperty(PROPERTY_PREFIX + "effective.vbr",
 					   String.valueOf(getEffectiveVBR()));
-			System.setProperty(PROPERTY_PREFIX + "effective.samplerate", 
+			System.setProperty(PROPERTY_PREFIX + "effective.samplerate",
 					   String.valueOf(getEffectiveSampleRate()));
-			System.setProperty(PROPERTY_PREFIX + "effective.encoding", 
+			System.setProperty(PROPERTY_PREFIX + "effective.encoding",
 					   getEffectiveEncoding().toString());
-			System.setProperty(PROPERTY_PREFIX + "encoder.version", 
+			System.setProperty(PROPERTY_PREFIX + "encoder.version",
 					   getEncoderVersion());
 		}
 		catch (Throwable t)
@@ -201,8 +201,8 @@ public class Lame {
 	 * Initializes the lame encoder.
 	 * Throws IllegalArgumentException when parameters are not supported
 	 * by LAME.
-	 */	
-	private native int nInitParams(int channels, int sampleRate, 
+	 */
+	private native int nInitParams(int channels, int sampleRate,
 				       int bitrate, int mode, int quality,
 				       boolean VBR, boolean bigEndian);
 
@@ -212,7 +212,7 @@ public class Lame {
 	 * if everything OK, returns the length of the string
 	 */
 	private native int nGetEncoderVersion(byte[] string);
-	
+
 	public String getEncoderVersion() {
 		byte[] string=new byte[300];
 		int res=nGetEncoderVersion(string);
@@ -235,7 +235,7 @@ public class Lame {
 		}
 		return sRes;
 	}
-	
+
 	private native int nGetPCMBufferSize(int suggested);
 
 	/**
@@ -261,13 +261,13 @@ public class Lame {
 	}
 
 
-	private native int nEncodeBuffer(byte[] pcm, int offset, 
+	private native int nEncodeBuffer(byte[] pcm, int offset,
 					int length, byte[] encoded);
 
 	/**
-	 * Encode a block of data. Throws IllegalArgumentException when parameters 
+	 * Encode a block of data. Throws IllegalArgumentException when parameters
 	 * are wrong.
-	 * When the <code>encoded</code> array is too small, 
+	 * When the <code>encoded</code> array is too small,
 	 * an ArrayIndexOutOfBoundsException is thrown.
 	 * <code>length</code> should be the value returned by getPCMBufferSize.
 	 * @return the number of bytes written to <code>encoded</code>. May be 0.
@@ -335,7 +335,7 @@ public class Lame {
 		}
 		return QUALITY_HIGHEST;
 	}
-		
+
 	public int getEffectiveBitRate() {
 		return effBitRate;
 	}
@@ -343,22 +343,22 @@ public class Lame {
 	public int getEffectiveChannelMode() {
 		return effChMode;
 	}
-	
+
 	public boolean getEffectiveVBR() {
 		return effVbr!=0;
 	}
-	
+
 	public int getEffectiveSampleRate() {
 		return effSampleRate;
 	}
-	
+
 	public AudioFormat.Encoding getEffectiveEncoding() {
 		if (effEncoding==MPEG_VERSION_2) {
 			if (getEffectiveSampleRate()<16000) {
 				return Encodings.getEncoding("MPEG2DOT5L3");
 			}
 			return Encodings.getEncoding("MPEG2L3");
-		} 
+		}
 		else if (effEncoding==MPEG_VERSION_2DOT5) {
 			return Encodings.getEncoding("MPEG2DOT5L3");
 		}
@@ -366,7 +366,7 @@ public class Lame {
 	}
 
 	/**
-	 * workaround for missing paramtrization possibilities 
+	 * workaround for missing paramtrization possibilities
 	 * for FormatConversionProviders
 	 */
 	private void readParameters() {

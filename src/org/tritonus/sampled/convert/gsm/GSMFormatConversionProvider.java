@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -168,7 +168,7 @@ public class GSMFormatConversionProvider
 		}
 		throw new IllegalArgumentException("conversion not supported");
 	}
-		
+
 
 
 	/**	AudioInputStream returned on decoding of GSM.

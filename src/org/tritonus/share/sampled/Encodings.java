@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,11 +42,11 @@ import	org.tritonus.share.TDebug;
  * be maintained by the Tritonus team.
  * <p>
  * In a specification request to JavaSoft, the static method
- * <code>getEncoding</code> should be integrated into 
- * <code>AudioFormat.Encoding(String name)</code> (possibly 
+ * <code>getEncoding</code> should be integrated into
+ * <code>AudioFormat.Encoding(String name)</code> (possibly
  * renamed to <code>getInstance(String name)</code>.<br>
  * The static instances of ULAW, ALAW PCM_UNSIGNED and PCM_SIGNED
- * encodings in that class should be retrieved using that function, 
+ * encodings in that class should be retrieved using that function,
  * too (internally).<br>
  * At best, the protected constructor of that class
  * should also be replaced to be a private constructor.
@@ -58,7 +58,7 @@ import	org.tritonus.share.TDebug;
  * Also, a specification request should be made to integrate
  * <code>getEncodings()</code> into AudioSystem (this is
  * especially annoying as the relevant methods already exist
- * in the provider interfaces of file readers, file writers and 
+ * in the provider interfaces of file readers, file writers and
  * converters).
  *
  * @author Florian Bomers
@@ -97,13 +97,13 @@ public class Encodings extends AudioFormat.Encoding {
 	  object that is not supported. Instead, some indication of an error should be
 	  signaled to the user program. And, there should be a second interface for
 	  service providers allowing them to register encodings supported by themselves.
-	  
+
 	  $$fb2000/09/26:
 	  The problem is what you see as second issue: it can never be assured
 	  that this class knows all available encodings. So at the moment, there
 	  is no choice than to allow users to create any Encoding they wish.
 	  The encodings database will simplify things.
-	  A problem with an interface to retrieve supported encodings (or API 
+	  A problem with an interface to retrieve supported encodings (or API
 	  function in spi.FormatConversionProvider) is that this requires
 	  loading of all providers very early. Hmmm, maybe this is necessary in any
 	  case when the user issues something like AudioSystem.isConversionSupported.
@@ -134,7 +134,7 @@ public class Encodings extends AudioFormat.Encoding {
 
 
 	/**
-	 * Returns all &quot;supported&quot; encodings. 
+	 * Returns all &quot;supported&quot; encodings.
 	 * Supported means that it is possible to read or
 	 * write files with this encoding, or that a converter
 	 * accepts this encoding as source or target format.

@@ -4,7 +4,7 @@
 
 
 /*
- *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ static void setIntField(JNIEnv *env, jobject obj, char* name, int value) {
 	jfieldID fieldID = getFieldID(env, name, "I");
 	(*env)->SetIntField(env, obj, fieldID, (jint) value);
 }
-	
+
 
 #define LA_ENDIAN_NOT_TESTED 0
 #define LA_BIG_ENDIAN 1
@@ -121,14 +121,14 @@ void CheckEndianness(void) {
  * returns >=0 on success
  */
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
-  (JNIEnv * env, jobject obj, jint channels, jint sampleRate, 
+  (JNIEnv * env, jobject obj, jint channels, jint sampleRate,
    jint bitrate, jint mode, jint quality, jboolean VBR, jboolean bigEndian) {
 	int result;
 	LameConf* conf;
 #ifdef _DEBUG
 	printf("Java_org_tritonus_lowlevel_lame_Lame_initParams: \n");
 	printf("   %d channels, %d Hz, %d KBit/s, mode %d, quality=%d VBR=%d bigEndian=%d\n",
-	       (int) channels, (int) sampleRate, (int) bitrate, 
+	       (int) channels, (int) sampleRate, (int) bitrate,
 	       (int) mode, (int) quality, (int) VBR, (int) bigEndian);
 	fflush(stdout);
 #endif
@@ -152,14 +152,14 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 	conf->quality=(int) quality;
 	conf->VBR=(int) VBR;
 	conf->mpegVersion=0;
-	
+
 	result=doInit(conf);
 	if (result<0) {
 		free(conf);
 		setNativeGlobalFlags(env, obj, 0);
 		return result;
 	}
-	
+
 	// update the Lame instance with the effective values
 	setIntField(env, obj, "effSampleRate", conf->sampleRate);
 	setIntField(env, obj, "effBitRate", conf->bitrate);
@@ -167,7 +167,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 	setIntField(env, obj, "effQuality", conf->quality);
 	setIntField(env, obj, "effVbr", conf->VBR);
 	setIntField(env, obj, "effEncoding", conf->mpegVersion);
-	
+
 	return (jint) result;
 }
 
@@ -205,14 +205,14 @@ void swapSamples(unsigned short* samples, int count) {
  * Signature: ([BII[B)I
  *
  * returns result of lame_encode_buffer:
- * return code     number of bytes output in mp3buf. Can be 0 
+ * return code     number of bytes output in mp3buf. Can be 0
  *                 -1:  mp3buf was too small
  *                 -2:  malloc() problem
  *                 -3:  lame_init_params() not called
- *                 -4:  psycho acoustic problems 
+ *                 -4:  psycho acoustic problems
  *                 -5:  ogg cleanup encoding error
  *                 -6:  ogg frame encoding error
- * 
+ *
  */
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 (JNIEnv *env, jobject obj, jbyteArray pcm, jint offset, jint length, jbyteArray encoded) {
@@ -221,7 +221,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 	char* encodedBytes, *pcmSamplesOrig;
 	short* pcmSamples;
 	int pcmLengthInFrames;
-	
+
 	// todo: consistency check for pcm array ?
 	int encodedArrayByteSize=(int) ((*env)->GetArrayLength(env, encoded));
 #ifdef _DEBUG
@@ -243,9 +243,9 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 			swapSamples((unsigned short*) pcmSamples, length/2);
 		}
 		encodedBytes=(*env)->GetByteArrayElements(env, encoded, NULL);
-		
+
 #ifdef _DEBUG
-			printf("   Encoding %d frames at %p into buffer %p of size %d bytes.\n", 
+			printf("   Encoding %d frames at %p into buffer %p of size %d bytes.\n",
 			       pcmLengthInFrames, pcmSamples, encodedBytes, encodedArrayByteSize);
 			//printf("   Sample1=%d Sample2=%d\n", pcmSamples[0], pcmSamples[1]);
 #endif
@@ -364,4 +364,4 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nGetEncoderVersion
 	res=doGetEncoderVersion(conf, charBuffer, charBufferSize);
 	(*env)->ReleaseByteArrayElements(env, string, charBuffer, 0);
 	return res;
-}  	
+}

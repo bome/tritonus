@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -77,14 +77,14 @@ public class Mp3LameFormatConversionProvider
 
 	/*
 	 * Lame provides these formats:
-	 * MPEG1 layer III samplerates(kHz): 32 44.1 48 
-	 * bitrates(kbs): 32 40 48 56 64 80 96 112 128 160 192 224 256 320 
+	 * MPEG1 layer III samplerates(kHz): 32 44.1 48
+	 * bitrates(kbs): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	 *
-	 * MPEG2 layer III samplerates(kHz): 16 22.05 24 
-	 * bitrates(kbs): 8 16 24 32 40 48 56 64 80 96 112 128 144 160 
+	 * MPEG2 layer III samplerates(kHz): 16 22.05 24
+	 * bitrates(kbs): 8 16 24 32 40 48 56 64 80 96 112 128 144 160
 	 *
-	 * MPEG2.5 layer III samplerates(kHz): 8 11.025 12 
-	 * bitrates(kbs): 8 16 24 32 40 48 56 64 80 96 112 128 144 160 
+	 * MPEG2.5 layer III samplerates(kHz): 8 11.025 12
+	 * bitrates(kbs): 8 16 24 32 40 48 56 64 80 96 112 128 144 160
 	 */
 
 	private static final AudioFormat[] OUTPUT_FORMATS = {

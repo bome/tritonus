@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 1999 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -218,12 +218,12 @@ public class AudioFormat
 		//$$fb 19 Dec 99: endian must be checked, too.
 		//
 		// we do have a problem with redundant elements:
-		// e.g. 
+		// e.g.
 		// encoding=ALAW || ULAW -> bigEndian and samplesizeinbits don't matter
 		// sample size in bits == 8 -> bigEndian doesn't matter
-		// sample size in bits > 8 -> PCM is always signed. 
+		// sample size in bits > 8 -> PCM is always signed.
 		// This is an overall issue in JavaSound, I think.
-		// At present, it is not consistently implemented to support these 
+		// At present, it is not consistently implemented to support these
 		// redundancies and implicit definitions
 		//
 		// As a workaround of this issue I return in the converters

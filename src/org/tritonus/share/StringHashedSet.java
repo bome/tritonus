@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,8 @@ import	org.tritonus.share.ArraySet;
  * method. No 2 objects with the same toString() can
  * be in the set.
  * <p>
- * The <code>contains(Object elem)</code> and <code>get(Object elem)</code> 
- * methods can be called with Strings as <code>elem</code> parameter. 
+ * The <code>contains(Object elem)</code> and <code>get(Object elem)</code>
+ * methods can be called with Strings as <code>elem</code> parameter.
  * For <code>get(Object elem)</code>, the object that has been added
  * is returned, and not its String representation.
  * <p>

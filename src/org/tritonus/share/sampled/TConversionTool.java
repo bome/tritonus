@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999,2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999,2000 by Florian Bomers <http://www.bomers.de>
  *  Copyright (c) 2000 by Matthias Pfisterer <matthias.pfisterer@gmx.de>
  *
  *
@@ -45,13 +45,13 @@ Some hints:
   the samples have to be.
 - >8 bits per sample is always treated signed.
 - all functions are tried to be optimized - hints welcome !
- 
- 
+
+
 ** "high level" methods **
 changeOrderOrSign(buffer, nOffset, nByteLength, nBytesPerSample)
 changeOrderOrSign(inBuffer, nInOffset, outBuffer, nOutOffset, nByteLength, nBytesPerSample)
- 
- 
+
+
 ** PCM byte order and sign conversion **
 void 	convertSign8(buffer, byteOffset, sampleCount)
 void 	swapOrder16(buffer, byteOffset, sampleCount)
@@ -61,8 +61,8 @@ void 	convertSign8(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount
 void 	swapOrder16(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
 void 	swapOrder24(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
 void 	swapOrder32(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
- 
- 
+
+
 ** conversion functions for byte arrays **
 ** these are for reference to see how to implement these conversions **
 short 	bytesToShort16(highByte, lowByte)
@@ -74,8 +74,8 @@ short 	bytesToInt32(buffer, byteOffset, bigEndian)
 void 	shortToBytes16(sample, buffer, byteOffset, bigEndian)
 void 	intToBytes24(sample, buffer, byteOffset, bigEndian)
 void 	intToBytes32(sample, buffer, byteOffset, bigEndian)
- 
- 
+
+
 ** ULAW <-> PCM **
 byte 	linear2ulaw(int sample)
 short 	ulaw2linear(int ulawbyte)
@@ -86,8 +86,8 @@ void 	pcm82ulaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, s
 void 	ulaw2pcm16(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, bigEndian)
 void 	ulaw2pcm8(buffer, byteOffset, sampleCount, signed)
 void 	ulaw2pcm8(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, signed)
- 
- 
+
+
 ** ALAW <-> PCM **
 byte linear2alaw(short pcm_val)
 short alaw2linear(byte ulawbyte)
@@ -98,8 +98,8 @@ void pcm82alaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, si
 void alaw2pcm16(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, bigEndian)
 void alaw2pcm8(buffer, byteOffset, sampleCount, signed)
 void alaw2pcm8(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount, signed)
- 
- 
+
+
 ** ULAW <-> ALAW **
 byte 	ulaw2alaw(byte sample)
 void 	ulaw2alaw(buffer, byteOffset, sampleCount)
@@ -107,7 +107,7 @@ void 	ulaw2alaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
 byte 	alaw2ulaw(byte sample)
 void 	alaw2ulaw(buffer, byteOffset, sampleCount)
 void 	alaw2ulaw(inBuffer, inByteOffset, outBuffer, outByteOffset, sampleCount)
- 
+
 */
 
 public class TConversionTool {
@@ -214,7 +214,7 @@ public class TConversionTool {
 	}
 
 	/**
-	 * Converts 2 successive bytes starting at <code>byteOffset</code> in 
+	 * Converts 2 successive bytes starting at <code>byteOffset</code> in
 	 * <code>buffer</code> to a signed sample of type <code>short</code>.
 	 * <p>
 	 * For little endian, buffer[byteOffset] is interpreted as low byte,
@@ -236,7 +236,7 @@ public class TConversionTool {
 	}
 
 	/**
-	 * Converts 2 successive bytes starting at <code>byteOffset</code> in 
+	 * Converts 2 successive bytes starting at <code>byteOffset</code> in
 	 * <code>buffer</code> to a signed integer sample with 16bit range.
 	 * <p>
 	 * For little endian, buffer[byteOffset] is interpreted as low byte,
@@ -250,7 +250,7 @@ public class TConversionTool {
 	}
 
 	/**
-	 * Converts 3 successive bytes starting at <code>byteOffset</code> in 
+	 * Converts 3 successive bytes starting at <code>byteOffset</code> in
 	 * <code>buffer</code> to a signed integer sample with 24bit range.
 	 * <p>
 	 * For little endian, buffer[byteOffset] is interpreted as lowest byte,
@@ -268,7 +268,7 @@ public class TConversionTool {
 	}
 
 	/**
-	 * Converts a 4 successive bytes starting at <code>byteOffset</code> in 
+	 * Converts a 4 successive bytes starting at <code>byteOffset</code> in
 	 * <code>buffer</code> to a signed 32bit integer sample.
 	 * <p>
 	 * For little endian, buffer[byteOffset] is interpreted as lowest byte,
@@ -292,7 +292,7 @@ public class TConversionTool {
 	 * Converts a sample of type <code>short</code> to 2 bytes in an array.
 	 * <code>sample</code> is interpreted as signed (as Java does).
 	 * <p>
-	 * For little endian, buffer[byteOffset] is filled with low byte of sample, 
+	 * For little endian, buffer[byteOffset] is filled with low byte of sample,
 	 * and buffer[byteOffset+1] is filled with high byte of sample.
 	 * <p> For big endian, this is reversed.
 	 * <p> This is a reference function.
@@ -305,7 +305,7 @@ public class TConversionTool {
 	 * Converts a 16 bit sample of type <code>int</code> to 2 bytes in an array.
 	 * <code>sample</code> is interpreted as signed (as Java does).
 	 * <p>
-	 * For little endian, buffer[byteOffset] is filled with low byte of sample, 
+	 * For little endian, buffer[byteOffset] is filled with low byte of sample,
 	 * and buffer[byteOffset+1] is filled with high byte of sample + sign bit.
 	 * <p> For big endian, this is reversed.
 	 * <p> Before calling this function, it should be assured that <code>sample</code>
@@ -326,7 +326,7 @@ public class TConversionTool {
 	 * Converts a 24 bit sample of type <code>int</code> to 3 bytes in an array.
 	 * <code>sample</code> is interpreted as signed (as Java does).
 	 * <p>
-	 * For little endian, buffer[byteOffset] is filled with low byte of sample, 
+	 * For little endian, buffer[byteOffset] is filled with low byte of sample,
 	 * and buffer[byteOffset+2] is filled with the high byte of sample + sign bit.
 	 * <p> For big endian, this is reversed.
 	 * <p> Before calling this function, it should be assured that <code>sample</code>
@@ -350,7 +350,7 @@ public class TConversionTool {
 	 * Converts a 32 bit sample of type <code>int</code> to 4 bytes in an array.
 	 * <code>sample</code> is interpreted as signed (as Java does).
 	 * <p>
-	 * For little endian, buffer[byteOffset] is filled with lowest byte of sample, 
+	 * For little endian, buffer[byteOffset] is filled with lowest byte of sample,
 	 * and buffer[byteOffset+3] is filled with the high byte of sample + sign bit.
 	 * <p> For big endian, this is reversed.
 	 * <p> This is a reference function.
@@ -1116,7 +1116,7 @@ public class TConversionTool {
 
 	/* u- to A-law conversions: copied from CCITT G.711 specifications */
 	/*
-	private static byte[] _u2a = { 
+	private static byte[] _u2a = {
 	1,	1,	2,	2,	3,	3,	4,	4,
 	5,	5,	6,	6,	7,	7,	8,	8,
 	9,	10,	11,	12,	13,	14,	15,	16,
@@ -1150,7 +1150,7 @@ public class TConversionTool {
 
 	/* A- to u-law conversions */
 	/*
-	private static byte[] _a2u = {			
+	private static byte[] _a2u = {
 	1,	3,	5,	7,	9,	11,	13,	15,
 	16,	17,	18,	19,	20,	21,	22,	23,
 	24,	25,	26,	27,	28,	29,	30,	31,

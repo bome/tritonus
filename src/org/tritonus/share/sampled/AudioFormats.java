@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 1999 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ public class AudioFormats
 	 * <li> For a match, endianness must be equal if SampleSizeInBits is not
 	 * AudioSystem.NOT_SPECIFIED and greater than 8bit in both formats.<br>
 	 * In other words: If SampleSizeInBits is AudioSystem.NOT_SPECIFIED
-	 * in either format or both formats have a SampleSizeInBits<8, 
+	 * in either format or both formats have a SampleSizeInBits<8,
 	 * endianness does not matter.
 	 * </ul>
 	 * This is a proposition to be used as AudioFormat.matches.
@@ -76,12 +76,12 @@ public class AudioFormats
 		//$$fb 19 Dec 99: endian must be checked, too.
 		//
 		// we do have a problem with redundant elements:
-		// e.g. 
+		// e.g.
 		// encoding=ALAW || ULAW -> bigEndian and samplesizeinbits don't matter
 		// sample size in bits == 8 -> bigEndian doesn't matter
-		// sample size in bits > 8 -> PCM is always signed. 
+		// sample size in bits > 8 -> PCM is always signed.
 		// This is an overall issue in JavaSound, I think.
-		// At present, it is not consistently implemented to support these 
+		// At present, it is not consistently implemented to support these
 		// redundancies and implicit definitions
 		//
 		// As a workaround of this issue I return in the converters
@@ -90,9 +90,9 @@ public class AudioFormats
 */
 		// as proposed by florian
 		return Encodings.equals(format1.getEncoding(), format2.getEncoding())
-			&& (format2.getSampleSizeInBits()<=8 
-			    || format1.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED 
-			    || format2.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED 
+			&& (format2.getSampleSizeInBits()<=8
+			    || format1.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED
+			    || format2.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED
 			    || format1.isBigEndian()==format2.isBigEndian())
 			&& doMatch(format1.getChannels(),format2.getChannels())
 			&& doMatch(format1.getSampleSizeInBits(), format2.getSampleSizeInBits())

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -39,11 +39,11 @@ import	org.tritonus.share.sampled.AudioFormats;
  * AudioFormats.equals rather than their object reference.
  * No 2 equal AudioFormats can exist in the set.
  * <p>
- * This class provide convenience methods like 
+ * This class provide convenience methods like
  * <code>getAudioFormat(AudioFormat)</code> and
  * <code>matches(AudioFormat)</code>.
  * <p>
- * The <code>contains(Object elem)</code> and <code>get(Object elem)</code> 
+ * The <code>contains(Object elem)</code> and <code>get(Object elem)</code>
  * fail, if elem is not an instance of AudioFormat.
  * <p>
  * You shouldn't use the ArrayList specific functions
@@ -134,7 +134,7 @@ public class AudioFormatSet extends ArraySet {
 		return (AudioFormat[]) toArray(EMPTY_FORMAT_ARRAY);
 	}
 
-	
+
 	public void add(int index, Object element) {
 		throw new UnsupportedOperationException("unsupported");
 	}

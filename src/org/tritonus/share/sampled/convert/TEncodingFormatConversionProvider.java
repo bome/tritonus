@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ import	org.tritonus.share.ArraySet;
 
 /**
  * This is a base class for FormatConversionProviders that only
- * change the encoding, i.e. they never 
+ * change the encoding, i.e. they never
  * <ul>
  * <li> change the sample size in bits without changing the encoding
  * <li> change the sample rate
@@ -76,7 +76,7 @@ public abstract class TEncodingFormatConversionProvider
 	 * from each of its source formats to each of its target
 	 * formats. If this is not the case, the converter has to
 	 * override this method.
-	 * <p>When conversion is supported, for every target encoding, 
+	 * <p>When conversion is supported, for every target encoding,
 	 * the fields sample size in bits, channels and sample rate are checked:
 	 * <ul>
 	 * <li>When a field in both the source and target format is AudioSystem.NOT_SPECIFIED,

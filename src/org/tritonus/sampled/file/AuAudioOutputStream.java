@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <http://www.bomers.de>
  *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *

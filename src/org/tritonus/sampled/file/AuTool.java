@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ public class AuTool {
 
 	public static final int	AU_HEADER_MAGIC = 0x2e736e64;
 	public static final int	AUDIO_UNKNOWN_SIZE = -1;
-	
+
 	// length of header in bytes
 	public static final int		DATA_OFFSET = 24;
 

@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999 - 2003 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -199,7 +199,7 @@ extends TEncodingFormatConversionProvider
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat); }
 		return newTargetFormat;
 	}
-		
+
 
 
 	/**	AudioInputStream returned on encoding to ogg vorbis.
@@ -221,7 +221,7 @@ extends TEncodingFormatConversionProvider
 		private StreamState		m_streamState;
 		private Page			m_page;
 		private Packet			m_packet;
-  
+
 		private Info			m_info;
 		private Comment			m_comment;
 		private DspState		m_dspState;
@@ -258,7 +258,7 @@ extends TEncodingFormatConversionProvider
 			m_streamState = new StreamState();
 			m_page = new Page();
 			m_packet = new Packet();
-  
+
 			m_info = new Info();
 			m_comment = new Comment();
 			m_dspState = new DspState();

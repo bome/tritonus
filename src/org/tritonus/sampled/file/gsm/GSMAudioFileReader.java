@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -109,9 +109,9 @@ public class GSMAudioFileReader
 			true);	// this value is chosen arbitrarily
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
-				AudioFileTypes.getType("GSM","gsm"), 
-				format, 
-				nFrameSize, 
+				AudioFileTypes.getType("GSM","gsm"),
+				format,
+				nFrameSize,
 				nByteSize);
 		if (TDebug.TraceAudioFileReader) { TDebug.out("GSMAudioFileReader.getAudioFileFormat(): end"); }
 		return audioFileFormat;

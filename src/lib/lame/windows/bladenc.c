@@ -5,7 +5,7 @@
 
 
 /*
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ int getLameMpegVersion(int bladeVersion, int sampleRate) {
 			case 12000: return org_tritonus_lowlevel_lame_Lame_MPEG_VERSION_2DOT5;
 			//case 16000: // MPEG 2
 			//case 22050: // MPEG 2
-			//case 24000: 
+			//case 24000:
 		}
 		return org_tritonus_lowlevel_lame_Lame_MPEG_VERSION_2;
 	}
@@ -204,7 +204,7 @@ int getLameQuality(LONG preset) {
 	}
 	return org_tritonus_lowlevel_lame_Lame_QUALITY_MIDDLE;
 }
-	
+
 
 ////////////////////////////////// functions called by native functions
 
@@ -214,7 +214,7 @@ int getLameQuality(LONG preset) {
 int doInit(LameConf* conf) {
 	int initDone;
 	BE_ERR err;
-	
+
 #ifndef _BLADEDLL
 	conf->dllType=loadLameLibrary(LAME_ENC_DLL);
 	if (!conf->dllType) {
@@ -223,7 +223,7 @@ int doInit(LameConf* conf) {
 #else
 	// first try with LAME style config
 	conf->dllType=DLL_TYPE_LAME;
-#endif		
+#endif
 	initDone=0;
 	while (!initDone) {
 		if (conf->dllType==DLL_TYPE_LAME) {
@@ -250,8 +250,8 @@ int doInit(LameConf* conf) {
 			conf->beConfig.format.mp3.wBitrate=(WORD) getBitrate(conf);
 		}
 		// Init the MP3 Stream
-		err = beInitStream(&(conf->beConfig), 
-				&(conf->PCMBufferSizeInBytes), 
+		err = beInitStream(&(conf->beConfig),
+				&(conf->PCMBufferSizeInBytes),
 				&(conf->MP3BufferSizeInBytes),
 				&(conf->hbeStream));
 		// blade returns in number of shorts
@@ -276,7 +276,7 @@ int doInit(LameConf* conf) {
 		printf("BufferSizeInBytes=%d\n", conf->PCMBufferSizeInBytes);
 #endif
 	}
-	
+
 	// update the Lame instance with the effective values
 	if (conf->dllType==DLL_TYPE_LAME) {
 #ifdef _DEBUG
@@ -304,7 +304,7 @@ int doInit(LameConf* conf) {
 		conf->quality=org_tritonus_lowlevel_lame_Lame_QUALITY_MIDDLE;
 		conf->VBR=0;
 		conf->mpegVersion=getLameMpegVersion(MPEG1, conf->sampleRate);
-	}	
+	}
 	return 0;
 }
 
@@ -333,7 +333,7 @@ int doGetEncoderVersion(LameConf* conf, char* charBuffer, int charBufferSize) {
 		return result;
 	}
 	thisString+=len; size-=len; result+=len;
-	
+
 	// dll version like "; dll 333.333)"
 	if (size>13) {
 		strcpy(thisString, "; dll ");
@@ -355,7 +355,7 @@ int doGetEncoderVersion(LameConf* conf, char* charBuffer, int charBufferSize) {
 		strcpy(thisString, "; MMX");
 		thisString+=5; size-=5; result+=5;
 	}
-	return result;	
+	return result;
 }
 
 /*
@@ -363,7 +363,7 @@ int doGetEncoderVersion(LameConf* conf, char* charBuffer, int charBufferSize) {
  */
 int doGetPCMBufferSize(LameConf* conf, int wishedBufferSize) {
 	int result=wishedBufferSize;
-	
+
 	if (conf->PCMBufferSizeInBytes<=0) {
 		//throwRuntimeException(env, "not initialized");
 		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
@@ -397,7 +397,7 @@ int doEncode(LameConf* conf, short* pcmSamples, int pcmLengthInFrames, char* enc
 		}
 		mp3SizeInBytes=encodedArrayByteSize;
 #ifdef _DEBUG
-		printf("     Encoding %d shorts at %p (size=%d shorts) into buffer %p (size=%d bytes).\n", 
+		printf("     Encoding %d shorts at %p (size=%d shorts) into buffer %p (size=%d bytes).\n",
 		       thisPcmSizeInShorts, pcmSamples, pcmLengthInShorts, encodedBytes, mp3SizeInBytes);
 		//printf("     Sample1=%d Sample2=%d\n", pcmSamples[0], pcmSamples[1]);
 		fflush(stdout);

@@ -5,7 +5,7 @@
 
 
 /*
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ int doInit(LameConf* conf) {
 		//throwRuntimeException(env, "out of memory");
 		return org_tritonus_lowlevel_lame_Lame_OUT_OF_MEMORY;
 	}
-	
+
 	lame_set_num_channels(conf->gf, conf->channels);
 	lame_set_in_samplerate(conf->gf, conf->sampleRate);
 	if (conf->mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
@@ -74,10 +74,10 @@ int doEncode(LameConf* conf, short* pcmSamples, int pcmLengthInFrames, char* enc
 		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
 	}
 	if (conf->channels==1) {
-		return lame_encode_buffer(conf->gf, pcmSamples, pcmSamples, pcmLengthInFrames, 
+		return lame_encode_buffer(conf->gf, pcmSamples, pcmSamples, pcmLengthInFrames,
 					      encodedBytes, encodedArrayByteSize);
 	} else {
-		return lame_encode_buffer_interleaved(conf->gf, pcmSamples, pcmLengthInFrames, 
+		return lame_encode_buffer_interleaved(conf->gf, pcmSamples, pcmLengthInFrames,
 					      encodedBytes, encodedArrayByteSize);
 	}
 }
@@ -123,7 +123,7 @@ int doGetEncoderVersion(LameConf* conf, char* charBuffer, int charBufferSize) {
 	int size=charBufferSize;
 	int len;
 	int result=0;
-	
+
 	memset(&version, 0, sizeof(version));
 	memset(charBuffer, 0, charBufferSize);
 	get_lame_version_numerical(&version);
@@ -137,7 +137,7 @@ int doGetEncoderVersion(LameConf* conf, char* charBuffer, int charBufferSize) {
 		return result;
 	}
 	thisString+=len; size-=len; result+=len;
-	
+
 	// first put something like "(psy model 333.333beta)"
 	if (size>=25) {
 		strcpy(thisString, "; psy model ");
@@ -156,5 +156,5 @@ int doGetEncoderVersion(LameConf* conf, char* charBuffer, int charBufferSize) {
 		charBuffer[charBufferSize-1]=0;
 		result=strlen(charBuffer);
 	}
-	return result;	
+	return result;
 }

@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -406,13 +406,13 @@ public abstract class TAudioFileReader
 		}
 		return (short) ((b1 << 8) + (b0 << 0));
 	}
-	
-	
+
+
 /*
- * C O N V E R T   F R O M   I E E E   E X T E N D E D  
+ * C O N V E R T   F R O M   I E E E   E X T E N D E D
  */
-	
-/* 
+
+/*
  * Copyright (C) 1988-1991 Apple Computer, Inc.
  * All rights reserved.
  *

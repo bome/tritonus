@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 1999, 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999, 2000 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -143,10 +143,10 @@ public abstract class TAudioFileWriter
 	public boolean isFileTypeSupported(AudioFileFormat.Type fileType, AudioInputStream audioInputStream)
 	{
 		// $$fb 2000-08-16: finally this method works reliably !
-		return isFileTypeSupported(fileType) 
+		return isFileTypeSupported(fileType)
 			&& (isAudioFormatSupportedImpl(audioInputStream.getFormat(), fileType)
 			    || findConvertableFormat(audioInputStream.getFormat(), fileType)!=null);
-		// we may soft it up by including the possibility of endian/sign 
+		// we may soft it up by including the possibility of endian/sign
 		// changing for PCM formats.
 		// I prefer to return false if the format is not exactly supported
 		// but still exectute the write, if only sign/endian changing is necessary.
@@ -193,7 +193,7 @@ public abstract class TAudioFileWriter
 				bNeedsConversion = true;
 				// $$fb 2000-08-16 made consistent with new conversion trials
 				// if 8 bit and only endianness changed, don't convert !
-				if (outputFormat.getSampleSizeInBits()==8 
+				if (outputFormat.getSampleSizeInBits()==8
 				    && outputFormat.getEncoding().equals(inputFormat.getEncoding())) {
 					bNeedsConversion = false;
 				}
@@ -258,7 +258,7 @@ public abstract class TAudioFileWriter
 				bNeedsConversion = true;
 				// $$fb 2000-08-16 made consistent with new conversion trials
 				// if 8 bit and only endianness changed, don't convert !
-				if (outputFormat.getSampleSizeInBits()==8 
+				if (outputFormat.getSampleSizeInBits()==8
 				    && outputFormat.getEncoding().equals(inputFormat.getEncoding())) {
 					bNeedsConversion = false;
 				}
@@ -303,7 +303,7 @@ public abstract class TAudioFileWriter
 
 		// TODO: handle case when frame size is unknown ?
 		int	nBytesPerSample = outputFormat.getFrameSize() / outputFormat.getChannels();
-		
+
 		//$$fb 2000-07-18: BUFFER_LENGTH must be a multiple of frame size...
 		int nBufferSize=((int)BUFFER_LENGTH/outputFormat.getFrameSize())*outputFormat.getFrameSize();
 		byte[]	abBuffer = new byte[nBufferSize];
@@ -403,7 +403,7 @@ public abstract class TAudioFileWriter
 			return null;
 		}
 		AudioFormat.Encoding	inputEncoding = inputFormat.getEncoding();
-		if ((inputEncoding.equals(PCM_SIGNED) || inputEncoding.equals(PCM_UNSIGNED)) 
+		if ((inputEncoding.equals(PCM_SIGNED) || inputEncoding.equals(PCM_UNSIGNED))
 		    && inputFormat.getSampleSizeInBits() == 8)
 		{
 			AudioFormat outputFormat = convertFormat(inputFormat, true, false);

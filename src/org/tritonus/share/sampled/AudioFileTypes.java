@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ import	org.tritonus.share.TDebug;
  * be maintained by the Tritonus team.
  * <p>
  * In a specification request to JavaSoft, these static methods
- * could be integrated into<code>AudioFileFormat.Type</code>. The static 
+ * could be integrated into<code>AudioFileFormat.Type</code>. The static
  * instances of AIFF, AIFC, AU, SND, and WAVE types in class
  * <code>AudioFileFormat.Type</code> should be retrieved
  * using this method, too (internally).<br>
@@ -104,9 +104,9 @@ public class AudioFileTypes extends AudioFileFormat.Type {
 	 * Use this method to retrieve an instance of
 	 * <code>AudioFileFormat.Type</code> of the specified
 	 * name. If it does not exist in the internal list
-	 * of types, a new type is created and returned. 
-	 * If it a type of that name already exists (regardless 
-	 * of extension), it is returned. In this case it can 
+	 * of types, a new type is created and returned.
+	 * If it a type of that name already exists (regardless
+	 * of extension), it is returned. In this case it can
 	 * not be guaranteed that the extension is the same as
 	 * passed as parameter.<br>
 	 * If <code>extension</code> is <code>null</code>,
@@ -122,7 +122,7 @@ public class AudioFileTypes extends AudioFileFormat.Type {
 	public static AudioFileFormat.Type getType(String name, String extension) {
 		AudioFileFormat.Type res=(AudioFileFormat.Type) types.get(name);
 		if (res==null) {
-			// it is not already in the string set. 
+			// it is not already in the string set.
 			if (extension==null) {
 				return null;
 			}
@@ -146,7 +146,7 @@ public class AudioFileTypes extends AudioFileFormat.Type {
 	public static boolean equals(AudioFileFormat.Type t1, AudioFileFormat.Type t2) {
 		return t2.toString().equals(t1.toString());
 	}
-	
+
 }
 
 /*** AudioFileTypes.java ***/
