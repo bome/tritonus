@@ -208,11 +208,13 @@ if test "${CONFIG_JIKES}" = "yes" ; then
 fi
 
 AC_OUTPUT(Makefile
+	src/lib/common/Makefile
 	src/lib/alsa/Makefile
 	src/lib/cdparanoia/Makefile
 	src/lib/cooked_ioctl/Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
 	src/lib/saint/Makefile
+	src/lib/gsvorbis/Makefile
 	doc/Makefile
 	test/Makefile)
