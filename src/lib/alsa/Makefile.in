@@ -10,7 +10,7 @@ JAVAEXTLIBPATH=$(JAVADIR)/$(REL_JAVAEXTLIBPATH)
 OSNAME=@OSNAME@
 ARCHNAME=@ARCHNAME@
 CC=@CC@
-CPPFLAGS=-Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
+CPPFLAGS=-Wall -Werror -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -41,8 +41,10 @@ JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.o \
 	org_tritonus_lowlevel_alsa_AlsaMixer.o
 
-OBJ=$(JNIOBJ) \
-	common.o
+OBJ=\
+	$(JNIOBJ) \
+	common.o \
+	HandleFieldHandler.o
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
@@ -71,7 +73,7 @@ JNICLASSES=\
 all: $(LIBDEST)
 
 $(LIBDEST):	$(OBJ)
-	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) $(LIBS)
+	$(CXX) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
