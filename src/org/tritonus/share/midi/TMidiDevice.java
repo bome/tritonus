@@ -30,6 +30,8 @@ import	java.util.ArrayList;
 import	java.util.Iterator;
 import	java.util.List;
 
+import	javax.sound.midi.InvalidMidiDataException;
+import	javax.sound.midi.MetaMessage;
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiMessage;
 import	javax.sound.midi.MidiUnavailableException;
@@ -77,10 +79,12 @@ public abstract class TMidiDevice
 	 */
 	public TMidiDevice(MidiDevice.Info info)
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.<init>(): begin"); }
 		m_info = info;
 		m_bOpen = false;
 		m_nNumReceivers = 0;
 		m_transmitters = new ArrayList();
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.<init>(): end"); }
 	}
 
 
@@ -94,6 +98,8 @@ public abstract class TMidiDevice
 	 */
 	public MidiDevice.Info getDeviceInfo()
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.getDeviceInfo(): begin"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.getDeviceInfo(): end"); }
 		return m_info;
 	}
 
@@ -102,11 +108,13 @@ public abstract class TMidiDevice
 	public void open()
 		throws	MidiUnavailableException
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): begin"); }
 		if (! isOpen())
 		{
 			openImpl();
 			m_bOpen = true;
 		}
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): end"); }
 	}
 
 
@@ -118,18 +126,22 @@ public abstract class TMidiDevice
 	protected void openImpl()
 		throws	MidiUnavailableException
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.openImpl(): begin"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.openImpl(): end"); }
 	}
 
 
 
 	public void close()
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.close(): begin"); }
 		if (isOpen())
 		{
 			closeImpl();
 			// TODO: close all Receivers and Transmitters
 			m_bOpen = false;
 		}
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.close(): end"); }
 	}
 
 
@@ -140,6 +152,8 @@ public abstract class TMidiDevice
 	 */
 	protected void closeImpl()
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.closeImpl(): begin"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.closeImpl(): end"); }
 	}
 
 
@@ -151,6 +165,11 @@ public abstract class TMidiDevice
 
 
 
+	/**	Returns the device time in microseconds.
+		This is a default implementation, telling the application
+		program that the device doesn't track time. If a device wants
+		to give timing information, it has to override this method.
+	*/
 	public long getMicrosecondPosition()
 	{
 		return -1;
@@ -210,10 +229,7 @@ public abstract class TMidiDevice
 	 */
 	protected void receive(MidiMessage message, long lTimeStamp)
 	{
-		if (TDebug.TraceTMidiDevice)
-		{
-			TDebug.out("### [should be overridden] TMidiDevice.receive(): message " + message);
-		}
+		if (TDebug.TraceMidiDevice) { TDebug.out("### [should be overridden] TMidiDevice.receive(): message " + message); }
 	}
 
 
@@ -263,7 +279,36 @@ public abstract class TMidiDevice
 		while (transmitters.hasNext())
 		{
 			TTransmitter	transmitter = (TTransmitter) transmitters.next();
-			MidiMessage	copiedMessage = (MidiMessage) message.clone();
+			/* due to a bug in the Sun jdk1.3, we cannot use
+			   clone() for MetaMessages. So we have to do the
+			   equivalent ourselves.
+			*/
+			// MidiMessage	copiedMessage = (MidiMessage) message.clone();
+			MidiMessage	copiedMessage = null;
+			if (message instanceof MetaMessage)
+			{
+				MetaMessage	origMessage = (MetaMessage) message;
+				MetaMessage	metaMessage = new MetaMessage();
+				try
+				{
+					metaMessage.setMessage(origMessage.getType(), origMessage.getData(), origMessage.getData().length);
+				}
+				catch (InvalidMidiDataException e)
+				{
+					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				}
+				copiedMessage = metaMessage;
+			}
+			else
+			{
+				copiedMessage = (MidiMessage) message.clone();
+			}
+
+			if (message instanceof MetaMessage)
+			{
+				if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.sendImpl(): MetaMessage.getData().length (original): " + ((MetaMessage) message).getData().length); }
+				if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.sendImpl(): MetaMessage.getData().length (cloned): " + ((MetaMessage) copiedMessage).getData().length); }
+			}
 			transmitter.send(copiedMessage, lTimeStamp);
 		}
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.sendImpl(): end"); }
@@ -306,10 +351,7 @@ public abstract class TMidiDevice
 		 */
 		public void send(MidiMessage message, long lTimeStamp)
 		{
-			if (TDebug.TraceTMidiDevice)
-			{
-				TDebug.out("TMidiDevice.TReceiver.send(): message " + message);
-			}
+			if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.TReceiver.send(): message " + message); }
 			if (m_bOpen)
 			{
 				TMidiDevice.this.receive(message, lTimeStamp);
@@ -395,10 +437,10 @@ public abstract class TMidiDevice
 
 
 	/*
-	 *	This is needed only because MidiDevice.Info's constructor
-	 *	is protected (in the Sun jdk1.3).
+	 *	This is needed only because MidiDevice.Info's
+	 *	constructor is protected (in the Sun jdk1.3).
 	 */
-	public class Info
+	public static class Info
 		extends MidiDevice.Info
 	{
 		public Info(String a, String b, String c, String d)
