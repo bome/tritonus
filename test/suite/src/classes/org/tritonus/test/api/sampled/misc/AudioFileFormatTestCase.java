@@ -57,7 +57,7 @@ extends TestCase
 	public void testNullMap()
 	{
 		AudioFileFormat fileFormat = new AudioFileFormat(null, null, 0,
-														 null);
+			null);
 		Map<String, Object> propReturn = fileFormat.properties();
 		assertTrue(propReturn.isEmpty());
 		Object result = propReturn.get("bitrate");
