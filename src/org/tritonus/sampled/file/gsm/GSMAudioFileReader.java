@@ -56,16 +56,24 @@ import	org.tritonus.share.sampled.AudioFileTypes;
 public class GSMAudioFileReader
 	extends	TAudioFileReader
 {
-	private static final byte		GSM_MAGIC = 0x0D;
-	private static final byte		GSM_MAGIC_MASK = 0x0F;
-	private static final int		GSM_MAGIC_SHIFT = 4;
+	private static final int		GSM_MAGIC = 0xD0;
+	private static final int		GSM_MAGIC_MASK = 0xF0;
 
 
 
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		return getAudioFileFormat(inputStream, null);
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream): begin");
+		}
+		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, null);
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream): end");
+		}
+		return audioFileFormat;
 	}
 
 
@@ -73,23 +81,27 @@ public class GSMAudioFileReader
 	private AudioFileFormat getAudioFileFormat(InputStream inputStream, byte[] abHeader)
 		throws	UnsupportedAudioFileException, IOException
 	{
-/*
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream, byte[]): begin");
+		}
 		int	b0 = inputStream.read();
 		if (b0 < 0)
 		{
 			throw new EOFException();
 		}
-		abHeader[0] = (byte) b0;
-*/
+		if (abHeader != null)
+		{
+			abHeader[0] = (byte) b0;
+		}
+
 		/*
 		 *	Check for magic number.
 		 */
-/*
-		if (((abHeader[0] >> GSM_MAGIC_SHIFT) & GSM_MAGIC_MASK) != GSM_MAGIC)
+		if ((b0 & GSM_MAGIC_MASK) != GSM_MAGIC)
 		{
 			throw new UnsupportedAudioFileException("not a GSM stream: wrong magic number");
 		}
-*/
 
 		AudioFormat	format = new AudioFormat(
 			Encodings.getEncoding("GSM0610"),
@@ -99,10 +111,17 @@ public class GSMAudioFileReader
 			33,
 			50.0F,
 			true);	// this value is chosen arbitrarily
-		return new TAudioFileFormat(AudioFileTypes.getType("GSM","gsm"), 
-					    format, 
-					    AudioSystem.NOT_SPECIFIED, 
-					    AudioSystem.NOT_SPECIFIED);
+		AudioFileFormat	audioFileFormat =
+			new TAudioFileFormat(
+				AudioFileTypes.getType("GSM","gsm"), 
+				format, 
+				AudioSystem.NOT_SPECIFIED, 
+				AudioSystem.NOT_SPECIFIED);
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream, byte[]): end");
+		}
+		return audioFileFormat;
 	}
 
 
@@ -110,13 +129,36 @@ public class GSMAudioFileReader
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		// TDebug.out("GSMAudioFileReader.getAudioInputStream()");
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("GSMAudioFileReader.getAudioInputStream(): begin");
+		}
 		byte[]	abHeader = new byte[1];
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, abHeader);
-		SequenceInputStream	sequenceInputStream = new SequenceInputStream(new ByteArrayInputStream(abHeader), inputStream);
-		// TODO: reenable the magic check in getAudioFileFormat; again use SequenceInputStream
-		// return new AudioInputStream(sequenceInputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
-		return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+		AudioFileFormat	audioFileFormat =
+			getAudioFileFormat(
+				inputStream,
+				abHeader);
+		SequenceInputStream	sequenceInputStream =
+			new SequenceInputStream(
+				new ByteArrayInputStream(abHeader),
+				inputStream);
+		AudioInputStream	audioInputStream =
+			new AudioInputStream(
+				sequenceInputStream,
+				audioFileFormat.getFormat(),
+				audioFileFormat.getFrameLength());
+/*
+		AudioInputStream	audioInputStream =
+			new AudioInputStream(
+				inputStream,
+				audioFileFormat.getFormat(),
+				audioFileFormat.getFrameLength());
+*/
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("GSMAudioFileReader.getAudioInputStream(): end");
+		}
+		return audioInputStream;
 	}
 
 
