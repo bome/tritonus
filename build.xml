@@ -80,6 +80,16 @@
 		<jar
 			jarfile="${dist}/tritonus_remaining.jar"
 			basedir="${dist}/tritonus_remaining" />
+		<mkdir dir="${dist}/tritonus_mp3" />
+		<copydir src="${build}" dest="${dist}/tritonus_mp3"
+			includes="org/tritonus/sampled/convert/Mpeg*,org/tritonus/sampled/file/Mpeg*" />
+		<copydir
+			src="${src}/packaging/tritonus_mp3"
+			dest="${dist}/tritonus_mp3"
+			includes="**" />
+		<jar
+			jarfile="${dist}/tritonus_mp3.jar"
+			basedir="${dist}/tritonus_mp3" />
 	</target>
 
 	<target name="install" depends="dist">
