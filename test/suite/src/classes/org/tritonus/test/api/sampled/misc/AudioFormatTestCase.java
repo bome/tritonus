@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2003 by Matthias Pfisterer
+ *  Copyright (c) 2003 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,7 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.test;
+package org.tritonus.test.api.sampled.misc;
 
 import junit.framework.TestCase;
 
@@ -43,7 +43,8 @@ extends TestCase
 
 	public void testNoMap()
 	{
-		AudioFormat fileFormat = new AudioFormat(null, null, 0);
+		AudioFormat fileFormat = new AudioFormat(
+			null, 0.0F, 0, 0, 0, 0.0F, false);
 		Map<String, Object> propReturn = fileFormat.properties();
 		assertNotNull(propReturn);
 		assertTrue(propReturn.isEmpty());
@@ -54,8 +55,9 @@ extends TestCase
 
 	public void testNullMap()
 	{
-		AudioFormat fileFormat = new AudioFormat(null, null, 0,
-														 null);
+		AudioFormat fileFormat = new AudioFormat(
+			null, 0.0F, 0, 0, 0, 0.0F, false,
+			null);
 		Map<String, Object> propReturn = fileFormat.properties();
 		assertTrue(propReturn.isEmpty());
 		Object result = propReturn.get("bitrate");
@@ -66,9 +68,8 @@ extends TestCase
 	public void testEmptyMap()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
-		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-											   44100.0F, 16, 2, 4, 44100.0F,
-											   true, prop);
+		AudioFormat format = new AudioFormat(
+			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
 		Map<String, Object> propReturn = format.properties();
 		assertTrue(propReturn.isEmpty());
 		Object result = propReturn.get("bitrate");
@@ -81,9 +82,8 @@ extends TestCase
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
-		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-											   44100.0F, 16, 2, 4, 44100.0F,
-											   true, prop);
+		AudioFormat format = new AudioFormat(
+			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
 		Map<String, Object> propReturn = format.properties();
 		assertTrue(prop != propReturn);
 		prop.put("bitrate", new Float(42.5F));
@@ -95,9 +95,8 @@ extends TestCase
 	public void testUnmodifiable()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
-		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-											   44100.0F, 16, 2, 4, 44100.0F,
-											   true, prop);
+		AudioFormat format = new AudioFormat(
+			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
 		Map<String, Object> propReturn = format.properties();
 		try
 		{
@@ -115,9 +114,8 @@ extends TestCase
 		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		prop.put("author", "Matthias Pfisterer");
-		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-											   44100.0F, 16, 2, 4, 44100.0F,
-											   true, prop);
+		AudioFormat format = new AudioFormat(
+			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
 		Map<String, Object> propReturn = format.properties();
 		assertEquals(new Float(22.5F), propReturn.get("bitrate"));
 		assertEquals("Matthias Pfisterer", propReturn.get("author"));
