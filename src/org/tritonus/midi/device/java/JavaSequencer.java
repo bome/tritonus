@@ -45,7 +45,8 @@ import	org.tritonus.share.midi.MidiUtils;
 import	org.tritonus.share.midi.TSequencer;
 
 
-
+/** Sequencer implementation in pure Java.
+ */
 public class JavaSequencer
 extends TSequencer
 implements Runnable
@@ -78,6 +79,12 @@ implements Runnable
 	private int			m_nPhase;
 	private boolean		m_bTempoChanged;
 
+	/** The clock to use as time base for this sequencer.
+		This is commonly intialized in the constructor,
+		but can also be set with {@link #setClock}.
+	 */
+	private Clock		m_clock;
+
 
 
 	public JavaSequencer(MidiDevice.Info info)
@@ -86,6 +93,15 @@ implements Runnable
 			  Arrays.asList(MASTER_SYNC_MODES),
 			  Arrays.asList(SLAVE_SYNC_MODES));
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.<init>(): begin"); }
+		String strVersion = System.getProperty("java.version");
+		if (strVersion.indexOf("1.4.2") != -1)
+		{
+			setClock(new SunMiscPerfClock());
+		}
+		else
+		{
+			setClock(new SystemCurrentTimeMillisClock());
+		}
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.<init>(): end"); }
 	}
 
@@ -376,7 +392,10 @@ implements Runnable
 		throws InvalidMidiDataException
 	{
 		boolean bWasRunning = isRunning();
-		stop();
+		if (bWasRunning)
+		{
+			stop();
+		}
 		super.setSequence(sequence);
 		m_lTickPosition = 0;
 		m_anTrackPositions = new int[sequence.getTracks().length];
@@ -406,7 +425,8 @@ implements Runnable
 			return;
 		}
 		boolean bWasRunning = isRunning();
-		stop();
+		if (bWasRunning)
+			stop();
 		if (lPosition > getSequence().getTickLength())
 		{
 			m_lTickPosition = getSequence().getTickLength();
@@ -420,9 +440,7 @@ implements Runnable
 			m_anTrackPositions[i] = getTrackPosition(getSequence().getTracks()[i], lPosition);
 		}
 		if (bWasRunning)
-		{
 			start();
-		}
 	}
 
 
@@ -488,7 +506,7 @@ implements Runnable
 		m_lMicroSecondsPerTick = (long) fMPQ / nResolution;
 		m_lStartTime = currentTime - currentTickPosition * m_lMicroSecondsPerTick;
 		m_bTempoChanged = true;
-		// TODO: update m_lMicroSecondsPerTick and m_lStartTimeonly after the next event because the the event now waiting for its schedule is not updated
+		// TODO: update m_lMicroSecondsPerTick and m_lStartTime only after the next event because the the event now waiting for its schedule is not updated
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.setTempoImpl(): end"); }
 	}
 
@@ -507,7 +525,8 @@ implements Runnable
 		// quick search
 		int idx1 = 0;
 		int idx2 = track.size() - 1;
-		for (;;) {
+		for (;;)
+		{
 			if ((idx2 - idx1) == 1)
 				return idx1;
 			int idx3 = (int)(((long)idx1 + (long)idx2) / 2L);
@@ -520,18 +539,53 @@ implements Runnable
 
 
 	/**	Retrieve system time in microseconds.
-		Defaults to retrieving the time by calling
-		System.currentTimeMillis().
-		Override this method if you want to use a different
-		time base.
+		This method uses the clock as set with {@link #setClock}.
 
 		@return the system time in microseconds
 	*/
 	protected long getTimeInMicroseconds()
 	{
-		return System.currentTimeMillis() * 1000;
+		// temporary hack
+		if (getClock() == null)
+		{
+			return 0;
+		}
+		// end hack
+		return getClock().getMicroseconds();
 	}
 
+
+
+	/** Set the clock this sequencer should use.
+		@param clock the Clock to be used
+		@throws IllegalStateException if the sequencer is not closed
+	 */
+	public void setClock(Clock clock)
+	{
+		if (isOpen())
+		{
+			throw new IllegalStateException("closed state required to set the clock");
+		}
+		m_clock = clock;
+	}
+
+
+
+	/** Obtain the clock used by this sequencer.
+		@return the clock currently set for this sequencer
+	 */
+	public Clock getClock()
+	{
+		return m_clock;
+	}
+
+
+	/** Interface for sequencer clocks.
+	 */
+	public static interface Clock
+	{
+		public long getMicroseconds();
+	}
 }
 
 
