@@ -154,7 +154,8 @@ public class JavaSequencer
 				{
 					// TDebug.out("track " + nTrack);
 					// Track	track = aTracks[nTrack];
-					if (anTrackPositions[nTrack] < aTracks[nTrack].size())
+					if (anTrackPositions[nTrack] < aTracks[nTrack].size()
+					    && isTrackEnabled(nTrack))
 					{
 						bTrackPresent = true;
 						MidiEvent	event = aTracks[nTrack].get(anTrackPositions[nTrack]);
@@ -277,35 +278,6 @@ public class JavaSequencer
 
 
 
-	public boolean getTrackSolo(int nTrack)
-	{
-		// TODO:
-		return false;
-	}
-
-
-
-	public void setTrackSolo(int nTrack, boolean bSolo)
-	{
-		// TODO:
-	}
-
-
-
-	public boolean getTrackMute(int nTrack)
-	{
-		// TODO:
-		return false;
-	}
-
-
-
-	public void setTrackMute(int nTrack, boolean bMute)
-	{
-		// TODO:
-	}
-
-
 	protected void setMasterSyncModeImpl(SyncMode syncMode)
 	{
 		// TODO:
@@ -382,13 +354,6 @@ public class JavaSequencer
 		int	nResolution = getResolution();
 		m_lMicroSecondsPerTick = (long) fMPQ / nResolution;
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.setTempoImpl(): end"); }
-	}
-
-
-
-	protected float getTempoImpl()
-	{
-		return 0.0F;
 	}
 }
 

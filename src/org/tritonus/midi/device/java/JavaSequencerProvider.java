@@ -55,7 +55,7 @@ public class JavaSequencerProvider
 			if (sm_info == null)
 			{
 				sm_info = new TMidiDevice.Info(
-					"Tritonus Java sequencer",
+					"Tritonus Java Sequencer",
 					GlobalInfo.getVendor(),
 					"this is a pure-java sequencer",
 					GlobalInfo.getVersion());
