@@ -139,11 +139,15 @@ public class AlsaMidiDeviceProvider
 		int	nPort = portInfo.getPort();
 		int	nType = portInfo.getType();
 		int	nCapability = portInfo.getCapability();
+		int	nSynthVoices = portInfo.getSynthVoices();
 		if (TDebug.TracePortScan)
 		{
 			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): port: " + nPort);
 			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): type: " + nType);
 			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): cap: " + nCapability);
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): midi channels: " + portInfo.getMidiChannels());
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): midi voices: " + portInfo.getMidiVoices());
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): synth voices: " + portInfo.getSynthVoices());
 		}
 		if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
 		{
@@ -154,7 +158,7 @@ public class AlsaMidiDeviceProvider
 				boolean	bWriteSubscriptionAllowed = (nCapability & WRITE_CAPABILITY) == WRITE_CAPABILITY;
 				if (bWriteSubscriptionAllowed)
 				{
-					device = new AlsaSynthesizer(nClient, nPort);
+					device = new AlsaSynthesizer(nClient, nPort, nSynthVoices);
 				}
 				else
 				{
