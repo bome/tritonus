@@ -49,6 +49,7 @@ public class AlsaDataLineMixerProvider
 		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): begin"); }
 		if (! sm_bInitialized)
 		{
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): initializing..."); }
 			int[]	anCards = AlsaCtl.getCards();
 			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): num cards: " + anCards.length); }
 			for (int i = 0; i < anCards.length; i++)
@@ -99,6 +100,10 @@ public class AlsaDataLineMixerProvider
 				super.addMixer(mixer);
 			}
 			sm_bInitialized = true;
+		}
+		else
+		{
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): already initialized"); }
 		}
 
 
