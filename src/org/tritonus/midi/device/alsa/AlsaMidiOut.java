@@ -34,7 +34,7 @@ import	javax.sound.midi.SysexMessage;
 import	javax.sound.midi.MetaMessage;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 
 
 
@@ -42,7 +42,7 @@ public class AlsaMidiOut
 {
 	/**	The low-level object to interface to the ALSA sequencer.
 	 */
-	private ASequencer	m_aSequencer;
+	private AlsaSeq	m_aSequencer;
 
 	/**	The source port to use for sending messages via the ALSA sequencer.
 	 */
@@ -65,7 +65,7 @@ public class AlsaMidiOut
 	/*
 	 *	Sends to all subscribers via queue.
 	 */
-	public AlsaMidiOut(ASequencer aSequencer, int nSourcePort,
+	public AlsaMidiOut(AlsaSeq aSequencer, int nSourcePort,
 			   int nQueue)
 	{
 		this(aSequencer, nSourcePort,
@@ -77,7 +77,7 @@ public class AlsaMidiOut
 	/*
 	 *	Sends to all subscribers immediately.
 	 */
-	public AlsaMidiOut(ASequencer aSequencer, int nSourcePort)
+	public AlsaMidiOut(AlsaSeq aSequencer, int nSourcePort)
 	{
 		this(aSequencer, nSourcePort,
 		     -1, true);
@@ -85,7 +85,7 @@ public class AlsaMidiOut
 
 
 
-	private AlsaMidiOut(ASequencer aSequencer, int nSourcePort,
+	private AlsaMidiOut(AlsaSeq aSequencer, int nSourcePort,
 			    int nQueue, boolean bImmediately)
 	{
 		m_aSequencer = aSequencer;
@@ -244,7 +244,7 @@ public class AlsaMidiOut
 				TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending noteoff message (subscribers, timed)");
 			}
 			// TDebug.out("hallo2");
-			// TDebug.out("ASequencer: " + m_aSequencer);
+			// TDebug.out("AlsaSeq: " + m_aSequencer);
 			m_aSequencer.sendNoteOffEventSubscribersTicked(
 				getQueue(), lTime,
 				getSourcePort(),
@@ -459,7 +459,7 @@ public class AlsaMidiOut
 				TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending meta message to subscribers");
 			}
 			m_aSequencer.sendVarEventSubscribersImmediately(
-				ASequencer.SND_SEQ_EVENT_USR_VAR4,
+				AlsaSeq.SND_SEQ_EVENT_USR_VAR4,
 				getSourcePort(),
 				abData, 0, nLength);
 		}
@@ -470,7 +470,7 @@ public class AlsaMidiOut
 				TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending meta message to subscribers");
 			}
 			m_aSequencer.sendVarEventSubscribersTicked(
-				ASequencer.SND_SEQ_EVENT_USR_VAR4, getQueue(), lTime,
+				AlsaSeq.SND_SEQ_EVENT_USR_VAR4, getQueue(), lTime,
 				getSourcePort(),
 				abData, 0, nLength);
 		}
@@ -487,7 +487,7 @@ public class AlsaMidiOut
 				TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending meta message to subscribers");
 			}
 			m_aSequencer.sendVarEventSubscribersImmediately(
-				ASequencer.SND_SEQ_EVENT_SYSEX,
+				AlsaSeq.SND_SEQ_EVENT_SYSEX,
 				getSourcePort(),
 				abData, 0, nLength);
 		}
@@ -498,7 +498,7 @@ public class AlsaMidiOut
 				TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending meta message to subscribers");
 			}
 			m_aSequencer.sendVarEventSubscribersTicked(
-				ASequencer.SND_SEQ_EVENT_SYSEX, getQueue(), lTime,
+				AlsaSeq.SND_SEQ_EVENT_SYSEX, getQueue(), lTime,
 				getSourcePort(),
 				abData, 0, nLength);
 		}

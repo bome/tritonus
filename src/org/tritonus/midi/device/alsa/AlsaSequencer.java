@@ -37,7 +37,7 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.MidiUnavailableException;
 import	javax.sound.midi.MidiDevice;
 
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.midi.TSequencer;
 
@@ -47,8 +47,8 @@ public class AlsaSequencer
 	extends		TSequencer
 	implements	AlsaMidiIn.AlsaMidiInListener
 {
-	private ASequencer	m_controlASequencer;
-	private ASequencer	m_dataASequencer;
+	private AlsaSeq	m_controlAlsaSeq;
+	private AlsaSeq	m_dataAlsaSeq;
 	private int		m_nControlClient;
 	private int		m_nDataClient;
 	private int		m_nControlPort;
@@ -104,22 +104,22 @@ public class AlsaSequencer
 
 	protected void openImpl()
 	{
-		m_controlASequencer = new ASequencer("Tritonus ALSA Sequencer (control)");
-		m_nControlClient = m_controlASequencer.getClientId();
-		m_nControlPort = m_controlASequencer.createPort("control port", ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ, 0, ASequencer.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_controlAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (control)");
+		m_nControlClient = m_controlAlsaSeq.getClientId();
+		m_nControlPort = m_controlAlsaSeq.createPort("control port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
-		m_dataASequencer = new ASequencer("Tritonus ALSA Sequencer (data)");
-		m_nDataClient = m_dataASequencer.getClientId();
-		m_nDataPort = m_dataASequencer.createPort("data port", ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ, 0, ASequencer.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_dataAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (data)");
+		m_nDataClient = m_dataAlsaSeq.getClientId();
+		m_nDataPort = m_dataAlsaSeq.createPort("data port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
-		// m_nQueue = m_controlASequencer.allocQueue();
-		m_nQueue = m_dataASequencer.allocQueue();
-		m_dataASequencer.setQueueLocked(getQueue(), false);
-		m_alsaMidiOut = new AlsaMidiOut(m_dataASequencer, getDataPort(), getQueue());
+		// m_nQueue = m_controlAlsaSeq.allocQueue();
+		m_nQueue = m_dataAlsaSeq.allocQueue();
+		m_dataAlsaSeq.setQueueLocked(getQueue(), false);
+		m_alsaMidiOut = new AlsaMidiOut(m_dataAlsaSeq, getDataPort(), getQueue());
 		m_alsaMidiOut.setHandleMetaMessages(true);
 
 		// this establishes the subscription, too
-		m_alsaMidiIn = new AlsaMidiIn(m_dataASequencer, getDataPort(), getDataClient(), getDataPort(), this);
+		m_alsaMidiIn = new AlsaMidiIn(m_dataAlsaSeq, getDataPort(), getDataClient(), getDataPort(), this);
 		// start the receiving thread
 		m_alsaMidiIn.start();
 	}
@@ -133,10 +133,10 @@ public class AlsaSequencer
 		// TODO:
 		// m_aSequencer.releaseQueue(getQueue());
 		// m_aSequencer.destroyPort(getPort());
-		m_controlASequencer.close();
-		m_controlASequencer = null;
-		m_dataASequencer.close();
-		m_dataASequencer = null;
+		m_controlAlsaSeq.close();
+		m_controlAlsaSeq = null;
+		m_dataAlsaSeq.close();
+		m_dataAlsaSeq = null;
 	}
 
 
@@ -146,7 +146,7 @@ public class AlsaSequencer
 /*	TODO:
 	setTempoInMPQ(500000);
 */
-		m_controlASequencer.setQueueTempo(getQueue(), getSequence().getResolution(), 500000/*getBPM() * getFactor()*/);
+		m_controlAlsaSeq.setQueueTempo(getQueue(), getSequence().getResolution(), 500000/*getBPM() * getFactor()*/);
 		startSeq();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
@@ -210,7 +210,7 @@ public class AlsaSequencer
 	{
 		if (isOpen())
 		{
-			return m_controlASequencer.getQueueTempo(getQueue());
+			return m_controlAlsaSeq.getQueueTempo(getQueue());
 		}
 		else
 		{
@@ -224,7 +224,7 @@ public class AlsaSequencer
 	{
 		if (isOpen())
 		{
-			m_controlASequencer.setQueueTempo(getQueue(), getSequence().getResolution(), (int) fRealMPQ);
+			m_controlAlsaSeq.setQueueTempo(getQueue(), getSequence().getResolution(), (int) fRealMPQ);
 		}
 	}
 
@@ -234,7 +234,7 @@ public class AlsaSequencer
 	{
 		if (isOpen())
 		{
-			return m_controlASequencer.getQueuePositionTick(getQueue());
+			return m_controlAlsaSeq.getQueuePositionTick(getQueue());
 		}
 		else
 		{
@@ -248,7 +248,7 @@ public class AlsaSequencer
 	{
 		if (isOpen())
 		{
-			m_controlASequencer.setQueuePositionTick(getControlPort(), getQueue(), lTick);
+			m_controlAlsaSeq.setQueuePositionTick(getControlPort(), getQueue(), lTick);
 		}
 	}
 
@@ -258,7 +258,7 @@ public class AlsaSequencer
 	{
 		if (isOpen())
 		{
-			long	lNanoSeconds = m_controlASequencer.getQueuePositionTime(getQueue()) / 1000;
+			long	lNanoSeconds = m_controlAlsaSeq.getQueuePositionTime(getQueue()) / 1000;
 			return lNanoSeconds / 1000;
 		}
 		else
@@ -274,7 +274,7 @@ public class AlsaSequencer
 		if (isOpen())
 		{
 			long	lNanoSeconds = lMicroseconds * 1000;
-			m_controlASequencer.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
+			m_controlAlsaSeq.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
 		}
 	}
 
@@ -471,14 +471,14 @@ public class AlsaSequencer
 
 	private void startSeq()
 	{
-		m_controlASequencer.startQueue(getQueue(), getControlPort());
+		m_controlAlsaSeq.startQueue(getQueue(), getControlPort());
 	}
 
 
 
 	private void stopSeq()
 	{
-		m_controlASequencer.stopQueue(getQueue(), getControlPort());
+		m_controlAlsaSeq.stopQueue(getQueue(), getControlPort());
 	}
 
 	///////////////////////////////////////////////////

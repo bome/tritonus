@@ -38,7 +38,7 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.midi.TMidiDevice;
 import	org.tritonus.share.midi.TMidiDeviceInfo;
 import	org.tritonus.share.GlobalInfo;
@@ -51,7 +51,7 @@ public class AlsaQueueHolder
 {
 	/**	The object interfacing to the ALSA sequencer.
 	 */
-	private ASequencer	m_aSequencer;
+	private AlsaSeq	m_aSequencer;
 
 	/**	ALSA queue number.
 	 */
@@ -62,7 +62,7 @@ public class AlsaQueueHolder
 
 	/**
 	 */
-	public AlsaQueueHolder(ASequencer aSequencer)
+	public AlsaQueueHolder(AlsaSeq aSequencer)
 	{
 		m_aSequencer = aSequencer;
 		m_nQueue = m_aSequencer.allocQueue();

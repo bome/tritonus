@@ -33,7 +33,7 @@ import	java.util.Iterator;
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 
 import	org.tritonus.share.TDebug;
 
@@ -47,7 +47,7 @@ public class AlsaMidiDeviceProvider
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];
 
 	private static List		m_devices;
-	private static ASequencer	m_aSequencer;
+	private static AlsaSeq	m_aSequencer;
 
 
 
@@ -65,7 +65,7 @@ public class AlsaMidiDeviceProvider
 				//TDebug.out("gaga2");
 				m_devices = new ArrayList();
 				TDebug.out("gaga2a");
-				m_aSequencer = new ASequencer("Tritonus ALSA device manager");
+				m_aSequencer = new AlsaSeq("Tritonus ALSA device manager");
 				//TDebug.out("gaga3");
 				scanPorts();
 			}
@@ -120,7 +120,7 @@ public class AlsaMidiDeviceProvider
 		// TDebug.out("" + clients);
 		while (clients.hasNext())
 		{
-			ASequencer.ClientInfo	clientInfo = (ASequencer.ClientInfo) clients.next();
+			AlsaSeq.ClientInfo	clientInfo = (AlsaSeq.ClientInfo) clients.next();
 			int	nClient = clientInfo.getClientId();
 			if (TDebug.TracePortScan)
 			{
@@ -130,7 +130,7 @@ public class AlsaMidiDeviceProvider
 			// TDebug.out("" + clients);
 			while (ports.hasNext())
 			{
-				ASequencer.PortInfo	portInfo = (ASequencer.PortInfo) ports.next();
+				AlsaSeq.PortInfo	portInfo = (AlsaSeq.PortInfo) ports.next();
 				int	nPort = portInfo.getPort();
 				int	nType = portInfo.getType();
 				if (TDebug.TracePortScan)
@@ -138,11 +138,11 @@ public class AlsaMidiDeviceProvider
 					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): port: " + nPort);
 					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): type: " + nType);
 				}
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
+				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
 				{
 					// TDebug.out("generic midi");
 					MidiDevice	device = null;
-					if ((nType & (ASequencer.SND_SEQ_PORT_TYPE_SYNTH | ASequencer.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE | ASequencer.SND_SEQ_PORT_TYPE_SAMPLE)) != 0)
+					if ((nType & (AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH | AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE | AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE)) != 0)
 					{
 						device = new AlsaSynthesizer(nClient, nPort);
 					}
@@ -153,27 +153,27 @@ public class AlsaMidiDeviceProvider
 					m_devices.add(device);
 				}
 /*
-  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
+  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
   {
   TDebug.out("gm");
   }
-  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
+  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
   {
   TDebug.out("gs");
   }
-  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
+  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
   {
   TDebug.out("xg");
   }
-  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_SYNTH) != 0)
+  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH) != 0)
   {
   TDebug.out("synth");
   }
-  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
+  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
   {
   TDebug.out("direct sample");
   }
-  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
+  if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
   {
   TDebug.out("sample");
   }

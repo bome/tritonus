@@ -33,7 +33,7 @@ JAVAH = @JAVAH@
 
 
 JNIOBJ=\
-	org_tritonus_lowlevel_alsa_ASequencer0.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq0.o \
 	org_tritonus_lowlevel_alsa_Alsa.o \
 	org_tritonus_lowlevel_alsa_AlsaCtl.o \
 	org_tritonus_lowlevel_alsa_AlsaPcm.o \
@@ -49,7 +49,7 @@ OBJ=\
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
 JNICLASSFILES=\
-	ASequencer0.class \
+	AlsaSeq0.class \
 	Alsa.class \
 	AlsaCtl.class \
 	AlsaMixer.class \
@@ -59,7 +59,7 @@ JNICLASSFILES=\
 
 
 JNICLASSES=\
-	org.tritonus.lowlevel.alsa.ASequencer0 \
+	org.tritonus.lowlevel.alsa.AlsaSeq0 \
 	org.tritonus.lowlevel.alsa.Alsa \
 	org.tritonus.lowlevel.alsa.AlsaCtl \
 	org.tritonus.lowlevel.alsa.AlsaMixer \

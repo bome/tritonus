@@ -79,9 +79,9 @@ public class TDebug
 	public static boolean	TraceMidiDeviceProvider = getBooleanProperty("TraceMidiDeviceProvider");
 
 	// midi specific implementation
-	public static boolean	TraceASequencer = getBooleanProperty("TraceASequencer");
-	public static boolean	TraceASequencerDetails = getBooleanProperty("TraceASequencerDetails");
-	public static boolean	TraceASequencerNative = getBooleanProperty("TraceASequencerNative");
+	public static boolean	TraceAlsaSeq = getBooleanProperty("TraceAlsaSeq");
+	public static boolean	TraceAlsaSeqDetails = getBooleanProperty("TraceAlsaSeqDetails");
+	public static boolean	TraceAlsaSeqNative = getBooleanProperty("TraceAlsaSeqNative");
 	public static boolean	TracePortScan = getBooleanProperty("TracePortScan");
 	public static boolean	TraceTMidiDevice = getBooleanProperty("TraceTMidiDevice");
 	public static boolean	TraceTSequencer = getBooleanProperty("TraceTSequencer");
@@ -91,7 +91,6 @@ public class TDebug
 	public static boolean	TraceAlsaSequencer = getBooleanProperty("TraceAlsaSequencer");
 	public static boolean	TraceAlsaMidiChannel = getBooleanProperty("TraceAlsaMidiChannel");
 	public static boolean	TraceMshMidiDevice = getBooleanProperty("TraceMshMidiDevice");
-	public static boolean	TraceAlsaSeqNative = getBooleanProperty("TraceAlsaSeqNative");
 
 
 

@@ -38,7 +38,7 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.midi.TMidiDevice;
 import	org.tritonus.share.midi.TMidiDeviceInfo;
 import	org.tritonus.share.GlobalInfo;
@@ -69,7 +69,7 @@ public class AlsaMidiDevice
 
 	/**	The object interfacing to the ALSA sequencer.
 	 */
-	private ASequencer	m_aSequencer;
+	private AlsaSeq	m_aSequencer;
 
 	/**	The ALSA port id of the handler.
 	 *	This is used by m_aSequencer.
@@ -143,13 +143,13 @@ public class AlsaMidiDevice
 			TDebug.out("AlsaMidiDevice.openImpl(): called");
 		}
 		// create an ALSA client...
-		m_aSequencer = new ASequencer("Tritonus Midi port handler");
+		m_aSequencer = new AlsaSeq("Tritonus Midi port handler");
 		// ...and an ALSA port
 		m_nOwnPort = m_aSequencer.createPort(
 			"handler port",
-			ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ,
+			AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ,
 			0,
-			ASequencer.SND_SEQ_PORT_TYPE_APPLICATION,
+			AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION,
 			0, 0, 0);
 		if (getUseIn())
 		{

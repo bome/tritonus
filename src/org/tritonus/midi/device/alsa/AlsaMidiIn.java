@@ -33,7 +33,7 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 
 
 
@@ -42,7 +42,7 @@ import	org.tritonus.lowlevel.alsa.ASequencer;
 public class AlsaMidiIn
 	extends		Thread
 {
-	private ASequencer		m_aSequencer;
+	private AlsaSeq		m_aSequencer;
 	private int			m_nSourceClient;
 	private int			m_nSourcePort;
 	private int			m_nDestPort;
@@ -53,7 +53,7 @@ public class AlsaMidiIn
 	   Does establish a subscription where events are routed directely
 	   (not getting a timestamp).
 	 */
-	public AlsaMidiIn(ASequencer aSequencer,
+	public AlsaMidiIn(AlsaSeq aSequencer,
 			  int nDestPort,
 			  int nSourceClient,
 			  int nSourcePort,
@@ -73,7 +73,7 @@ public class AlsaMidiIn
 	   Does establish a subscription where events are routed through
 	   a queue to get a timestamp.
 	 */
-	public AlsaMidiIn(ASequencer aSequencer,
+	public AlsaMidiIn(AlsaSeq aSequencer,
 			  int nDestPort,
 			  int nSourceClient,
 			  int nSourcePort,
@@ -108,7 +108,7 @@ public class AlsaMidiIn
 
 	/**	The working part of the class.
 		Here, the thread repeats in blocking in a call to
-		ASequencer.getEvent() and calling the listener's
+		AlsaSeq.getEvent() and calling the listener's
 		dequeueEvent() method.
 	 */
 	public void run()
@@ -116,7 +116,7 @@ public class AlsaMidiIn
 		// TODO: recheck interupt mechanism
 		while (!interrupted())
 		{
-			// TODO: do we need a filter in ASequencer?
+			// TODO: do we need a filter in AlsaSeq?
 			MidiEvent	event = m_aSequencer.getEvent();
 			if (TDebug.TraceAlsaMidiIn)
 			{

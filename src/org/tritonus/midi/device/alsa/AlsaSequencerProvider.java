@@ -34,7 +34,7 @@ import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.GlobalInfo;
 import	org.tritonus.share.midi.TMidiDeviceInfo;
 

@@ -44,7 +44,7 @@ import	javax.sound.midi.VoiceStatus;
 import	javax.sound.midi.Patch;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.midi.TMidiDeviceInfo;
 import	org.tritonus.share.GlobalInfo;
 
