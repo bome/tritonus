@@ -22,21 +22,10 @@
  *
  */
 
-
 package	org.tritonus.core;
 
-
-import	java.io.InputStream;
-import	java.io.IOException;
-
-import	java.net.URL;
-
-import	java.util.ArrayList;
-import	java.util.Collection;
 import	java.util.Iterator;
-import	java.util.List;
 import	java.util.Set;
-import	java.util.HashSet;
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.Sequencer;
@@ -65,11 +54,30 @@ public class TMidiConfig
 	private static MidiDevice.Info	sm_defaultSynthesizerInfo = null;
 
 
+	static
+	{
+		init();
+	}
 
 	/** Constructor to prevent instantiation.
 	 */
 	private TMidiConfig()
 	{
+	}
+
+
+	/** Initialize the collections of providers and the default devices.
+	 */
+	private static void init()
+	{
+		// init providers from scanning the class path
+		// note: this already sets the default devices
+		getMidiDeviceProvidersImpl();
+		getMidiFileReadersImpl();
+		getMidiFileWritersImpl();
+		getSoundbankReadersImpl();
+		// now check properties for default devices
+		// ... TODO:
 	}
 
 
@@ -81,10 +89,10 @@ public class TMidiConfig
 			{
 				public void register(Object obj)
 					throws	Exception
-					{
-						MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
-						TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
-					}
+				{
+					MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
+					TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
+				}
 			};
 		TInit.registerClasses(MidiDeviceProvider.class, action);
 	}
@@ -98,10 +106,10 @@ public class TMidiConfig
 			{
 				public void register(Object obj)
 					throws	Exception
-					{
-						MidiFileReader	provider = (MidiFileReader) obj;
-						TMidiConfig.addMidiFileReader(provider);
-					}
+				{
+					MidiFileReader	provider = (MidiFileReader) obj;
+					TMidiConfig.addMidiFileReader(provider);
+				}
 			};
 		TInit.registerClasses(MidiFileReader.class, action);
 	}
@@ -115,10 +123,10 @@ public class TMidiConfig
 			{
 				public void register(Object obj)
 					throws	Exception
-					{
-						MidiFileWriter	provider = (MidiFileWriter) obj;
-						TMidiConfig.addMidiFileWriter(provider);
-					}
+				{
+					MidiFileWriter	provider = (MidiFileWriter) obj;
+					TMidiConfig.addMidiFileWriter(provider);
+				}
 			};
 		TInit.registerClasses(MidiFileWriter.class, action);
 	}
@@ -132,10 +140,10 @@ public class TMidiConfig
 			{
 				public void register(Object obj)
 					throws	Exception
-					{
-						SoundbankReader	provider = (SoundbankReader) obj;
-						TMidiConfig.addSoundbankReader(provider);
-					}
+				{
+					SoundbankReader	provider = (SoundbankReader) obj;
+					TMidiConfig.addSoundbankReader(provider);
+				}
 			};
 		TInit.registerClasses(SoundbankReader.class, action);
 	}
@@ -319,6 +327,7 @@ public class TMidiConfig
 	}
 
 
+
 	private static synchronized Set getSoundbankReadersImpl()
 	{
 		if (sm_soundbankReaders == null)
@@ -331,14 +340,8 @@ public class TMidiConfig
 
 
 
-
 	public static MidiDevice.Info getDefaultMidiDeviceInfo()
 	{
-		/* The following call is necessary to make the providers
-		   are registered. Otherwise, it may be that the default
-		   devices are not yet set.
-		*/
-		getMidiDeviceProvidersImpl();
 		return sm_defaultMidiDeviceInfo;
 	}
 
@@ -346,11 +349,6 @@ public class TMidiConfig
 
 	public static MidiDevice.Info getDefaultSynthesizerInfo()
 	{
-		/* The following call is necessary to make the providers
-		   are registered. Otherwise, it may be that the default
-		   devices are not yet set.
-		*/
-		getMidiDeviceProvidersImpl();
 		return sm_defaultSynthesizerInfo;
 	}
 
@@ -358,11 +356,6 @@ public class TMidiConfig
 
 	public static MidiDevice.Info getDefaultSequencerInfo()
 	{
-		/* The following call is necessary to make the providers
-		   are registered. Otherwise, it may be that the default
-		   devices are not yet set.
-		*/
-		getMidiDeviceProvidersImpl();
 		return sm_defaultSequencerInfo;
 	}
 }
