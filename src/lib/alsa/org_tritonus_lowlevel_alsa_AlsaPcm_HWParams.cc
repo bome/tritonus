@@ -67,9 +67,6 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_malloc
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
 
-	// extremely hacky
-	debug_file = stderr;
-
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_malloc(): begin\n"); }
 	nReturn = snd_pcm_hw_params_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_malloc(): handle: %p\n", handle); }

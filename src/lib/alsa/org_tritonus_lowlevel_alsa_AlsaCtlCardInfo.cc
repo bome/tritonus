@@ -47,9 +47,6 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc
 	snd_ctl_card_info_t*	handle;
 	int			nReturn;
 
-	// extremely hacky
-	debug_file = stderr;
-
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): begin\n"); }
 	nReturn = snd_ctl_card_info_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): handle: %p\n", handle); }

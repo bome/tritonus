@@ -48,9 +48,6 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_malloc
 	snd_pcm_format_mask_t*	handle;
 	int			nReturn;
 
-	// extremely hacky
-	debug_file = stderr;
-
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_malloc(): begin\n"); }
 	nReturn = snd_pcm_format_mask_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_malloc(): handle: %p\n", handle); }
