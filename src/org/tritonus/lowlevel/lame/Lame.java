@@ -471,11 +471,11 @@ public class Lame {
 		try {
 			strValue = System.getProperty(strPropertyName, strValue);
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
 			if (TDebug.TraceAllExceptions)
 			{
-				TDebug.out(e);
+				TDebug.out(t);
 			}
 		}
 		strValue=strValue.toLowerCase();
@@ -500,11 +500,11 @@ public class Lame {
 		try {
 			strValue = System.getProperty(strPropertyName, def);
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
 			if (TDebug.TraceAllExceptions)
 			{
-				TDebug.out(e);
+				TDebug.out(t);
 			}
 		}
 		return strValue;
