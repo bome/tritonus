@@ -131,6 +131,20 @@ public class EsdSourceDataLine
 			m_bSwapBytes = true;
 			encoding = AudioFormat.Encoding.PCM_UNSIGNED;
 		}
+		/*
+		 *	Ugly hack, should fade as soon as possible.
+		 *	IDEA: if swapping IS necessary here, isolate the "detection" of
+		 *	big-endian architectures into a seperate class. Perhaps have a
+		 *	property with a list of big-endian architecture names, so that
+		 *	support can be extended to other architectures without changes
+		 *	in the source code.
+		 */
+		// TODO: does 8 bit work? (perhaps problem inside esd?)
+		if (System.getProperty("os.arch").equals("ppc")
+		    && format.getSampleSizeInBits() == 16)
+		{
+			m_bSwapBytes ^= true;
+		}
 		if (m_bSwapBytes)
 		{
 			format = new AudioFormat(encoding,
