@@ -51,7 +51,7 @@ import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
 
 
 public abstract class AlsaBaseDataLine
-	extends		TSourceTargetDataLine
+extends TBaseDataLine
 {
 	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
 
