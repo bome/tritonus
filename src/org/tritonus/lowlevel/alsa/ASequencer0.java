@@ -432,8 +432,24 @@ public class ASequencer0
 
 	public native int createPort(String strName, int nCapabilities, int nGroupPermissions, int nType, int nMidiChannels, int nMidiVoices, int nSynthVoices);
 
-
+	/**	Allocates (reserves) a sequencing queue.
+		Calls snd_seq_alloc_queue().
+		@return the queue number (>= 0), if successful. A negative
+		value otherwise.
+	 */
 	public native int allocQueue();
+
+
+	/**	Frees a sequencing queue.
+		Calls snd_seq_free_queue().
+
+		@param nQueue a queue number that has previously been
+		allocated with allocQueue().
+
+		@return 0 if successful. A negative
+		value otherwise.
+	 */
+	public native int freeQueue(int nQueue);
 
 
 	/*
