@@ -731,6 +731,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_open
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_open failed");
+		return (jint) nReturn;
 	}
 	// printf("3\n");
 	snd_seq_block_mode(seq, 1);

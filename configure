@@ -992,7 +992,7 @@ fi
 
 
 
-SUBDIRS=src/lib/util
+SUBDIRS=src/lib/saint
 echo $ac_n "checking for snd_seq_open in -lasound""... $ac_c" 1>&6
 echo "configure:998: checking for snd_seq_open in -lasound" >&5
 ac_lib_var=`echo asound'_'snd_seq_open | sed 'y%./+-%__p_%'`
@@ -1420,7 +1420,7 @@ ac_given_INSTALL="$INSTALL"
 trap 'rm -fr `echo "Makefile
 	src/lib/alsa/Makefile
 	src/lib/esd/Makefile
-	src/lib/util/Makefile
+	src/lib/saint/Makefile
 	test/Makefile" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
@@ -1514,7 +1514,7 @@ cat >> $CONFIG_STATUS <<EOF
 CONFIG_FILES=\${CONFIG_FILES-"Makefile
 	src/lib/alsa/Makefile
 	src/lib/esd/Makefile
-	src/lib/util/Makefile
+	src/lib/saint/Makefile
 	test/Makefile"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF

@@ -50,6 +50,7 @@ vpath %.java $(SRCDIR_PUB)/sampled/spi
 vpath %.java $(SRCDIR_PRIV)
 vpath %.java $(SRCDIR_PRIV)/lowlevel/alsa
 vpath %.java $(SRCDIR_PRIV)/lowlevel/esd
+vpath %.java $(SRCDIR_PRIV)/lowlevel/saint
 vpath %.java $(SRCDIR_PRIV)/sampled
 vpath %.java $(SRCDIR_PRIV)/sampled/convert
 vpath %.java $(SRCDIR_PRIV)/sampled/file
@@ -60,6 +61,7 @@ vpath %.java $(SRCDIR_PRIV)/sampled/mixer/jesd
 vpath %.java $(SRCDIR_PRIV)/midi
 vpath %.java $(SRCDIR_PRIV)/midi/device
 vpath %.java $(SRCDIR_PRIV)/midi/device/alsa
+vpath %.java $(SRCDIR_PRIV)/midi/device/saint
 vpath %.java $(SRCDIR_PRIV)/midi/file
 vpath %.java $(SRCDIR_PRIV)/util
 vpath %.java $(SRCDIR_JL)
@@ -72,6 +74,7 @@ vpath %.class $(OBJDIR_PUB)/sampled/spi
 vpath %.class $(OBJDIR_PRIV)
 vpath %.class $(OBJDIR_PRIV)/lowlevel/alsa
 vpath %.class $(OBJDIR_PRIV)/lowlevel/esd
+vpath %.class $(OBJDIR_PRIV)/lowlevel/saint
 vpath %.class $(OBJDIR_PRIV)/sampled
 vpath %.class $(OBJDIR_PRIV)/sampled/convert
 vpath %.class $(OBJDIR_PRIV)/sampled/file
@@ -82,6 +85,7 @@ vpath %.class $(OBJDIR_PRIV)/sampled/mixer/jesd
 vpath %.class $(OBJDIR_PRIV)/midi
 vpath %.class $(OBJDIR_PRIV)/midi/device
 vpath %.class $(OBJDIR_PRIV)/midi/device/alsa
+vpath %.class $(OBJDIR_PRIV)/midi/device/saint
 vpath %.class $(OBJDIR_PRIV)/midi/file
 vpath %.class $(OBJDIR_PRIV)/util
 vpath %.class $(OBJDIR_JL)
@@ -95,6 +99,7 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/*.java \
 	$(SRCDIR_PRIV)/lowlevel/alsa/*.java \
 	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
+	$(SRCDIR_PRIV)/lowlevel/saint/*.java \
 	$(SRCDIR_PRIV)/sampled/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/*.java \
 	$(SRCDIR_PRIV)/sampled/file/*.java \
@@ -105,6 +110,7 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/midi/*.java \
 	$(SRCDIR_PRIV)/midi/device/*.java \
 	$(SRCDIR_PRIV)/midi/device/alsa/*.java \
+	$(SRCDIR_PRIV)/midi/device/saint/*.java \
 	$(SRCDIR_PRIV)/midi/file/*.java \
 	$(SRCDIR_PRIV)/util/*.java \
 	$(SRCDIR_JL)/*.java \
