@@ -29,17 +29,17 @@ package	org.tritonus.midi.device.alsa;
 import	java.util.Arrays;
 
 import	javax.sound.midi.InvalidMidiDataException;
+import	javax.sound.midi.MetaMessage;
+import	javax.sound.midi.MidiDevice;
+import	javax.sound.midi.MidiEvent;
+import	javax.sound.midi.MidiMessage;
+import	javax.sound.midi.MidiUnavailableException;
+import	javax.sound.midi.Receiver;
+import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.Sequence;
 import	javax.sound.midi.Sequencer;
 import	javax.sound.midi.Track;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.Transmitter;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.MidiDevice;
 
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.TDebug;
@@ -50,7 +50,6 @@ import	org.tritonus.share.midi.TSequencer;
 
 public class AlsaSequencer
 	extends		TSequencer
-	implements	AlsaMidiIn.AlsaMidiInListener
 {
 	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
 	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
@@ -68,21 +67,22 @@ public class AlsaSequencer
 		}
 	}
 
-	private AlsaSeq			m_controlAlsaSeq;
-	private AlsaSeq			m_dataAlsaSeq;
+	private AlsaSeq			m_playbackAlsaSeq;
+	private AlsaSeq			m_recordingAlsaSeq;
+	private int			m_nRecordingPort;
+	private int			m_nPlaybackPort;
+	private int			m_nQueue;
 	private AlsaSeq.QueueInfo	m_queueInfo;
 	private AlsaSeq.QueueStatus	m_queueStatus;
 	private AlsaSeq.QueueTempo	m_queueTempo;
-	private int			m_nControlClient;
-	private int			m_nDataClient;
-	private int			m_nControlPort;
-	private int			m_nDataPort;
-	private int			m_nQueue;
-	private AlsaMidiIn		m_alsaMidiIn;
-	private AlsaMidiOut		m_alsaMidiOut;
+	private AlsaMidiIn		m_playbackAlsaMidiIn;
+	private AlsaMidiOut		m_playbackAlsaMidiOut;
+	private AlsaMidiIn		m_recordingAlsaMidiIn;
 	private Thread			m_loaderThread;
 	private Thread			m_syncThread;
 	private AlsaSeq.Event		m_queueControlEvent;
+	private boolean			m_bRecording;
+	private Track			m_track;
 
 
 
@@ -97,30 +97,32 @@ public class AlsaSequencer
 
 
 
-	private int getControlClient()
+	private int getPlaybackClient()
 	{
-		return m_nControlClient;
+		int	nClient = getPlaybackAlsaSeq().getClientId();
+		return nClient;
 	}
 
 
 
-	private int getControlPort()
+	private int getPlaybackPort()
 	{
-		return m_nControlPort;
+		return m_nPlaybackPort;
 	}
 
 
 
-	private int getDataClient()
+	private int getRecordingClient()
 	{
-		return m_nDataClient;
+		int	nClient = getRecordingAlsaSeq().getClientId();
+		return nClient;
 	}
 
 
 
-	private int getDataPort()
+	private int getRecordingPort()
 	{
-		return m_nDataPort;
+		return m_nRecordingPort;
 	}
 
 
@@ -146,16 +148,16 @@ public class AlsaSequencer
 
 
 
-	private AlsaSeq getDataAlsaSeq()
+	private AlsaSeq getPlaybackAlsaSeq()
 	{
-		return m_dataAlsaSeq;
+		return m_playbackAlsaSeq;
 	}
 
 
 
-	private AlsaSeq getControlAlsaSeq()
+	private AlsaSeq getRecordingAlsaSeq()
 	{
-		return m_controlAlsaSeq;
+		return m_recordingAlsaSeq;
 	}
 
 
@@ -164,7 +166,8 @@ public class AlsaSequencer
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.updateQueueStatus(): begin"); }
 		// TODO: error handling
-		getControlAlsaSeq().getQueueStatus(getQueue(), getQueueStatus());
+		// getRecordingAlsaSeq().getQueueStatus(getQueue(), getQueueStatus());
+		getPlaybackAlsaSeq().getQueueStatus(getQueue(), getQueueStatus());
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.updateQueueStatus(): end"); }
 	}
 
@@ -173,29 +176,27 @@ public class AlsaSequencer
 	protected void openImpl()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): begin"); }
-		m_controlAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (control)");
-		m_nControlClient = getControlAlsaSeq().getClientId();
-		m_nControlPort = getControlAlsaSeq().createPort("control port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_recordingAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (recording/synchronization)");
+		m_nRecordingPort = getRecordingAlsaSeq().createPort("recording/synchronization port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
-		m_dataAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (data)");
-		m_nDataClient = getDataAlsaSeq().getClientId();
-		m_nDataPort = getDataAlsaSeq().createPort("data port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_playbackAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (playback)");
+		m_nPlaybackPort = getPlaybackAlsaSeq().createPort("playback port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
-		// m_nQueue = getControlAlsaSeq().allocQueue();
-		m_nQueue = getDataAlsaSeq().allocQueue();
+		m_nQueue = getPlaybackAlsaSeq().allocQueue();
 		m_queueInfo = new AlsaSeq.QueueInfo();
 		m_queueStatus = new AlsaSeq.QueueStatus();
 		m_queueTempo = new AlsaSeq.QueueTempo();
-		getDataAlsaSeq().getQueueInfo(getQueue(), m_queueInfo);
+		getPlaybackAlsaSeq().getQueueInfo(getQueue(), m_queueInfo);
 		m_queueInfo.setLocked(false);
-		getDataAlsaSeq().setQueueInfo(getQueue(), m_queueInfo);
-		m_alsaMidiOut = new AlsaMidiOut(getDataAlsaSeq(), getDataPort(), getQueue());
-		m_alsaMidiOut.setHandleMetaMessages(true);
+		getPlaybackAlsaSeq().setQueueInfo(getQueue(), m_queueInfo);
+		m_playbackAlsaMidiOut = new AlsaMidiOut(getPlaybackAlsaSeq(), getPlaybackPort(), getQueue());
+		m_playbackAlsaMidiOut.setHandleMetaMessages(true);
 
 		// this establishes the subscription, too
-		m_alsaMidiIn = new AlsaMidiIn(getDataAlsaSeq(), getDataPort(), getDataClient(), getDataPort(), this);
+		AlsaMidiIn.AlsaMidiInListener	playbackListener = new PlaybackAlsaMidiInListener();
+		m_playbackAlsaMidiIn = new AlsaMidiIn(getPlaybackAlsaSeq(), getPlaybackPort(), getPlaybackClient(), getPlaybackPort(), playbackListener);
 		// start the receiving thread
-		m_alsaMidiIn.start();
+		m_playbackAlsaMidiIn.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): end"); }
 		m_queueControlEvent = new AlsaSeq.Event();
 	}
@@ -205,8 +206,8 @@ public class AlsaSequencer
 	protected void closeImpl()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): begin"); }
-		m_alsaMidiIn.interrupt();
-		m_alsaMidiIn = null;
+		m_playbackAlsaMidiIn.interrupt();
+		m_playbackAlsaMidiIn = null;
 		getQueueStatus().free();
 		m_queueStatus = null;
 		getQueueTempo().free();
@@ -214,10 +215,10 @@ public class AlsaSequencer
 		// TODO:
 		// m_aSequencer.releaseQueue(getQueue());
 		// m_aSequencer.destroyPort(getPort());
-		getControlAlsaSeq().close();
-		m_controlAlsaSeq = null;
-		getDataAlsaSeq().close();
-		m_dataAlsaSeq = null;
+		getRecordingAlsaSeq().close();
+		m_recordingAlsaSeq = null;
+		getPlaybackAlsaSeq().close();
+		m_playbackAlsaSeq = null;
 		m_queueControlEvent.free();
 		m_queueControlEvent = null;
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): end"); }
@@ -228,10 +229,11 @@ public class AlsaSequencer
 	protected void startImpl()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): begin"); }
+		// TODO: start may also be a re-start after pausing. In this case, the tempo shouldn't be altered
 		setTempoInMPQ(500000);
 		startQueue();
-// 		m_syncThread = new MasterSynchronizer();
-// 		m_syncThread.start();
+//  		m_syncThread = new MasterSynchronizer();
+//  		m_syncThread.start();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): end"); }
@@ -243,6 +245,7 @@ public class AlsaSequencer
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): begin"); }
 		stopQueue();
+		stopRecording();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): end"); }
 	}
 
@@ -266,22 +269,22 @@ public class AlsaSequencer
 
 	public void startRecording()
 	{
-		// TODO:
+		m_bRecording = true;
+		start();
 	}
 
 
 
 	public void stopRecording()
 	{
-		// TODO:
+		m_bRecording = false;
 	}
 
 
 
 	public boolean isRecording()
 	{
-		// TODO:
-		return false;
+		return m_bRecording;
 	}
 
 
@@ -289,8 +292,11 @@ public class AlsaSequencer
 	// name should be: enableRecording
 	public void recordEnable(Track track, int nChannel)
 	{
-		// TODO:
+		// TODO: hacky
+		m_track = track;
 	}
+
+
 
 	// name should be: disableRecording
 	public void recordDisable(Track track)
@@ -308,7 +314,7 @@ public class AlsaSequencer
 			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): setting tempo to " + (int) fRealMPQ); }
 			getQueueTempo().setTempo((int) fRealMPQ);
 			getQueueTempo().setPpq(getResolution());
-			getControlAlsaSeq().setQueueTempo(getQueue(), getQueueTempo());
+			getPlaybackAlsaSeq().setQueueTempo(getQueue(), getQueueTempo());
 		}
 		else
 		{
@@ -344,7 +350,7 @@ public class AlsaSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): begin"); }
 		if (isOpen())
 		{
-			int	nSourcePort = getControlPort();
+			int	nSourcePort = getRecordingPort();
 			int	nQueue = getQueue();
 			long	lTime = lTick;
 			sendQueueControlEvent(
@@ -389,7 +395,7 @@ public class AlsaSequencer
 		if (isOpen())
 		{
 			long	lNanoSeconds = lMicroseconds * 1000;
-			int	nSourcePort = getControlPort();
+			int	nSourcePort = getRecordingPort();
 			int	nQueue = getQueue();
 			long	lTime = lNanoSeconds;
 			sendQueueControlEvent(
@@ -521,38 +527,15 @@ public class AlsaSequencer
 
 	private void enqueueMessage(MidiMessage message, long lTick)
 	{
-		m_alsaMidiOut.enqueueMessage(message, lTick);
+		m_playbackAlsaMidiOut.enqueueMessage(message, lTick);
 	}
 
 
 
-	// for AlsaMidiIn.AlsaMidiInListener
-	// passes events to the receivers
-	public void dequeueEvent(MidiEvent event)
+	public void sendMessageTick(MidiMessage message, long lTick)
 	{
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.dequeueEvent(): begin"); }
-		MidiMessage	message = event.getMessage();
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.dequeueEvent(): message: " + message); }
-		if (message instanceof MetaMessage)
-		{
-			MetaMessage	metaMessage = (MetaMessage) message;
-			// TDebug.out("meta!");
-			if (metaMessage.getType() == 0x51)	// set tempo
-			{
-				byte[]	abData = metaMessage.getData();
-				int	nTempo = MidiUtils.getUnsignedInteger(abData[0]) * 65536 +
-					MidiUtils.getUnsignedInteger(abData[1]) * 256 +
-					MidiUtils.getUnsignedInteger(abData[2]);
-				// TDebug.out("tempo (us/quarter note): " + nTempo);
-				setTempoInMPQ((float) nTempo);
-					
-			}
-		}
-		sendImpl(message, -1L);
-		notifyListeners(message);
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.dequeueEvent(): end"); }
+		enqueueMessage(message, lTick);
 	}
-
 
 
 
@@ -572,7 +555,7 @@ public class AlsaSequencer
 
 	private void controlQueue(int nType)
 	{
-		int	nSourcePort = getControlPort();
+		int	nSourcePort = getRecordingPort();
 		int	nQueue = getQueue();
 		sendQueueControlEvent(
 			nType, AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL, 0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
@@ -590,7 +573,37 @@ public class AlsaSequencer
 		m_queueControlEvent.setCommon(nType, nFlags, nTag, nQueue, lTime,
 		0, nSourcePort, nDestClient, nDestPort);
 		m_queueControlEvent.setQueueControl(nControlQueue, nControlValue, lControlTime);
-		getControlAlsaSeq().eventOutputDirect(m_queueControlEvent);
+		getPlaybackAlsaSeq().eventOutputDirect(m_queueControlEvent);
+	}
+
+
+
+	/**	Receive a correctely timestamped event.
+		This method expects that the timestamp is in ticks,
+		appropriate for the Sequence currently running.
+	 */
+	private void receiveTimestamped(MidiMessage message, long lTimestamp)
+	{
+		if (isRecording())
+		{
+			// TODO: this is hacky; should implement correct track mapping
+			Track	track = m_track;
+			MidiEvent	event = new MidiEvent(message, lTimestamp);
+			track.add(event);
+		}
+		// TODO: entering an event into the sequence
+	}
+
+
+
+	/**	Receive an event from a Receiver.
+	 	This method is called by AlsaSequencer.AlsaSequencerReceiver
+		on receipt of a MidiMessage.
+	 */
+	protected void receive(MidiMessage message, long lTimestamp)
+	{
+		lTimestamp = getTickPosition();
+		receiveTimestamped(message, lTimestamp);
 	}
 
 
@@ -598,24 +611,126 @@ public class AlsaSequencer
 	///////////////////////////////////////////////////
 
 
+	public Receiver getReceiver()
+		throws	MidiUnavailableException
+	{
+		return new AlsaSequencerReceiver();
+	}
+
+
+
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
-		// TODO: check number
-		return new AlsaTransmitter();
+		return new AlsaSequencerTransmitter();
 	}
 
 
 /////////////////// INNER CLASSES //////////////////////////////////////
 
-	private class AlsaTransmitter
+
+
+	private class PlaybackAlsaMidiInListener
+		implements AlsaMidiIn.AlsaMidiInListener
+	{
+		public void dequeueEvent(MidiMessage message, long lTimestamp)
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.PlaybackAlsaMidiInListener.dequeueEvent(): begin"); }
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.PlaybackAlsaMidiInListener.dequeueEvent(): message: " + message); }
+			if (message instanceof MetaMessage)
+			{
+				MetaMessage	metaMessage = (MetaMessage) message;
+				if (metaMessage.getType() == 0x51)	// set tempo
+				{
+					byte[]	abData = metaMessage.getData();
+					int	nTempo = MidiUtils.getUnsignedInteger(abData[0]) * 65536 +
+						MidiUtils.getUnsignedInteger(abData[1]) * 256 +
+						MidiUtils.getUnsignedInteger(abData[2]);
+					setTempoInMPQ((float) nTempo);
+				}
+			}
+			// passes events to the receivers
+			sendImpl(message, -1L);
+			// calls control and meta listeners
+			notifyListeners(message);
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.PlaybackAlsaMidiInListener.dequeueEvent(): end"); }
+		}
+	}
+
+
+
+	private class RecordingAlsaMidiInListener
+		implements AlsaMidiIn.AlsaMidiInListener
+	{
+		public void dequeueEvent(MidiMessage message, long lTimestamp)
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.RecordingAlsaMidiInListener.dequeueEvent(): begin"); }
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.RecordingAlsaMidiInListener.dequeueEvent(): message: " + message); }
+			AlsaSequencer.this.receiveTimestamped(message, lTimestamp);
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.RecordingAlsaMidiInListener.dequeueEvent(): end"); }
+		}
+	}
+
+
+
+
+	private class AlsaSequencerReceiver
+		extends		TReceiver
+		implements	AlsaReceiver
+	{
+
+
+
+		public AlsaSequencerReceiver()
+		{
+			super();
+		}
+
+
+
+		/**	Subscribe to the passed port.
+		 *	This establishes a subscription in the ALSA sequencer
+		 *	so that the device this Receiver belongs to receives
+		 *	event from the client:port passed as parameters.
+		 *
+		 *	@return true if subscription was established,
+		 *		false otherwise
+		 */
+		public boolean subscribeTo(int nClient, int nPort)
+		{
+			try
+			{
+				AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+				portSubscribe.setSender(nClient, nPort);
+				portSubscribe.setDest(AlsaSequencer.this.getRecordingClient(), AlsaSequencer.this.getRecordingPort());
+				portSubscribe.setQueue(AlsaSequencer.this.getQueue());
+				portSubscribe.setExclusive(false);
+				portSubscribe.setTimeUpdate(true);
+				portSubscribe.setTimeReal(false);
+				AlsaSequencer.this.getRecordingAlsaSeq().subscribePort(portSubscribe);
+				portSubscribe.free();
+				return true;
+			}
+			catch (RuntimeException e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				return false;
+			}
+		}
+
+
+	}
+
+
+
+	private class AlsaSequencerTransmitter
 		extends		TTransmitter
 	{
 		private boolean		m_bReceiverSubscribed;
 
 
 
-		public AlsaTransmitter()
+		public AlsaSequencerTransmitter()
 		{
 			super();
 			m_bReceiverSubscribed = false;
@@ -631,11 +746,11 @@ public class AlsaSequencer
 			 *	to the ALSA seqencer client of the device this
 			 *	Transmitter belongs to.
 			 */
-			if (receiver instanceof AlsaSequencerReceiver)
+			if (receiver instanceof AlsaReceiver)
 			{
-				// TDebug.out("AlsaSequencer.AlsaTransmitter.setReceiver(): trying to establish subscription");
-				m_bReceiverSubscribed = ((AlsaSequencerReceiver) receiver).subscribeTo(getDataClient(), getDataPort());
-				// TDebug.out("AlsaSequencer.AlsaTransmitter.setReceiver(): subscription established: " + m_bReceiverSubscribed);
+				// TDebug.out("AlsaSequencer.AlsaSequencerTransmitter.setReceiver(): trying to establish subscription");
+				m_bReceiverSubscribed = ((AlsaReceiver) receiver).subscribeTo(getPlaybackClient(), getPlaybackPort());
+				// TDebug.out("AlsaSequencer.AlsaSequencerTransmitter.setReceiver(): subscription established: " + m_bReceiverSubscribed);
 			}
 		}
 
@@ -644,7 +759,7 @@ public class AlsaSequencer
 		public void send(MidiMessage message, long lTimeStamp)
 		{
 			/*
-			 *	Send message via Java methods only if not
+			 *	Send message via Java methods only if no
 			 *	subscription was established. If there is a
 			 *	subscription, the message is routed inside of
 			 *	the ALSA sequencer.
@@ -683,13 +798,14 @@ public class AlsaSequencer
 
 
 
-
+	// TODO: start/stop; on/off
+	// TODO: change to use AlsaSeq.Event directely
 	private class MasterSynchronizer
 		extends	Thread
 	{
 		public MasterSynchronizer()
 		{
-			setPriority(10);
+			// setPriority(10);
 		}
 
 
@@ -699,7 +815,7 @@ public class AlsaSequencer
 			long	lTickStep = getSequence().getResolution() / 24;
 			for (long lTick = 0; lTick < lTickMax; lTick += lTickStep)
 			{
-				TDebug.out("MasterSynchronizer.run(): enqueueing clock message with tick " + lTick);
+				// TDebug.out("MasterSynchronizer.run(): enqueueing clock message with tick " + lTick);
 				enqueueMessage(CLOCK_MESSAGE, lTick);
 			}
 		}
