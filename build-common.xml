@@ -33,6 +33,7 @@
 			srcFile="version" />
   <property name="plugins"  value="tritonus_share-${version}.jar tritonus_remaining-${version}.jar tritonus_gsm-${version}.jar tritonus_javasequencer-${version}.jar tritonus_src-${version}.jar tritonus_aos-${version}.jar tritonus_vorbis-${version}.jar tritonus_jorbis-${version}.jar tritonus_dsp-${version}.jar tritonus_mp3-${version}.jar" />
   <!--property name="plugins"  value="../../javalayer/dist/javalayer.jar" /-->
+  <property name="plugins-bin"  value="tritonus-vorbis-linux-${version}.zip" />
 </target>
 
 
@@ -324,6 +325,17 @@
 </target>
 
 
+<target name="plugins-bin-upload"
+		depends="dist-vorbis">
+  <exec
+		dir="${dist}"
+		executable="scp"
+		output="upload.log" >
+	<arg line="-p ${plugins-bin} www.tritonus.org:vtritonus/htdocs/" />
+  </exec>
+</target>
+
+
 
   <!-- for saol -->
 <target name="compile-saol" depends="prepare">
@@ -406,4 +418,14 @@
   <exec executable="etags">
     <arg line="-o ${src}/TAGS ${src.files.expanded}" />
   </exec>
+</target>
+
+
+<target name="dist-vorbis" depends="dist-common"
+		description="Create binary distribution for vorbis codec">
+  <zip destfile="${dist}/tritonus-vorbis-linux-${version}.zip">
+	<zipfileset dir="${dist}" includes="tritonus_vorbis-${version}.jar,tritonus_share-${version}.jar" prefix="tritonus-vorbis-${version}"/>
+	<zipfileset dir="doc/bindists/vorbis" includes="readme.txt" prefix="tritonus-vorbis-${version}"/>
+	<zipfileset dir="src/lib/vorbis" includes="libtritonusvorbis.so" prefix="tritonus-vorbis-${version}"/>
+	</zip>
 </target>
