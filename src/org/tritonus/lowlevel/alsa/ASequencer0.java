@@ -378,15 +378,7 @@ public class ASequencer0
 
 	static
 	{
-		if (TDebug.TraceAlsaNative)
-		{
-			TDebug.out("ASequencer0.<clinit>(): loading native library tritonusalsa");
-		}
-		System.loadLibrary("tritonusalsa");
-		if (TDebug.TraceAlsaNative)
-		{
-			TDebug.out("ASequencer0.<clinit>(): loaded");
-		}
+		Alsa.loadNativeLibrary();
 		if (TDebug.TraceAlsaSeqNative)
 		{
 			setTrace(true);
