@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,10 @@
 
 package	javax.sound.sampled;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 
 
 public class AudioFileFormat
@@ -33,32 +37,63 @@ public class AudioFileFormat
 
 	private Type			m_type;
 	private AudioFormat		m_audioFormat;
-	private int			m_nLengthInFrames;
-	private int			m_nLengthInBytes;
+	private int				m_nLengthInFrames;
+	private int				m_nLengthInBytes;
+
+	private Map<String, Object>	m_properties;
+	private Map<String, Object>	m_unmodifiableProperties;
+
+
+	public AudioFileFormat(Type type,
+						   AudioFormat audioFormat,
+						   int nLengthInFrames)
+	{
+		this(type,
+		     audioFormat,
+		     nLengthInFrames,
+			 null);
+	}
 
 
 
 	public AudioFileFormat(Type type,
-			       AudioFormat audioFormat,
-			       int nLengthInFrames)
+						   AudioFormat audioFormat,
+						   int nLengthInFrames,
+						   Map<String, Object> properties)
 	{
 		this(type,
 		     AudioSystem.NOT_SPECIFIED,
 		     audioFormat,
 		     nLengthInFrames);
+		initProperties(properties);
 	}
 
 
 
 	protected AudioFileFormat(Type type,
-				  int nLengthInBytes,
-				  AudioFormat audioFormat,
-				  int nLengthInFrames)
+							  int nLengthInBytes,
+							  AudioFormat audioFormat,
+							  int nLengthInFrames)
 	{
 		m_type = type;
 		m_audioFormat = audioFormat;
 		m_nLengthInFrames = nLengthInFrames;
 		m_nLengthInBytes = nLengthInBytes;
+		initProperties(null);
+	}
+
+
+	private void initProperties(Map<String, Object> properties)
+	{
+		/* Here, we make a shallow copy of the map. It's unclear if this
+		   is sufficient (or if a deep copy should be made).
+		*/
+		m_properties = new HashMap<String, Object>();
+		if (properties != null)
+		{
+			m_properties.putAll(properties);
+		}
+		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
 	}
 
 
@@ -91,7 +126,6 @@ public class AudioFileFormat
 	}
 
 
-
 	// IDEA: output "not specified" of length == AudioSystem.NOT_SPECIFIED
 	public String toString()
 	{
@@ -103,6 +137,25 @@ public class AudioFileFormat
 	}
 
 
+
+	public Map<String, Object> properties()
+	{
+		return m_unmodifiableProperties;
+	}
+
+
+
+	public Object getProperty(String key)
+	{
+		return m_properties.get(key);
+	}
+
+
+
+	protected void setProperty(String key, Object value)
+	{
+		m_properties.put(key, value);
+	}
 
 
 
