@@ -35,7 +35,6 @@ public class JavaSequencer
 	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
 	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
 
-	// private Receiver	m_receiver;
 	private Thread		m_thread;
 	private long		m_lMicroSecondsPerTick;
 
@@ -138,7 +137,7 @@ public class JavaSequencer
 				anTrackPositions[i] = 0;
 			}
 			//NOTE: all time calculations are done in microseconds
-			long	lStartTime = System.currentTimeMillis() * 1000;
+			long	lStartTime = getTimeInMicroseconds();
 			// Track	track = getSequence().getTracks()[0];
 			// int	nIndex = 0;
 			// ByteArrayOutputStream	baos = new ByteArrayOutputStream();
@@ -242,7 +241,7 @@ public class JavaSequencer
 	private void deliverEvent(MidiMessage message, long lScheduledTime)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.deliverEvent(): begin"); }
-		while (System.currentTimeMillis() * 1000 < lScheduledTime)
+		while (getTimeInMicroseconds() < lScheduledTime)
 		{
 			try
 			{
@@ -354,6 +353,21 @@ public class JavaSequencer
 		int	nResolution = getResolution();
 		m_lMicroSecondsPerTick = (long) fMPQ / nResolution;
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.setTempoImpl(): end"); }
+	}
+
+
+
+	/**	Retrieve system time in microseconds.
+		Defaults to retrieving the time by calling
+		System.currentTimeMillis().
+		Override this method if you want to use a different
+		time base.
+
+		@returns the system time in microseconds
+	 */
+	protected long getTimeInMicroseconds()
+	{
+		return System.currentTimeMillis() * 1000;
 	}
 }
 
