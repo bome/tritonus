@@ -1,14 +1,10 @@
 Makefile
-javax
-org
-javazoom
-com
 config.status
 config.log
-config.cache
 configure
 *.jar
 dist
 build
 ChangeLog
 *.log
+autom4te.cache

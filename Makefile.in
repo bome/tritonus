@@ -355,6 +355,9 @@ install-link: all
 		(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$$l $$l) ; done
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install-link; done
 
+# TODO: install-link-usc
+#links /usr/share/common/tritonus_*.jar to build version; links .../jre/lib/ext/... to /u/s/j
+
 .PHONY: uninstall
 uninstall:
 	@for l in $(LIBS) ; do \
