@@ -8,6 +8,7 @@ package	org.tritonus.midi.device.java;
 import	java.io.ByteArrayOutputStream;
 import	java.io.InputStream;
 import	java.io.IOException;
+import	java.util.Arrays;
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiEvent;
@@ -31,7 +32,10 @@ public class JavaSequencer
 	extends		TSequencer
 	implements	Runnable
 {
-	private Receiver	m_receiver;
+	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
+	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
+
+	// private Receiver	m_receiver;
 	private Thread		m_thread;
 	private long		m_lMicroSecondsPerTick;
 
@@ -39,7 +43,9 @@ public class JavaSequencer
 
 	public JavaSequencer(MidiDevice.Info info)
 	{
-		super(info);
+		super(info,
+		      Arrays.asList(MASTER_SYNC_MODES),
+		      Arrays.asList(SLAVE_SYNC_MODES));
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.<init>(): begin"); }
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.<init>(): end"); }
 	}
@@ -300,46 +306,16 @@ public class JavaSequencer
 	}
 
 
-	public Sequencer.SyncMode[] getSlaveSyncModes()
+	protected void setMasterSyncModeImpl(SyncMode syncMode)
 	{
 		// TODO:
-		return null;
 	}
 
 
 
-	public void setSlaveSyncMode(Sequencer.SyncMode mode)
-	{
-	}
-
-
-
-	public Sequencer.SyncMode getSlaveSyncMode()
+	protected void setSlaveSyncModeImpl(SyncMode syncMode)
 	{
 		// TODO:
-		return null;
-	}
-
-
-
-	public Sequencer.SyncMode[] getMasterSyncModes()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
-	public void setMasterSyncMode(Sequencer.SyncMode mode)
-	{
-	}
-
-
-
-	public Sequencer.SyncMode getMasterSyncMode()
-	{
-		// TODO:
-		return null;
 	}
 
 

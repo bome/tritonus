@@ -25,6 +25,9 @@
 
 package	org.tritonus.midi.device.alsa;
 
+
+import	java.util.Arrays;
+
 import	javax.sound.midi.InvalidMidiDataException;
 import	javax.sound.midi.Sequence;
 import	javax.sound.midi.Sequencer;
@@ -49,8 +52,11 @@ public class AlsaSequencer
 	extends		TSequencer
 	implements	AlsaMidiIn.AlsaMidiInListener
 {
-	private AlsaSeq	m_controlAlsaSeq;
-	private AlsaSeq	m_dataAlsaSeq;
+	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
+	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
+
+	private AlsaSeq		m_controlAlsaSeq;
+	private AlsaSeq		m_dataAlsaSeq;
 	private int		m_nControlClient;
 	private int		m_nDataClient;
 	private int		m_nControlPort;
@@ -64,7 +70,9 @@ public class AlsaSequencer
 
 	public AlsaSequencer(MidiDevice.Info info)
 	{
-		super(info);
+		super(info,
+		      Arrays.asList(MASTER_SYNC_MODES),
+		      Arrays.asList(SLAVE_SYNC_MODES));
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.<init>(): begin"); }
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.<init>(): end"); }
 	}
@@ -327,50 +335,17 @@ public class AlsaSequencer
 
 
 
-	public Sequencer.SyncMode getMasterSyncMode()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
-	public void setMasterSyncMode(Sequencer.SyncMode syncMode)
+	protected void setMasterSyncModeImpl(SyncMode syncMode)
 	{
 		// TODO:
 	}
 
 
 
-	public Sequencer.SyncMode[] getMasterSyncModes()
-	{
-		// TODO:
-		return new Sequencer.SyncMode[0];
-	}
-
-
-
-	public Sequencer.SyncMode getSlaveSyncMode()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
-	public void setSlaveSyncMode(Sequencer.SyncMode syncMode)
+	protected void setSlaveSyncModeImpl(SyncMode syncMode)
 	{
 		// TODO:
 	}
-
-
-	public Sequencer.SyncMode[] getSlaveSyncModes()
-	{
-		// TODO:
-		return new Sequencer.SyncMode[0];
-	}
-
-
 
 
 

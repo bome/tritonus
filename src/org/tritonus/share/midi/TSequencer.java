@@ -28,8 +28,9 @@ package	org.tritonus.share.midi;
 import	java.io.InputStream;
 import	java.io.IOException;
 
-import	java.util.Set;
+import	java.util.Collection;
 import	java.util.Iterator;
+import	java.util.Set;
 
 import	javax.sound.midi.MidiSystem;
 import	javax.sound.midi.Sequencer;
@@ -77,9 +78,15 @@ public abstract class TSequencer
 
 	private float		m_fNominalTempoInMPQ;
 	private float		m_fTempoFactor;
+	private Collection	m_masterSyncModes;
+	private Collection	m_slaveSyncModes;
+	private SyncMode	m_masterSyncMode;
+	private SyncMode	m_slaveSyncMode;
 
 
-	protected TSequencer(MidiDevice.Info info)
+	protected TSequencer(MidiDevice.Info info,
+			     Collection masterSyncModes,
+			     Collection slaveSyncModes)
 	{
 		super(info);
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): begin"); }
@@ -87,8 +94,18 @@ public abstract class TSequencer
 		m_sequence = null;
 		m_metaListeners = new ArraySet();
 		m_aControllerListeners = new Set[128];
-		setTempoFactor(1.0F);
 		setTempoInMPQ(500000);
+		setTempoFactor(1.0F);
+		m_masterSyncModes = masterSyncModes;
+		m_slaveSyncModes = slaveSyncModes;
+		if (getMasterSyncModes().length > 0)
+		{
+			m_masterSyncMode = getMasterSyncModes()[0];
+		}
+		if (getSlaveSyncModes().length > 0)
+		{
+			m_slaveSyncMode = getSlaveSyncModes()[0];
+		}
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): end"); }
 	}
 
@@ -506,6 +523,80 @@ public abstract class TSequencer
 			sendControllerEvent((ShortMessage) message);
 		}
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.sendToListeners(): end"); }
+	}
+
+
+
+	public SyncMode getMasterSyncMode()
+	{
+		return m_masterSyncMode;
+	}
+
+
+
+	public void setMasterSyncMode(SyncMode syncMode)
+	{
+		if (m_masterSyncModes.contains(syncMode))
+		{
+			m_masterSyncMode = syncMode;
+			setMasterSyncModeImpl(syncMode);
+		}
+		else
+		{
+			throw new IllegalArgumentException("sync mode not allowed: " + syncMode);
+		}
+	}
+
+
+
+	protected void setMasterSyncModeImpl(SyncMode syncMode)
+	{
+		// TODO:
+	}
+
+
+
+	public SyncMode[] getMasterSyncModes()
+	{
+		SyncMode[]	syncModes = (SyncMode[]) m_masterSyncModes.toArray();
+		return syncModes;
+	}
+
+
+
+	public SyncMode getSlaveSyncMode()
+	{
+		return m_slaveSyncMode;
+	}
+
+
+
+	public void setSlaveSyncMode(SyncMode syncMode)
+	{
+		if (m_slaveSyncModes.contains(syncMode))
+		{
+			m_slaveSyncMode = syncMode;
+			setSlaveSyncModeImpl(syncMode);
+		}
+		else
+		{
+			throw new IllegalArgumentException("sync mode not allowed: " + syncMode);
+		}
+	}
+
+
+
+	protected void setSlaveSyncModeImpl(SyncMode syncMode)
+	{
+		// TODO:
+	}
+
+
+
+	public SyncMode[] getSlaveSyncModes()
+	{
+		SyncMode[]	syncModes = (SyncMode[]) m_slaveSyncModes.toArray();
+		return syncModes;
 	}
 }
 
