@@ -100,7 +100,7 @@ final public class MshEventConverter {
 			// these should not occur in a ShortMessage
 			// Hey, system realtime are short messages!
 		default:
-			TDebug.out("MshMidiOut.decodeShortMessage(): UNKNOWN EVENT TYPE!");
+			TDebug.out("MshEventConverter.decodeShortMessage(): UNKNOWN EVENT TYPE!");
 			return 0;
 		}
 	}
@@ -143,7 +143,7 @@ final public class MshEventConverter {
 				return  makeKeySignEvent(lTick,abMessageData);
 					
 			default:
-				TDebug.out("MshMidiOut.decodeMetaMessage(): UNKNOWN EVENT TYPE!");
+				TDebug.out("MshEventConverter.decodeMetaMessage(): UNKNOWN EVENT TYPE!");
 				System.out.println("Length " + message.getLength());
 				return 0;
 		}
@@ -213,6 +213,9 @@ final public class MshEventConverter {
 					return makeTimeSignMessage(event);
 			case Midi.typeKeySign:
 					return makeKeySignMessage(event);
+			case Midi.typeSysEx:
+					return makeSysexMessage(event);
+		
 			default:
 					return null;
 		}
@@ -391,13 +394,16 @@ final public class MshEventConverter {
 
 	static private int decodeSysexMessage(SysexMessage event, long lTime)
 	{
-		byte[]	abMessageData = event.getMessage();
+		byte[]	abMessageData = event.getData();
 		int ev = Midi.NewEv(Midi.typeSysEx);
-		 
+		
+		// the last byte of abMessageData is 0xF7, it should not be put in the MidiShare event
+	
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTime);
-		 	for (int i = 0; i < abMessageData.length; i++) {Midi.AddField(ev,abMessageData[i]);}
-		 	if (Midi.CountFields(ev) != abMessageData.length) { // check event
+		 	for (int i = 0; i < abMessageData.length-1; i++) {Midi.AddField(ev,abMessageData[i]);}
+		 	
+		 	if (Midi.CountFields(ev) != abMessageData.length-1) { // check event
 		 		Midi.FreeEv(ev);
 		 		ev = 0;
 		 	}
@@ -405,6 +411,22 @@ final public class MshEventConverter {
 		 return ev;	
 	}
 	
+	
+	static private MidiMessage makeSysexMessage(int ev) throws	InvalidMidiDataException
+	{
+		int n = Midi.CountFields(ev);
+		byte[] abMessageData = new byte[n+1];
+		SysexMessage sysexMessage = new SysexMessage();
+		
+		for (int i = 0; i < n; i++) {abMessageData[i] = (byte)Midi.GetField(ev,i);}
+		
+		// the last byte of abMessageData must be 0xF7
+		
+		abMessageData[n] =  (byte)0xF7;
+		sysexMessage.setMessage(0xF0,abMessageData, abMessageData.length);
+		return  sysexMessage;
+	}
+		
 	//------------------------
 	// Meta events (MIDIFiles)
 	//------------------------
