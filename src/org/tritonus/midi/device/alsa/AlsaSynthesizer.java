@@ -43,7 +43,6 @@ import	javax.sound.midi.Soundbank;
 import	javax.sound.midi.VoiceStatus;
 import	javax.sound.midi.Patch;
 
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.GlobalInfo;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.midi.TMidiDevice;
@@ -56,12 +55,14 @@ public class AlsaSynthesizer
 	implements	Synthesizer
 {
 	private static final MidiChannel[]	EMPTY_MIDICHANNEL_ARRAY = new MidiChannel[0];
+	private static final VoiceStatus[]	EMPTY_VOICESTATUS_ARRAY = new VoiceStatus[0];
 
 	private List		m_channels;
+	private int		m_nVoices;
 
 
 
-	public AlsaSynthesizer(int nClient, int nPort)
+	public AlsaSynthesizer(int nClient, int nPort, int nVoices)
 	{
 		super(
 			new TMidiDevice.Info(
@@ -70,6 +71,7 @@ public class AlsaSynthesizer
 				"Synthesizer based on the ALSA sequencer",
 				GlobalInfo.getVersion()),
 			nClient, nPort, false, true);
+		m_nVoices = nVoices;
 		m_channels = new ArrayList();
 	}
 
@@ -112,7 +114,7 @@ public class AlsaSynthesizer
 
 	public int getMaxPolyphony()
 	{
-		return 62;
+		return m_nVoices;
 	}
 
 
@@ -134,7 +136,7 @@ public class AlsaSynthesizer
 
 	public VoiceStatus[] getVoiceStatus()
 	{
-		return null;
+		return EMPTY_VOICESTATUS_ARRAY;
 	}
 
 
