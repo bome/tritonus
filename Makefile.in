@@ -148,6 +148,9 @@ $(LIBDEST_JL):	$(OBJ)
 	cp src/javazoom/jl/decoder/*.ser javazoom/jl/decoder/
 	jar cf $(LIBDEST_JL) $(PACKSRCDIR_JL)
 
+#$(LIBDEST_JL):	../javalayer/$(LIBDEST_JL)
+#	cp ../javalayer/$(LIBDEST_JL) .
+
 .PHONY: mp3jars
 mp3jars:	all
 	mkdir -p META-INF/services

@@ -81,7 +81,14 @@ public abstract class MidiMessage
 	{
 		if (m_abData != null)
 		{
-			return m_abData[0];
+			if (m_abData[0] < 0)
+			{
+				return (int) m_abData[0] + 256;
+			}
+			else
+			{
+				return m_abData[0];
+			}
 		}
 		else
 		{

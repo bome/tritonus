@@ -472,6 +472,12 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 		(*env)->DeleteGlobalRef(env, objectRef);
 		break;
 
+	case SND_SEQ_EVENT_SYSEX:
+	case SND_SEQ_EVENT_BOUNCE:
+	case SND_SEQ_EVENT_USR_VAR0:
+	case SND_SEQ_EVENT_USR_VAR1:
+	case SND_SEQ_EVENT_USR_VAR2:
+	case SND_SEQ_EVENT_USR_VAR3:
 	case SND_SEQ_EVENT_USR_VAR4:
 	{
 		jbyteArray	abData;
@@ -487,8 +493,8 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 			throwRuntimeException(env, "array does not have enough elements (1 required)");
 		}
 		(*env)->SetObjectArrayElement(env, aObjValues, 0, abData);
-		break;
 	}
+	break;
 	}
 
 

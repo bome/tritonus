@@ -427,7 +427,8 @@ public class AlsaMidiOut
 			n = 1;
 			abMessageData[0] = (byte) message.getStatus();
 		}
-		System.arraycopy(message.getMessage(), n, abMessageData, 1, message.getLength() - n);
+		byte[]	abData = message.getData();
+		System.arraycopy(abData, n, abMessageData, 1, abData.length);
 		sendSysexEvent(lTick, abMessageData, abMessageData.length);
 	}
 

@@ -26,7 +26,184 @@
 package	javax.sound.midi;
 
 
+/**	Holds the data of a MIDI System Exclusive event.
+ *	Sysex event are tricking me over and over again. I give my
+ *	understanding of the expected behaviour for
+ *	review:
+ *
+ *	
+      <table bgcolor="aqua">
+	<tr>
+	  <td>
 
+	    <p align="center">
+	      <strong></strong>
+	    </p>
+	  </td>
+
+	  <td>
+	    <p align="center">
+	      <strong>Sysex (F0)</strong>
+	    </p>
+	  </td>
+
+	  <td>
+	    <p align="center">
+	      <strong>special sysex (F7)</strong>
+	    </p>
+	  </td>
+
+
+	</tr>
+	<tr valign="top">
+	  <td valign="center">
+	    <p align="center">
+	      0.2
+	    </p>
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>Java Sound 1.0 API</li>
+	      <li>reading and writing of .au, .aiff and .wav files</li>
+	      <li>basic playback and recording</li>
+	      <li>Alaw and mu-law converter</li>
+	      <li>Java MP3 decoder</li>
+	    </ul>
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>Java Sound 1.0 API</li>
+	      <li>reading of MIDI files</li>
+	      <li>basic Sequencer</li>
+	      <li>basic hardware Synthesizer support</li>
+	      <li>external MIDI I/O</li>
+	    </ul>
+
+	  </td>
+
+	</tr>
+	<tr valign="top">
+
+	  <td valign="center">
+	    <p align="center">
+	      0.3
+	    </p>
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>linear converter</li>
+	      <li>Java EsounD support</li>
+	      <li>Mixer details</li>
+	      <li>Line details</li>
+	      <li>full Clip support</li>
+	      <li>Volume and balance/pan controls</li>
+	    </ul>
+
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>writing of MIDI files</li>
+	      <li>handling of Sysex messages</li>
+	      <li>improved Sequencer</li>
+	      <li>Sequencer and MIDI I/O on Mac</li>
+	    </ul>
+
+	  </td>
+
+
+	</tr>
+	<tr valign="top">
+
+	  <td valign="center">
+	    <p align="center">
+	      0.4
+	    </p>
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>ALSA support (allows hardware mixing)</li>
+	      <li>24 bit/96 kHz throughout the implementation</li>
+	      <li>smart selection of converters</li>
+	      <!--li>native MP3 decoder</li-->
+	      <li>sample rate converter</li>
+	      <li>applet support</li>
+	    </ul>
+
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>full Sequencer</li>
+	      <li>improved hardware Synthesizer support</li>
+	      <li>basic software Synthesizer support</li>
+	    </ul>
+
+	  </td>
+
+	</tr>
+	<tr valign="top">
+
+	  <td valign="center">
+	    <p align="center">
+	      0.5
+	    </p>
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>Ports</li>
+	      <li>digital reading from CD</li>
+	      <li>MP3 encoder</li>
+	      <li>GSM codec</li>
+	    </ul>
+
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>full hardware Synthesizer support</li>
+	      <li>improved software Synthesizer support</li>
+	      <li>Soundbank handling</li>
+	    </ul>
+
+	  </td>
+
+
+	</tr>
+	<tr valign="top">
+
+	  <td valign="center">
+	    <p align="center">
+	      later
+	    </p>
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>AAC decoder and encoder</li>
+	      <li>other codecs</li>
+	    </ul>
+
+	  </td>
+
+	  <td>
+	    <ul>
+	      <li>MPEG-4 structured audio</li>
+	      <li>full software Synthesizer support</li>
+	    </ul>
+
+	  </td>
+
+
+	</tr>
+      </table>
+
+ */
 public class SysexMessage
     extends	MidiMessage
 {
