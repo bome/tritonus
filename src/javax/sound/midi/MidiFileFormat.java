@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,11 @@
  */
 
 
-package	javax.sound.midi;
+package javax.sound.midi;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -38,19 +41,43 @@ public class MidiFileFormat
 	protected int		byteLength;
 	protected long		microsecondLength;
 
+	private Map<String, Object>	m_properties;
+	private Map<String, Object>	m_unmodifiableProperties;
+
 
 
 	public MidiFileFormat(int nType,
-			      float fDivisionType,
-			      int nResolution,
-			      int nByteLength,
-			      long lMicrosecondLength)
+						  float fDivisionType,
+						  int nResolution,
+						  int nByteLength,
+						  long lMicrosecondLength)
 	{
 		type = nType;
 		divisionType = fDivisionType;
 		resolution = nResolution;
 		byteLength = nByteLength;
 		microsecondLength = lMicrosecondLength;
+	}
+
+
+	public MidiFileFormat(int nType,
+						  float fDivisionType,
+						  int nResolution,
+						  int nByteLength,
+						  long lMicrosecondLength,
+						  Map<String, Object> properties)
+	{
+		this(nType,
+			 fDivisionType,
+			 nResolution,
+			 nByteLength,
+			 lMicrosecondLength);
+		/* Here, we make a shallow copy of the map. It's unclear if this
+		   is sufficient (or if a deep copy should be made).
+		*/
+		m_properties = new HashMap<String, Object>();
+		m_properties.putAll(properties);
+		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
 	}
 
 
@@ -85,6 +112,26 @@ public class MidiFileFormat
 	public long getMicrosecondLength()
 	{
 		return microsecondLength;
+	}
+
+
+	public Map properties()
+	{
+		return m_unmodifiableProperties;
+	}
+
+
+
+	public Object getProperty(String key)
+	{
+		return m_properties.get(key);
+	}
+
+
+
+	protected void setProperty(String key, Object value)
+	{
+		m_properties.put(key, value);
 	}
 }
 
