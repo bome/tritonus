@@ -478,12 +478,12 @@ public class MpegFormatConversionProvider
 					{
 						TDebug.out("header is null (end of mpeg stream)");
 					}
-					m_circularBuffer.close();
+					getCircularBuffer().close();
 					return;
 				}
 				Obuffer	decoderOutput = m_decoder.decodeFrame(header, m_bitstream);
 				m_bitstream.closeFrame();
-				m_circularBuffer.write(m_oBuffer.getBuffer(), 0, m_oBuffer.getCurrentBufferSize());
+				getCircularBuffer().write(m_oBuffer.getBuffer(), 0, m_oBuffer.getCurrentBufferSize());
 				m_oBuffer.reset();
 			}
 			catch (BitstreamException e)
