@@ -143,6 +143,10 @@ public class TDebug
 		{
 			strValue = System.getProperty(strPropertyName, "false");
 		}
+		/*
+		  It is important here to catch exceptions because in applets,
+		  the above statement may produce an AccessControlException.
+		 */
 		catch (Exception e)
 		{
 			if (SHOW_ACCESS_CONTROL_EXCEPTIONS)
