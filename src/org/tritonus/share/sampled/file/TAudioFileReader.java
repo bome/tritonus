@@ -6,7 +6,6 @@
  *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -20,10 +19,7 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
-
 
 package	org.tritonus.share.sampled.file;
 
@@ -49,129 +45,246 @@ import	org.tritonus.share.TDebug;
 
 
 
-/**
- * Base class for audio file readers.
- *
- * @author Matthias Pfisterer
- */
+/**	Base class for audio file readers.
+	This is Tritonus' base class for classes that provide the facility
+	of detecting an audio file type and reading its header.
+	Classes should be derived from this class or one of its subclasses
+	rather than from javax.sound.sampled.spi.AudioFileReader.
+
+	@author Matthias Pfisterer
+	@author Florian Bomers
+*/
 public abstract class TAudioFileReader
 	extends	AudioFileReader
 {
-	//$$fb I choose this method of telling inheriting classes
-	// the length of the file - if the inputstream originates
-	// from a file.
-	// This is useful for streamed formats and AudioFileWriter
-	// that are not capable of backpatching (like Sun JDK1.3 wave writer)
-	// $$mp This construct is not thread safe!! With the Sun jdk1.3,
-	// the problem doesn't occur because it instantiates new
-	// AudioFileReaders for each reading. Once this is optimized as in
-	// Tritonus, race conditions will happen.
-	private long m_fileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+	/**	Get an AudioFileFormat object for a File.
+		This method calls getAudioFileFormat(InputStream, long).
+		Subclasses should not override this method unless there are
+		really severe reasons. Normally, it is sufficient to
+		implement getAudioFileFormat(InputStream, long).
 
-
-
+		@param file	the file to read from.
+		@return	an AudioFileFormat instance containing
+		information from the header of the file passed in.
+	*/
 	public AudioFileFormat getAudioFileFormat(File file)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		m_fileLengthInBytes = file.length();
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(File): begin"); }
+		long	lFileLengthInBytes = file.length();
 		InputStream	inputStream = new FileInputStream(file);
+		AudioFileFormat	audioFileFormat = null;
 		try
 		{
-			return getAudioFileFormat(inputStream);
+			audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
 		}
 		finally
 		{
 			inputStream.close();
 		}
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(File): end"); }
+		return audioFileFormat;
 	}
 
 
 
+	/**	Get an AudioFileFormat object for a URL.
+		This method calls getAudioFileFormat(InputStream, long).
+		Subclasses should not override this method unless there are
+		really severe reasons. Normally, it is sufficient to
+		implement getAudioFileFormat(InputStream, long).
+
+		@param url	the URL to read from.
+		@return	an AudioFileFormat instance containing
+		information from the header of the URL passed in.
+	*/
 	public AudioFileFormat getAudioFileFormat(URL url)
 		throws	UnsupportedAudioFileException, IOException
 
 	{
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(URL): begin"); }
+		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
 		InputStream	inputStream = url.openStream();
+		AudioFileFormat	audioFileFormat = null;
 		try
 		{
-			return getAudioFileFormat(inputStream);
+			audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
 		}
 		finally
 		{
 			inputStream.close();
 		}
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(URL): end"); }
+		return audioFileFormat;
 	}
 
 
 
+	/**	Get an AudioFileFormat object for an InputStream.
+		This method calls getAudioFileFormat(InputStream, long).
+		Subclasses should not override this method unless there are
+		really severe reasons. Normally, it is sufficient to
+		implement getAudioFileFormat(InputStream, long).
+
+		@param inputStream	the stream to read from.
+		@return	an AudioFileFormat instance containing
+		information from the header of the stream passed in.
+	*/
+	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
+		throws	UnsupportedAudioFileException, IOException
+
+	{
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): begin"); }
+		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): end"); }
+		return audioFileFormat;
+	}
+
+
+
+	/**	Get an AudioFileFormat (internal implementation).
+		Subclasses must implement this method in a way specific
+		to the file format they handle.
+
+		Note that depending on the implementation of this method,
+		you should or should not override
+		getAudioInputStream(InputStream, long), too (see comment
+		there).
+
+		@param inputStream	The InputStream to read from.
+		@param lFileLengthInBytes	The size of the originating
+		file, if known. If it isn't known, AudioSystem.NOT_SPECIFIED
+		should be passed. This value may be used for byteLength in
+		AudioFileFormat, if this value can't be derived from the
+		informmation in the file header.
+
+		@return	an AudioFileFormat instance containing
+		information from the header of the stream passed in as
+		inputStream.
+	*/
+	protected abstract AudioFileFormat getAudioFileFormat(
+		InputStream inputStream,
+		long lFileLengthInBytes)
+		throws	UnsupportedAudioFileException, IOException;
+
+
+
+	/**	Get an AudioInputStream object for a file.
+		This method calls getAudioInputStream(InputStream, long).
+		Subclasses should not override this method unless there are
+		really severe reasons. Normally, it is sufficient to
+		implement getAudioFileFormat(InputStream, long) and perhaps
+		override getAudioInputStream(InputStream, long).
+
+		@param file	the File object to read from.
+		@return	an AudioInputStream instance containing
+		the audio data from this file.
+	*/
 	public AudioInputStream getAudioInputStream(File file)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		m_fileLengthInBytes=file.length();
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(File): begin"); }
+		long	lFileLengthInBytes = file.length();
 		InputStream	inputStream = new FileInputStream(file);
+		AudioInputStream	audioInputStream = null;
 		try
 		{
-			return getAudioInputStream(inputStream);
+			audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
 		}
-		catch (UnsupportedAudioFileException e)
+		finally
 		{
-			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			inputStream.close();
-			throw e;
 		}
-		catch (IOException e)
-		{
-			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-			inputStream.close();
-			throw e;
-		}
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(File): end"); }
+		return audioInputStream;
 	}
 
 
 
+	/**	Get an AudioInputStream object for a URL.
+		This method calls getAudioInputStream(InputStream, long).
+		Subclasses should not override this method unless there are
+		really severe reasons. Normally, it is sufficient to
+		implement getAudioFileFormat(InputStream, long) and perhaps
+		override getAudioInputStream(InputStream, long).
+
+		@param url	the URL to read from.
+		@return	an AudioInputStream instance containing
+		the audio data from this URL.
+	*/
 	public AudioInputStream getAudioInputStream(URL url)
 		throws	UnsupportedAudioFileException, IOException
 	{
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): begin"); }
+		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
 		InputStream	inputStream = url.openStream();
+		AudioInputStream	audioInputStream = null;
 		try
 		{
-			return getAudioInputStream(inputStream);
+			audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
 		}
-		catch (UnsupportedAudioFileException e)
+		finally
 		{
-			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			inputStream.close();
-			throw e;
 		}
-		catch (IOException e)
-		{
-			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-			inputStream.close();
-			throw e;
-		}
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): end"); }
+		return audioInputStream;
 	}
 
 
 
+	/**	Get an AudioInputStream object for an InputStream.
+		This method calls getAudioInputStream(InputStream, long).
+		Subclasses should not override this method unless there are
+		really severe reasons. Normally, it is sufficient to
+		implement getAudioFileFormat(InputStream, long) and perhaps
+		override getAudioInputStream(InputStream, long).
+
+		@param inputStream	the stream to read from.
+		@return	an AudioInputStream instance containing
+		the audio data from this stream.
+	*/
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream);
-		return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): begin"); }
+		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+		AudioInputStream	audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): end"); }
+		return audioInputStream;
 	}
 
 
 
-	/**
-	 * If the InputStream that is passed to getAudioFileFormat
-	 * originates from a file, the file size is returned.
-	 * Otherwise, AudioSystem.NOT_SPECIFIED is returned.
-	 */
-	protected long getFileLengthInBytes()
+	/**	Get an AudioInputStream (internal implementation).
+		This implementation calls getAudioFileFormat() with the
+		same arguments as passed in here. Then, it constructs
+		an AudioInputStream instance. This instance takes the passed
+		inputStream in the state it is left after getAudioFileFormat()
+		did its work. In other words, the implementation here
+		assumes that getAudioFileFormat() reads the entire header
+		up to a position exactely where the audio data starts.
+		If this can't be realized for a certain format, this method
+		should be overridden.
+
+		@param inputStream	The InputStream to read from.
+		@param lFileLengthInBytes	The size of the originating
+		file, if known. If it isn't known, AudioSystem.NOT_SPECIFIED
+		should be passed. This value may be used for byteLength in
+		AudioFileFormat, if this value can't be derived from the
+		informmation in the file header.
+	*/
+	protected AudioInputStream getAudioInputStream(InputStream inputStream, long lFileLengthInBytes)
+		throws	UnsupportedAudioFileException, IOException
 	{
-		return m_fileLengthInBytes;
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin"); }
+		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
+		AudioInputStream	audioInputStream = new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): end"); }
+		return audioInputStream;
 	}
-	
+
 
 
 	public static int readLittleEndianInt(InputStream is)
@@ -275,8 +388,6 @@ public abstract class TAudioFileReader
 		}
 		return f;
 	}
-	
-	
 }
 
 
