@@ -169,7 +169,7 @@ $(LIBDEST_JL):	$(OBJ)
 .PHONY: mp3jars
 mp3jars:	all
 	mkdir -p META-INF/services
-	cp src/META-INF/Services/* META-INF/services/
+	cp src/META-INF/Services/javax.* META-INF/services/
 	jar cf mp3.jar org/tritonus javazoom META-INF/
 
 .PHONY: mp3sp
