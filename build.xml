@@ -2,6 +2,15 @@
 <project name="tritonus" default="dist" basedir=".">
   <!--taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"/-->
 
+  <!--
+    If you don't have aspectj and its ant task,
+    comment out the following taskdef.
+  -->
+  <taskdef name="ajc"
+    classname="org.aspectj.tools.ant.taskdefs.Ajc" >
+ </taskdef>
+
+
   <target name="init">
     <tstamp/>
     <property name="src" value="${basedir}/src" />
@@ -332,8 +341,8 @@
 
 
 
-    <!-- for jsr-135 -->
-  <target name="compile-mmapi" depends="prepare">
+  <!-- for MMAPI (jsr-135) -->
+  <target name="compile-mmapi-release" depends="prepare">
     <javac srcdir="${src}/classes"
 	   depend="yes"
 	   destdir="${build}"
@@ -341,8 +350,27 @@
 	   excludes="org/tritonus/whatever" />
   </target>
 
+  <target name="compile-mmapi-debug" depends="prepare">
+<!-- TODO: use ajc -->
+    <ajc srcdir="${src}/classes"
+	   destdir="${build}"
+	   includes="javax/microedition/media/,org/tritonus/mmapi/"
+	   excludes="org/tritonus/whatever" />
+  </target>
+
   <target name="dist-mmapi"
-	  depends="compile-mmapi" >
+	  depends="dist-mmapi-debug" >
+  </target>
+
+  <target name="dist-mmapi-release"
+	  depends="compile-mmapi-release,do-dist-mmapi" >
+  </target>
+
+  <target name="dist-mmapi-debug"
+	  depends="compile-mmapi-debug,do-dist-mmapi" >
+  </target>
+
+  <target name="do-dist-mmapi" >
 
     <jar jarfile="${dist}/tritonus_mmapi.jar">
       <fileset dir="${build}">
@@ -373,7 +401,6 @@
 
     <jar jarfile="${dist}/saol.jar">
       <fileset dir="${build}">
-	<!--include name="javax/microedition/media/" /-->
 	<include name="org/tritonus/saol/" />
       </fileset>
       <fileset dir="${src.classes}">
