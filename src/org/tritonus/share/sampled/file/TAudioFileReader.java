@@ -62,12 +62,18 @@ public abstract class TAudioFileReader
 	// from a file.
 	// This is useful for streamed formats and AudioFileWriter
 	// that are not capable of backpatching (like Sun JDK1.3 wave writer)
-	private long m_fileLengthInBytes=AudioSystem.NOT_SPECIFIED;
-	
+	// $$mp This construct is not thread safe!! With the Sun jdk1.3,
+	// the problem doesn't occur because it instantiates new
+	// AudioFileReaders for each reading. Once this is optimized as in
+	// Tritonus, race conditions will happen.
+	private long m_fileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+
+
+
 	public AudioFileFormat getAudioFileFormat(File file)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		m_fileLengthInBytes=file.length();
+		m_fileLengthInBytes = file.length();
 		InputStream	inputStream = new FileInputStream(file);
 		try
 		{
@@ -109,19 +115,13 @@ public abstract class TAudioFileReader
 		}
 		catch (UnsupportedAudioFileException e)
 		{
-			if (TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
+			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			inputStream.close();
 			throw e;
 		}
 		catch (IOException e)
 		{
-			if (TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
+			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			inputStream.close();
 			throw e;
 		}
@@ -139,19 +139,13 @@ public abstract class TAudioFileReader
 		}
 		catch (UnsupportedAudioFileException e)
 		{
-			if (TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
+			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			inputStream.close();
 			throw e;
 		}
 		catch (IOException e)
 		{
-			if (TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
+			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			inputStream.close();
 			throw e;
 		}
@@ -166,12 +160,15 @@ public abstract class TAudioFileReader
 		return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
 	}
 
+
+
 	/**
 	 * If the InputStream that is passed to getAudioFileFormat
 	 * originates from a file, the file size is returned.
 	 * Otherwise, AudioSystem.NOT_SPECIFIED is returned.
 	 */
-	protected long getFileLengthInBytes() {
+	protected long getFileLengthInBytes()
+	{
 		return m_fileLengthInBytes;
 	}
 	
