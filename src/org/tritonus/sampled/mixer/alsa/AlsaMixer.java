@@ -68,47 +68,6 @@ public class AlsaMixer
 	// default buffer size in bytes.
 	private static final int	DEFAULT_BUFFER_SIZE = 32768;
 
-	private static AudioFormat[]	FORMATS =
-	{
-		// hack for testing.
-		// new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 44100/*AudioSystem.NOT_SPECIFIED*/, 8, 1, 1, 44100/*AudioSystem.NOT_SPECIFIED*/, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 11025/*AudioSystem.NOT_SPECIFIED*/, 16, 1, 2, 11025/*AudioSystem.NOT_SPECIFIED*/, false),
-
-		// Formats supported directely by esd.
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
-
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 1, 2, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 2, 4, AudioSystem.NOT_SPECIFIED, false),
-
-		/*
-		 *	Format supported through "simple" conversions.
-		 *	"Simple" conversions are changes in the byte order
-		 *	and changing signed/unsigned for 8 bit.
-		 */
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 1, 2, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 2, 4, AudioSystem.NOT_SPECIFIED, true),
-	};
-
-	private static Line.Info[]	SOURCE_LINE_INFOS =
-	{
-		new DataLine.Info(SourceDataLine.class, FORMATS, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED),
-	};
-
-	private static Line.Info[]	TARGET_LINE_INFOS =
-	{
-		new DataLine.Info(TargetDataLine.class, FORMATS, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED),
-	};
-
 	/*	The name of the sound card this mixer is representing.
 	 */
 	private String	m_strPcmName;
@@ -162,12 +121,7 @@ public class AlsaMixer
 			GlobalInfo.getVendor(),
 			"Mixer for the Advanced Linux Sound Architecture (card " + strPcmName + ")",
 			GlobalInfo.getVersion()),
-		      new Line.Info(Mixer.class),
-		      Arrays.asList(FORMATS),
-		      Arrays.asList(FORMATS),
-		      Arrays.asList(SOURCE_LINE_INFOS),
-		      Arrays.asList(TARGET_LINE_INFOS));
-		// TODO: use setSupportInformation() (after gathering the information from alsa-lib)
+		      new Line.Info(Mixer.class));
 		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.<init>(String): begin."); }
 		m_strPcmName = strPcmName;
 		List	sourceFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_PLAYBACK);
@@ -186,7 +140,10 @@ public class AlsaMixer
 			AudioSystem.NOT_SPECIFIED,
 			AudioSystem.NOT_SPECIFIED);
 		targetLineInfos.add(targetLineInfo);
-		setSupportInformation(sourceFormats, targetFormats, sourceLineInfos, targetLineInfos, new ArrayList());
+		setSupportInformation(sourceFormats,
+				      targetFormats,
+				      sourceLineInfos,
+				      targetLineInfos);
 		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.<init>(String): end."); }
 	}
 
