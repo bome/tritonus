@@ -228,8 +228,20 @@ public class Buffer
 		{
 			return null;
 		}
-		byte[] aBytes = new byte[length];
-		for (int i = 0; i < length; i++)
+		return readString(length);
+	}
+
+
+	/** Reads a UTF-8 coded string without length coding.
+		It is expected that at the current read position,
+		there is string in UTF-8 coding.
+
+		@return the string read from the buffer or null if an error occurs.
+	 */
+	public String readString(int nLength)
+	{
+		byte[] aBytes = new byte[nLength];
+		for (int i = 0; i < nLength; i++)
 		{
 			aBytes[i] = (byte) read(8);
 		}
@@ -247,6 +259,17 @@ public class Buffer
 
 
 	private static native void setTrace(boolean bTrace);
+
+	// for debugging
+	public static void outBuffer(byte[] buffer)
+	{
+		String s = "";
+		for (int i = 0; i < buffer.length; i++)
+		{
+			s += "" + buffer[i] + ", ";
+		}
+		TDebug.out("buffer: " + s);
+	}
 }
 
 

@@ -30,12 +30,14 @@ package org.tritonus.lowlevel.pvorbis;
 
 import org.tritonus.lowlevel.pogg.Ogg;
 import org.tritonus.lowlevel.pogg.Packet;
+import org.tritonus.lowlevel.pogg.Buffer;
 import org.tritonus.share.TDebug;
 
 
 /** Wrapper for vorbis_info.
  */
 public class Info
+implements VorbisConstants
 {
         static
         {
@@ -195,13 +197,83 @@ public class Info
 	 */
 	public int headerIn(Comment comment, Packet packet)
 	{
-		return headerIn_native(comment, packet);
+		if(packet == null)
+		{
+			return OV_EBADHEADER;
+		}
+		Buffer buffer = new Buffer();
+		byte[] abData = packet.getData();
+		//Buffer.outBuffer(abData);
+		buffer.readInit(abData, abData.length);
+
+		/* Which of the three types of header is this? */
+		/* Also verify header-ness, vorbis */
+		int packtype = buffer.read(8);
+		//TDebug.out("packtype: " + packtype);
+		String s = buffer.readString(6);
+		if(! "vorbis".equals(s))
+		{
+			/* not a vorbis header */
+			buffer.free();
+			return OV_ENOTVORBIS;
+		}
+		int r;
+		switch (packtype)
+		{
+		case 0x01: /* least significant *bit* is read first */
+			if(! packet.isBos())
+			{
+				/* Not the initial packet */
+				buffer.free();
+				return OV_EBADHEADER;
+			}
+			if (getRate() != 0)
+			{
+				/* previously initialized info header */
+				buffer.free();
+				return OV_EBADHEADER;
+			}
+			r = headerIn_native(buffer, packtype, packet);
+			buffer.free();
+			return r;
+			//return(_vorbis_unpack_info(vi,&buffer));
+
+		case 0x03: /* least significant *bit* is read first */
+			if (getRate() == 0)
+			{
+				/* um... we didn't get the initial header */
+				buffer.free();
+				return OV_EBADHEADER;
+			}
+			r = comment.unpack(buffer);
+			buffer.free();
+			return r;
+			//return(_vorbis_unpack_comment(vc,&buffer));
+
+		case 0x05: /* least significant *bit* is read first */
+			if (getRate() == 0 || comment.getVendor() == null)
+			{
+				/* um... we didn;t get the initial header or comments yet */
+				buffer.free();
+				return OV_EBADHEADER;
+			}
+			r = headerIn_native(buffer, packtype, packet);
+			buffer.free();
+			return r;
+			//return(_vorbis_unpack_books(vi,&buffer));
+
+		default:
+			/* Not a valid vorbis header type */
+			buffer.free();
+			return OV_EBADHEADER;
+		}
 	}
 
 
 	/** Calls vorbis_synthesis_headerin().
 	 */
-	public native int headerIn_native(Comment comment, Packet packet);
+	public native int headerIn_native(Buffer buffer, int nPacketType,
+									  Packet packet);
 
 
 	private static native void setTrace(boolean bTrace);

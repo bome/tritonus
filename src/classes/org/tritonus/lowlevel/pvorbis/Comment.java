@@ -45,33 +45,11 @@ implements VorbisConstants
 	private String m_vendor;
 	private List<String> m_comments;
 
-	static
-	{
-		Ogg.loadNativeLibrary();
-		if (TDebug.TraceVorbisNative)
-		{
-			setTrace(true);
-		}
-	}
-
-
-	/**
-	 *	Holds the pointer to vorbis_info
-	 *	for the native code.
-	 *	This must be long to be 64bit-clean.
-	 */
-	private long	m_lNativeHandle;
-
 
 
 	public Comment()
 	{
 		if (TDebug.TraceVorbisNative) { TDebug.out("Comment.<init>(): begin"); }
-		int	nReturn = malloc();
-		if (nReturn < 0)
-		{
-			throw new RuntimeException("malloc of vorbis_comment failed");
-		}
 		if (TDebug.TraceVorbisNative) { TDebug.out("Comment.<init>(): end"); }
 	}
 
@@ -86,8 +64,10 @@ implements VorbisConstants
 
 
 
-	private native int malloc();
-	public native void free();
+	// TODO: since this is now a no-op, remove calls to this method.
+ 	public void free()
+	{
+	}
 
 
 	/** Initializes the comment object.
@@ -98,13 +78,8 @@ implements VorbisConstants
 	{
 		m_vendor = null;
 		m_comments = new ArrayList<String>();
-		init_native();
 	}
 
-
-	/** Calls vorbis_comment_init().
-	 */
-	public native void init_native();
 
 
 	/** Adds a comment to the list of comments.
@@ -114,13 +89,8 @@ implements VorbisConstants
 	public void addComment(String strComment)
 	{
 		m_comments.add(strComment);
-		addComment_native(strComment);
 	}
 
-
-	/** Calls vorbis_comment_add().
-	 */
-	public native void addComment_native(String strComment);
 
 
 	/** Adds a comment with a specific tag
@@ -128,113 +98,68 @@ implements VorbisConstants
 	public void addTag(String strTag, String strContents)
 	{
 		addComment(strTag + "=" + strContents);
-		addTag_native(strTag, strContents);
 	}
-
-
-	/** Calls vorbis_comment_add_tag().
-	 */
-	public native void addTag_native(String strTag, String strContents);
 
 
 	/** Calls vorbis_comment_query_count().
 	 */
 	public int queryCount(String strTag)
-{
-	return queryCount_native(strTag);
-}
-/*
-{
-String strFullTag = strTag + "=";
-int nCount = 0;
-for (int i = 0; i < m_comments.size(); i++)
-{
-	if (m_comments.get(i).startsWith(strFullTag))
-{
-nCount++;
-}
-}
-return nCount;
-}
- */
-
-
-	/** Calls vorbis_comment_query_count().
-	 */
-	public native int queryCount_native(String strTag);
+	{
+		String strFullTag = strTag + "=";
+		int nCount = 0;
+		for (int i = 0; i < m_comments.size(); i++)
+		{
+			if (m_comments.get(i).startsWith(strFullTag))
+			{
+				nCount++;
+			}
+		}
+		return nCount;
+	}
 
 
 	/** Calls vorbis_comment_query().
 	 */
 	public String query(String strTag, int nIndex)
 	{
-		return query_native(strTag, nIndex);
+		String strFullTag = strTag + "=";
+		int nCount = 0;
+		for (int i = 0; i < m_comments.size(); i++)
+		{
+			if (i == nIndex)
+			{
+				return m_comments.get(i).substring(strTag.length() + 1);
+			}
+			nCount++;
+		}
+		return null;
 	}
 
-
-/*
-{
-String strFullTag = strTag + "=";
-int nCount = 0;
-for (int i = 0; i < m_comments.size(); i++)
-{
-	if (i == nIndex)
-{
-	return m_comments.get(i).substr(strTag.length() + 1);
-}
-nCount++;
-}
-return null;
-}
- */
-
-
-	/** Calls vorbis_comment_query().
-	 */
-	public native String query_native(String strTag, int nIndex);
 
 
 	/** Accesses user_comments, comment_lengths and comments.
 	 */
 	public String[] getUserComments()
 	{
-		return getUserComments_native();
+		return m_comments.toArray(new String[m_comments.size()]);
 	}
-
-
-	/** Accesses user_comments, comment_lengths and comments.
-	 */
-	public native String[] getUserComments_native();
-
 
 
 	/** Accesses vendor.
 	 */
 	public String getVendor()
 	{
-		// return m_vendor;
-		return getVendor_native();
+		return m_vendor;
 	}
-
-
-	/** Accesses vendor.
-	 */
-	public native String getVendor_native();
 
 
 	/** Calls vorbis_comment_clear().
 	 */
 	public void clear()
 	{
-		// m_comments.clear();
-		// m_vendor = null;
-		clear_native();
+		m_comments.clear();
+		m_vendor = null;
 	}
-
-
-	/** Calls vorbis_comment_clear().
-	 */
-	public native void clear_native();
 
 
 	public int pack(Buffer buffer)
@@ -300,9 +225,6 @@ return null;
 		// everything ok.
 		return 0;
 	}
-
-
-	private static native void setTrace(boolean bTrace);
 }
 
 

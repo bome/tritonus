@@ -36,6 +36,8 @@ getInfoNativeHandle(JNIEnv *env, jobject obj)
         return getHandle(env, obj);
 }
 
+oggpack_buffer*
+getBufferNativeHandle(JNIEnv *env, jobject obj);
 vorbis_comment*
 getCommentNativeHandle(JNIEnv *env, jobject obj);
 ogg_packet*
@@ -211,23 +213,23 @@ Java_org_tritonus_lowlevel_pvorbis_Info_encodeInitVBR_1native
 
 /*
  * Class:     org_tritonus_lowlevel_pvorbis_Info
- * Method:    headerIn_1native
- * Signature: (Lorg/tritonus/lowlevel/vorbis/Comment;Lorg/tritonus/lowlevel/ogg/Packet;)I
+ * Method:    headerIn_native
+ * Signature: (Lorg/tritonus/lowlevel/pogg/Buffer;ILorg/tritonus/lowlevel/pogg/Packet;)I
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_pvorbis_Info_headerIn_1native
-(JNIEnv* env, jobject obj, jobject comment, jobject packet)
+(JNIEnv* env, jobject obj, jobject buffer, jint nPacketType, jobject packet)
 {
 	vorbis_info*	handle;
-	vorbis_comment*	commentHandle;
+	oggpack_buffer*	bufferHandle;
 	ogg_packet*	packetHandle;
 	int		nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_headerIn(): begin\n"); }
 	handle = getHandle(env, obj);
-	commentHandle = getCommentNativeHandle(env, comment);
+	bufferHandle = getBufferNativeHandle(env, buffer);
 	packetHandle = getPacketNativeHandle(env, packet);
-	nReturn = vorbis_synthesis_headerin(handle, commentHandle, packetHandle);
+	nReturn = vorbis_synthesis_headerin(handle, bufferHandle, nPacketType, packetHandle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_Info_headerIn(): end\n"); }
 	return nReturn;
 }

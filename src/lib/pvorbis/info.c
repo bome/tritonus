@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <ogg/ogg.h>
+#include "ogg/ogg.h"
 #include "vorbis/codec.h"
 #include "codec_internal.h"
 #include "codebook.h"
@@ -333,15 +333,17 @@ static int _vorbis_unpack_books(vorbis_info *vi,oggpack_buffer *opb){
    with bitstream comments and a third packet that holds the
    codebook. */
 
-int vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op){
-  oggpack_buffer opb;
+int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype, ogg_packet *op)
+{
+	//oggpack_buffer opb;
   
   if(op){
-    oggpack_readinit(&opb,op->packet,op->bytes);
+	  //oggpack_readinit(&opb,op->packet,op->bytes);
 
     /* Which of the three types of header is this? */
     /* Also verify header-ness, vorbis */
     {
+#if 0
       char buffer[6];
       int packtype=oggpack_read(&opb,8);
       memset(buffer,0,6);
@@ -350,6 +352,7 @@ int vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op)
 	/* not a vorbis header */
 	return(OV_ENOTVORBIS);
       }
+#endif
       switch(packtype){
       case 0x01: /* least significant *bit* is read first */
 	if(!op->b_o_s){
@@ -361,23 +364,25 @@ int vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op)
 	  return(OV_EBADHEADER);
 	}
 
-	return(_vorbis_unpack_info(vi,&opb));
+	return(_vorbis_unpack_info(vi,opb));
 
+#if 0
       case 0x03: /* least significant *bit* is read first */
 	if(vi->rate==0){
 	  /* um... we didn't get the initial header */
 	  return(OV_EBADHEADER);
 	}
 
-	return(_vorbis_unpack_comment(vc,&opb));
+	return(_vorbis_unpack_comment(vc,opb));
+#endif
 
       case 0x05: /* least significant *bit* is read first */
-	if(vi->rate==0 || vc->vendor==NULL){
+		  if(vi->rate==0 /*|| vc->vendor==NULL*/){
 	  /* um... we didn;t get the initial header or comments yet */
 	  return(OV_EBADHEADER);
 	}
 
-	return(_vorbis_unpack_books(vi,&opb));
+	return(_vorbis_unpack_books(vi,opb));
 
       default:
 	/* Not a valid vorbis header type */

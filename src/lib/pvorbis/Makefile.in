@@ -28,7 +28,7 @@ LIBDEST=$(LIBBASENAME).so.1.0
 LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/pvorbis/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
-LIBS=-logg
+LIBS=
 
 JAVAH = @JAVAH@
 
@@ -54,6 +54,8 @@ VORBISOBJ=\
 	vorbisenc.o \
 	window.o
 
+OGGOBJ=bitwise.o framing.o
+
 JNIOBJ=\
 	org_tritonus_lowlevel_pogg_Buffer.o \
 	org_tritonus_lowlevel_pogg_Packet.o \
@@ -68,7 +70,8 @@ JNIOBJ=\
 OBJ=\
 	$(JNIOBJ) \
 	../common/common.o \
-	$(VORBISOBJ)
+	$(VORBISOBJ) \
+	$(OGGOBJ)
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 

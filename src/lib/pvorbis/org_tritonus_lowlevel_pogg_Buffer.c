@@ -29,6 +29,11 @@
 
 HandleFieldHandlerDeclaration(handler, oggpack_buffer*)
 
+oggpack_buffer*
+getBufferNativeHandle(JNIEnv *env, jobject obj)
+{
+        return getHandle(env, obj);
+}
 
 
 /*
@@ -201,15 +206,26 @@ Java_org_tritonus_lowlevel_pogg_Buffer_readInit
 {
 	oggpack_buffer*	handle;
 	jbyte*		buffer;
+	void*		buffer2;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): begin\n"); }
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): nBytes: %d\n", nBytes); }
 	handle = getHandle(env, obj);
 	buffer = (*env)->GetByteArrayElements(env, abBuffer, NULL);
+	/* ATTENTION!! The memory allocated here is never freed! So here, we have a
+	   memory leak!!!
+	 */
+	buffer2 = _ogg_malloc(nBytes);
+	if (!buffer2)
+	{
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): malloc failed!!!\n"); }
+		return;
+	}
+	(void) memcpy(buffer2, buffer, nBytes);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): buffer[0]: %d\n", buffer[0]); }
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): buffer[1]: %d\n", buffer[1]); }
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): buffer[2]: %d\n", buffer[2]); }
-	oggpack_readinit(handle, buffer, nBytes);
+	oggpack_readinit(handle, buffer2, nBytes);
 	(*env)->ReleaseByteArrayElements(env, abBuffer, buffer, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_readInit(): end\n"); }
 }
@@ -329,7 +345,9 @@ Java_org_tritonus_lowlevel_pogg_Buffer_read
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_read(): begin\n"); }
 	handle = getHandle(env, obj);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_read(): bits: %d\n", nBits); }
 	nReturn = oggpack_read(handle, nBits);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_read(): value: %d\n", nReturn); }
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_read(): end\n"); }
 	return nReturn;
 }

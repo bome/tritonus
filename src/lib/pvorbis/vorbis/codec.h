@@ -195,8 +195,9 @@ extern int      vorbis_bitrate_flushpacket(vorbis_dsp_state *vd,
 					   ogg_packet *op);
 
 /* Vorbis PRIMITIVES: synthesis layer *******************************/
-extern int      vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,
-					  ogg_packet *op);
+//extern int      vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,
+//					  ogg_packet *op);
+extern int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype, ogg_packet *op);
 
 extern int      vorbis_synthesis_init(vorbis_dsp_state *v,vorbis_info *vi);
 extern int      vorbis_synthesis_restart(vorbis_dsp_state *v);
