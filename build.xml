@@ -60,6 +60,11 @@
 	   destdir="${build}"
 	   includes="javax/sound/,org/tritonus/"
 	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" />
+    <javac srcdir="${src.classes}"
+	   depend="yes"
+	   debug="on"
+	   destdir="${build}"
+	   includes="org/tritonus/lowlevel/dsp/" />
   </target>
 
   <target name="compile-javalayer-dependent"
