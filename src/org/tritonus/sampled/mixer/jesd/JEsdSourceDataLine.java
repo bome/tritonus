@@ -124,11 +124,6 @@ public class JEsdSourceDataLine
 			m_nBytesPerSample = format.getFrameSize() / format.getChannels();
 		}
 		int	nOutFormat = JEsd.ESD_STREAM | JEsd.ESD_PLAY | JEsdUtils.getJEsdFormat(format);
-/*
-		m_esdStream = new JEsdStream();
-		m_esdStream.open(nOutFormat,
-				 (int) format.getSampleRate());
-*/
 		try
 		{
 			m_esdStream = JEsd.play_stream_fallback(
@@ -145,7 +140,18 @@ public class JEsdSourceDataLine
 
 
 
+	protected void closeImpl()
+	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("JEsdSourceDataLine.closeImpl(): called");
+		}
+		m_esdStream.close();
+	}
 
+
+
+/*
 	public void start()
 	{
 		setStarted(true);
@@ -162,7 +168,7 @@ public class JEsdSourceDataLine
 	{
 		setStarted(false);
 	}
-
+*/
 
 
 	public int available()
@@ -227,16 +233,6 @@ public class JEsdSourceDataLine
 		}
 		return nLength;
 	}
-
-
-
-	protected void closeImpl()
-	{
-		// TDebug.out("JEsdSourceDataLine.closeImpl(): called");
-		m_esdStream.close();
-	}
-
-
 
 
 

@@ -50,8 +50,8 @@ public abstract class TDataLine
 {
 	private AudioFormat		m_format;
 	private int			m_nBufferSize;
-	private boolean			m_bStarted;
-	private boolean			m_bActive;
+	private boolean			m_bRunning;
+	// private boolean			m_bActive;
 
 
 
@@ -83,73 +83,111 @@ public abstract class TDataLine
 	{
 		m_format = null;
 		m_nBufferSize = AudioSystem.NOT_SPECIFIED;
-		setStarted(false);
-		setActive(false);
+		setRunning(false);
+		// setActive(false);
 	}
-
-
-
-	public boolean isRunning()
-	{
-		// TOOD:
-		return false;
-	}
-
 
 
 
 	// not defined here:
 	// public void drain()
 	// public void flush()
-	// public void start()
-	// public void stop()
 
 
 
-	public boolean isStarted()
+	public void start()
 	{
-		return m_bStarted;
-	}
-
-
-	// TODO: should only ALLOW engaging in data I/O.
-	// actual START event should only be sent when line really becomes active
-	protected void setStarted(boolean bStarted)
-	{
-		m_bStarted = bStarted;
-		if (!isStarted())
+		if (TDebug.TraceSourceDataLine)
 		{
-			setActive(false);
+			TDebug.out("TDataLine.start(): called");
 		}
+		setRunning(true);
 	}
 
 
 
-	public boolean isActive()
+	public void stop()
 	{
-		return m_bActive;
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("TDataLine.stop(): called");
+		}
+		setRunning(false);
+	}
+
+
+
+	public boolean isRunning()
+	{
+		return m_bRunning;
 	}
 
 
 
 	// TODO: recheck
-	protected void setActive(boolean bActive)
+	protected void setRunning(boolean bRunning)
 	{
-		boolean	bOldValue = isActive();
-		m_bActive = bActive;
-		if (bOldValue != isActive())
+		boolean	bOldValue = isRunning();
+		m_bRunning = bRunning;
+		if (bOldValue != isRunning())
 		{
-			if (isActive())
+			if (isRunning())
 			{
+				startImpl();
 				notifyLineEvent(LineEvent.Type.START);
 			}
 			else
 			{
+				stopImpl();
 				notifyLineEvent(LineEvent.Type.STOP);
 			}
 		}
 	}
 
+
+
+	protected void startImpl()
+	{
+	}
+
+
+
+	protected void stopImpl()
+	{
+	}
+
+
+
+	/**
+	 *	This implementation returns the status of isRunning().
+	 *	Subclasses should overwrite this method if there is more
+	 *	precise information about the status of the line available.
+	 */
+	public boolean isActive()
+	{
+		return isRunning();
+	}
+
+
+/*
+	public boolean isStarted()
+	{
+		return m_bStarted;
+	}
+*/
+
+	// TODO: should only ALLOW engaging in data I/O.
+	// actual START event should only be sent when line really becomes active
+/*
+	protected void setStarted(boolean bStarted)
+	{
+		m_bStarted = bStarted;
+		if (!isRunning())
+		{
+			setActive(false);
+		}
+	}
+*/
 
 
 	public AudioFormat getFormat()
@@ -187,6 +225,7 @@ public abstract class TDataLine
 	}
 
 
+
 	// not defined here:
 	// public int available()
 
@@ -216,6 +255,7 @@ public abstract class TDataLine
 	}
 
 
+
 	protected void checkOpen()
 	{
 		if (getFormat() == null)
@@ -242,27 +282,6 @@ public abstract class TDataLine
 	{
 		notifyLineEvent(new LineEvent(this, type, getFramePosition()));
 	}
-
-
-/*
-	protected class TDataLineInfo
-		extends	DataLine.Info
-	{
-		private Mixer		m_mixer;
-
-
-
-		public TDataLineInfo(Class lineClass, Mixer mixer)
-		{
-			super(lineClass, null);
-			m_mixer = mixer;
-		}
-
-
-
-		public AudioFormats[] getFormats
-	}
-*/
 }
 
 

@@ -119,7 +119,7 @@ public class EsdTargetDataLine
 				 (int) format.getSampleRate());
 	}
 
-
+/*
 	public void start()
 	{
 		setStarted(true);
@@ -136,7 +136,7 @@ public class EsdTargetDataLine
 	{
 		setStarted(false);
 	}
-
+*/
 
 
 	public int available()
@@ -183,12 +183,10 @@ public class EsdTargetDataLine
 
 
 
-	// Channel
-	public void close()
+	public void closeImpl()
 	{
 		m_esdStream.close();
 	}
-
 
 
 

@@ -152,25 +152,6 @@ public class EsdSourceDataLine
 
 
 
-	public void start()
-	{
-		setStarted(true);
-		setActive(true);
-		if (TDebug.TraceSourceDataLine)
-		{
-			TDebug.out("EsdSourceDataLine.start(): channel started.");
-		}
-	}
-
-
-
-	public void stop()
-	{
-		setStarted(false);
-	}
-
-
-
 	public int available()
 	{
 		// TODO:
@@ -235,10 +216,12 @@ public class EsdSourceDataLine
 
 
 
-	// Channel
-	// TODO: use closeImpl()
-	public void close()
+	protected void closeImpl()
 	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.closeImpl(): called.");
+		}
 		m_esdStream.close();
 	}
 
@@ -248,6 +231,10 @@ public class EsdSourceDataLine
 
 	public void drain()
 	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.drain(): called.");
+		}
 		// TODO:
 	}
 
@@ -255,6 +242,10 @@ public class EsdSourceDataLine
 
 	public void flush()
 	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.flush(): called.");
+		}
 		// TODO:
 	}
 

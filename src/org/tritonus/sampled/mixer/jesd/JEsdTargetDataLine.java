@@ -50,9 +50,6 @@ public class JEsdTargetDataLine
 	extends		TSourceTargetDataLine
 	implements	TargetDataLine
 {
-	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
-
-
 	private JEsd			m_esdStream;
 	private boolean			m_bSwapBytes;
 	private byte[]			m_abSwapBuffer;
@@ -83,6 +80,7 @@ public class JEsdTargetDataLine
 		{
 			TDebug.out("JEsdTargetDataLine.openImpl(): called.");
 		}
+
 		/*
 		 *	Checks that a format is set.
 		 *	Sets the buffer size to a default value if not
@@ -136,11 +134,26 @@ public class JEsdTargetDataLine
 	}
 
 
+
+
+	protected void closeImpl()
+	{
+		if (TDebug.TraceTargetDataLine)
+		{
+			TDebug.out("JEsdTargetDataLine.closeImpl(): called.");
+		}
+		m_esdStream.close();
+	}
+
+
+
+
+/*
 	public void start()
 	{
 		setStarted(true);
 		setActive(true);
-		if (TDebug.TraceSourceDataLine)
+		if (TDebug.TraceTargetDataLine)
 		{
 			TDebug.out("JEsdTargetDataLine.start(): channel started.");
 		}
@@ -152,6 +165,7 @@ public class JEsdTargetDataLine
 	{
 		setStarted(false);
 	}
+*/
 
 
 
@@ -196,15 +210,6 @@ public class JEsdTargetDataLine
 		}
 		return nBytesRead;
 	}
-
-
-
-	// Channel
-	public void close()
-	{
-		m_esdStream.close();
-	}
-
 
 
 
