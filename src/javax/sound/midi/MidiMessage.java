@@ -38,7 +38,13 @@ public abstract class MidiMessage
 
 
 
-
+	/**	Constructs a MidiMessage.
+		The data of the message (m_abData) are initialized by the
+		array passed as a parameter. Note that the data is not copied.
+		Rather, m_abData is set to point at the passed array.
+		This constructor does not use setMessage(byte[], int). So it
+		unaffected by overriding setMessage().
+	 */
 	protected MidiMessage(byte[] abData)
 	{
 		m_abData = abData;
@@ -46,7 +52,8 @@ public abstract class MidiMessage
 
 
 
-	/**
+	/**	Initializes the data of the message.
+		This method 
 	 */
 	protected void setMessage(byte[] abData, int nLength)
 		throws	InvalidMidiDataException
@@ -62,11 +69,17 @@ public abstract class MidiMessage
 
 
 	/**	returns the complete message.
-	 *	This method does not make a copy of the array.
+		This method makes a copy of the data and returns a
+		reference to the copy. Both Sun jdk and Tritonus implement it
+		this way. However, it is not clear if this is a requirement
+		(Florian).
+		Behaviour if getLength() != data.length ?? (Matthias, Florian)
 	 */
 	public byte[] getMessage()
 	{
-		return m_abData;
+		byte[]	abData = new byte[m_abData.length];
+		System.arraycopy(m_abData, 0, abData, 0, m_abData.length);
+		return abData;
 	}
 
 
@@ -99,15 +112,15 @@ public abstract class MidiMessage
 
 
 
-	/**
-	 *	Returns the length of the message in bytes.
-	 *	In this implementation, the length returned by this method
-	 *	is always equal to the length of the array returned by
-	 *	getMessage(). However, this has to be considered
-	 *	implementation-specific behaviour. It is not guaranteed for
-	 *	other implementations of the Java Sound API.
-	 *	If no message has been set, a length of 0 is returned.
-	 */
+	/**	Returns the length of the whole message in bytes.
+		In this implementation, the length returned by this method
+		is always equal to the length of the array returned by
+		getMessage(). However, this has to be considered
+		implementation-specific behaviour. It is not guaranteed for
+		other implementations of the Java Sound API. Should be made a
+		requirement? (Matthias, Florian)
+		If no message has been set, a length of -1 is returned.
+	*/
 	public int getLength()
 	{
 		if (m_abData != null)
@@ -116,7 +129,7 @@ public abstract class MidiMessage
 		}
 		else
 		{
-			return 0;
+			return -1;
 		}
 	}
 

@@ -79,14 +79,24 @@ public class ShortMessage
 	/* 0 for undefined (or unknown for F0) */
 
 
-
+	/**	Constructs a ShortMessage with a default message set.
+	 */
 	public ShortMessage()
 	{
 		super(null);
+		/*
+		  the following message is chosen arbitrarily. Actually, it
+		  not so much arbitrary: it is the same as in the Sun
+		  implementation.
+		 */
+		// TODO: check if the Sun implementation uses setMessage(), too.
+		setMessage(144, 255, 0);
 	}
 
 
 
+	/**	Constructs a ShortMessage with a message set.
+	 */
 	protected ShortMessage(byte[] abData)
 	{
 		super(abData);
