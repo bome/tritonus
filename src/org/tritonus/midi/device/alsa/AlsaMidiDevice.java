@@ -84,6 +84,10 @@ public class AlsaMidiDevice
 	 */
 	private AlsaMidiOut	m_alsaMidiOut;
 
+	/**	ALSA queue number used to timestamp incoming events.
+	 */
+	private int		m_nTimestampingQueue;
+
 
 
 
@@ -141,16 +145,23 @@ public class AlsaMidiDevice
 		// create an ALSA client...
 		m_aSequencer = new ASequencer("Tritonus Midi port handler");
 		// ...and an ALSA port
-		m_nOwnPort = m_aSequencer.createPort("handler port", ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ, 0, ASequencer.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_nOwnPort = m_aSequencer.createPort(
+			"handler port",
+			ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ,
+			0,
+			ASequencer.SND_SEQ_PORT_TYPE_APPLICATION,
+			0, 0, 0);
 		if (getUseIn())
 		{
 			/*
-			 *	AlsaMidiIn listend to incoming event on the
+			 *	AlsaMidiIn listens to incoming event on the
 			 *	MIDI port.
 			 *	It calls this.dequeueEvent() if
 			 *	it receives an event.
 			 */
-			m_alsaMidiIn = new AlsaMidiIn(m_aSequencer, m_nOwnPort, getClient(), getPort(), this);
+			m_nTimestampingQueue = m_aSequencer.allocQueue();
+			m_aSequencer.startQueue(m_nOwnPort, getTimestampingQueue());
+			m_alsaMidiIn = new AlsaMidiIn(m_aSequencer, m_nOwnPort, getClient(), getPort(), getTimestampingQueue(), this);
 			m_alsaMidiIn.start();
 		}
 		if (getUseOut())
@@ -176,6 +187,7 @@ public class AlsaMidiDevice
 		}
 		// TODO:
 		// m_aSequencer.destroyPort(m_nOwnPort);
+		// release timestamping queue
 		m_aSequencer.close();
 		m_aSequencer = null;
 	}
@@ -184,7 +196,8 @@ public class AlsaMidiDevice
 
 	public long getMicroSecondPosition()
 	{
-		return -1;
+		long	lNanoSeconds = m_aSequencer.getQueuePositionTime(getTimestampingQueue());
+		return lNanoSeconds / 1000;
 	}
 
 
@@ -210,8 +223,9 @@ public class AlsaMidiDevice
 		{
 			TDebug.out("AlsaMidiDevice.dequeueEvent(): message: " + message);
 		}
+		TDebug.out("dequeueEvent(): tick: " + event.getTick());
 		// send via superclass method
-		sendImpl(message, -1L);
+		sendImpl(message, event.getTick());
 	}
 
 
@@ -229,6 +243,13 @@ public class AlsaMidiDevice
 	public int getPort()
 	{
 		return m_nPort;
+	}
+
+
+
+	private int getTimestampingQueue()
+	{
+		return m_nTimestampingQueue;
 	}
 
 

@@ -49,15 +49,53 @@ public class AlsaMidiIn
 	private AlsaMidiInListener	m_listener;
 
 
+	/**
+	   Does establish a subscription where events are routed directely
+	   (not getting a timestamp).
+	 */
+	public AlsaMidiIn(ASequencer aSequencer,
+			  int nDestPort,
+			  int nSourceClient,
+			  int nSourcePort,
+			  AlsaMidiInListener listener)
+	{
+		this(aSequencer,
+		     nDestPort,
+		     nSourceClient,
+		     nSourcePort,
+		     -1,		// signals: do not do timestamping
+		     listener);
+	}
 
-	public AlsaMidiIn(ASequencer aSequencer, int nDestPort, int nSourceClient, int nSourcePort, AlsaMidiInListener listener)
+
+
+	/**
+	   Does establish a subscription where events are routed through
+	   a queue to get a timestamp.
+	 */
+	public AlsaMidiIn(ASequencer aSequencer, int nDestPort, int nSourceClient, int nSourcePort, int nTimestampingQueue, AlsaMidiInListener listener)
 	{
 		m_nSourceClient = nSourceClient;
 		m_nSourcePort = nSourcePort;
 		m_listener = listener;
 		m_aSequencer = aSequencer;
 		m_nDestPort = nDestPort;
-		m_aSequencer.subscribePort(nSourceClient, nSourcePort, m_aSequencer.getClientId(), nDestPort);
+		if (nTimestampingQueue >= 0)
+		{
+			m_aSequencer.subscribePort(
+				nSourceClient, nSourcePort,
+				m_aSequencer.getClientId(), nDestPort,
+				nTimestampingQueue,
+				false,		// exclusive
+				false,		// realtime
+				true);		// convert time
+		}
+		else
+		{
+			m_aSequencer.subscribePort(
+				nSourceClient, nSourcePort,
+				m_aSequencer.getClientId(), nDestPort);
+		}
 		setDaemon(true);
 	}
 
