@@ -766,7 +766,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange(): begin\n"); }
 	handle = handler.getHandle(env, obj);
-	snd_mixer_selem_get_playback_volume_range(handle, values, values + 1);
+	snd_mixer_selem_get_playback_volume_range(handle, (long*) values, (long*) values + 1);
 	checkArrayLength(env, anValues, 2);
 	env->SetIntArrayRegion(anValues, 0, 2, values);
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange(): end\n"); }
@@ -788,7 +788,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange(): begin\n"); }
 	handle = handler.getHandle(env, obj);
-	snd_mixer_selem_get_capture_volume_range(handle, values, values + 1);
+	snd_mixer_selem_get_capture_volume_range(handle, (long*) values, (long*) values + 1);
 	checkArrayLength(env, anValues, 2);
 	env->SetIntArrayRegion(anValues, 0, 2, values);
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange(): end\n"); }
