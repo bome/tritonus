@@ -217,7 +217,7 @@ public class TestSystemMixer
 
 
 	// nBufferSize is in bytes!
-	private SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
+	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		if (TDebug.TraceMixer)
@@ -241,9 +241,10 @@ public class TestSystemMixer
 
 
 	// nBufferSize is in bytes!
-	private TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
+	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
+/*
 		int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
 		AlsaTargetDataLine	targetDataLine = new AlsaTargetDataLine(this, format, nBufferSizeInBytes);
 		// targetDataLine.start();
@@ -252,11 +253,13 @@ public class TestSystemMixer
 			TDebug.out("TestSystemMixer.getTargetDataLine(): returning: " + targetDataLine);
 		}
 		return targetDataLine;
+*/
+		return null;
 	}
 
 
 
-	private Clip getClip(AudioFormat format)
+	protected Clip getClip(AudioFormat format)
 		throws	LineUnavailableException
 	{
 		// return new AlsaClip(this);
