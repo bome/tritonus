@@ -32,17 +32,15 @@ dnl AC_MSG_RESULT(version: x${JdkVersion}x)
 
 case $JdkVersion in
     1.4* )
-	echo "JDK 1.4 detected (Very very lucky indeed)"
+	echo "JDK 1.4 detected"
 	;;
     1.3* )
-	echo "JDK 1.3 detected (Very lucky indeed)"
+	echo "JDK 1.3 detected"
 	#bug in jar -i ...
 	#JAR_INDEX=jar_index
 	;;
-    1.3*[Bb]eta )
-	echo "JDK 1.3 detected (Only a Beta version)" ;;
     1.2* )
-	echo "JDK 1.2 detected (Nice)" ;;
+	echo "JDK 1.2 detected" ;;
     1.1.8* )
 	echo "JDK 1.1.8 detected" ;;
     1.1.7* )
@@ -52,7 +50,10 @@ case $JdkVersion in
     1.0* )
 	echo "JDK 1.0.x detected (impossible)" ;;
     *)
-	echo "No JDK Version detected SERIOUS FAILURE...";;
+	echo "No JDK Version detected. "
+	echo "Please make sure a J2SDK is in your CLASSPATH."
+	echo "For more information read the file INSTALL"
+	;;
 esac
 # fini
 

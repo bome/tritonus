@@ -23,15 +23,15 @@ What you need
 
 - jdk 1.4.x, 1.3.x or jdk1.2.x. Testing was done with the
 Sun jdk1.4.0-b92. Other versions may work.
-If you want to compile Linux specific components, it is recommanded to do
-it on a Linux system, so you need a jdk for Linux. Cross-compiling has not
+If you want to compile Linux specific components, it is recommended to do
+it on a Linux system, so you need a j2sdk for Linux. Cross-compiling has not
 been tested.
 If you only want to build pure-java (not Linux specific) components, you
-can use a jdk on any platform.
+can use a j2sdk on any platform.
 Tritonus does not work with jdk1.1.X.
 There are no experiences with gcj. Reports are welcome.
 
-- Optional: jikes (recommanded, testing was done with version 1.16)
+- Optional: jikes (recommended, testing was done with version 1.16)
 
 - Either: the Enlightened Sound Daemon (esd or EsounD). On Debian
 systems, install the packages esound-common, esound, libesd0 and
@@ -66,7 +66,8 @@ For MIDI:
 
 For the build process:
 - make (Testing done with GNU make 3.79)
-- ant (Testing done with Apache Ant 1.5; 1.4 should work, too. Get it from http://jakarta.apache.org/ant/ if not present in your distribution)
+- ant (Testing done with Apache Ant 1.5; 1.4 should work, too. 
+  Get it from http://jakarta.apache.org/ant/ if not present in your distribution)
 - g++
 - libtool (currently not needed)
 - m4
@@ -76,7 +77,9 @@ For the build process:
 Building mp3 related components
 -------------------------------
 
-The ant based build requires that javalayer.jar is already compiled and that it is available in the class path during the build. Only then the mp3 SPI plug-in gets compiled and packaged.
+The ant based build requires that javalayer.jar is already compiled and that it is 
+available in the classpath during the build. Only then the mp3 SPI plug-in gets 
+compiled and packaged.
 
 
 Installing steps

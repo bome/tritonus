@@ -213,9 +213,13 @@ CONVERTTARGETS = @CONVERTTARGETS@
 #----------------- rules -------------------
 
 .PHONY: all
-all: builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
+# $$fb do not compile the java classes
+#all: builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
+#	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
+#	@rm -rf $(DESTDIR)/META-INF
+
+all: builddir
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
-	@rm -rf $(DESTDIR)/META-INF
 
 .PHONY: convert
 convert:
