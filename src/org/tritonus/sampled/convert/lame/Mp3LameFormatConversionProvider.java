@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.convert;
+package	org.tritonus.sampled.convert.lame;
 
 
 import	java.io.File;
@@ -69,7 +69,7 @@ public class Mp3LameFormatConversionProvider
 	extends	TSimpleFormatConversionProvider {
 
 	// estimated maximum size for an mpeg encoded frame
-	private static final int ENCODER_MAX_FRAME_SIZE=2048*16;
+	private static final int ENCODER_MAX_FRAME_SIZE=2048*8;
 	private static final int ENCODER_PCM_BUFFER_SIZE=2048*16;
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
@@ -211,9 +211,9 @@ public class Mp3LameFormatConversionProvider
 		      Arrays.asList(OUTPUT_FORMATS));
 		if (!Lame.isLibAvailable()) {
 			disable();
-			//if (TDebug.TraceAudioConverter) {
-			TDebug.out("******* Error initializing LAME mp3 encoder: "+Lame.getLinkError());
-			//}
+			if (TDebug.TraceAudioConverter) {
+				TDebug.out("******* Error initializing LAME mp3 encoder: "+Lame.getLinkError());
+			}
 		}
 	}
 

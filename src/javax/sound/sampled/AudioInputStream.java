@@ -218,24 +218,39 @@ public class AudioInputStream
 	public int read(byte[] abData, int nOffset, int nLength)
 		throws	IOException
 	{
+		//$$fb better to first check if end is reached.
+		//otherwise, on un-aligned nLength, it will lead to a misleading exception
+		// (as it occurs with DataInputStream.readFully)
+		if (isEndReached())
+		{
+			return -1;
+		}
 		if (CHECK_LENGTHS)
 		{
 			if (nLength % getCheckFrameSize() != 0)
 			{
-				throw new IOException("length must be a multiple of the frame size");
+				throw new IOException("length must be a multiple of the frame size (length="+nLength+", frameSize="+getCheckFrameSize()+")");
 			}
-		}
-		if (isEndReached())
-		{
-			return -1;
 		}
 		if (m_lLengthInBytes != AudioSystem.NOT_SPECIFIED)
 		{
 			nLength = (int) Math.min(nLength, m_lLengthInBytes - m_lPosition);
 		}
-		int nBytesRead = stream.read(abData, nOffset, nLength);
-		if (nBytesRead != -1)
-		{
+		//$$fb try to read frame-aligned (when stream returns unaligned data)
+		//$$fb e.g. SequenceInputStream
+		int nBytesRead=0;
+		int thisRead;
+		do {
+		  thisRead = stream.read(abData, nOffset, nLength);
+		  if (thisRead>0) {
+		  	nBytesRead+=thisRead;
+		  	nLength-=thisRead;
+		  	nOffset+=thisRead;
+		  }
+		} while (thisRead>0 && nLength>0);
+		if (nBytesRead<=0 && thisRead==-1) {
+			nBytesRead=-1;
+		} else {
 			m_lPosition += nBytesRead;
 			updateFramePosition();
 		}

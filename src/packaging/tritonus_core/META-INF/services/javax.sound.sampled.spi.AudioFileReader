@@ -4,8 +4,6 @@
 org.tritonus.sampled.file.AuAudioFileReader
 org.tritonus.sampled.file.WaveAudioFileReader
 org.tritonus.sampled.file.AiffAudioFileReader
-org.tritonus.sampled.file.MpegAudioFileReader
-org.tritonus.sampled.file.gsm.GSMAudioFileReader
 
 # end
 #

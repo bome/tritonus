@@ -31,6 +31,7 @@ import	java.io.InputStream;
 import	java.io.IOException;
 
 import	java.util.Arrays;
+import	java.util.Iterator;
 
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
@@ -44,6 +45,7 @@ import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.Encodings;
 //import	org.tritonus.share.TCircularBuffer;
 
@@ -112,6 +114,8 @@ public class GSMFormatConversionProvider
 			TDebug.out("from: " + audioInputStream.getFormat());
 			TDebug.out("to: " + targetFormat);
 		}
+
+		targetFormat=getDefaultTargetFormat(targetFormat, audioInputStream.getFormat());
 		if (isConversionSupported(targetFormat,
 					  audioInputStream.getFormat()))
 		{
@@ -149,6 +153,19 @@ public class GSMFormatConversionProvider
 		}
 	}
 
+	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat) {
+		// return first of the matching formats
+		// pre-condition: the predefined target formats (FORMATS2) must be well-defined !
+		Iterator iterator=getCollectionTargetFormats().iterator();
+		while (iterator.hasNext()) {
+			AudioFormat format=(AudioFormat) iterator.next();
+			if (AudioFormats.matches(targetFormat, format)) {
+				return format;
+			}
+		}
+		throw new IllegalArgumentException("conversion not supported");
+	}
+		
 
 
 	public static class DecodedGSMAudioInputStream

@@ -41,9 +41,25 @@ PACKAGING_ABSOLUTE_DIR=@SRC_ABSOLUTE_PATH@/src/packaging
 
 PACKSRCDIR_CORE = javax/sound org/tritonus/core
 PACKSRCDIR_SHARE = org/tritonus/share
-PACKSRCDIR_REMAINING = org/tritonus/lowlevel org/tritonus/midi org/tritonus/sampled
-PACKSRCDIR_MP3 = org/tritonus/sampled/convert/javalayer/Mpeg* org/tritonus/sampled/file/Mpeg*
-PACKSRCDIR_GSM = org/tritonus/lowlevel/gsm org/tritonus/sampled/file/gsm org/tritonus/sampled/convert/gsm
+PACKSRCDIR_REMAINING = \
+	org/tritonus/lowlevel/alsa \
+	org/tritonus/lowlevel/esd \
+	org/tritonus/lowlevel/saint \
+	org/tritonus/midi \
+	org/tritonus/sampled/convert/*.class \
+	org/tritonus/sampled/file/*.class \
+	org/tritonus/sampled/mixer
+
+PACKSRCDIR_MP3 = \
+	org/tritonus/sampled/convert/lame \
+	org/tritonus/sampled/convert/javalayer \
+	org/tritonus/sampled/file/mpeg \
+	org/tritonus/lowlevel/lame
+
+PACKSRCDIR_GSM = \
+	org/tritonus/lowlevel/gsm \
+	org/tritonus/sampled/file/gsm \
+	org/tritonus/sampled/convert/gsm
 
 PACKSRCDIR_JL = javazoom
 
@@ -80,8 +96,10 @@ vpath %.java $(SRCDIR_PRIV)/share/midi
 vpath %.java $(SRCDIR_PRIV)/sampled/convert
 vpath %.java $(SRCDIR_PRIV)/sampled/convert/gsm
 vpath %.java $(SRCDIR_PRIV)/sampled/convert/javalayer
+vpath %.java $(SRCDIR_PRIV)/sampled/convert/lame
 vpath %.java $(SRCDIR_PRIV)/sampled/file
 vpath %.java $(SRCDIR_PRIV)/sampled/file/gsm
+vpath %.java $(SRCDIR_PRIV)/sampled/file/mpeg
 vpath %.java $(SRCDIR_PRIV)/sampled/mixer
 vpath %.java $(SRCDIR_PRIV)/sampled/mixer/alsa
 vpath %.java $(SRCDIR_PRIV)/sampled/mixer/esd
@@ -114,8 +132,10 @@ vpath %.class $(OBJDIR_PRIV)/share/midi
 vpath %.class $(OBJDIR_PRIV)/sampled/convert
 vpath %.class $(OBJDIR_PRIV)/sampled/convert/gsm
 vpath %.class $(OBJDIR_PRIV)/sampled/convert/javalayer
+vpath %.class $(OBJDIR_PRIV)/sampled/convert/lame
 vpath %.class $(OBJDIR_PRIV)/sampled/file
 vpath %.class $(OBJDIR_PRIV)/sampled/file/gsm
+vpath %.class $(OBJDIR_PRIV)/sampled/file/mpeg
 vpath %.class $(OBJDIR_PRIV)/sampled/mixer
 vpath %.class $(OBJDIR_PRIV)/sampled/mixer/alsa
 vpath %.class $(OBJDIR_PRIV)/sampled/mixer/esd
@@ -149,8 +169,10 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/sampled/convert/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/gsm/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/javalayer/*.java \
+	$(SRCDIR_PRIV)/sampled/convert/lame/*.java \
 	$(SRCDIR_PRIV)/sampled/file/*.java \
 	$(SRCDIR_PRIV)/sampled/file/gsm/*.java \
+	$(SRCDIR_PRIV)/sampled/file/mpeg/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/alsa/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/esd/*.java \
@@ -167,7 +189,7 @@ SRC:=$(notdir $(SRCTMP))
 OBJ:=$(SRC:.java=.class)
 
 srcdir=.
-DISTFILES=ConvertJDK117 INSTALL LGPL Makefile.in NEWS README README.midi README.mp3 config.guess config.sub configure.in configure  doc src test util #new
+DISTFILES=ConvertJDK117 INSTALL LGPL Makefile.in NEWS README README_midi README_mp3 config.guess config.sub configure.in configure  doc src test util #new
 SUBDIRS=@SUBDIRS@
 CONVERTTARGETS = @CONVERTTARGETS@
 
@@ -320,6 +342,7 @@ clean:
 	rm -rf $(DESTDIR)/org $(DESTDIR)/javax $(DESTDIR)/javazoom $(DESTDIR)/com $(DESTDIR)/META-INF
 	find . -name '*~' -exec rm '{}' ';'
 	find . -name '*.class' -exec rm '{}' ';'
+	find . -name '*.bak' -exec rm '{}' ';'
 	find . -name '.directory' -exec rm '{}' ';'
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d clean; done
 

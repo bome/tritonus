@@ -48,7 +48,7 @@
 		<javac srcdir="${src}"
 			destdir="${build}"
 			includes="javax/sound/**,org/tritonus/**"
-			excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**" />
+			excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/lame/,org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**" />
 	</target>
 
 	<target name="compile-javalayer-dependent"
@@ -119,8 +119,10 @@
 		<jar	jarfile="${dist}/tritonus_mp3.jar" >
 			<fileset
 				dir="${build}" >
+				<include name="org/tritonus/lowlevel/lame/" />
 				<include name="org/tritonus/sampled/convert/javalayer/" />
-				<include name="org/tritonus/sampled/file/Mpeg*" />
+				<include name="org/tritonus/sampled/convert/lame/" />
+				<include name="org/tritonus/sampled/file/mpeg/" />
 			</fileset>
 			<fileset
 				dir="${src}/packaging/tritonus_mp3" />

@@ -49,7 +49,7 @@ quality levels may be choosen which affect
 
 Downloading LAME:
 LAME has to be installed on your system. 
-You need at least LAME V3.88 or later. You can get LAME from
+You need at least LAME V3.88beta or later. You can get LAME from
 http://sourceforge.net/projects/lame/
 To get the latest CVS version of lame, issue these 2 commands:
 cvs -d:pserver:anonymous@cvs.lame.sourceforge.net:/cvsroot/lame login

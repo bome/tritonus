@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.file;
+package	org.tritonus.sampled.file.mpeg;
 
 
 import	java.io.IOException;

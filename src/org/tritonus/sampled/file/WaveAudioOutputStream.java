@@ -76,7 +76,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 	protected void writeHeader()
 	throws	IOException {
 		if (TDebug.TraceAudioOutputStream) {
-			TDebug.out("WaveAudioOutputStream.writeHeader(): called.");
+			TDebug.out("WaveAudioOutputStream.writeHeader()");
 		}
 		AudioFormat		format = getFormat();
 		long			lLength = getLength();
