@@ -112,71 +112,72 @@ public class AlsaMidiDeviceProvider
 
 	private void scanPorts()
 	{
-		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): begin"); }
+		if (TDebug.TraceMidiDeviceProvider || TDebug.TracePortScan) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): begin"); }
 		Iterator	clients = m_alsaSeq.getClientInfos();
 		while (clients.hasNext())
 		{
 			AlsaSeq.ClientInfo	clientInfo = (AlsaSeq.ClientInfo) clients.next();
-			int	nClient = clientInfo.getClientId();
+			int	nClient = clientInfo.getClient();
 			if (TDebug.TracePortScan) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): client: " + nClient); }
 			Iterator	ports = m_alsaSeq.getPortInfos(nClient);
 			while (ports.hasNext())
 			{
 				AlsaSeq.PortInfo	portInfo = (AlsaSeq.PortInfo) ports.next();
-				int	nPort = portInfo.getPort();
-				int	nType = portInfo.getType();
-				int	nCapability = portInfo.getCapability();
-				if (TDebug.TracePortScan)
-				{
-					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): port: " + nPort);
-					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): type: " + nType);
-					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): cap: " + nCapability);
-				}
-				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
-				{
-					// TDebug.out("generic midi");
-					MidiDevice	device = null;
-					if ((nType & (AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH | AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE | AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE)) != 0)
-					{
-						device = new AlsaSynthesizer(nClient, nPort);
-					}
-					else	// ordinary midi port
-					{
-						device = new AlsaMidiDevice(nClient, nPort);
-					}
-					m_devices.add(device);
-				}
-
-// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
-// 				{
-// 					TDebug.out("gm");
-// 				}
-// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
-// 				{
-// 					TDebug.out("gs");
-// 				}
-// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
-// 				{
-// 					TDebug.out("xg");
-// 				}
-// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH) != 0)
-// 				{
-// 					TDebug.out("synth");
-// 				}
-// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
-// 				{
-// 					TDebug.out("direct sample");
-// 				}
-// 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
-// 				{
-// 					TDebug.out("sample");
-// 				}
-
+				handlePort(clientInfo, portInfo);
 			}
 		}
-		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): end"); }
+		if (TDebug.TraceMidiDeviceProvider || TDebug.TracePortScan) { TDebug.out("AlsaMidiDeviceProvider.scanPorts(): end"); }
 	}
 
+
+	private void handlePort(AlsaSeq.ClientInfo clientInfo,
+				AlsaSeq.PortInfo portInfo)
+	{
+		int	nClient = clientInfo.getClient();
+		int	nPort = portInfo.getPort();
+		int	nType = portInfo.getType();
+		int	nCapability = portInfo.getCapability();
+		if (TDebug.TracePortScan)
+		{
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): port: " + nPort);
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): type: " + nType);
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): cap: " + nCapability);
+		}
+		if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
+		{
+			// TDebug.out("generic midi");
+			MidiDevice	device = null;
+			if ((nType & (AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH | AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE | AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE)) != 0)
+			{
+				boolean	bWriteSubscriptionAllowed = (nCapability & AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE) != 0;
+				if (bWriteSubscriptionAllowed)
+				{
+					device = new AlsaSynthesizer(nClient, nPort);
+				}
+				else
+				{
+					if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDevice(): port does not allows write subscription, not used"); }
+				}
+			}
+			else	// ordinary midi port
+			{
+				boolean	bReadSubscriptionAllowed = (nCapability & AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ) != 0;
+				boolean	bWriteSubscriptionAllowed = (nCapability & AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE) != 0;
+				if (bReadSubscriptionAllowed || bWriteSubscriptionAllowed)
+				{
+					device = new AlsaMidiDevice(nClient, nPort, bReadSubscriptionAllowed, bWriteSubscriptionAllowed);
+				}
+				else
+				{
+					if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaMidiDeviceProvider.getDevice(): port allows neither read nor write subscription, not used"); }
+				}
+			}
+			if (device != null)
+			{
+				m_devices.add(device);
+			}
+		}
+	}
 }
 
 
