@@ -62,6 +62,7 @@ extends BaseProviderTestCase
 		Encodings.getEncoding("MPEG2DOT5L2"),
 		Encodings.getEncoding("MPEG2DOT5L3"),
 		Encodings.getEncoding("VORBIS"),
+		Encodings.getEncoding("IMA_ADPCM"),
 	};
 
 

@@ -94,6 +94,7 @@
       <test name="org.tritonus.test.UlawFormatConversionProviderTestCase" />
       <test name="org.tritonus.test.PCM2PCMConversionProviderTestCase" />
       <test name="org.tritonus.test.SampleRateConversionProviderTestCase" />
+      <test name="org.tritonus.test.ImaAdpcmFormatConversionProviderTestCase" />
       <test name="org.tritonus.test.GSMFormatConversionProviderTestCase" />
       <test name="org.tritonus.test.JorbisFormatConversionProviderTestCase" />
       <test name="org.tritonus.test.VorbisFormatConversionProviderTestCase" />
