@@ -37,9 +37,9 @@ JNIOBJ=\
 	org_tritonus_lowlevel_alsa_Alsa.o \
 	org_tritonus_lowlevel_alsa_AlsaCtl.o \
 	org_tritonus_lowlevel_alsa_AlsaPcm.o \
-	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.o
-
-#	org_tritonus_lowlevel_alsa_AlsaMixer.o \
+	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.o \
+	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.o \
+	org_tritonus_lowlevel_alsa_AlsaMixer.o
 
 OBJ=$(JNIOBJ) \
 	common.o
@@ -52,7 +52,8 @@ JNICLASSFILES=\
 	AlsaCtl.class \
 	AlsaMixer.class \
 	AlsaPcm.class \
-	AlsaPcm$$HWParams.class
+	AlsaPcm$$HWParams.class \
+	AlsaPcm$$SWParams.class
 
 
 JNICLASSES=\
@@ -61,7 +62,8 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaCtl \
 	org.tritonus.lowlevel.alsa.AlsaMixer \
 	org.tritonus.lowlevel.alsa.AlsaPcm \
-	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams
+	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams \
+	org.tritonus.lowlevel.alsa.AlsaPcm\$$SWParams
 
 #----------------- rules -------------------
 
