@@ -34,19 +34,18 @@ public class MshMidiInTest
 			device.open();
 			Transmitter	t = device.getTransmitter();
 			t.setReceiver(r);
-		}
-		catch (MidiUnavailableException e)
-		{
-		}
-		while (true)
-		{
-			try
-			{
-				Thread.sleep(1000);
+			
+			while (true){
+				try
+				{
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException e){}
 			}
-			catch (InterruptedException e)
-			{
-			}
+	
+		}catch (MidiUnavailableException e){
+			e.printStackTrace();
 		}
+		
 	}
 }

@@ -23,38 +23,36 @@ public class MshMidiOutTest
 		{
 			device.open();
 			r = device.getReceiver();
-
-		}
-		catch (MidiUnavailableException e)
-		{
-		}
-		System.out.println("Receiver: " + r);
-		
-		for (int i = 0; i<50; i++){
-			try
-			{
-				ShortMessage	m0 = new ShortMessage();
-				m0.setMessage(0x90, 0, 61, 80);
-				//r.send(m0, -1);  // for current date
-				r.send(m0, device.getMicroSecondPosition() + 1005500);
+			System.out.println("Receiver: " + r);
+			
+			for (int i = 0; i<50; i++){
 				try
 				{
-					Thread.sleep(1000);
+					ShortMessage	m0 = new ShortMessage();
+					m0.setMessage(0x90, 0, 61, 80);
+					//r.send(m0, -1);  // for current date
+					r.send(m0, device.getMicroSecondPosition() + 1000000);
+					try
+					{
+						Thread.sleep(1000);
+					}
+					catch (InterruptedException e)
+					{
+					}
+					ShortMessage	m1 = new ShortMessage();
+					m1.setMessage(0x80, 0, 61, 0);
+					//r.send(m1, -1);  // for current date
+					r.send(m1, device.getMicroSecondPosition() + 1000000);
 				}
-				catch (InterruptedException e)
-				{
-				}
-				ShortMessage	m1 = new ShortMessage();
-				m1.setMessage(0x80, 0, 61, 0);
-				//r.send(m1, -1);  // for current date
-				r.send(m1, device.getMicroSecondPosition() + 1005500);
+				catch (InvalidMidiDataException e) {}
 			}
-			catch (InvalidMidiDataException e)
-			{
-			}
+
+			r.close();
+			device.close();
+			
+		}catch (MidiUnavailableException e){
+			e.printStackTrace();
 		}
 
-		r.close();
-		device.close();
 	}
 }
