@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -44,12 +44,13 @@ import	org.tritonus.core.TInit.ProviderRegistrationAction;
  */
 public class TMidiConfig
 {
-	private static Set		sm_midiDeviceProviders = null;
-	private static Set		sm_midiFileReaders = null;
-	private static Set		sm_midiFileWriters = null;
-	private static Set		sm_soundbankReaders = null;
+	private static Set<MidiDeviceProvider>	sm_midiDeviceProviders = null;
+	private static Set<MidiFileReader>		sm_midiFileReaders = null;
+	private static Set<MidiFileWriter>		sm_midiFileWriters = null;
+	private static Set<SoundbankReader>		sm_soundbankReaders = null;
 
-	private static MidiDevice.Info	sm_defaultMidiDeviceInfo = null;
+	private static MidiDevice.Info	sm_defaultMidiInDeviceInfo = null;
+	private static MidiDevice.Info	sm_defaultMidiOutDeviceInfo = null;
 	private static MidiDevice.Info	sm_defaultSequencerInfo = null;
 	private static MidiDevice.Info	sm_defaultSynthesizerInfo = null;
 
@@ -156,19 +157,20 @@ public class TMidiConfig
 	{
 		// TDebug.out("MidiDeviceProvider: " + provider);
 		getMidiDeviceProvidersImpl().add(provider);
-		if (getDefaultMidiDeviceInfo() == null ||
+		if (getDefaultMidiInDeviceInfo() == null ||
+			getDefaultMidiOutDeviceInfo() == null ||
 		    getDefaultSynthesizerInfo() == null ||
 		    getDefaultSequencerInfo() == null)
 		{
-			// TDebug.out("hello");
 			MidiDevice.Info[]	infos = provider.getDeviceInfo();
 			// TDebug.out("#infos: " + infos.length);
 			for (int i = 0; i < infos.length; i++)
 			{
+				MidiDevice.Info info = infos[i];
 				MidiDevice	device = null;
 				try
 				{
-					device = provider.getDevice(infos[i]);
+					device = provider.getDevice(info);
 				}
 				catch (IllegalArgumentException e)
 				{
@@ -181,21 +183,28 @@ public class TMidiConfig
 				{
 					if (getDefaultSynthesizerInfo() == null)
 					{
-						sm_defaultSynthesizerInfo = infos[i];
+						sm_defaultSynthesizerInfo = info;
 					}
 				}
 				else if (device instanceof Sequencer)
 				{
 					if (getDefaultSequencerInfo() == null)
 					{
-						sm_defaultSequencerInfo = infos[i];
+						sm_defaultSequencerInfo = info;
 					}
 				}
-				else
+				else if (device.getMaxTransmitters() != 0)
 				{
-					if (getDefaultMidiDeviceInfo() == null)
+					if (getDefaultMidiInDeviceInfo() == null)
 					{
-						sm_defaultMidiDeviceInfo = infos[i];
+						sm_defaultMidiInDeviceInfo = info;
+					}
+				}
+				else if (device.getMaxReceivers() != 0)
+				{
+					if (getDefaultMidiOutDeviceInfo() == null)
+					{
+						sm_defaultMidiOutDeviceInfo = info;
 					}
 				}
 			}
@@ -212,7 +221,7 @@ public class TMidiConfig
 
 
 
-	public static synchronized Iterator getMidiDeviceProviders()
+	public static synchronized Iterator<MidiDeviceProvider> getMidiDeviceProviders()
 	{
 		return getMidiDeviceProvidersImpl().iterator();
 	}
@@ -220,11 +229,11 @@ public class TMidiConfig
 
 
 
-	private static synchronized Set getMidiDeviceProvidersImpl()
+	private static synchronized Set<MidiDeviceProvider> getMidiDeviceProvidersImpl()
 	{
 		if (sm_midiDeviceProviders == null)
 		{
-			sm_midiDeviceProviders = new ArraySet();
+			sm_midiDeviceProviders = new ArraySet<MidiDeviceProvider>();
 			registerMidiDeviceProviders();
 		}
 		return sm_midiDeviceProviders;
@@ -235,15 +244,9 @@ public class TMidiConfig
 
 	public static synchronized void addMidiFileReader(MidiFileReader reader)
 	{
-		if (TDebug.TraceMidiConfig)
-		{
-			TDebug.out("TMidiConfig.addMidiFileReader(): adding " + reader);
-		}
+		if (TDebug.TraceMidiConfig) TDebug.out("TMidiConfig.addMidiFileReader(): adding " + reader);
 		getMidiFileReadersImpl().add(reader);
-		if (TDebug.TraceMidiConfig)
-		{
-			TDebug.out("TMidiConfig.addMidiFileReader(): size " + sm_midiFileReaders.size());
-		}
+		if (TDebug.TraceMidiConfig) TDebug.out("TMidiConfig.addMidiFileReader(): size " + sm_midiFileReaders.size());
 	}
 
 
@@ -255,18 +258,18 @@ public class TMidiConfig
 
 
 
-	public static synchronized Iterator getMidiFileReaders()
+	public static synchronized Iterator<MidiFileReader> getMidiFileReaders()
 	{
 		return getMidiFileReadersImpl().iterator();
 	}
 
 
 
-	private static synchronized Set getMidiFileReadersImpl()
+	private static synchronized Set<MidiFileReader> getMidiFileReadersImpl()
 	{
 		if (sm_midiFileReaders == null)
 		{
-			sm_midiFileReaders = new ArraySet();
+			sm_midiFileReaders = new ArraySet<MidiFileReader>();
 			registerMidiFileReaders();
 		}
 		return sm_midiFileReaders;
@@ -288,17 +291,17 @@ public class TMidiConfig
 
 
 
-	public static synchronized Iterator getMidiFileWriters()
+	public static synchronized Iterator<MidiFileWriter> getMidiFileWriters()
 	{
 		return getMidiFileWritersImpl().iterator();
 	}
 
 
-	private static synchronized Set getMidiFileWritersImpl()
+	private static synchronized Set<MidiFileWriter> getMidiFileWritersImpl()
 	{
 		if (sm_midiFileWriters == null)
 		{
-			sm_midiFileWriters = new ArraySet();
+			sm_midiFileWriters = new ArraySet<MidiFileWriter>();
 			registerMidiFileWriters();
 		}
 		return sm_midiFileWriters;
@@ -321,18 +324,18 @@ public class TMidiConfig
 
 
 
-	public static synchronized Iterator getSoundbankReaders()
+	public static synchronized Iterator<SoundbankReader> getSoundbankReaders()
 	{
 		return getSoundbankReadersImpl().iterator();
 	}
 
 
 
-	private static synchronized Set getSoundbankReadersImpl()
+	private static synchronized Set<SoundbankReader> getSoundbankReadersImpl()
 	{
 		if (sm_soundbankReaders == null)
 		{
-			sm_soundbankReaders = new ArraySet();
+			sm_soundbankReaders = new ArraySet<SoundbankReader>();
 			registerSoundbankReaders();
 		}
 		return sm_soundbankReaders;
@@ -340,9 +343,16 @@ public class TMidiConfig
 
 
 
-	public static MidiDevice.Info getDefaultMidiDeviceInfo()
+	public static MidiDevice.Info getDefaultMidiInDeviceInfo()
 	{
-		return sm_defaultMidiDeviceInfo;
+		return sm_defaultMidiInDeviceInfo;
+	}
+
+
+
+	public static MidiDevice.Info getDefaultMidiOutDeviceInfo()
+	{
+		return sm_defaultMidiOutDeviceInfo;
 	}
 
 
