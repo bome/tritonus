@@ -1,5 +1,5 @@
 /*
- *	Alsa.java
+ *	AlsaMixerControl.java
  */
 
 /*
@@ -29,22 +29,54 @@ package	org.tritonus.lowlevel.alsa;
 import	org.tritonus.share.TDebug;
 
 
-public class Alsa
+public class AlsaMixerControl
 {
-	static
+	AlsaMixer		m_mixer;
+	private int		m_nIndex;
+	private String		m_strName;
+
+
+
+	public AlsaMixerControl(AlsaMixer mixer,
+				int nIndex,
+				String strName)
 	{
-		if (TDebug.TraceAlsaNative)
-		{
-			System.out.println("Alsa.<clinit>(): loading native library tritonusalsa");
-		}
-		System.loadLibrary("tritonusalsa");
+		m_mixer = mixer;
+		m_nIndex = nIndex;
+		m_strName = strName;
 	}
 
 
 
-	public static native String getStringError(int nErrnum);
+	private AlsaMixer getMixer()
+	{
+		return m_mixer;
+	}
+
+
+	public int getIndex()
+	{
+		return m_nIndex;
+	}
+
+
+	public String getName()
+	{
+		return m_strName;
+	}
+
+
+	public void read()
+	{
+	}
+
+
+	public void write()
+	{
+	}
+
 }
 
 
 
-/*** Alsa.java ***/
+/*** AlsaMixerControl.java ***/

@@ -31,6 +31,7 @@ import	javax.sound.sampled.spi.MixerProvider;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.Alsa;
+import	org.tritonus.lowlevel.alsa.AlsaCtl;
 import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
@@ -41,14 +42,15 @@ public class AlsaMixerProvider
 	public AlsaMixerProvider()
 	{
 		super();
-		int	nNumCards = Alsa.getCards();
+		int[]	anCards = AlsaCtl.getCards();
 		if (TDebug.TraceMixerProvider)
 		{
-			System.out.println("AlsaMixerProvider.<init>(): num cards: " + nNumCards);
+			System.out.println("AlsaMixerProvider.<init>(): num cards: " + anCards.length);
 		}
-		for (int i = 0; i < nNumCards; i++)
+		for (int i = 0; i < anCards.length; i++)
 		{
-			Alsa.loadCard(i);
+			AlsaCtl.loadCard(anCards[i]);
+			// TODO: has to be "hw:<anCards[i]>"
 			AlsaMixer	mixer = new AlsaMixer(i);
 			super.addMixer(mixer);
 		}

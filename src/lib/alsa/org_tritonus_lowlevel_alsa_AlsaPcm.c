@@ -25,28 +25,11 @@
 
 #include	<sys/asoundlib.h>
 #include	<errno.h>
+#include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaPcm.h"
 
 
 static int	DEBUG = 1;
-
-
-static void
-throwRuntimeException(JNIEnv *env, char* pStrMessage)
-{
-	static  jclass	runtimeExceptionClass = NULL;
-
-	if (runtimeExceptionClass == NULL)
-	{
-		runtimeExceptionClass = (*env)->FindClass(env, "java/lang/RuntimeException");
-		if (runtimeExceptionClass == NULL)
-		{
-			(*env)->FatalError(env, "cannot get class object for java.lang.RuntimeException");
-		}
-	}
-	(*env)->ThrowNew(env, runtimeExceptionClass, pStrMessage);
-}
-
 
 
 static jfieldID

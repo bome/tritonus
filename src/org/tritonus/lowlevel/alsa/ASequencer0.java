@@ -236,17 +236,11 @@ public class ASequencer0
 	public static final int	SND_SEQ_CLIENT_DUMMY =		62;	/* dummy ports */
 	public static final int	SND_SEQ_CLIENT_OSS =		63;	/* oss sequencer emulator */
 
-
-	/* client types */
-	public static final int	NO_CLIENT       = 0;
-	public static final int	USER_CLIENT     = 1;
-	public static final int	KERNEL_CLIENT   = 2;
-                        
 	/* event filter flags */
 	public static final int	SND_SEQ_FILTER_BROADCAST =	(1<<0);	/* accept broadcast messages */
 	public static final int	SND_SEQ_FILTER_MULTICAST =	(1<<1);	/* accept multicast messages */
 	public static final int	SND_SEQ_FILTER_BOUNCE =		(1<<2);	/* accept bounce event in error */
-	public static final int	SND_SEQ_FILTER_USE_EVENT =	(1<<31);	/* use event filter */
+	public static final long	SND_SEQ_FILTER_USE_EVENT =	(1L<<31);	/* use event filter */
 
 
 	/* known port numbers */
@@ -287,16 +281,15 @@ public class ASequencer0
 	public static final String SND_SEQ_GROUP_APPLICATION =	"application";
 
 
-	public static final boolean	DEBUG = false;
-
 
 	static
 	{
 		if (TDebug.TraceASequencer)
 		{
-			System.out.println("ASequencer0.<clinit>(): loading native library tritonusalsa");
+			TDebug.out("ASequencer0.<clinit>(): loading native library tritonusalsa");
 		}
 		System.loadLibrary("tritonusalsa");
+		setTrace(TDebug.TraceASequencerNative);
 	}
 
 	/*
@@ -314,12 +307,15 @@ public class ASequencer0
 
 	public ASequencer0()
 	{
-		if (DEBUG)
+		if (TDebug.TraceASequencer)
 		{
-			System.out.println("ASequencer0.<init>:");
-			Thread.dumpStack();
+			System.out.println("ASequencer0.<init>: begin");
 		}
 		m_nClientId = open();
+		if (TDebug.TraceASequencer)
+		{
+			System.out.println("ASequencer0.<init>: end");
+		}
 	}
 
 
@@ -509,7 +505,7 @@ public class ASequencer0
 
 	/**	Gets information about the next client.
 	 *	Calls snd_seq_query_next_client().
-	 *	and put the returned values
+	 *	and puts the returned values
 	 *	into the passed arrays.
 	 *
 	 *	nClient has to be -1 to start, or a client id returned by
@@ -559,6 +555,9 @@ public class ASequencer0
 
 
 	public native void setClientName(String strName);
+
+
+	private static native void setTrace(boolean bTrace);
 }
 
 

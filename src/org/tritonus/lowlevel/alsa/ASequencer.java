@@ -1365,21 +1365,34 @@ public class ASequencer
 
 		private ClientInfo createNextClientInfo()
 		{
+			if (TDebug.TraceASequencer)
+			{
+				TDebug.out("ASequencer.createNextClientInfo(): begin");
+			}
 			int[]		anValues = new int[4];
 			String[]	astrValues = new String[2];
 			int	nSuccess = getNextClientInfo(m_nClient, anValues, astrValues);
-			// TDebug.out("succ: " + nSuccess);
+			if (TDebug.TraceASequencer)
+			{
+				TDebug.out("succ: " + nSuccess);
+			}
+			ClientInfo	clientInfo = null;
 			if (nSuccess == 0)
 			{
-				// TDebug.out("getNextClientInfo successful");
+				// TDebug.out("ASequencer.createNextClientInfo(): getNextClientInfo successful");
 				m_nClient = anValues[0];
-				return new ClientInfo(anValues[0], anValues[1], astrValues[0], anValues[2], astrValues[1], anValues[3]);
+				clientInfo = new ClientInfo(anValues[0], anValues[1], astrValues[0], anValues[2], astrValues[1], anValues[3]);
 			}
 			else
 			{
-				// TDebug.out("getNextClientInfo failed");
-				return null;
+				// TDebug.out("ASequencer.createNextClientInfo(): getNextClientInfo failed");
+				clientInfo = null;
 			}
+			if (TDebug.TraceASequencer)
+			{
+				TDebug.out("ASequencer.createNextClientInfo(): end");
+			}
+			return clientInfo;
 		}
 	}
 

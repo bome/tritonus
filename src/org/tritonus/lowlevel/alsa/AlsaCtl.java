@@ -46,6 +46,20 @@ public class AlsaCtl
 
 
 
+	public static native int loadCard(int nCard);
+	public static native int[] getCards();
+	public static native int getCardIndex(String strName);
+	public static native String getCardName(int nCard);
+	public static native String getCardLongName(int nCard);
+
+	public static native int getDefaultCard();
+	public static native int getDefaultMixerCard();
+	public static native int getDefaultPcmCard();
+	public static native int getDefaultPcmDevice();
+	public static native int getDefaultRawmidiCard();
+	public static native int getDefaultRawmidiDevice();
+
+
 	public AlsaCtl(int nCard)
 		throws	Exception
 	{
@@ -84,9 +98,9 @@ public class AlsaCtl
 	 *	astrValues[0]	id
 	 *	astrValues[1]	name
 	 */
-	private native int getPcmInfo(int nDevice,
-				      int[] anValues,
-				      String astrValues);
+// 	private native int getPcmInfo(int nDevice,
+// 				      int[] anValues,
+// 				      String astrValues);
 
 
 	/**
@@ -98,11 +112,11 @@ public class AlsaCtl
 	 *	astrValues[0]	id
 	 *	astrValues[1]	name
 	 */
-	private native int getPcmChannelInfo(int nDevice,
-					     int nChannel,
-					     int nSubDevice,
-					     int[] anValues,
-					     String astrValues);
+// 	private native int getPcmChannelInfo(int nDevice,
+// 					     int nChannel,
+// 					     int nSubDevice,
+// 					     int[] anValues,
+// 					     String astrValues);
 
 
 }

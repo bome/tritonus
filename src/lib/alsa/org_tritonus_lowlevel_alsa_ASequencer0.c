@@ -5,29 +5,15 @@
 #include	<errno.h>
 #include	<string.h>
 #include	<sys/asoundlib.h>
+#include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_ASequencer0.h"
+#include	"constants_check.h"
+
+static int DEBUG = 0;
 
 
 static void
 sendEvent(JNIEnv *env, snd_seq_t* seq, snd_seq_event_t* pEvent);
-
-
-
-static void
-throwRuntimeException(JNIEnv *env, char* pStrMessage)
-{
-	static  jclass	runtimeExceptionClass = NULL;
-
-	if (runtimeExceptionClass == NULL)
-	{
-		runtimeExceptionClass = (*env)->FindClass(env, "java/lang/RuntimeException");
-		if (runtimeExceptionClass == NULL)
-		{
-			(*env)->FatalError(env, "cannot get class object for java.lang.RuntimeException");
-		}
-	}
-	(*env)->ThrowNew(env, runtimeExceptionClass, pStrMessage);
-}
 
 
 
@@ -36,7 +22,6 @@ getNativeSeqFieldID(JNIEnv *env)
 {
 	static jfieldID	nativeSeqFieldID = NULL;
 
-	// printf("hallo\n");
 	if (nativeSeqFieldID == NULL)
 	{
 		// TODO: use a passed object rather than the name of the class
@@ -79,14 +64,26 @@ setNativeSeq(JNIEnv *env, jobject obj, snd_seq_t* seq)
  * Method:    allocQueue
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue
 (JNIEnv *env, jobject obj)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nQueue = snd_seq_alloc_queue(seq);
+	snd_seq_t*	seq;
+	int		nQueue;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
+	nQueue = snd_seq_alloc_queue(seq);
 	if (nQueue < 0)
 	{
 		throwRuntimeException(env, "snd_seq_alloc_queue failed");
+	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue(): end\n");
 	}
 	return (jint) nQueue;
 }
@@ -98,14 +95,26 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue
  * Method:    close
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_close
-  (JNIEnv *env, jobject obj)
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_close
+(JNIEnv *env, jobject obj)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn = snd_seq_close(seq);
+	snd_seq_t*	seq;
+	int		nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_close(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
+	nReturn = snd_seq_close(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_close failed");
+	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_close(): end\n");
 	}
 }
 
@@ -114,13 +123,20 @@ JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_close
  * Method:    createPort
  * Signature: (Ljava/lang/String;IIIIII)I
  */
-JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort
 (JNIEnv *env, jobject obj, jstring strName, jint nCapabilities, jint nGroupPermissions, jint nType, jint nMidiChannels, jint nMidiVoices, jint nSynthVoices)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
+	snd_seq_t*		seq;
 	snd_seq_port_info_t	portInfo;
 	const char*		name;
-	int		nReturn;
+	int			nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&portInfo, 0, sizeof(portInfo));
 	name = (*env)->GetStringUTFChars(env, strName, NULL);
 	if (name == NULL)
@@ -147,6 +163,10 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort
 	{
 		throwRuntimeException(env, "snd_seq_create_port failed");
 	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort(): end\n");
+	}
 	return (jint) portInfo.port;
 }
 
@@ -159,7 +179,7 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 	jstring		strName;
 	jstring		strGroupName;
 	jboolean	bIsCopy;
-	jint*	pnValues;
+	jint*		pnValues;
 
 	nLength = (*env)->GetArrayLength(env, anValues);
 	if (nLength < 4)
@@ -199,7 +219,7 @@ fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jint
 	jstring		strName;
 	jstring		strGroupName;
 	jboolean	bIsCopy;
-	jint*	pnValues;
+	jint*		pnValues;
 
 	// printf("4a\n");
 	nLength = (*env)->GetArrayLength(env, anValues);
@@ -258,17 +278,19 @@ fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jint
  * Method:    getClientInfo
  * Signature: (I[I[Ljava/lang/String;)V
  */
-JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo
-  (JNIEnv *env, jobject obj, jint nClient, jintArray anValues, jobjectArray astrValues)
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo
+(JNIEnv *env, jobject obj, jint nClient, jintArray anValues, jobjectArray astrValues)
 {
+	snd_seq_t*		seq;
 	snd_seq_client_info_t	clientInfo;
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn;
-	// int		nLength;
-	// jstring		strName;
-	// jstring		strGroupName;
-	// jboolean	bIsCopy;
+	int			nReturn;
 
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
 	nReturn = snd_seq_get_any_client_info(seq, nClient, &clientInfo);
 	if (nReturn < 0)
@@ -278,36 +300,10 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo
 	else
 	{
 		fillClientInfoArrays(env, obj, &clientInfo, anValues, astrValues);
-/*
-		jint*	pnValues;
-		nLength = (*env)->GetArrayLength(env, anValues);
-		if (nLength < 4)
-		{
-			throwRuntimeException(env, "array does not have enough elements (4 required)");
-		}
-		pnValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopy);
-		if (pnValues == NULL)
-		{
-			throwRuntimeException(env, "GetIntArrayElements failed");
-		}
-		pnValues[0] = clientInfo.client;
-		pnValues[1] = clientInfo.type;
-		pnValues[2] = clientInfo.filter;
-		pnValues[3] = clientInfo.num_ports;
-		if (bIsCopy)
-		{
-			(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
-		}
-		nLength = (*env)->GetArrayLength(env, astrValues);
-		if (nLength < 2)
-		{
-			throwRuntimeException(env, "array does not have enough elements (2 required)");
-		}
-		strName = (*env)->NewStringUTF(env, clientInfo.name);
-		(*env)->SetObjectArrayElement(env, astrValues, 0, strName);
-		strGroupName = (*env)->NewStringUTF(env, clientInfo.group);
-		(*env)->SetObjectArrayElement(env, astrValues, 1, strGroupName);
-*/
+	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo(): end\n");
 	}
 	return (jint) nReturn;
 }
@@ -323,16 +319,22 @@ JNIEXPORT jboolean JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 (JNIEnv *env, jobject obj, jintArray anValues, jlongArray alValues, jobjectArray aObjValues)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
+	snd_seq_t*		seq;
 	snd_seq_event_t*	pEvent;
-	int		nReturn;
-	int		nLength;
-	jobject		objectRef;
-	jint*		panValues;
-	jlong*		palValues;
-	jboolean	bIsCopyI;
-	jboolean	bIsCopyL;
-	jbyteArray	byteArray;
+	int			nReturn;
+	int			nLength;
+	jobject			objectRef;
+	jint*			panValues;
+	jlong*			palValues;
+	jboolean		bIsCopyI;
+	jboolean		bIsCopyL;
+	jbyteArray		byteArray;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 
 	/*
 	 *	snd_seq_event_input() results in a blocking read on a
@@ -519,6 +521,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 		(*env)->SetObjectArrayElement(env, aObjValues, 0, byteArray);
 	}
 	// TODO: should events be freed with snd_seq_free_event()?
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent(): end\n");
+	}
 	return JNI_TRUE;
 }
 
@@ -533,23 +539,38 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo
 (JNIEnv *env, jobject obj, jint nClient, jintArray anValues, jobjectArray astrValues)
 {
+	snd_seq_t*		seq;
 	snd_seq_client_info_t	clientInfo;
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn;
+	int			nReturn;
 
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): begin\n");
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): client: %d\n", nClient);
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
 	clientInfo.client = nClient;
 	nReturn = snd_seq_query_next_client(seq, &clientInfo);
-	// printf("return: %d\n", nReturn);
-	// perror("abc");
-	// -2 (no such file or directory): returned when no more client is available
-	if (nReturn < 0/* && nReturn != -2*/)
+	if (DEBUG)
 	{
-		// throwRuntimeException(env, "snd_seq_query_next_client failed");
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): return value from snd_seq_query_next_client(): %d\n", nReturn);
+	}
+	if (nReturn < 0)
+	{
+		// -2 (no such file or directory): returned when no more client is available
+		if (nReturn != -2)
+		{
+			throwRuntimeException(env, "snd_seq_query_next_client failed");
+		}
 	}
 	else
 	{
 		fillClientInfoArrays(env, obj, &clientInfo, anValues, astrValues);
+	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): end\n");
 	}
 	return (jint) nReturn;
 }
@@ -565,26 +586,38 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo
 (JNIEnv *env, jobject obj, jint nClient, jint nPort, jintArray anValues, jobjectArray astrValues)
 {
+	snd_seq_t*		seq;
 	snd_seq_port_info_t	portInfo;
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn;
+	int			nReturn;
 
-	// printf("1\n");
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&portInfo, 0, sizeof(portInfo));
 	portInfo.client = nClient;
 	portInfo.port = nPort;
-	// printf("2\n");
 	nReturn = snd_seq_query_next_port(seq, &portInfo);
-	// printf("3\n");
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo(): return value from snd_seq_query_next_port(): %d\n", nReturn);
+	}
 	if (nReturn < 0)
 	{
-		// throwRuntimeException(env, "snd_seq_query_next_port failed");
+		// -2 (no such file or directory): returned when no more port is available
+		if (nReturn != -2)
+		{
+			throwRuntimeException(env, "snd_seq_query_next_port failed");
+		}
 	}
 	else
 	{
-		// printf("4\n");
 		fillPortInfoArrays(env, obj, &portInfo, anValues, astrValues);
-		// printf("5\n");
+	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo(): end\n");
 	}
 	return (jint) nReturn;
 }
@@ -600,12 +633,19 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 (JNIEnv *env, jobject obj, jint nQueue, jintArray anValues, jlongArray alValues)
 {
-	jint*	values = NULL;
-	jlong*	lvalues = NULL;
-	int	nLength;
+	snd_seq_t*		seq;
 	snd_seq_queue_status_t	queueStatus;
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn = snd_seq_get_queue_status(seq, nQueue, &queueStatus);
+	int			nReturn;
+	jint*			values = NULL;
+	jlong*			lvalues = NULL;
+	int			nLength;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
+	nReturn = snd_seq_get_queue_status(seq, nQueue, &queueStatus);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_status failed");
@@ -638,6 +678,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	lvalues[0] = queueStatus.tick;
 	lvalues[1] = (jlong) queueStatus.time.tv_sec * 1000000000 + queueStatus.time.tv_nsec;
 	(*env)->ReleaseLongArrayElements(env, alValues, lvalues, 0);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus(): end\n");
+	}
 }
 
 
@@ -651,11 +695,18 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
 (JNIEnv *env, jobject obj, jint nQueue, jintArray anValues)
 {
-	jint*	values = NULL;
-	int	nLength;
+	snd_seq_t*		seq;
 	snd_seq_queue_tempo_t	queueTempo;
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn = snd_seq_get_queue_tempo(seq, nQueue, &queueTempo);
+	jint*			values = NULL;
+	int			nLength;
+	int			nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
+	nReturn = snd_seq_get_queue_tempo(seq, nQueue, &queueTempo);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_tempo failed");
@@ -673,6 +724,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
 	values[0] = queueTempo.tempo;
 	values[1] = queueTempo.ppq;
 	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo(): end\n");
+	}
 }
 
 
@@ -686,11 +741,18 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo
 (JNIEnv *env, jobject obj, jintArray anValues)
 {
-	jint*	values = NULL;
-	int	nLength;
+	snd_seq_t*		seq;
 	snd_seq_system_info_t	systemInfo;
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	int		nReturn = snd_seq_system_info(seq, &systemInfo);
+	jint*			values = NULL;
+	int			nLength;
+	int			nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
+	nReturn = snd_seq_system_info(seq, &systemInfo);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_system_info failed");
@@ -710,7 +772,13 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo
 	values[2] = systemInfo.ports;
 	values[3] = systemInfo.channels;
 	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo(): end\n");
+	}
 }
+
+
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_ASequencer0
@@ -723,8 +791,12 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_open
 {
 	snd_seq_t*	seq;
 	int		nReturn;
-	// errno = 0;
-	nReturn = snd_seq_open(&seq, SND_SEQ_OPEN);
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_open(): begin\n");
+	}
+	nReturn = snd_seq_open(&seq, "hw", SND_SEQ_OPEN_DUPLEX, 0);
 	// printf("2\n");
 	// printf("return: %d\n", nReturn);
 	// perror("abc");
@@ -734,7 +806,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_open
 		return (jint) nReturn;
 	}
 	// printf("3\n");
-	snd_seq_block_mode(seq, 1);
+	snd_seq_nonblock(seq, SND_SEQ_NONBLOCK);
 	// printf("4\n");
 	setNativeSeq(env, obj, seq);
 	// printf("5\n");
@@ -742,12 +814,16 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_open
 	// printf("6\n");
 	// printf("return: %d\n", nReturn);
 	// perror("abc");
-	fflush(stdout);
+	// fflush(stdout);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_client_id failed");
 	}
 	// printf("7\n");
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_open(): end\n");
+	}
 	return (jint) nReturn;
 }
 
@@ -765,8 +841,14 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendControlEvent
  jint nSourcePort, jint nDestClient, jint nDestPort,
  jint nChannel, jint nParam, jint nValue)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	snd_seq_event_t	event;
+	snd_seq_t*		seq;
+	snd_seq_event_t		event;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendControlEvent(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -794,6 +876,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendControlEvent
 	event.data.control.value = nValue;
 
 	sendEvent(env, seq, &event);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendControlEvent(): end\n");
+	}
 }
 
 
@@ -810,8 +896,14 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendNoteEvent
  jint nSourcePort, jint nDestClient, jint nDestPort,
  jint nChannel, jint nNote, jint nVelocity, jint nOffVelocity, jint nDuration)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	snd_seq_event_t	event;
+	snd_seq_t*		seq;
+	snd_seq_event_t		event;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendNoteEvent(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -850,6 +942,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendNoteEvent
 	event.data.note.duration = nDuration;
 
 	sendEvent(env, seq, &event);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendNoteEvent(): end\n");
+	}
 }
 
 
@@ -866,9 +962,15 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent
  jint nSourcePort, jint nDestClient, jint nDestPort,
  jobject objectRef)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	snd_seq_event_t	event;
-	jobject		globalRef;
+	snd_seq_t*		seq;
+	snd_seq_event_t		event;
+	jobject			globalRef;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 
 	memset(&event, 0, sizeof(event));
 
@@ -918,7 +1020,13 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent
 	*((jobject*) (event.data.raw32.d)) = globalRef;
 
 	sendEvent(env, seq, &event);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent(): end\n");
+	}
 }
+
+
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_ASequencer0
@@ -932,8 +1040,14 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent
  jint nSourcePort, jint nDestClient, jint nDestPort,
  jint nControlQueue, jint nControlValue, jlong lControlTime)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	snd_seq_event_t	event;
+	snd_seq_t*		seq;
+	snd_seq_event_t		event;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -972,6 +1086,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent
 	}
 
 	sendEvent(env, seq, &event);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent(): end\n");
+	}
 }
 
 
@@ -988,9 +1106,15 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent
  jint nSourcePort, jint nDestClient, jint nDestPort,
  jbyteArray abData, jint nOffset, jint nLength)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
-	snd_seq_event_t	event;
-	jbyte*		data;
+	snd_seq_t*		seq;
+	snd_seq_event_t		event;
+	jbyte*			data;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -1022,7 +1146,11 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent
 	event.data.ext.len = nLength;
 
 	sendEvent(env, seq, &event);
-	// some sort of release of the array elements necessary?
+	// TODO: some sort of release of the array elements necessary?
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent(): end\n");
+	}
 }
 
 
@@ -1044,9 +1172,15 @@ sendEvent(JNIEnv *env,
 	do
 	{
 		errno = 0;
-		// printf("before flushing output\n");
-		nReturn = snd_seq_flush_output(seq);
-		// printf("after flushing output\n");
+		if (DEBUG)
+		{
+			printf("before draining output\n");
+		}
+		nReturn = snd_seq_drain_output(seq);
+		if (DEBUG)
+		{
+			printf("after draining output\n");
+		}
 	}
 	while ((nReturn == -1 && errno == EINTR) || nReturn == -EINTR);
 	if (nReturn < 0)
@@ -1069,11 +1203,16 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_setClientName
 (JNIEnv *env, jobject obj, jstring strName)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
+	snd_seq_t*		seq;
 	snd_seq_client_info_t	clientInfo;
 	const char*		name;
-	int	nReturn;
+	int			nReturn;
 
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setClientName(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
 	nReturn = snd_seq_get_client_info(seq, &clientInfo);
 	if (nReturn < 0)
@@ -1092,6 +1231,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setClientName
 	{
 		throwRuntimeException(env, "snd_seq_set_client_info failed");
 	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setClientName(): end\n");
+	}
 }
 
 
@@ -1105,10 +1248,15 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueLocked
 (JNIEnv *env, jobject obj, jint nQueue, jboolean bLocked)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
+	snd_seq_t*		seq;
 	snd_seq_queue_owner_t	owner;
-	int	nReturn;
+	int			nReturn;
 
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueLocked(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&owner, 0, sizeof(owner));
 	// owner.queue = nQueue;
 	nReturn = snd_seq_get_queue_owner(seq, nQueue, &owner);
@@ -1124,6 +1272,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueLocked
 		// perror("abc");
 		throwRuntimeException(env, "snd_seq_set_queue_owner failed");
 	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueLocked(): end\n");
+	}
 }
 
 
@@ -1137,10 +1289,15 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo
 (JNIEnv *env, jobject obj, jint nQueue, jint nResolution, jint nTempo)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
+	snd_seq_t*		seq;
 	snd_seq_queue_tempo_t	tempo;
-	int	nReturn;
+	int			nReturn;
 
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&tempo, 0, sizeof(tempo));
 	tempo.queue = nQueue;
 	tempo.ppq = nResolution;
@@ -1153,6 +1310,10 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo
 		perror("abc");
 		throwRuntimeException(env, "snd_seq_set_queue_tempo failed");
 	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo(): end\n");
+	}
 }
 
 
@@ -1162,15 +1323,22 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo
  * Method:    subscribePort
  * Signature: (IIIIIZZZIII)V
  */
-JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort
 (JNIEnv *env, jobject obj,
  jint nSenderClient, jint nSenderPort, jint nDestClient, jint nDestPort,
  jint nQueue, jboolean bExclusive, jboolean bRealtime, jboolean bConvertTime,
  jint nMidiChannels, jint nMidiVoices, jint nSynthVoices)
 {
-	snd_seq_t*	seq = getNativeSeq(env, obj);
+	snd_seq_t*			seq;
 	snd_seq_port_subscribe_t	subs;
-	int	nReturn;
+	int				nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort(): begin\n");
+	}
+	seq = getNativeSeq(env, obj);
 	memset(&subs, 0, sizeof(subs));
 
 	subs.sender.client = nSenderClient;
@@ -1190,8 +1358,26 @@ JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort
 	nReturn = snd_seq_subscribe_port(seq, &subs);
 	if (nReturn < 0)
 	{
-		throwRuntimeException(env, "snd_seq_subscribe_port failed");
+		throwRuntimeException(env, "snd_seq_subscribe_port() failed");
 	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort(): end\n");
+	}
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_ASequencer0
+ * Method:    setTrace
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_setTrace
+(JNIEnv *env, jclass cls, jboolean bTrace)
+{
+	DEBUG = bTrace;
 }
 
 
