@@ -7,3 +7,5 @@ sequencer:
 - synchronization
 - reorganize JavaSequencer to have a loader thread and a player thread
 - clean up AlsaSeq
+
+- why is tritonus_remaining.jar in the classpath attribute in the manifest of, for instance, tritonus_mp3.jar?
