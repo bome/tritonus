@@ -36,6 +36,8 @@ public class TDebug
 	// The stream we output to
 	public static PrintStream	m_printStream = System.out;
 
+	private static String indent="";
+
 	// general
 	public static boolean	TraceInit = getBooleanProperty("TraceInit");
 	public static boolean	TraceCircularBuffer = getBooleanProperty("TraceCircularBuffer");
@@ -85,7 +87,17 @@ public class TDebug
 	// make this method configurable to write to file, write to stderr,...
 	public static void out(String strMessage)
 	{
-		m_printStream.println(strMessage);
+		if (strMessage.length()>0 && strMessage.charAt(0)=='<') {
+			if (indent.length()>2) {	
+				indent=indent.substring(2);
+			} else {
+				indent="";
+			}
+		}
+		m_printStream.println(indent+strMessage);
+		if (strMessage.length()>0 && strMessage.charAt(0)=='>') {
+				indent+="  ";
+		} 
 	}
 
 

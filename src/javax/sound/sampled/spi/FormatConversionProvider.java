@@ -72,14 +72,17 @@ public abstract class FormatConversionProvider
 	{
 		if (TDebug.TraceAudioConverter)
 		{
-			TDebug.out("FormatConversionProvider.isConversionSupported(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out(">FormatConversionProvider.isConversionSupported(AudioFormat.Encoding, AudioFormat):");
 			TDebug.out("checking if conversion possible");
 			TDebug.out("from: " + sourceFormat);
 			TDebug.out("to: " + targetEncoding);
 		}
 		AudioFormat.Encoding[]	aTargetEncodings = getTargetEncodings(sourceFormat);
-		return arrayContains(aTargetEncodings,
-				     targetEncoding);
+		boolean res = arrayContains(aTargetEncodings, targetEncoding);
+		if (TDebug.TraceAudioConverter) {
+			TDebug.out("< result="+res);
+		}
+		return res;
 	}
 
 
@@ -96,7 +99,7 @@ public abstract class FormatConversionProvider
 	{
 		if (TDebug.TraceAudioConverter)
 		{
-			TDebug.out("FormatConversionProvider.isConversionSupported(AudioFormat, AudioFormat):");
+			TDebug.out(">FormatConversionProvider.isConversionSupported(AudioFormat, AudioFormat):");
 			TDebug.out("checking if conversion possible");
 			TDebug.out("from: " + sourceFormat);
 			TDebug.out("to: " + targetFormat);
@@ -111,8 +114,15 @@ public abstract class FormatConversionProvider
 			}
 			if (aTargetFormats[i] != null && aTargetFormats[i].matches(targetFormat))
 			{
+				if (TDebug.TraceAudioConverter) 
+				{
+					TDebug.out("<result=true");
+				}
 				return true;
 			}
+		}
+		if (TDebug.TraceAudioConverter) {
+			TDebug.out("<result=false");
 		}
 		return false;
 	}

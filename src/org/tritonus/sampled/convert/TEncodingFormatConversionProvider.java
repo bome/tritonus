@@ -93,7 +93,7 @@ public abstract class TEncodingFormatConversionProvider
 	 */
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat) {
 		if (TDebug.TraceAudioConverter) {
-			TDebug.out("TEncodingFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out(">TEncodingFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
 			TDebug.out("checking if conversion possible");
 			TDebug.out("from: " + sourceFormat);
 			TDebug.out("to: " + targetEncoding);
@@ -107,8 +107,14 @@ public abstract class TEncodingFormatConversionProvider
 				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
 				result.add(targetFormat);
 			}
+			if (TDebug.TraceAudioConverter) {
+				TDebug.out("< returning "+result.size()+" elements.");
+			}
 			return (AudioFormat[]) result.toArray(EMPTY_FORMAT_ARRAY);
 		} else {
+			if (TDebug.TraceAudioConverter) {
+				TDebug.out("< returning empty array.");
+			}
 			return EMPTY_FORMAT_ARRAY;
 		}
 	}
