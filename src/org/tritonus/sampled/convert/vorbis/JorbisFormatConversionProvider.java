@@ -136,7 +136,6 @@ public class JorbisFormatConversionProvider
 
 		if (TDebug.TraceAudioConverter)
 		{
-			TDebug.out("JorbisFormatConversionProvider.getAudioInputStream(): begin");
 			TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
 			TDebug.out("checking if conversion supported");
 			TDebug.out("from: " + audioInputStream.getFormat());
@@ -167,7 +166,6 @@ public class JorbisFormatConversionProvider
 			}
 			throw new IllegalArgumentException("conversion not supported");
 		}
-		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getAudioInputStream(): end"); }
 		return convertedAudioInputStream;
 	}
 
@@ -195,7 +193,10 @@ public class JorbisFormatConversionProvider
 		to decode an ogg/vorbis stream. This class contains the logic
 		of maintaining buffers and calling the decoder.
 	*/
-	private static class DecodedJorbisAudioInputStream extends TAsynchronousFilteredAudioInputStream
+	/* Class should be private, but is public due to a bug (?) in the
+	   aspectj compiler. */
+	/*private*/public static class DecodedJorbisAudioInputStream
+		extends TAsynchronousFilteredAudioInputStream
 	{
 		public static boolean		DEBUG = false;
 
@@ -278,7 +279,6 @@ public class JorbisFormatConversionProvider
 			// and adapted by E.B from JavaZOOM to suit to JavaSound SPI.
 			// loop 1
 			if (streamStillHasData == true)
-				//while (streamStillHasData)
 			{
 				if (loopid == 1)
 				{
@@ -432,7 +432,7 @@ public class JorbisFormatConversionProvider
 				vorbisDspState.clear();
 				vorbisInfo.clear();
 			} // end loop 1
-			else
+			else // no more data
 			{
 				oggSyncState_.clear();
 				if (DEBUG) System.out.println("Done Song.");
@@ -448,7 +448,6 @@ public class JorbisFormatConversionProvider
 				{
 					if (DEBUG) e.printStackTrace();
 				}
-				//break;
 			}
 		}
 
