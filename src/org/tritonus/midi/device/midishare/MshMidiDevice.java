@@ -24,14 +24,7 @@
  *
  */
 
-
 package	org.tritonus.midi.device.midishare;
-
-/*
-import	com.sun.java.util.collections.ArrayList;
-import	com.sun.java.util.collections.Iterator;
-import	com.sun.java.util.collections.List;
-*/
 
 
 import	java.util.ArrayList;
@@ -60,9 +53,6 @@ public class MshMidiDevice
 	private int			m_refNum = -1;	// the MidiShare application refnum
 	public int 			m_filter = 0;   // the application filter
 
-	private boolean		m_bUseIn;
-	private boolean		m_bUseOut;
-	
 	private MshMidiIn	m_mshMidiIn;
 	private MshMidiOut	m_mshMidiOut;
 	
@@ -74,10 +64,9 @@ public class MshMidiDevice
 		super(new TMidiDevice.Info("MidiShare MIDI client",
 					 GlobalInfo.getVendor(),
 					 "this client uses MidiShare",
-					 GlobalInfo.getVersion()));
-		m_bUseIn = true;
-		m_bUseOut = true;
-		if (TDebug.TraceMshMidiDevice)
+					 GlobalInfo.getVersion()),
+		      true, true);
+		if (TDebug.TraceMidiDevice)
 		{
 			TDebug.out("MshMidiDevice.<init>(): called.");
 		}
@@ -107,17 +96,6 @@ public class MshMidiDevice
 		m_bUseOut = bUseOut;
 	}
 	*/
-
-	private boolean getUseIn()
-	{
-		return m_bUseIn;
-	}
-
-
-	private boolean getUseOut()
-	{
-		return m_bUseOut;
-	}
 
 	public int getRefnum() 
 	{
@@ -169,7 +147,7 @@ public class MshMidiDevice
 					m_mshMidiOut = new MshMidiOut(m_refNum);
 				}
 				
-				if (TDebug.TraceAlsaMidiDevice)
+				if (TDebug.TraceMidiDevice)
 				{
 					TDebug.out("MidiShareMidiDevice.openImpl(): completed");
 				}
@@ -226,7 +204,7 @@ public class MshMidiDevice
 	public void dequeueEvent(MidiEvent event)
 	{
 		MidiMessage	message = event.getMessage();
-		if (TDebug.TraceAlsaMidiDevice)
+		if (TDebug.TraceMidiDevice)
 		{
 			TDebug.out("MshMidiDevice.dequeueEvent(): message: " + message);
 		}
