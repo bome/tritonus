@@ -46,7 +46,7 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	extends		AudioInputStream
 	implements	TCircularBuffer.Trigger
 {
-	private static int		DEFAULT_BUFFER_SIZE = 327670;
+	private static int		DEFAULT_BUFFER_SIZE = 3276700;
 	private static final byte[]	EMPTY_BYTE_ARRAY = new byte[0];
 
 	// ausnahmsweise ;-)
@@ -122,9 +122,9 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read(byte[] abData)
 		throws	IOException
 	{
-		// if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): begin"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): begin"); }
 		int	nRead = read(abData, 0, abData.length);
-		// if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): end"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): end"); }
 		return nRead;
 	}
 
@@ -133,12 +133,12 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read(byte[] abData, int nOffset, int nLength)
 		throws	IOException
 	{
-		// if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): begin"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): begin"); }
 		//$$fb 2001-04-22: this returns at maximum circular buffer
 		// length. This is not very efficient...
 		//$$fb 2001-04-25: we should check that we do not exceed getFrameLength() !
 		int	nRead = m_circularBuffer.read(abData, nOffset, nLength);
-		// if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): end"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): end"); }
 		return nRead;
 	}
 
