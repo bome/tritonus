@@ -64,11 +64,34 @@ getHandle(JNIEnv *env, jobject obj)
 }
 
 
+
+template<typename _handle_type>
+void
+HandleFieldHandler<_handle_type>::
+setDebug(bool bDebug)
+{
+	m_bDebug = bDebug;
+}
+
+
+
+template<typename _handle_type>
+bool
+HandleFieldHandler<_handle_type>::
+getDebug()
+{
+	return m_bDebug;
+}
+
+
+
+
 template class HandleFieldHandler<snd_seq_t*>;
 template class HandleFieldHandler<snd_ctl_t*>;
 template class HandleFieldHandler<snd_mixer_t*>;
 template class HandleFieldHandler<snd_pcm_t*>;
 template class HandleFieldHandler<snd_pcm_hw_params_t*>;
+template class HandleFieldHandler<snd_pcm_format_mask_t*>;
 template class HandleFieldHandler<snd_pcm_sw_params_t*>;
 
 
