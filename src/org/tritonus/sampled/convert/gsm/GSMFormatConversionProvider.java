@@ -165,8 +165,8 @@ public class GSMFormatConversionProvider
 
 		public DecodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
 		{
-			// TODO: try to find out length (possible?)
-			super(outputFormat, -1);
+			super(outputFormat,
+			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 33 * 160);
 			if (TDebug.TraceAudioConverter)
 			{
 				TDebug.out("DecodedGSMAudioInputStream.<init>(): called");
@@ -275,8 +275,8 @@ public class GSMFormatConversionProvider
 
 		public EncodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
 		{
-			// TODO: try to find out length (possible?)
-			super(outputFormat, -1);
+			super(outputFormat,
+			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 160 * 33);
 			if (TDebug.TraceAudioConverter)
 			{
 				TDebug.out("EncodedGSMAudioInputStream.<init>(): called");
