@@ -405,4 +405,10 @@ devdist-upload: devdist
 	-rm -f .fname
 
 plugins-upload:	$(PLUGINS)
-	cd $(DISTDIR) ; scp $(PLUGINS) tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
+	cd $(DISTDIR) ; scp $(PLUGINS) www.tritonus.org:vtritonus/htdocs
+
+# doesn't work on www.tritonus.org
+plugins-rsync:	$(PLUGINS)
+	cd $(DISTDIR) ; rsync $(PLUGINS) www.tritonus.org:vtritonus/htdocs
+
+
