@@ -1,12 +1,5 @@
 /*
- *	CddaTest.java
- */
-
-/*
-  programs related to cdda:
-  command-line extractor
-  cd player
-  extractor/mp3 encoder
+ *	CookedIoctlTest.java
  */
 
 import	javax.sound.sampled.AudioFormat;
@@ -16,14 +9,15 @@ import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.Line;
 import	javax.sound.sampled.LineUnavailableException;
 
-import	org.tritonus.lowlevel.cdda.CDDA;
 import	org.tritonus.lowlevel.cdda.cooked_ioctl.CookedIoctl;
 
 
-public class CddaTest
+
+public class CookedIoctlTest
 {
 	public static void main(String[] args)
 	{
+		String		strDevice = "/dev/cdrom";
 		boolean		bTocOnly = true;
 		int		nTrack = 0;
 		if (args.length < 1)
@@ -35,19 +29,26 @@ public class CddaTest
 			nTrack = Integer.parseInt(args[0]);
 			bTocOnly = false;
 		}
-		CDDA	cdda = new CookedIoctl();
-		int[]	anValues = new int[2];
-		int[]	anStart = new int[100];
-		int[]	anType = new int[100];
-		cdda.readTOC(anValues, anStart, anType);
+		CookedIoctl	cookedIoctl = new CookedIoctl(strDevice);
+		int[]		anValues = new int[2];
+		int[]		anStartFrame = new int[100];
+		int[]		anLength = new int[100];
+		int[]		anType = new int[100];
+		boolean[]	abCopy = new boolean[100];
+		boolean[]	abPre = new boolean[100];
+		int[]		anChannels = new int[100];
+		cookedIoctl.readTOC(anValues, anStartFrame, anLength, anType, abCopy, abPre, anChannels);
 		System.out.println("First track: " + anValues[0]);
 		System.out.println("last track: " + anValues[1]);
 		int	nTracks = anValues[1] - anValues[0] + 1;
 		for (int i = 0; i < nTracks; i++)
 		{
-			System.out.println("Track " + (i + anValues[0]) + " start: " + anStart[i]);
+			System.out.println("Track " + (i + anValues[0]) + " start frame: " + anStartFrame[i]);
+			System.out.println("Track " + (i + anValues[0]) + " length: " + anLength[i]);
 			System.out.println("Track " + (i + anValues[0]) + " type: " + anType[i]);
-			System.out.println("Track " + (i + anValues[0]) + " length (s): " + (anStart[i + 1] - anStart[i])/75);
+			System.out.println("Track " + (i + anValues[0]) + " copy: " + abCopy[i]);
+			System.out.println("Track " + (i + anValues[0]) + " pre: " + abPre[i]);
+			System.out.println("Track " + (i + anValues[0]) + " channels: " + anChannels[i]);
 		}
 		if (! bTocOnly)
 		{
@@ -67,15 +68,17 @@ public class CddaTest
 			{
 				e.printStackTrace();
 			}
-			for (int i = anStart[nTrack - 1]; i < anStart[nTrack ]; i++)
+			int	nStart = anStartFrame[nTrack - anValues[0]];
+			int	nEnd = nStart + anLength[nTrack - anValues[0]];
+			for (int i = nStart; i < nEnd; i++)
 			{
-				cdda.readFrame(i, 1, abData);
+				cookedIoctl.readFrame(i, 1, abData);
 				line.write(abData, 0, 2352);
 			}
 		}
-		cdda.close();
+		cookedIoctl.close();
 	}
 }
 
 
-/*** CddaTest.java ****/
+/*** CookedIoctlTest.java ****/
