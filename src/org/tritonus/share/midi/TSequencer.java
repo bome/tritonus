@@ -315,7 +315,7 @@ public abstract class TSequencer
 
 
 	// TODO: what should be the behaviour if no Sequence is set?
-	// TODO: has to be redefined if recording is done natively
+	// NOTE: has to be redefined if recording is done natively
 	public long getTickLength()
 	{
 		return getSequence().getTickLength();
@@ -324,7 +324,7 @@ public abstract class TSequencer
 
 
 	// TODO: what should be the behaviour if no Sequence is set?
-	// TODO: has to be redefined if recording is done natively
+	// NOTE: has to be redefined if recording is done natively
 	public long getMicrosecondLength()
 	{
 		return getSequence().getMicrosecondLength();
@@ -498,7 +498,7 @@ public abstract class TSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.sendToListeners(): begin"); }
 		if (message instanceof MetaMessage)
 		{
-			// TODO: use extra thread for event delivery
+			// IDEA: use extra thread for event delivery
 			sendMetaMessage((MetaMessage) message);
 		}
 		else if (message instanceof ShortMessage && ((ShortMessage) message).getCommand() == ShortMessage.CONTROL_CHANGE)
