@@ -8,3 +8,4 @@ build
 ChangeLog
 *.log
 autom4te.cache
+tritonus-*.tar.gz
