@@ -30,13 +30,24 @@ LIBS=-lasound
 JAVAH = @JAVAH@
 
 OBJ=\
-	org_tritonus_lowlevel_alsa_ASequencer0.o
+	org_tritonus_lowlevel_alsa_ASequencer0.o \
+	org_tritonus_lowlevel_alsa_Alsa.o \
+	org_tritonus_lowlevel_alsa_AlsaPcm.o
+#	org_tritonus_lowlevel_alsa_AlsaCtl.o \
+
 JNICLASSFILES=\
-	ASequencer0.class
+	ASequencer0.class \
+	Alsa.class \
+	AlsaCtl.class \
+	AlsaPcm.class
+
 JNIHEADERS:=$(OBJ:.o=.h)
 
 JNICLASSES=\
-	org.tritonus.lowlevel.alsa.ASequencer0
+	org.tritonus.lowlevel.alsa.ASequencer0 \
+	org.tritonus.lowlevel.alsa.Alsa \
+	org.tritonus.lowlevel.alsa.AlsaCtl \
+	org.tritonus.lowlevel.alsa.AlsaPcm
 
 #----------------- rules -------------------
 
