@@ -9,3 +9,5 @@ config.cache
 *.jar
 dist
 build
+ChangeLog
+*.log
