@@ -50,14 +50,13 @@ public class Cdparanoia
 
 
 	/*
-	 *	This holds a file descriptor for the native code -
+	 *	This holds a pointer for the native code -
 	 *	do not touch!
 	 */
 	private long		m_lNativeHandle;
 
 
 
-	// TODO: parameter strDevicename (or something else sensible)
 	public Cdparanoia(String strDevice)
 	{
 		if (TDebug.TraceCdda) { System.out.println("Cdparanoia.<init>: begin"); }
@@ -96,6 +95,7 @@ public class Cdparanoia
 			   int[] anStartFrame,
 			   int[] anLength,
 			   int[] anType,
+			   boolean[] abAudio,
 			   boolean[] abCopy,
 			   boolean[] abPre,
 			   int[] anChannels);

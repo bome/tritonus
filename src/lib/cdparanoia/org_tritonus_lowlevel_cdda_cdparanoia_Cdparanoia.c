@@ -133,7 +133,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close
 /*
  * Class:     org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia
  * Method:    readTOC
- * Signature: ([I[I[I[I[Z[Z[I)I
+ * Signature: ([I[I[I[I[Z[Z[Z[I)I
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
@@ -142,6 +142,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
  jintArray anStartFrame,
  jintArray anLength,
  jintArray anType,
+ jbooleanArray abAudio,
  jbooleanArray abCopy,
  jbooleanArray abPre,
  jintArray anChannels)
@@ -154,6 +155,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 	jint*		pnStartFrame;
 	jint*		pnLength;
 	jint*		pnType;
+	jboolean*	pbAudio;
 	jboolean*	pbCopy;
 	jboolean*	pbPre;
 	jint*		pnChannels;
@@ -193,6 +195,12 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
 	}
+	checkArrayLength(env, abAudio, 100);
+	pbAudio = (*env)->GetBooleanArrayElements(env, abAudio, NULL);
+	if (pbAudio == NULL)
+	{
+		throwRuntimeException(env, "GetBooleanArrayElements failed");
+	}
 	checkArrayLength(env, abCopy, 100);
 	pbCopy = (*env)->GetBooleanArrayElements(env, abCopy, NULL);
 	if (pbCopy == NULL)
@@ -216,6 +224,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 		pnStartFrame[nTrack - nFirstTrack] = cdda_track_firstsector(cdrom, nTrack);
 		pnLength[nTrack - nFirstTrack] = cdda_track_lastsector(cdrom, nTrack) - cdda_track_firstsector(cdrom, nTrack) + 1;
 		pnType[nTrack - nFirstTrack] = 0;	// TODO: toc_entry.cdte_ctrl & CDROM_DATA_TRACK;
+		pbAudio[nTrack - nFirstTrack] = cdda_track_audiop(cdrom, nTrack);
 		pbCopy[nTrack - nFirstTrack] = cdda_track_copyp(cdrom, nTrack);
 		pbPre[nTrack - nFirstTrack] = cdda_track_preemp(cdrom, nTrack);
 		pnChannels[nTrack - nFirstTrack] = cdda_track_channels(cdrom, nTrack);
@@ -225,6 +234,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 	(*env)->ReleaseIntArrayElements(env, anStartFrame, pnStartFrame, 0);
 	(*env)->ReleaseIntArrayElements(env, anLength, pnLength, 0);
 	(*env)->ReleaseIntArrayElements(env, anType, pnType, 0);
+	(*env)->ReleaseBooleanArrayElements(env, abAudio, pbAudio, 0);
 	(*env)->ReleaseBooleanArrayElements(env, abCopy, pbCopy, 0);
 	(*env)->ReleaseBooleanArrayElements(env, abPre, pbPre, 0);
 	(*env)->ReleaseIntArrayElements(env, anChannels, pnChannels, 0);

@@ -43,10 +43,6 @@ import	java.util.List;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.Line;
-import	javax.sound.sampled.LineUnavailableException;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.cdda.CddaMidLevel;
@@ -105,6 +101,7 @@ public class CdparanoiaMidLevel
 		int[]			anStartFrame = new int[100];
 		int[]			anLength = new int[100];
 		int[]			anType = new int[100];
+		boolean[]		abAudio = new boolean[100];
 		boolean[]		abCopy = new boolean[100];
 		boolean[]		abPre = new boolean[100];
 		int[]			anChannels = new int[100];
@@ -113,6 +110,7 @@ public class CdparanoiaMidLevel
 				    anStartFrame,
 				    anLength,
 				    anType,
+				    abAudio,
 				    abCopy,
 				    abPre,
 				    anChannels);
@@ -126,6 +124,7 @@ public class CdparanoiaMidLevel
 			out.print(" start=\"" + anStartFrame[i] + "\"");
 			out.print(" length=\"" + anLength[i] + "\"");
 			out.print(" type=\"" + anType[i] + "\"");
+			out.print(" audio=\"" + abAudio[i] + "\"");
 			out.print(" copy=\"" + abCopy[i] + "\"");
 			out.print(" pre=\"" + abPre[i] + "\"");
 			out.print(" channels=\"" + anChannels[i] + "\" />\n");
@@ -207,6 +206,7 @@ public class CdparanoiaMidLevel
 			int[]			anStartFrame = new int[100];
 			int[]			anLength = new int[100];
 			int[]			anType = new int[100];
+			boolean[]		abAudio = new boolean[100];
 			boolean[]		abCopy = new boolean[100];
 			boolean[]		abPre = new boolean[100];
 			int[]			anChannels = new int[100];
@@ -215,6 +215,7 @@ public class CdparanoiaMidLevel
 					      anStartFrame,
 					      anLength,
 					      anType,
+					      abAudio,
 					      abCopy,
 					      abPre,
 					      anChannels);
