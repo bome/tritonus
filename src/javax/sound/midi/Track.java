@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -35,15 +35,12 @@ import	java.util.Vector;
 public class Track
 {
 	private List		m_events;
-	// private Vector		m_events;
-
 
 
 
 	public Track()
 	{
 		m_events = new ArrayList();
-		// m_events = new Vector();
 	}
 
 
@@ -57,13 +54,6 @@ public class Track
 			     nIndex >= 0 && get(nIndex).getTick() > event.getTick();
 			     nIndex--)
 			{
-				//if (event == get(nIndex))
-				//{
-					/*
-					 *	Event is already there
-					 */
-				//return false;
-				//}
 			}
 			m_events.add(nIndex + 1, event);
 			return true;
@@ -84,10 +74,9 @@ public class Track
 
 
 	public synchronized MidiEvent get(int nIndex)
-		// TODO: throws ArrayIndexOutOfBoundsException ??
+		throws ArrayIndexOutOfBoundsException
 	{
 		return (MidiEvent) m_events.get(nIndex);
-		// return (MidiEvent) m_events.elementAt(nIndex);
 	}
 
 
@@ -103,8 +92,8 @@ public class Track
 	public long ticks()
 	{
 		/*
-		 *	Since ordering by tich value is guaranteed, we can simply
-		 *	pick the last event and return its tick value.
+		 *	Since ordering by tick value is guaranteed, we can
+		 *	simply pick the last event and return its tick value.
 		 */
 		return get(size() - 1).getTick();
 	}

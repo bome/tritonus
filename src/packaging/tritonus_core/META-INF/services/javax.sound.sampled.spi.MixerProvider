@@ -1,8 +1,8 @@
 # configuration file for the tritonus library
 #
 
-org.tritonus.sampled.mixer.alsa.AlsaMixerProvider
-#org.tritonus.sampled.mixer.esd.EsdMixerProvider
+#org.tritonus.sampled.mixer.alsa.AlsaMixerProvider
+org.tritonus.sampled.mixer.esd.EsdMixerProvider
 #org.tritonus.sampled.mixer.jesd.JEsdMixerProvider
 
 # end
