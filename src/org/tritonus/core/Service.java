@@ -48,23 +48,28 @@ public class Service
 	private static final String	BASE_NAME = "META-INF/services/";
 
 
+	/**	Determines if the order of service providers is reversed.
+		If this is true, the Iterator returned by providers(Class)
+		iterates through the service provider classes backwards.
+		This means that service providers that are in the user class
+		path are first, then service providers in the extension class
+		path, then those in the boot class path.
+		This behaviour has the advantage that 'built-in' providers
+		(those in the boot class path) can be 'shadowed' by
+		providers in the extension and user class path.
+	 */
+	private static final boolean	REVERSE_ORDER = true;
+
+
 
 	public static Iterator providers(Class cls)
 	{
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.providers(): begin");
-		}
+		if (TDebug.TraceService) { TDebug.out("Service.providers(): begin"); }
 		String	strFullName = BASE_NAME + cls.getName();
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.providers(): full name: " + strFullName);
-		}
-		Iterator	iterator = createInstancesList(strFullName).iterator();
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.providers(): end");
-		}
+		if (TDebug.TraceService) { TDebug.out("Service.providers(): full name: " + strFullName); }
+		List	instancesList = createInstancesList(strFullName);
+		Iterator	iterator = instancesList.iterator();
+		if (TDebug.TraceService) { TDebug.out("Service.providers(): end"); }
 		return iterator;
 	}
 
@@ -72,10 +77,7 @@ public class Service
 
 	private static List createInstancesList(String strFullName)
 	{
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.createInstancesList(): begin");
-		}
+		if (TDebug.TraceService) { TDebug.out("Service.createInstancesList(): begin"); }
 		List	providers = new ArrayList();
 		Iterator	classNames = createClassNames(strFullName);
 		if (classNames != null)
@@ -83,54 +85,41 @@ public class Service
 			while (classNames.hasNext())
 			{
 				String	strClassName = (String) classNames.next();
-				if (TDebug.TraceService)
-				{
-					TDebug.out("Service.createInstancesList(): Class name: " + strClassName);
-				}
+				if (TDebug.TraceService) { TDebug.out("Service.createInstancesList(): Class name: " + strClassName); }
 				try
 				{
-					Class	cls = Class.forName(strClassName);
-					if (TDebug.TraceService)
-					{
-						TDebug.out("Service.createInstancesList(): now creating instance of " + cls);
-					}
+					ClassLoader	systemClassLoader = ClassLoader.getSystemClassLoader();
+					Class	cls = Class.forName(strClassName, true, systemClassLoader);
+					if (TDebug.TraceService) { TDebug.out("Service.createInstancesList(): now creating instance of " + cls); }
 					Object	instance = cls.newInstance();
-					providers.add(instance);
+					if (REVERSE_ORDER)
+					{
+						providers.add(0, instance);
+					}
+					else
+					{
+						providers.add(instance);
+					}
 				}
 				catch (ClassNotFoundException e)
 				{
-					if (TDebug.TraceService || TDebug.TraceAllExceptions)
-					{
-						TDebug.out(e);
-					}
+					if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 				}
 				catch (InstantiationException e)
 				{
-					if (TDebug.TraceService || TDebug.TraceAllExceptions)
-					{
-						TDebug.out(e);
-					}
+					if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 				}
 				catch (IllegalAccessException e)
 				{
-					if (TDebug.TraceService || TDebug.TraceAllExceptions)
-					{
-						TDebug.out(e);
-					}
+					if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 				}
 				catch (Throwable e)
 				{
-					if (TDebug.TraceService || TDebug.TraceAllExceptions)
-					{
-						TDebug.out(e);
-					}
+					if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 				}
 			}
 		}
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.createInstancesList(): end");
-		}
+		if (TDebug.TraceService) { TDebug.out("Service.createInstancesList(): end"); }
 		return providers;
 	}
 
@@ -138,10 +127,7 @@ public class Service
 
 	private static Iterator createClassNames(String strFullName)
 	{
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.createClassNames(): begin");
-		}
+		if (TDebug.TraceService) { TDebug.out("Service.createClassNames(): begin"); }
 		Set	providers = new ArraySet();
 		Enumeration	configs = null;
 		try
@@ -150,20 +136,14 @@ public class Service
 		}
 		catch (IOException e)
 		{
-			if (TDebug.TraceService || TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
+			if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 		}
 		if (configs != null)
 		{
 			while (configs.hasMoreElements())
 			{
 				URL	configFileUrl = (URL) configs.nextElement();
-				if (TDebug.TraceService)
-				{
-					TDebug.out("config: " + configFileUrl);
-				}
+				if (TDebug.TraceService) { TDebug.out("Service.createClassNames(): config: " + configFileUrl); }
 				InputStream	input = null;
 				try
 				{
@@ -171,10 +151,7 @@ public class Service
 				}
 				catch (IOException e)
 				{
-					if (TDebug.TraceService || TDebug.TraceAllExceptions)
-					{
-						TDebug.out(e);
-					}
+					if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 				}
 				if (input != null)
 				{
@@ -193,34 +170,22 @@ public class Service
 							if (strLine.length() > 0)
 							{
 								providers.add(strLine);
-								if (TDebug.TraceService)
-								{
-									TDebug.out("adding class name: " + strLine);
-								}
+								if (TDebug.TraceService) { TDebug.out("Service.createClassNames(): adding class name: " + strLine); }
 							}
 							strLine = reader.readLine();
 						}
 					}
 					catch (IOException e)
 					{
-						if (TDebug.TraceService || TDebug.TraceAllExceptions)
-						{
-							TDebug.out(e);
-						}
+						if (TDebug.TraceService || TDebug.TraceAllExceptions) { TDebug.out(e); }
 					}
 				}
 			}
 		}
 		Iterator	iterator = providers.iterator();
-		if (TDebug.TraceService)
-		{
-			TDebug.out("Service.createClassNames(): end");
-		}
+		if (TDebug.TraceService) { TDebug.out("Service.createClassNames(): end"); }
 		return iterator;
 	}
-
-
-
 }
 
 
