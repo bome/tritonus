@@ -90,12 +90,6 @@ public class TDebug
 	public static boolean	TraceCdda = getBooleanProperty("TraceCdda");
 	public static boolean	TraceCddaNative = getBooleanProperty("TraceCddaNative");
 
-	// mmapi
-	public static boolean	TraceManager = getBooleanProperty("TraceManager");
-	public static boolean	TraceToneGenerator = getBooleanProperty("TraceToneGenerator");
-	public static boolean	TraceDataSource = getBooleanProperty("TraceDataSource");
-
-
 
 
 	// make this method configurable to write to file, write to stderr,...
