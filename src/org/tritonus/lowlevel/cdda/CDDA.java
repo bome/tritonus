@@ -25,27 +25,25 @@
 
 package	org.tritonus.lowlevel.cdda;
 
-import	javax.sound.midi.MidiEvent;
 
 import	org.tritonus.share.TDebug;
 
 
 
-/**	The lowest level of interface to the ALSA sequencer.
+/**	Low-level interface to reading CDs
  */
 public class CDDA
 {
+	/**	Size of a cdda frame in bytes.
+	 */
+	public static final int		FRAME_SIZE = 2352;
+
+
 	static
 	{
-		if (TDebug.TraceCDDA)
-		{
-			TDebug.out("CDDA.<clinit>(): loading native library tritonuscdda");
-		}
+		if (TDebug.TraceCDDA) { TDebug.out("CDDA.<clinit>(): loading native library tritonuscdda"); }
 		System.loadLibrary("tritonuscdda");
-		if (TDebug.TraceCDDA)
-		{
-			TDebug.out("CDDA.<clinit>(): loaded");
-		}
+		if (TDebug.TraceCDDA) { TDebug.out("CDDA.<clinit>(): loaded"); }
 		// TODO: ????
 		setTrace(true /*TDebug.TraceCDDANative*/);
 	}
@@ -63,30 +61,26 @@ public class CDDA
 	// TODO: parameter strDevicename (or something else sensible)
 	public CDDA()
 	{
-		if (TDebug.TraceCDDA)
-		{
-			System.out.println("CDDA.<init>: begin");
-		}
+		if (TDebug.TraceCDDA) { System.out.println("CDDA.<init>: begin"); }
 		int	nResult = open();
 		if (nResult < 0)
 		{
 			throw new RuntimeException("cannot open /dev/cdrom");
 		}
-		if (TDebug.TraceCDDA)
-		{
-			System.out.println("CDDA.<init>: end");
-		}
+		if (TDebug.TraceCDDA) { System.out.println("CDDA.<init>: end"); }
 	}
 
 
 
-	/**	Opens the sequencer.
+	/**	OUTDATED!
+		Opens the sequencer.
 	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
 	 *	client id.
 	 */
 	private native int open();
 
-	/**	Closes the sequencer.
+	/**	OUTDATED!
+		Closes the sequencer.
 	 *	Calls snd_seq_close().
 	 */
 	public native void close();
@@ -95,8 +89,12 @@ public class CDDA
 	/*
 	 *	anValues[0]	first track
 	 *	anValues[1]	last track
+	 *
+	 *	anStartTrack[x]	start sector of the track x.
+	 *	anType[x]	type of track x.
 	 */
 	public native int readTOC(int[] anValues, int[] anStartTrack, int[] anType);
+
 
 	/**	Reads one or more raw frames from the CD.
 		This call reads <CODE>nCount</CODE> frames starting at
