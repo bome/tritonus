@@ -40,6 +40,11 @@ public class Cdparanoia
 		System.loadLibrary("tritonuscdparanoia");
 		if (TDebug.TraceCdda) { TDebug.out("Cdparanoia.<clinit>(): loaded"); }
 		setTrace(TDebug.TraceCddaNative);
+
+		if (Boolean.getBoolean("tritonus.DisableParanoia"))
+		{
+			setParanoiaMode(false);
+		}
 	}
 
 
@@ -59,7 +64,7 @@ public class Cdparanoia
 		int	nResult = open(strDevice);
 		if (nResult < 0)
 		{
-			throw new RuntimeException("cannot open " + strDevice);
+			throw new RuntimeException("cannot open device '" + strDevice + "'");
 		}
 		if (TDebug.TraceCdda) { System.out.println("Cdparanoia.<init>: end"); }
 	}
@@ -110,6 +115,18 @@ public class Cdparanoia
 	public native int readNextFrame(int nCount, byte[] abData);
 
 	private static native void setTrace(boolean bTrace);
+
+	/** Set the paranoia level.
+	    This setting influences the value that is used in the call
+	    'paranoia_modeset(cdrom_paranoia*, int [mode])'.
+	    If set to true a hard-coded default value will be used.
+	    (Currently 'PARANOIA_MODE_FULL ^ PARANOIA_MODE_NEVERSKIP', but
+	    for definitive answers, look it up in src/lib/cdparanoia/org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.c).
+	    If set to false, 'PARANOIA_MODE_DISABLE' will be used.
+	    Note that currently, changing this value only has an effect prior
+	    to opening the device.
+	*/
+	private static native void setParanoiaMode(boolean bPoranoiaMode);
 }
 
 
