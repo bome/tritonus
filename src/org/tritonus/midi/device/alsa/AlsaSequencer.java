@@ -927,19 +927,19 @@ public class AlsaSequencer
 					}
 				}
 				while (! isRunning());
-				long	lTickMin = getTickPosition();
-				long	lTickMax = getSequence().getTickLength();
-				// TODO: more precise calculation; use double, also for loop variable
-				long	lTickStep = getSequence().getResolution() / 24;
-				long	lTick = lTickMin;
+				double	dTickMin = getTickPosition();
+				double	dTickMax = getSequence().getTickLength();
+				double	dTickStep = getSequence().getResolution() / 24.0;
+				double	dTick = dTickMin;
 				// TODO: ... && getS.Mode().equals(...)
-				while (lTick < lTickMax && isRunning())
+				while (dTick < dTickMax && isRunning())
 				{
+					long	lTick = Math.round(dTick);
 					if (TDebug.TraceSequencer) { TDebug.out("MasterSynchronizer.run(): sending clock event with tick " + lTick); }
 					m_clockEvent.setTimestamp(lTick);
 					getRecordingAlsaSeq().eventOutput(m_clockEvent);
 					getRecordingAlsaSeq().drainOutput();
-					lTick += lTickStep;
+					dTick += dTickStep;
 				}
 			}
 			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.MasterSynchronizer.run(): end"); }
