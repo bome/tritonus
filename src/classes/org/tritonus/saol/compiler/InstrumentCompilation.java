@@ -23,6 +23,7 @@
 package	org.tritonus.saol.compiler;
 
 
+import	java.io.ByteArrayOutputStream;
 import	java.io.IOException;
 
 import	java.util.HashMap;
@@ -33,50 +34,66 @@ import	org.apache.bcel.classfile.Field;
 import	org.apache.bcel.classfile.JavaClass;
 import	org.apache.bcel.generic.*;
 
-import	saol.analysis.*;
-import	saol.node.*;
+import	org.tritonus.saol.sablecc.analysis.*;
+import	org.tritonus.saol.sablecc.node.*;
 
 
 
 public class InstrumentCompilation
 extends DepthFirstAdapter
 {
+	private static final boolean	DEBUG = true;
+
 	// may become "org.tritonus.saol.generated."
 	private static final String	PACKAGE_PREFIX = "";
 	private static final String	CLASSFILENAME_PREFIX = "src/";
 	private static final String	CLASSFILENAME_SUFFIX = ".class";
-	private static final String	SUPERCLASS_NAME = "AbstractInstrument";
+	private static final String	SUPERCLASS_NAME = "org.tritonus.saol.engine.AbstractInstrument";
+	private static final String	SUPERCLASS_CONSTRUCTOR_NAME = "AbstractInstrument";
+
+	private static final int	METHOD_CONSTR = WidthAndRate.RATE_UNKNOWN;
+	private static final int	METHOD_I = WidthAndRate.RATE_I;
+	private static final int	METHOD_K = WidthAndRate.RATE_K;
+	private static final int	METHOD_A = WidthAndRate.RATE_A;
+
+	private static final Type	FLOAT_ARRAY = new ArrayType(Type.FLOAT, 1);
+
+
 
 	private SAOLGlobals		m_saolGlobals;
+
+	// maps instrument names (String) to classes (Class)
+	private Map			m_instrumentMap;
 	private Map			m_nodeAttributes;
 	private String			m_strClassName;
 	private ClassGen		m_classGen;
 	private ConstantPoolGen		m_constantPoolGen;
-	private MethodGen		m_methodGen;
-	private InstructionList		m_instructionList;
+	// private MethodGen		m_methodGen;
+	// private InstructionList		m_instructionList;
 	private InstructionFactory	m_instructionFactory;
-	private BranchInstruction	m_pendingBranchInstruction;
+	// private BranchInstruction	m_pendingBranchInstruction;
 
+	// TODO: should be made obsolete by using node attributes
 	private boolean			m_bOpvardecls;
+	private MemoryClassLoader	m_classLoader = new MemoryClassLoader();
+
+	// 0: constructor
+	// 1: doIPass()
+	// 2: doKPass()
+	// 3: doAPass()
+	private InstrumentMethod[]	m_aMethods;
 
 
-	public InstrumentCompilation(SAOLGlobals saolGlobals)
+	public InstrumentCompilation(SAOLGlobals saolGlobals,
+				     Map instrumentMap)
 	{
 		m_saolGlobals = saolGlobals;
+		m_instrumentMap = instrumentMap;
 		m_nodeAttributes = new HashMap();
+		m_aMethods = new InstrumentMethod[4];
 	}
 
 
-
-	public void inStart(Start node)
-	{
-		defaultIn(node);
-	}
-
-	public void outStart(Start node)
-	{
-		defaultOut(node);
-	}
 
 	public void defaultIn(Node node)
 	{
@@ -86,36 +103,6 @@ extends DepthFirstAdapter
 	{
 	}
 
-//     public void caseStart(Start node)
-//     {
-//         inStart(node);
-//         node.getPOrcfile().apply(this);
-//         node.getEOF().apply(this);
-//         outStart(node);
-//     }
-
-	public void inAOrcfileOrcfile(AOrcfileOrcfile node)
-	{
-		defaultIn(node);
-	}
-
-	public void outAOrcfileOrcfile(AOrcfileOrcfile node)
-	{
-		defaultOut(node);
-	}
-
-//     public void caseAOrcfileOrcfile(AOrcfileOrcfile node)
-//     {
-//         inAOrcfileOrcfile(node);
-//         {
-//             Object temp[] = node.getProc().toArray();
-//             for(int i = 0; i < temp.length; i++)
-//             {
-//                 ((PProc) temp[i]).apply(this);
-//             }
-//         }
-//         outAOrcfileOrcfile(node);
-//     }
 
 	public void inAInstrdeclProc(AInstrdeclProc node)
 	{
@@ -208,27 +195,36 @@ extends DepthFirstAdapter
 					  null);
 		m_constantPoolGen = m_classGen.getConstantPool();
 		m_instructionFactory = new InstructionFactory(m_constantPoolGen);
-		m_instructionList = new InstructionList();
-		m_methodGen = new MethodGen(Constants.ACC_PUBLIC,
-					    Type.VOID,
-					    new Type[]{new ObjectType("RTSystem")},
-					    new String[]{"rtSystem"},
-					    "doAPass",
-					    m_strClassName,
-					    m_instructionList,
-					    m_constantPoolGen);
+		m_aMethods[METHOD_CONSTR] = new InstrumentMethod(m_classGen, "<init>");
+		m_aMethods[METHOD_I] = new InstrumentMethod(m_classGen, "doIPass");
+		m_aMethods[METHOD_K] = new InstrumentMethod(m_classGen, "doKPass");
+		m_aMethods[METHOD_A] = new InstrumentMethod(m_classGen, "doAPass");
+		m_aMethods[METHOD_CONSTR].appendInstruction(InstructionConstants.ALOAD_0);
+		Instruction	invokeSuperInstruction = m_instructionFactory.createInvoke(SUPERCLASS_NAME, "<init>", Type.VOID, Type.NO_ARGS, Constants.INVOKESPECIAL);
+//		Instruction	invokeSuperInstruction = m_instructionFactory.createInvoke(SUPERCLASS_NAME, SUPERCLASS_CONSTRUCTOR_NAME, Type.VOID, Type.NO_ARGS, Constants.INVOKESPECIAL);
+		m_aMethods[METHOD_CONSTR].appendInstruction(invokeSuperInstruction);
 	}
+
+
 
 	public void outAInstrdeclInstrdecl(AInstrdeclInstrdecl node)
 	{
-		appendInstruction(InstructionConstants.RETURN);
-		m_methodGen.setMaxStack();
-		m_classGen.addMethod(m_methodGen.getMethod());
-		m_classGen.addEmptyConstructor(Constants.ACC_PUBLIC);
+		for (int i = 0; i < m_aMethods.length; i++)
+		{
+			m_aMethods[i].finish();
+		}
 		JavaClass	javaClass = m_classGen.getJavaClass();
 		try
 		{
-			javaClass.dump("tone.class");
+			ByteArrayOutputStream	baos = new ByteArrayOutputStream();
+			javaClass.dump(baos);
+			byte[]	abData = baos.toByteArray();
+			Class	instrumentClass = m_classLoader.findClass(m_strClassName, abData);
+			m_instrumentMap.put(m_strClassName, instrumentClass);
+			if (DEBUG)
+			{
+				javaClass.dump(m_strClassName + CLASSFILENAME_SUFFIX);
+			}
 		}
 		catch (IOException e)
 		{
@@ -1088,40 +1084,19 @@ extends DepthFirstAdapter
 //         outABlockBlock(node);
 //     }
 
-	public void inAAssignmentStatement(AAssignmentStatement node)
-	{
-		appendInstruction(InstructionConstants.ALOAD_0);
-	}
+// 	public void inAAssignmentStatement(AAssignmentStatement node)
+// 	{
+// 	}
 
 
 
 	public void outAAssignmentStatement(AAssignmentStatement node)
 	{
-		String	strVariableName = ((ASimpleLvalue) node.getLvalue()).getIdentifier().getText();
-		appendPutField(strVariableName);
+		Instruction	instruction = (Instruction) getNodeAttribute(node.getLvalue());
+		m_aMethods[METHOD_A].appendInstruction(instruction);
 	}
 
-//     public void caseAAssignmentStatement(AAssignmentStatement node)
-//     {
-//         inAAssignmentStatement(node);
-//         if(node.getLvalue() != null)
-//         {
-//             node.getLvalue().apply(this);
-//         }
-//         if(node.getAssign() != null)
-//         {
-//             node.getAssign().apply(this);
-//         }
-//         if(node.getExpr() != null)
-//         {
-//             node.getExpr().apply(this);
-//         }
-//         if(node.getSemicolon() != null)
-//         {
-//             node.getSemicolon().apply(this);
-//         }
-//         outAAssignmentStatement(node);
-//     }
+
 
 	public void inAExpressionStatement(AExpressionStatement node)
 	{
@@ -1176,10 +1151,10 @@ extends DepthFirstAdapter
         {
             node.getRPar().apply(this);
         }
-	appendInstruction(InstructionConstants.FCONST_0);
-	appendInstruction(InstructionConstants.FCMPL);
+	m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FCONST_0);
+	m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FCMPL);
 	BranchInstruction	ifeq = new IFEQ(null);
-	appendInstruction(ifeq);
+	m_aMethods[METHOD_A].appendInstruction(ifeq);
         if(node.getLBrace() != null)
         {
             node.getLBrace().apply(this);
@@ -1192,7 +1167,7 @@ extends DepthFirstAdapter
         {
             node.getRBrace().apply(this);
         }
-	setPendingBranchInstruction(ifeq);
+	m_aMethods[METHOD_A].setPendingBranchInstruction(ifeq);
         outAIfStatement(node);
     }
 
@@ -1552,34 +1527,41 @@ extends DepthFirstAdapter
 //         outAReturnStatement(node);
 //     }
 
-	public void inASimpleLvalue(ASimpleLvalue node)
-	{
-		defaultIn(node);
-	}
+// 	public void inASimpleLvalue(ASimpleLvalue node)
+// 	{
+// 	}
 
 	public void outASimpleLvalue(ASimpleLvalue node)
 	{
-		defaultOut(node);
+		/*	This is needed at the very end, when the putfield
+			instruction is executed.
+		*/
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.ALOAD_0);
+		String	strVariableName = node.getIdentifier().getText();
+		// TODO: use getClassName()
+		// set the instruction to be executed after the rvalue is calculated
+		Instruction	instruction = getInstructionFactory().createPutField(m_strClassName, strVariableName, Type.FLOAT);
+		setNodeAttribute(node, instruction);
 	}
 
-//     public void caseASimpleLvalue(ASimpleLvalue node)
-//     {
-//         inASimpleLvalue(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         outASimpleLvalue(node);
-//     }
 
 	public void inAIndexedLvalue(AIndexedLvalue node)
 	{
-		defaultIn(node);
+		// push the array reference onto the stack
+		String	strVariableName = node.getIdentifier().getText();
+		m_aMethods[METHOD_A].appendGetField(strVariableName);
 	}
 
 	public void outAIndexedLvalue(AIndexedLvalue node)
 	{
-		defaultOut(node);
+		/*	The array reference still is on the stack. Now,
+			also the array index (as a float) is on the stack.
+			It has to be transformed to integer.
+		*/
+		// TODO: correct rounding (1.5 -> 2.0)
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.F2I);
+		// set the instruction to be executed after the rvalue is calculated
+		setNodeAttribute(node, InstructionConstants.FASTORE);
 	}
 
 //     public void caseAIndexedLvalue(AIndexedLvalue node)
@@ -1888,10 +1870,6 @@ extends DepthFirstAdapter
 //         outANamelistTailNamelistTail(node);
 //     }
 
-	public void inASimpleName(ASimpleName node)
-	{
-		defaultIn(node);
-	}
 
 	public void outASimpleName(ASimpleName node)
 	{
@@ -1902,251 +1880,81 @@ extends DepthFirstAdapter
 		}
 	}
 
-//     public void caseASimpleName(ASimpleName node)
-//     {
-//         inASimpleName(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         outASimpleName(node);
-//     }
 
-	public void inAIndexedName(AIndexedName node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAIndexedName(AIndexedName node)
 	{
-		defaultOut(node);
+		if (m_bOpvardecls)
+		{
+			String	strVariableName = node.getIdentifier().getText();
+			String	strInteger = node.getInteger().getText();
+			int	nInteger = Integer.parseInt(strInteger);
+			addLocalArray(strVariableName);
+			// code to allocate array in constructor
+			m_aMethods[METHOD_CONSTR].appendInstruction(InstructionConstants.ALOAD_0);
+			Instruction	instruction = (Instruction) getInstructionFactory().createNewArray(Type.FLOAT, (short) nInteger);
+			m_aMethods[METHOD_CONSTR].appendInstruction(instruction);
+			m_aMethods[METHOD_CONSTR].appendPutField(strVariableName);
+		}
 	}
 
-//     public void caseAIndexedName(AIndexedName node)
-//     {
-//         inAIndexedName(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getLBracket() != null)
-//         {
-//             node.getLBracket().apply(this);
-//         }
-//         if(node.getInteger() != null)
-//         {
-//             node.getInteger().apply(this);
-//         }
-//         if(node.getRBracket() != null)
-//         {
-//             node.getRBracket().apply(this);
-//         }
-//         outAIndexedName(node);
-//     }
 
-	public void inAInchannelsName(AInchannelsName node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAInchannelsName(AInchannelsName node)
 	{
-		defaultOut(node);
+		// TODO:
 	}
 
-//     public void caseAInchannelsName(AInchannelsName node)
-//     {
-//         inAInchannelsName(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getLBracket() != null)
-//         {
-//             node.getLBracket().apply(this);
-//         }
-//         if(node.getInchannels() != null)
-//         {
-//             node.getInchannels().apply(this);
-//         }
-//         if(node.getRBracket() != null)
-//         {
-//             node.getRBracket().apply(this);
-//         }
-//         outAInchannelsName(node);
-//     }
-
-	public void inAOutchannelsName(AOutchannelsName node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAOutchannelsName(AOutchannelsName node)
 	{
-		defaultOut(node);
+		// TODO:
 	}
 
-//     public void caseAOutchannelsName(AOutchannelsName node)
-//     {
-//         inAOutchannelsName(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getLBracket() != null)
-//         {
-//             node.getLBracket().apply(this);
-//         }
-//         if(node.getOutchannels() != null)
-//         {
-//             node.getOutchannels().apply(this);
-//         }
-//         if(node.getRBracket() != null)
-//         {
-//             node.getRBracket().apply(this);
-//         }
-//         outAOutchannelsName(node);
-//     }
 
-	public void inAIvarStype(AIvarStype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAIvarStype(AIvarStype node)
 	{
-		defaultOut(node);
+		setNodeAttribute(node, new WidthAndRate(WidthAndRate.WIDTH_UNKNOWN, WidthAndRate.RATE_I));
 	}
 
-//     public void caseAIvarStype(AIvarStype node)
-//     {
-//         inAIvarStype(node);
-//         if(node.getIvar() != null)
-//         {
-//             node.getIvar().apply(this);
-//         }
-//         outAIvarStype(node);
-//     }
-
-	public void inAKsigStype(AKsigStype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAKsigStype(AKsigStype node)
 	{
-		defaultOut(node);
+		setNodeAttribute(node, new WidthAndRate(WidthAndRate.WIDTH_UNKNOWN, WidthAndRate.RATE_K));
 	}
 
-//     public void caseAKsigStype(AKsigStype node)
-//     {
-//         inAKsigStype(node);
-//         if(node.getKsig() != null)
-//         {
-//             node.getKsig().apply(this);
-//         }
-//         outAKsigStype(node);
-//     }
-
-	public void inAAsigStype(AAsigStype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAAsigStype(AAsigStype node)
 	{
-		defaultOut(node);
+		setNodeAttribute(node, new WidthAndRate(WidthAndRate.WIDTH_UNKNOWN, WidthAndRate.RATE_A));
 	}
 
-//     public void caseAAsigStype(AAsigStype node)
-//     {
-//         inAAsigStype(node);
-//         if(node.getAsig() != null)
-//         {
-//             node.getAsig().apply(this);
-//         }
-//         outAAsigStype(node);
-//     }
-
-	public void inATableStype(ATableStype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outATableStype(ATableStype node)
 	{
-		defaultOut(node);
+		// TODO:
 	}
 
-//     public void caseATableStype(ATableStype node)
-//     {
-//         inATableStype(node);
-//         if(node.getTable() != null)
-//         {
-//             node.getTable().apply(this);
-//         }
-//         outATableStype(node);
-//     }
-
-	public void inAOparrayStype(AOparrayStype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAOparrayStype(AOparrayStype node)
 	{
-		defaultOut(node);
+		// TODO:
 	}
 
-//     public void caseAOparrayStype(AOparrayStype node)
-//     {
-//         inAOparrayStype(node);
-//         if(node.getOparray() != null)
-//         {
-//             node.getOparray().apply(this);
-//         }
-//         outAOparrayStype(node);
-//     }
-
-	public void inAXsigOtype(AXsigOtype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAXsigOtype(AXsigOtype node)
 	{
-		defaultOut(node);
+		// TODO:
 	}
 
-//     public void caseAXsigOtype(AXsigOtype node)
-//     {
-//         inAXsigOtype(node);
-//         if(node.getXsig() != null)
-//         {
-//             node.getXsig().apply(this);
-//         }
-//         outAXsigOtype(node);
-//     }
-
-	public void inAStypeOtype(AStypeOtype node)
-	{
-		defaultIn(node);
-	}
 
 	public void outAStypeOtype(AStypeOtype node)
 	{
-		defaultOut(node);
+		setNodeAttribute(node, getNodeAttribute(node.getStype()));
 	}
 
-//     public void caseAStypeOtype(AStypeOtype node)
-//     {
-//         inAStypeOtype(node);
-//         if(node.getStype() != null)
-//         {
-//             node.getStype().apply(this);
-//         }
-//         outAStypeOtype(node);
-//     }
+
 
 	public void inATabledeclTabledecl(ATabledeclTabledecl node)
 	{
@@ -2418,7 +2226,7 @@ extends DepthFirstAdapter
 	public void outANeqEqualityexpr(ANeqEqualityexpr node)
 	{
 		BranchInstruction	branch = new IFNE(null);
-		appendRelationalOperation(branch);
+		m_aMethods[METHOD_A].appendRelationalOperation(branch);
 	}
 
 
@@ -2426,7 +2234,7 @@ extends DepthFirstAdapter
 	public void outAEqEqualityexpr(AEqEqualityexpr node)
 	{
 		BranchInstruction	branch = new IFEQ(null);
-		appendRelationalOperation(branch);
+		m_aMethods[METHOD_A].appendRelationalOperation(branch);
 	}
 
 
@@ -2439,7 +2247,7 @@ extends DepthFirstAdapter
 	public void outAGtRelationalexpr(AGtRelationalexpr node)
 	{
 		BranchInstruction	branch = new IFGT(null);
-		appendRelationalOperation(branch);
+		m_aMethods[METHOD_A].appendRelationalOperation(branch);
 	}
 
 
@@ -2447,7 +2255,7 @@ extends DepthFirstAdapter
 	public void outALtRelationalexpr(ALtRelationalexpr node)
 	{
 		BranchInstruction	branch = new IFLT(null);
-		appendRelationalOperation(branch);
+		m_aMethods[METHOD_A].appendRelationalOperation(branch);
 	}
 
 
@@ -2455,7 +2263,7 @@ extends DepthFirstAdapter
 	public void outALteqRelationalexpr(ALteqRelationalexpr node)
 	{
 		BranchInstruction	branch = new IFLE(null);
-		appendRelationalOperation(branch);
+		m_aMethods[METHOD_A].appendRelationalOperation(branch);
 	}
 
 
@@ -2463,58 +2271,58 @@ extends DepthFirstAdapter
 	public void outAGteqRelationalexpr(AGteqRelationalexpr node)
 	{
 		BranchInstruction	branch = new IFGE(null);
-		appendRelationalOperation(branch);
+		m_aMethods[METHOD_A].appendRelationalOperation(branch);
 	}
 
 
 
 	public void outAPlusAddexpr(APlusAddexpr node)
 	{
-		appendInstruction(InstructionConstants.FADD);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FADD);
 	}
 
 
 
 	public void outAMinusAddexpr(AMinusAddexpr node)
 	{
-		appendInstruction(InstructionConstants.FSUB);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FSUB);
 	}
 
 
 
 	public void outAMultFactor(AMultFactor node)
 	{
-		appendInstruction(InstructionConstants.FMULT);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FMUL);
 	}
 
 
 
 	public void outADivFactor(ADivFactor node)
 	{
-		appendInstruction(InstructionConstants.FDIV);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FDIV);
 	}
 
 
 
 	public void outANotUnaryminusterm(ANotUnaryminusterm node)
 	{
-		appendInstruction(InstructionConstants.FNEG);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FNEG);
 	}
 
 
 
 	public void outANotNotterm(ANotNotterm node)
 	{
-		appendInstruction(InstructionConstants.FCONST_0);
-		appendInstruction(InstructionConstants.FCMPL);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FCONST_0);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FCMPL);
 		BranchInstruction	branch0 = new IFNE(null);
-		appendInstruction(branch0);
-		appendInstruction(InstructionConstants.FCONST_1);
+		m_aMethods[METHOD_A].appendInstruction(branch0);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FCONST_1);
 		BranchInstruction	branch1 = new GOTO(null);
-		appendInstruction(branch1);
-		setPendingBranchInstruction(branch0);
-		appendInstruction(InstructionConstants.FCONST_0);
-		setPendingBranchInstruction(branch1);
+		m_aMethods[METHOD_A].appendInstruction(branch1);
+		m_aMethods[METHOD_A].setPendingBranchInstruction(branch0);
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.FCONST_0);
+		m_aMethods[METHOD_A].setPendingBranchInstruction(branch1);
 	}
 
 
@@ -2522,7 +2330,7 @@ extends DepthFirstAdapter
 	public void outAIdentifierTerm(AIdentifierTerm node)
 	{
 		String	strVariableName = node.getIdentifier().getText();
-		appendGetField(strVariableName);
+		m_aMethods[METHOD_A].appendGetField(strVariableName);
 	}
 
 
@@ -2533,7 +2341,7 @@ extends DepthFirstAdapter
 		    constant instanceof Float)
 		{
 			float	fValue = ((Number) constant).floatValue();
-			appendFloatConstant(fValue);
+			m_aMethods[METHOD_A].appendFloatConstant(fValue);
 		}
 		else
 		{
@@ -2541,47 +2349,28 @@ extends DepthFirstAdapter
 		}
 	}
 
-//     public void caseAConstantTerm(AConstantTerm node)
-//     {
-//         inAConstantTerm(node);
-//         if(node.getConst() != null)
-//         {
-//             node.getConst().apply(this);
-//         }
-//         outAConstantTerm(node);
-//     }
+
 
 	public void inAIndexedTerm(AIndexedTerm node)
 	{
-		defaultIn(node);
+		// push the array reference onto the stack
+		String	strVariableName = node.getIdentifier().getText();
+		m_aMethods[METHOD_A].appendGetField(strVariableName);
 	}
 
 	public void outAIndexedTerm(AIndexedTerm node)
 	{
-		defaultOut(node);
+		/*	The array reference still is on the stack. Now,
+			also the array index (as a float) is on the stack.
+			It has to be transformed to integer.
+		*/
+		// TODO: correct rounding (1.5 -> 2.0)
+		m_aMethods[METHOD_A].appendInstruction(InstructionConstants.F2I);
+		// and now fetch the value from the array
+		setNodeAttribute(node, InstructionConstants.FALOAD);
 	}
 
-//     public void caseAIndexedTerm(AIndexedTerm node)
-//     {
-//         inAIndexedTerm(node);
-//         if(node.getIdentifier() != null)
-//         {
-//             node.getIdentifier().apply(this);
-//         }
-//         if(node.getLBracket() != null)
-//         {
-//             node.getLBracket().apply(this);
-//         }
-//         if(node.getExpr() != null)
-//         {
-//             node.getExpr().apply(this);
-//         }
-//         if(node.getRBracket() != null)
-//         {
-//             node.getRBracket().apply(this);
-//         }
-//         outAIndexedTerm(node);
-//     }
+
 
 	public void inASasbfTerm(ASasbfTerm node)
 	{
@@ -2857,9 +2646,9 @@ extends DepthFirstAdapter
 //         outAIntegerConst(node);
 //     }
 
-	public void inANumberConst(ANumberConst node)
-	{
-	}
+// 	public void inANumberConst(ANumberConst node)
+// 	{
+// 	}
 
 
 
@@ -2922,32 +2711,86 @@ extends DepthFirstAdapter
 
 
 
-	/**	Append an instruction to the global Instruction list.
-		If a BranchInstruction is pending, it is targetted here.
-	*/
-	private InstructionHandle appendInstruction(Instruction instruction)
+	private void addLocalArray(String strVariableName)
 	{
-		// System.out.println("instruction: " + instruction);
-		InstructionHandle	target = null;
-		if (instruction instanceof BranchInstruction)
-		{
-			target = m_instructionList.append((BranchInstruction) instruction);
-		}
-		else if (instruction instanceof CompoundInstruction)
-		{
-			target = m_instructionList.append((CompoundInstruction) instruction);
-		}
-		else
-		{
-			target = m_instructionList.append(instruction);
-		}
-		if (m_pendingBranchInstruction != null)
-		{
-			m_pendingBranchInstruction.setTarget(target);
-			m_pendingBranchInstruction = null;
-		}
-		return target;
+		FieldGen	fieldGen;
+		fieldGen = new FieldGen(Constants.ACC_PRIVATE,
+					FLOAT_ARRAY,
+					strVariableName,
+					m_constantPoolGen);
+		m_classGen.addField(fieldGen.getField());
+
 	}
+
+
+
+	/**	Returns the InstructionFactory.
+		This method is mainly for use by inner classes.
+		A bit dangerous, since that has to be one
+		InstructionFactory per generated class.
+	*/
+	private InstructionFactory getInstructionFactory()
+	{
+		return m_instructionFactory;
+	}
+
+
+
+
+
+	private class InstrumentMethod
+	{
+		private ClassGen		m_classGen;
+		private MethodGen		m_methodGen;
+		private InstructionList		m_instructionList;
+		private BranchInstruction	m_pendingBranchInstruction;
+
+
+		public InstrumentMethod(ClassGen classGen, String strMethodName)
+		{
+			m_classGen = classGen;
+			m_instructionList = new InstructionList();
+			m_methodGen = new MethodGen(
+				Constants.ACC_PUBLIC,
+				Type.VOID,
+				new Type[]{new ObjectType("org.tritonus.saol.engine.RTSystem")},
+				new String[]{"rtSystem"},
+				strMethodName,
+				m_classGen.getClassName(),
+				m_instructionList,
+				m_classGen.getConstantPool());
+		}
+
+
+
+		/**	Append an instruction to the method's Instruction
+			list. If a BranchInstruction is pending, it is
+			targetted here.
+		*/
+		public InstructionHandle appendInstruction(Instruction instruction)
+		{
+			// System.out.println("instruction: " + instruction);
+			InstructionHandle	target = null;
+			if (instruction instanceof BranchInstruction)
+			{
+				target = m_instructionList.append((BranchInstruction) instruction);
+			}
+			else if (instruction instanceof CompoundInstruction)
+			{
+				target = m_instructionList.append((CompoundInstruction) instruction);
+			}
+			else
+			{
+				target = m_instructionList.append(instruction);
+			}
+			if (m_pendingBranchInstruction != null)
+			{
+				m_pendingBranchInstruction.setTarget(target);
+				m_pendingBranchInstruction = null;
+			}
+			return target;
+		}
+
 
 
 	/**	Set the 'pending' BranchInstruction.
@@ -2955,11 +2798,11 @@ extends DepthFirstAdapter
 		has to be targeted at an instruction that is immediately
 		following, but has not been generated yet, set this
 		BranchInstruction as the pending BranchInstruction.
-		The next instruction added to the global InstructionList
+		The next instruction added to the method's InstructionList
 		with appendInstruction() will become the target of
 		the pending BranchInstruction.
 	*/
-	private void setPendingBranchInstruction(BranchInstruction branchInstruction)
+	public void setPendingBranchInstruction(BranchInstruction branchInstruction)
 	{
 		if (m_pendingBranchInstruction != null)
 		{
@@ -2969,12 +2812,12 @@ extends DepthFirstAdapter
 	}
 
 
-	private void appendGetField(String strVariableName)
+	public void appendGetField(String strVariableName)
 	{
 		// System.out.println("class name: " + m_strClassName);
 		// System.out.println("var name: " + strVariableName);
 		appendInstruction(InstructionConstants.ALOAD_0);
-		Instruction	instruction = m_instructionFactory.createGetField(m_strClassName, strVariableName, Type.FLOAT);
+		Instruction	instruction = getInstructionFactory().createGetField(m_strClassName, strVariableName, Type.FLOAT);
 		appendInstruction(instruction);
 	}
 
@@ -2982,57 +2825,58 @@ extends DepthFirstAdapter
 	/**
 	   NOTE: this method does not append an ALOAD_0 instruction!
 	 */
-	private void appendPutField(String strVariableName)
+	public void appendPutField(String strVariableName)
 	{
 		// System.out.println("class name: " + m_strClassName);
 		// System.out.println("var name: " + strVariableName);
-		Instruction	instruction = m_instructionFactory.createPutField(m_strClassName, strVariableName, Type.FLOAT);
+		Instruction	instruction = getInstructionFactory().createPutField(m_strClassName, strVariableName, Type.FLOAT);
 		appendInstruction(instruction);
 	}
 
 
-// 	private void appendIntegerConstant(int nValue)
-// 	{
-// 		Instruction	instruction = null;
-// 		switch (nValue)
-// 		{
-// 		case -1:
-// 			instruction = InstructionConstants.ICONST_M1;
-// 			break;
 
-// 		case 0:
-// 			instruction = InstructionConstants.ICONST_0;
-// 			break;
+	public void appendIntegerConstant(int nValue)
+	{
+		Instruction	instruction = null;
+		switch (nValue)
+		{
+		case -1:
+			instruction = InstructionConstants.ICONST_M1;
+			break;
 
-// 		case 1:
-// 			instruction = InstructionConstants.ICONST_1;
-// 			break;
+		case 0:
+			instruction = InstructionConstants.ICONST_0;
+			break;
 
-// 		case 2:
-// 			instruction = InstructionConstants.ICONST_2;
-// 			break;
+		case 1:
+			instruction = InstructionConstants.ICONST_1;
+			break;
 
-// 		case 3:
-// 			instruction = InstructionConstants.ICONST_3;
-// 			break;
+		case 2:
+			instruction = InstructionConstants.ICONST_2;
+			break;
 
-// 		case 4:
-// 			instruction = InstructionConstants.ICONST_4;
-// 			break;
+		case 3:
+			instruction = InstructionConstants.ICONST_3;
+			break;
 
-// 		case 5:
-// 			instruction = InstructionConstants.ICONST_5;
-// 			break;
+		case 4:
+			instruction = InstructionConstants.ICONST_4;
+			break;
 
-// 		default:
-// 			int	nConstantIndex = m_constantPoolGen.addInteger(nValue);
-// 			instruction = new LDC(nConstantIndex);
-// 		}
-// 		appendInstruction(instruction);
-// 	}
+		case 5:
+			instruction = InstructionConstants.ICONST_5;
+			break;
+
+		default:
+			int	nConstantIndex = m_constantPoolGen.addInteger(nValue);
+			instruction = new LDC(nConstantIndex);
+		}
+		appendInstruction(instruction);
+	}
 
 
-	private void appendFloatConstant(float fValue)
+	public void appendFloatConstant(float fValue)
 	{
 		Instruction	instruction = null;
 		if (fValue == 0.0)
@@ -3057,17 +2901,26 @@ extends DepthFirstAdapter
 
 
 
-	private void appendRelationalOperation(BranchInstruction branch0)
-	{
-		appendInstruction(InstructionConstants.FCMPL);
-		// BranchInstruction	branch0 = new IFEQ(null);
-		appendInstruction(branch0);
-		appendInstruction(InstructionConstants.FCONST_0);
-		BranchInstruction	branch1 = new GOTO(null);
-		appendInstruction(branch1);
-		setPendingBranchInstruction(branch0);
-		appendInstruction(InstructionConstants.FCONST_1);
-		setPendingBranchInstruction(branch1);
+		public void appendRelationalOperation(BranchInstruction branch0)
+		{
+			appendInstruction(InstructionConstants.FCMPL);
+			appendInstruction(branch0);
+			appendInstruction(InstructionConstants.FCONST_0);
+			BranchInstruction	branch1 = new GOTO(null);
+			appendInstruction(branch1);
+			setPendingBranchInstruction(branch0);
+			appendInstruction(InstructionConstants.FCONST_1);
+			setPendingBranchInstruction(branch1);
+		}
+
+
+
+		public void finish()
+		{
+			appendInstruction(InstructionConstants.RETURN);
+			m_methodGen.setMaxStack();
+			m_classGen.addMethod(m_methodGen.getMethod());
+		}
 	}
 }
 
