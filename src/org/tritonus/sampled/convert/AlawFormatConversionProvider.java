@@ -55,7 +55,7 @@ public class AlawFormatConversionProvider extends TEncodingConversionProvider
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	
 	// TODO:
-	// see AlawFormatConversionProvider
+	// see UlawFormatConversionProvider
 	
 	/*private static final AudioFormat[]	INPUT_FORMATS =
 	{
@@ -174,6 +174,7 @@ public class AlawFormatConversionProvider extends TEncodingConversionProvider
 				sourceStream.getFormat().getFrameRate(),
 				sourceStream.getFormat().isBigEndian()));
 	    	convertType=getConvertType(sourceStream.getFormat());
+		enableConvertInPlace();
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}
@@ -225,6 +226,7 @@ public class AlawFormatConversionProvider extends TEncodingConversionProvider
 				sourceStream.getFormat().getFrameRate(),
 				targetFormat.isBigEndian()));
 	    	convertType=getConvertType(getFormat());
+		enableConvertInPlace();
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}

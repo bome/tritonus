@@ -34,38 +34,24 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioUtils;
 
 
-
-// TODO: verify that this class works with sample rate converters
 
 /** 
- * base class for any type of audio filter/converter.
+ * base class for types of audio filter/converter that translate one frame to another frame.
  * It provides all the transformation of lengths and sizes.
- * **Note**
- * Currently, the pos field is not maintained ! Overriding
- * classes won't get happy when acessing this field -> it will
- * always be 0.
  *
  * @author Florian Bomers
+ * $$fb 2000-07-18: extensive clean up
  */
 public abstract class TSynchronousFilteredAudioInputStream
 	extends AudioInputStream
 {
-	private int	length;
 
 	private AudioInputStream originalStream;
 	private AudioFormat originalFormat;
 	private int originalFrameSize;
-		
-	/**
-	 * this is the factor by which frame indexes in original stream 
-	 * have to be multiplied
-	 * to obtain the frame index of this stream.
-	 * It can be seen as new frames per original frame
-	 * = (converted frame rate) / (original frame rate);
-	 */
-	// protected float frameRateFactor;
 		
 	/**
 	 * = (converted frame size) / (original frame size);
@@ -89,52 +75,47 @@ public abstract class TSynchronousFilteredAudioInputStream
 	private boolean	m_bConvertInPlace = false;
 
 
-
-		
 	public TSynchronousFilteredAudioInputStream(AudioInputStream audioInputStream, AudioFormat newFormat)
 	{
-		// the super class will do nothing... we override everything
-		super(null, newFormat, audioInputStream.getFrameLength());
-		length = (int) audioInputStream.getFrameLength();
+	    // the super class will do nothing... we override everything
+	    super(audioInputStream /*null*/, newFormat, audioInputStream.getFrameLength());
 		originalStream=audioInputStream;
 		originalFormat=audioInputStream.getFormat();
 		originalFrameSize=originalFormat.getFrameSize();
 		if (TDebug.TraceAudioConverter)
 		{
-			System.out.println("TSynchronousFilteredAudioInputStream: original format ="+originalFormat);
-			System.out.println("TSynchronousFilteredAudioInputStream: converted format="+ getFormat());
+			TDebug.out("TSynchronousFilteredAudioInputStream: original format ="
+				   +AudioUtils.format2ShortStr(originalFormat));
+			TDebug.out("TSynchronousFilteredAudioInputStream: converted format="
+				   +AudioUtils.format2ShortStr(getFormat()));
 		}
 		if (originalFrameSize == AudioSystem.NOT_SPECIFIED)
 		{
 			originalFrameSize = 1;
 		}
-		// frameRateFactor = (((float)getFormat().getFrameRate())/originalFormat.getFrameRate());
 		frameSizeFactor = (((float)getFormat().getFrameSize())/originalFormat.getFrameSize());
 		inverseFrameSizeFactor = ((float) getFormat().getFrameSize() / originalFormat.getFrameSize());
-		if (getFormat().getFrameSize() == originalFormat.getFrameSize())
-		{
-			m_bConvertInPlace = true;
-		}
-
-		if (TDebug.TraceAudioConverter)
-		{
-			System.out.println("TSynchronousFilteredAudioInputStream: frameSizeFactor="+frameSizeFactor);
-		}
-/*
-		if (length != AudioSystem.NOT_SPECIFIED)
-		{
-			// TODO: a bit cleaner, please!
-			length = (int) (frameRateFactor*length);
-		}
-*/
-		if (TDebug.TraceAudioConverter)
-		{
-			System.out.println("AudioStreamWrapper: originalLength="+audioInputStream.getFrameLength()+" this length="+length);
-		}
-	}
-
-
+		//$$fb 2000-07-17: convert in place has to be enabled explicitly with "enableConvertInPlace"
+		/*if (getFormat().getFrameSize() == originalFormat.getFrameSize()) {
+		  m_bConvertInPlace = true;
+		}*/
+		m_bConvertInPlace = false;
 		
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("TSynchronousFilteredAudioInputStream: frameSizeFactor="+frameSizeFactor);
+		}
+		
+	}
+    
+    protected boolean enableConvertInPlace() {
+	if (getFormat().getFrameSize() == originalFormat.getFrameSize()) {
+	    m_bConvertInPlace = true;
+	}
+	return m_bConvertInPlace;
+    }
+
+
 	/**
 	 * Override this method to do the actual conversion.
 	 * inBuffer starts always at index 0 (it is an internal buffer)
@@ -150,16 +131,16 @@ public abstract class TSynchronousFilteredAudioInputStream
 
 	/**
 	 * Override this method to provide in-place conversion of samples.
-	 * You should override it when canConvertInPlace is true.
-	 * This method must always convert frameCount frames.
+	 * To use it, call "enableConvertInPlace()". It will only be used when
+	 * input bytes per frame = output bytes per frame.
+	 * This method must always convert frameCount frames, so no return value is necessary.
 	 */
 	protected void convertInPlace(byte[] buffer, int byteOffset, int frameCount)
 	{
-		convert(buffer, buffer, byteOffset, frameCount);
+	    //convert(buffer, buffer, byteOffset, frameCount);
+	    throw new RuntimeException("Illegal call to convertInPlace");
 	}
 
-
-	
 	public int read()
 		throws IOException
 	{
@@ -190,13 +171,6 @@ public abstract class TSynchronousFilteredAudioInputStream
 		buffer = null;
 	}
 
-
-
-	protected void calcPos()
-	{
-		//pos=(int) originalStream.pos/**frameRateFactor*/;
-	}
-
 	public AudioInputStream getOriginalStream() {
 		return originalStream;
 	}
@@ -212,133 +186,111 @@ public abstract class TSynchronousFilteredAudioInputStream
 	 * this method may read less than nLength frames.
 	 */
 	public int read(byte[] abData, int nOffset, int nLength)
-		throws	IOException
-	{
-		int nFrameLength = nLength/getFormat().getFrameSize();
-		if (TDebug.TraceAudioConverter)
-		{
-			System.out.println("converter.read(buffer["+abData.length+"], "+nOffset+" ,"+nLength+" bytes ^="+nFrameLength+" frames)");
+	    throws	IOException {
+	    // number of frames that we have to read from the underlying stream.
+	    int	nFrameLength = nLength/getFormat().getFrameSize();
+	    
+	    // number of bytes that we need to read from underlying stream.
+	    int	originalBytes = nFrameLength * originalFrameSize;
+
+	    if (TDebug.TraceAudioConverter) {
+		//TDebug.out("converter.read(buffer["+abData.length+"], "
+		//		   +nOffset+" ,"+nLength+" bytes ^="+nFrameLength+" frames)");
+	    }
+	    int nFramesConverted = 0;
+	    
+	    // set up buffer to read
+	    byte readBuffer[];
+	    int readOffset;
+	    if (m_bConvertInPlace) {
+		readBuffer=abData;
+		readOffset=nOffset;
+	    } else {
+		// assert that the buffer fits
+		if (buffer == null || buffer.length < originalBytes) {
+		    buffer = new byte[originalBytes];
 		}
-		int nFramesConverted = 0;
-		if (m_bConvertInPlace)
-		{
-				// the trivial case: read directly
-			int nBytesRead = originalStream.read(abData, nOffset, nFrameLength * getFormat().getFrameSize());
-			if (nBytesRead == -1)
-			{
-				clearBuffer();
-				return -1;
-			}
-			nFramesConverted = nBytesRead / originalFrameSize;
-			convertInPlace(abData, nOffset, nFramesConverted);
-		}
-		else
-		{
-				// tricky...
-				// this is the number of frames that we have to read from the 
-				// underlying stream.
-			int	originalFrameLength = (int) (nFrameLength/** inverseFrameRateFactor*/);
-				// this is the number of bytes that we need to read from underlying
-				// stream.
-			int	originalBytes = originalFrameLength * originalFrameSize;
-				// assert that the buffer fits
-			if (buffer == null || buffer.length < originalBytes)
-			{
-				buffer = new byte[originalBytes];
-			}
-			if (TDebug.TraceAudioConverter)
-			{
-				System.out.println("converter: original.read(buffer["+buffer.length+"], 0, "+originalBytes+" bytes ^= "+originalFrameLength+" frames)");
-			}
-			int	nBytesRead = originalStream.read(buffer, 0, originalBytes);
-			if (nBytesRead == -1)
-			{
-				clearBuffer();
-				return -1;
-			}
-			int	originalFramesRead = nBytesRead / originalFrameSize;
-			if (TDebug.TraceAudioConverter)
-			{
-				System.out.println("converter: original.read returned "+nBytesRead+" bytes ^="+originalFramesRead+" frames");
-			}
-				// finally convert it.
-			nFramesConverted = convert(buffer, abData, nOffset, originalFramesRead);
-			if (TDebug.TraceAudioConverter)
-			{
-				System.out.println("converter: convert converted "+nFramesConverted+" frames");
-			}
-		}
-		//pos += nFramesConverted;
-		calcPos();
-		return nFramesConverted * getFormat().getFrameSize();
+		readBuffer=buffer;
+		readOffset=0;
+	    }
+	    int nBytesRead = originalStream.read(readBuffer, readOffset, originalBytes);
+	    if (nBytesRead == -1) {
+		clearBuffer();
+		return -1;
+	    }
+	    int nFramesRead = nBytesRead / originalFrameSize;
+	    if (TDebug.TraceAudioConverter) {
+		//TDebug.out("converter: original.read returned "
+		//		   +nBytesRead+" bytes ^="+nFramesRead+" frames");
+	    }
+	    if (m_bConvertInPlace) {
+		convertInPlace(abData, nOffset, nFramesRead);
+		nFramesConverted=nFramesRead;
+	    } else {
+		nFramesConverted = convert(buffer, abData, nOffset, nFramesRead);
+	    }
+	    if (TDebug.TraceAudioConverter) {
+		//TDebug.out("converter: convert converted "+nFramesConverted+" frames");
+	    }
+	    return nFramesConverted * getFormat().getFrameSize();
 	}
 
+	
+    public long skip(long nSkip)
+	throws	IOException
+    {
+	// only returns integral frames
+	long skipFrames = nSkip / getFormat().getFrameSize();
+	long originalSkippedBytes = originalStream.skip(skipFrames*originalFrameSize);
+	long nSkippedFrames = (int) (originalSkippedBytes/originalFrameSize);
+	return nSkippedFrames * getFormat().getFrameSize();
+    }
 
 
-	public long skip(long nSkip)
-		throws	IOException
-	{
-		long skipFrames = nSkip / getFormat().getFrameSize();
-		int originalSkipFrames = (int) (skipFrames/*/frameRateFactor*/);
-		long originalSkippedBytes = originalStream.skip(originalSkipFrames*originalFrameSize);
-		long originalSkippedFrames = originalSkippedBytes/originalFrameSize;
-		
-		long nSkippedFrames = (int) (originalSkippedFrames/**frameRateFactor*/);
-		//pos += nSkippedFrames;
-		calcPos();
-		return nSkippedFrames * getFormat().getFrameSize();
+    public int available()
+	throws IOException
+    {
+	int avail = originalStream.available();
+	if (avail>0) {
+	    avail=(int) (avail * frameSizeFactor);
 	}
+	return avail;
+    }
+
+
+    public void close()
+	throws IOException
+    {
+	originalStream.close();
+	clearBuffer();
+    }
 
 
 
-	public int available()
-		throws IOException
-	{
-		int avail = originalStream.available();
-		// TODO: validate this
-		return (int) (avail * /*frameRateFactor**/ frameSizeFactor);
-	}
+    public void mark(int readlimit)
+    {
+	originalStream.mark((int) (readlimit*inverseFrameSizeFactor));
+    }
 
 
 
-	public void close()
-		throws IOException
-	{
-		originalStream.close();
-		buffer = null;
-	}
+    public void reset()
+	throws IOException
+    {
+	originalStream.reset();
+    }
 
 
-
-	/*
-	  public void mark(int readlimit)
-	  {
-	  originalStream.mark(readlimit);
-	  }*/
+    public boolean markSupported()
+    {
+	return originalStream.markSupported();
+    }
 
 
-
-	public void reset()
-		throws IOException
-	{
-		originalStream.reset();
-		calcPos();
-	}
-
-
-
-	/*
-	  public boolean markSupported()
-	  {
-	  return originalStream.markSupported();
-	  }
-
-
-	  private int getFrameSize()
-	  {
-	  return getFormat().getFrameSize();
-	  }
-	*/
+    private int getFrameSize()
+    {
+	return getFormat().getFrameSize();
+    }
 
 }
 
