@@ -16,6 +16,9 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+LN_S = @LN_S@
+RM_F = @RM_F@
+MKDIR_P = @MKDIR_P@
 
 %.class: %.java
 	export CLASSPATH=.:src:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $<
@@ -39,7 +42,8 @@ LIBDEST=tritonus.jar
 LIBDEST_JL=javalayer.jar
 LIBDEST_MP3SP=mp3sp.jar
 LIBDEST_GSM=tritonus_gsm.jar
-
+LIBDEST_ABSOLUTE_PREFIX=@SRC_ABSOLUTE_PATH@
+# or LIBDEST_ABSOLUTE_PREFIX=$(CURDIR)
 
 vpath %.java $(SRCDIR_PUB)/midi
 vpath %.java $(SRCDIR_PUB)/midi/spi
@@ -50,6 +54,7 @@ vpath %.java $(SRCDIR_PRIV)/lowlevel/alsa
 vpath %.java $(SRCDIR_PRIV)/lowlevel/esd
 vpath %.java $(SRCDIR_PRIV)/lowlevel/gsm
 vpath %.java $(SRCDIR_PRIV)/lowlevel/saint
+vpath %.java $(SRCDIR_PRIV)/lowlevel/lame
 vpath %.java $(SRCDIR_PRIV)/sampled
 vpath %.java $(SRCDIR_PRIV)/sampled/convert
 vpath %.java $(SRCDIR_PRIV)/sampled/convert/gsm
@@ -78,6 +83,7 @@ vpath %.class $(OBJDIR_PRIV)/lowlevel/alsa
 vpath %.class $(OBJDIR_PRIV)/lowlevel/esd
 vpath %.class $(OBJDIR_PRIV)/lowlevel/gsm
 vpath %.class $(OBJDIR_PRIV)/lowlevel/saint
+vpath %.class $(OBJDIR_PRIV)/lowlevel/lame
 vpath %.class $(OBJDIR_PRIV)/sampled
 vpath %.class $(OBJDIR_PRIV)/sampled/convert
 vpath %.class $(OBJDIR_PRIV)/sampled/convert/gsm
@@ -123,6 +129,7 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_JL)/*.java \
 	)
 
+#	$(SRCDIR_PRIV)/lowlevel/lame/*.java \
 #	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
 #	$(SRCDIR_PRIV)/midi/device/saint/*.java \
 #	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
@@ -248,9 +255,24 @@ install: all
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install; done
 
 .PHONY: install-link
-install-link:
-	(cd  $(JAVAEXTLIBPATH) && $(LN_S) $(LIBDEST_ABSOLUTE))
+install-link: all
+	@echo "Creating link for $(LIBDEST) in $(JAVAEXTPATH)"
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST)
+	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST) $(LIBDEST))
+	@echo "Creating link for $(LIBDEST_JL) in $(JAVAEXTPATH)"
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_JL)
+	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_JL) $(LIBDEST_JL))
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install-link; done
+
+.PHONY: uninstall
+uninstall:
+	@echo "Removing tritonus jars in $(JAVAEXTPATH)"
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST)
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_JL)
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d uninstall; done
+
+.PHONY: uninstall-link
+uninstall-link: uninstall
 
 .PHONY: clean
 clean:

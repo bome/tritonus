@@ -91,7 +91,8 @@ AC_PROG_LN_S
 AC_SUBST(SUBDIRS)
 dnl Checks for libraries.
 #SUBDIRS=src/lib/lame
-SUBDIRS=src/lib/saint
+#SUBDIRS=src/lib/saint
+SUBDIRS=
 AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"]; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
 AC_CHECK_LIB(esd,esd_open_sound,[SUBDIRS="$SUBDIRS src/lib/esd"; AC_MSG_RESULT(Information: will build stuff for Enlightened Sound Daemon)],[AC_MSG_RESULT(Information: will not build stuff for Enlightened Sound Daemon)],-laudiofile)
 AC_CHECK_LIB(mp3lame,lame_init_params,[SUBDIRS="$SUBDIRS src/lib/lame"; AC_MSG_RESULT(Information: will build stuff for LAME mp3 encoder)],[AC_MSG_RESULT(Information: will not build stuff for LAME mp3 encoder)])
