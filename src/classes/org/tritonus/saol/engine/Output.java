@@ -2,7 +2,26 @@
  *	Output.java
  */
 
-import	java.io.IOException;
+/*
+ *  Copyright (c) 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as published
+ *   by the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Library General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+package	org.tritonus.saol.engine;
+
 
 
 
@@ -16,11 +35,18 @@ import	java.io.IOException;
  */
 public interface Output
 {
+	/**	Gives the width of this output.
+		@returns	width of the output (number of channels)
+	 */
+	public int getWidth();
+
+
 	/**	Initiate the cumulation of a sample value.
+		Sets the values of all samples to 0.0.
 		This method must be called in an a-cycle before
 		any instrument's a-cycle code is executed.
 	*/
-	public void init();
+	public void clear();
 
 
 	/**	Add the sample value of one instrument.
@@ -32,26 +58,13 @@ public interface Output
 	public void output(float fSample);
 
 
-	/**	Writes the accumulated sample values to the output media.
-		This method must be called by the engine after all
-		instrument's a-cycle code for this cycle is executed.
-		It is intended to actually write the resulting sample data
-		to the desired location. The desired location may be a file,
-		a line, or somthing else, depending on this interface'
-		implementation.
+	/**	Add sample values of one instrument.
+		This method can be called by instrument's a-cycle
+		code to output the sample value the instrument has
+		calculated for this a-cycle.
+		The current hacky version allows only for mono samples.
 	*/
-	public void emit()
-		throws IOException;
-
-
-	/**	Closes the output destination.
-		This method must be called by the engine after execution,
-		i.e. when there are no further a-cycles.
-		It is intended to close files, lines, or other output
-		destinations.
-	*/
-	public void close()
-		throws IOException;
+	public void output(float[] afSamples);
 }
 
 
