@@ -119,8 +119,7 @@ public class TCircularBuffer
 		}
 		synchronized (this)
 		{
-			// if (m_trigger != null && availableRead() < nLength)
-			while (m_trigger != null && availableRead() < nLength)
+			if (m_trigger != null && availableRead() < nLength)
 			{
 				if (TDebug.TraceCircularBuffer) { TDebug.out("executing trigger."); }
 				m_trigger.execute();
