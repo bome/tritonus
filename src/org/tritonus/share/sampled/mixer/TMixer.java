@@ -60,12 +60,27 @@ public abstract class TMixer
 	private Collection	m_supportedTargetFormats;
 	private Collection	m_supportedSourceLineInfos;
 	private Collection	m_supportedTargetLineInfos;
-	private Collection	m_supportedPortLineInfos;
+	// private Collection	m_supportedPortInfos;
 	private Set		m_openSourceDataLines;
 	private Set		m_openTargetDataLines;
 
 
-	/**	constructor for mixers without ports.
+	/**	Constructor for mixers that use setSupportInformation().
+	 */
+	protected TMixer(Mixer.Info mixerInfo,
+			 Line.Info lineInfo)
+	{
+		this(mixerInfo,
+		     lineInfo,
+		     new ArrayList(),
+		     new ArrayList(),
+		     new ArrayList(),
+		     new ArrayList());
+	}
+
+
+
+	/**	Constructor for mixers.
 	 */
 	protected TMixer(Mixer.Info mixerInfo,
 			 Line.Info lineInfo,
@@ -74,63 +89,18 @@ public abstract class TMixer
 			 Collection supportedSourceLineInfos,
 			 Collection supportedTargetLineInfos)
 	{
-		this(mixerInfo,
-		     lineInfo,
-		     supportedSourceFormats,
-		     supportedTargetFormats,
-		     supportedSourceLineInfos,
-		     supportedTargetLineInfos,
-		     new ArrayList());
-	}
-
-
-
-	/**	Constructor for mixers with only ports.
-	 */
-	protected TMixer(Mixer.Info mixerInfo,
-			 Line.Info lineInfo,
-			 Collection supportedPortLineInfos)
-	{
-		this(mixerInfo,
-		     lineInfo,
-		     new ArrayList(),
-		     new ArrayList(),
-		     new ArrayList(),
-		     new ArrayList(),
-		     supportedPortLineInfos);
-	}
-
-
-
-	/**	Constructor for mixers with both normal lines and ports.
-	 */
-	protected TMixer(Mixer.Info mixerInfo,
-			 Line.Info lineInfo,
-			 Collection supportedSourceFormats,
-			 Collection supportedTargetFormats,
-			 Collection supportedSourceLineInfos,
-			 Collection supportedTargetLineInfos,
-			 Collection supportedPortLineInfos)
-	{
 		super(null,	// TMixer
 		      lineInfo);
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.<init>(): begin");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.<init>(): begin"); }
 		m_mixerInfo = mixerInfo;
 		setSupportInformation(
 			supportedSourceFormats,
 			supportedTargetFormats,
 			supportedSourceLineInfos,
-			supportedTargetLineInfos,
-			supportedPortLineInfos);
+			supportedTargetLineInfos);
 		m_openSourceDataLines = new ArraySet();
 		m_openTargetDataLines = new ArraySet();
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.<init>(): end");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.<init>(): end"); }
 	}
 
 
@@ -139,15 +109,13 @@ public abstract class TMixer
 			 Collection supportedSourceFormats,
 			 Collection supportedTargetFormats,
 			 Collection supportedSourceLineInfos,
-			 Collection supportedTargetLineInfos,
-			 Collection supportedPortLineInfos)
+			 Collection supportedTargetLineInfos)
 	{
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.setSupportInformation(): begin"); }
 		m_supportedSourceFormats = supportedSourceFormats;
 		m_supportedTargetFormats = supportedTargetFormats;
 		m_supportedSourceLineInfos = supportedSourceLineInfos;
 		m_supportedTargetLineInfos = supportedTargetLineInfos;
-		m_supportedPortLineInfos = supportedPortLineInfos;
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.setSupportInformation(): end"); }
 	}
 
@@ -155,10 +123,8 @@ public abstract class TMixer
 
 	public Mixer.Info getMixerInfo()
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getMixerInfo(): called");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getMixerInfo(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getMixerInfo(): end"); }
 		return m_mixerInfo;
 	}
 
@@ -166,32 +132,27 @@ public abstract class TMixer
 
 	public Line.Info[] getSourceLineInfo()
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSourceLineInfo(): called");
-		}
-		return (Line.Info[]) m_supportedSourceLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSourceLineInfo(): begin"); }
+		Line.Info[]	infos = (Line.Info[]) m_supportedSourceLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSourceLineInfo(): end"); }
+		return infos;
 	}
 
 
 
 	public Line.Info[] getTargetLineInfo()
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getTargetLineInfo(): called");
-		}
-		return (Line.Info[]) m_supportedTargetLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getTargetLineInfo(): begin"); }
+		Line.Info[]	infos = (Line.Info[]) m_supportedTargetLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getTargetLineInfo(): end"); }
+		return infos;
 	}
 
 
 
 	public Line.Info[] getSourceLineInfo(Line.Info info)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSourceLineInfo(Line.Info): info to test: " + info);
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSourceLineInfo(Line.Info): info to test: " + info); }
 		// TODO:
 		return EMPTY_LINE_INFO_ARRAY;
 	}
@@ -200,10 +161,7 @@ public abstract class TMixer
 
 	public Line.Info[] getTargetLineInfo(Line.Info info)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getTargetLineInfo(Line.Info): info to test: " + info);
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getTargetLineInfo(Line.Info): info to test: " + info); }
 		// TODO:
 		return EMPTY_LINE_INFO_ARRAY;
 	}
@@ -212,10 +170,7 @@ public abstract class TMixer
 
 	public boolean isLineSupported(Line.Info info)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.isLineSupported(): info to test: " + info);
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.isLineSupported(): info to test: " + info); }
 		Class	lineClass = info.getLineClass();
 		if (lineClass.equals(SourceDataLine.class))
 		{
@@ -227,7 +182,7 @@ public abstract class TMixer
 		}
 		else if (lineClass.equals(Port.class))
 		{
-			return isLineSupportedImpl(info, m_supportedPortLineInfos);
+			return isLineSupportedImpl(info, m_supportedSourceLineInfos) || isLineSupportedImpl(info, m_supportedTargetLineInfos);
 		}
 		else
 		{
@@ -242,9 +197,6 @@ public abstract class TMixer
 		Iterator	iterator = supportedLineInfos.iterator();
 		while (iterator.hasNext())
 		{
-			// Object	obj =  iterator.next();
-			// System.out.println("line info:" + obj);
-			// Line.Info	info2 = (Line.Info) obj;
 			Line.Info	info2 = (Line.Info) iterator.next();
 			if (info2.matches(info))
 			{
@@ -259,54 +211,67 @@ public abstract class TMixer
 	public Line getLine(Line.Info info)
 		throws	LineUnavailableException
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getLine(): begin");
-		}
-		DataLine.Info	dataLineInfo = (DataLine.Info) info;
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): begin"); }
 		Class		lineClass = info.getLineClass();
-		AudioFormat[]	aFormats = dataLineInfo.getFormats();
+		DataLine.Info	dataLineInfo = null;
+		Port.Info	portInfo = null;
+		AudioFormat[]	aFormats = null;
+		if (info instanceof DataLine.Info)
+		{
+			dataLineInfo = (DataLine.Info) info;
+			aFormats = dataLineInfo.getFormats();
+		}
+		else if (info instanceof Port.Info)
+		{
+			portInfo = (Port.Info) info;
+		}
 		AudioFormat	format = null;
 		Line		line = null;
 		if (lineClass == SourceDataLine.class)
 		{
-			if (TDebug.TraceMixer)
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): type: SourceDataLine"); }
+			if (dataLineInfo == null)
 			{
-				TDebug.out("TMixer.getLine(): type: SourceDataLine");
+				throw new IllegalArgumentException("need DataLine.Info for SourceDataLine");
 			}
 			format = getSupportedSourceFormat(aFormats);
 			line = getSourceDataLine(format, dataLineInfo.getMaxBufferSize());
 		}
 		else if (lineClass == Clip.class)
 		{
-			if (TDebug.TraceMixer)
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): type: Clip"); }
+			if (dataLineInfo == null)
 			{
-				TDebug.out("TMixer.getLine(): type: Clip");
+				throw new IllegalArgumentException("need DataLine.Info for Clip");
 			}
 			format = getSupportedSourceFormat(aFormats);
 			line = getClip(format);
 		}
 		else if (lineClass == TargetDataLine.class)
 		{
-			if (TDebug.TraceMixer)
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): type: TargetDataLine"); }
+			if (dataLineInfo == null)
 			{
-				TDebug.out("TMixer.getLine(): type: TargetDataLine");
+				throw new IllegalArgumentException("need DataLine.Info for TargetDataLine");
 			}
 			format = getSupportedTargetFormat(aFormats);
 			line = getTargetDataLine(format, dataLineInfo.getMaxBufferSize());
 		}
+		else if (lineClass == Port.class)
+		{
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): type: TargetDataLine"); }
+			if (portInfo == null)
+			{
+				throw new IllegalArgumentException("need Port.Info for Port");
+			}
+			line = getPort(portInfo);
+		}
 		else
 		{
-			if (TDebug.TraceMixer)
-			{
-				TDebug.out("TMixer.getLine(): unknown line type, will throw exception");
-			}
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): unknown line type, will throw exception"); }
 			throw new LineUnavailableException("unknown line class: " + lineClass);
 		}
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getLine(): end");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): end"); }
 		return line;
 	}
 
@@ -316,7 +281,7 @@ public abstract class TMixer
 		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSourceDataLine(): begin"); }
-		throw new LineUnavailableException("not implemented");
+		throw new IllegalArgumentException("this mixer does not support SourceDataLines");
 	}
 
 
@@ -324,11 +289,8 @@ public abstract class TMixer
 	protected Clip getClip(AudioFormat format)
 		throws LineUnavailableException
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getClip(): begin");
-		}
-		throw new LineUnavailableException("not implemented");
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getClip(): begin"); }
+		throw new IllegalArgumentException("this mixer does not support Clips");
 	}
 
 
@@ -336,34 +298,31 @@ public abstract class TMixer
 	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
 		throws LineUnavailableException
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getTargetDataLine(): begin");
-		}
-		throw new LineUnavailableException("not implemented");
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getTargetDataLine(): begin"); }
+		throw new IllegalArgumentException("this mixer does not support TargetDataLines");
+	}
+
+
+
+	protected Port getPort(Port.Info info)
+		throws LineUnavailableException
+	{
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getTargetDataLine(): begin"); }
+		throw new IllegalArgumentException("this mixer does not support Ports");
 	}
 
 
 
 	private AudioFormat getSupportedSourceFormat(AudioFormat[] aFormats)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSupportedSourceFormat(): begin");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedSourceFormat(): begin"); }
 		AudioFormat	format = null;
 		for (int i = 0; i < aFormats.length; i++)
 		{
-			if (TDebug.TraceMixer)
-			{
-				TDebug.out("TMixer.getSupportedSourceFormat(): checking " + aFormats[i] + "...");
-			}
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedSourceFormat(): checking " + aFormats[i] + "..."); }
 			if (isSourceFormatSupported(aFormats[i]))
 			{
-				if (TDebug.TraceMixer)
-				{
-					TDebug.out("TMixer.getSupportedSourceFormat(): ...supported");
-				}
+				if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedSourceFormat(): ...supported"); }
 				format = aFormats[i];
 				break;
 			}
@@ -379,10 +338,7 @@ public abstract class TMixer
 		{
 			throw new IllegalArgumentException("no line matchine one of the passed formats");
 		}
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSupportedSourceFormat(): end");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedSourceFormat(): end"); }
 		return format;
 	}
 
@@ -390,23 +346,14 @@ public abstract class TMixer
 
 	private AudioFormat getSupportedTargetFormat(AudioFormat[] aFormats)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSupportedTargetFormat(): begin");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedTargetFormat(): begin"); }
 		AudioFormat	format = null;
 		for (int i = 0; i < aFormats.length; i++)
 		{
-			if (TDebug.TraceMixer)
-			{
-				TDebug.out("TMixer.getSupportedTargetFormat(): checking " + aFormats[i] + " ...");
-			}
+			if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedTargetFormat(): checking " + aFormats[i] + " ..."); }
 			if (isTargetFormatSupported(aFormats[i]))
 			{
-				if (TDebug.TraceMixer)
-				{
-					TDebug.out("TMixer.getSupportedTargetFormat(): ...supported");
-				}
+				if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedTargetFormat(): ...supported"); }
 				format = aFormats[i];
 				break;
 			}
@@ -422,10 +369,7 @@ public abstract class TMixer
 		{
 			throw new IllegalArgumentException("no line matchine one of the passed formats");
 		}
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSupportedTargetFormat(): end");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSupportedTargetFormat(): end"); }
 		return format;
 	}
 
@@ -440,10 +384,7 @@ public abstract class TMixer
 
 	public Line[] getSourceLines()
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getSourceLines(): called");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSourceLines(): called"); }
 		return (Line[]) m_openSourceDataLines.toArray(EMPTY_LINE_ARRAY);
 	}
 
@@ -451,10 +392,7 @@ public abstract class TMixer
 
 	public Line[] getTargetLines()
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.getTargetLines(): called");
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getTargetLines(): called"); }
 		return (Line[]) m_openTargetDataLines.toArray(EMPTY_LINE_ARRAY);
 	}
 
@@ -485,10 +423,7 @@ public abstract class TMixer
 
 	protected boolean isSourceFormatSupported(AudioFormat format)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.isSourceFormatSupported(): format to test: " + format);
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.isSourceFormatSupported(): format to test: " + format); }
 		Iterator	iterator = m_supportedSourceFormats.iterator();
 		while (iterator.hasNext())
 		{
@@ -505,10 +440,7 @@ public abstract class TMixer
 
 	protected boolean isTargetFormatSupported(AudioFormat format)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.isTargetFormatSupported(): format to test: " + format);
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.isTargetFormatSupported(): format to test: " + format); }
 		Iterator	iterator = m_supportedTargetFormats.iterator();
 		while (iterator.hasNext())
 		{
@@ -525,9 +457,7 @@ public abstract class TMixer
 
 	/*package*/ void registerOpenLine(Line line)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.registerOpenLine(): line to register: " + line);
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.registerOpenLine(): line to register: " + line);
 		}
 		if (line instanceof SourceDataLine)
 		{
@@ -549,10 +479,7 @@ public abstract class TMixer
 
 	/*package*/ void unregisterOpenLine(Line line)
 	{
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("TMixer.unregisterOpenLine(): line to unregister: " + line);
-		}
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.unregisterOpenLine(): line to unregister: " + line); }
 		if (line instanceof SourceDataLine)
 		{
 			synchronized (m_openSourceDataLines)
@@ -569,7 +496,7 @@ public abstract class TMixer
 		}
 	}
 	}
-
+ 
 
 
 /*** TMixer.java ***/
