@@ -37,6 +37,7 @@ public class Mp3Encoder {
 	private static boolean DEBUG = false;
 	private static boolean dumpExceptions=false;
 	private static boolean traceConverters=false;
+	private static boolean quiet=false;
 
 	// currently, there is no convenient method in JavaSound to specify non-standard Encodings.
 	// using tritonus' proposal to overcome this.
@@ -51,7 +52,7 @@ public class Mp3Encoder {
 		} catch (Exception e) {
 			if (dumpExceptions) {
 				e.printStackTrace();
-			} else {
+			} else if (!quiet) {
 				System.out.println("Error: "+e.getMessage());
 			}
 		}
@@ -73,58 +74,111 @@ public class Mp3Encoder {
 		return filename.substring(0, ind);
 	}
 
+	/* first version. Remains here for documentation how to 
+	 * get a stream with complete description of the target format.
+	 */
+	public static AudioInputStream getConvertedStream2(AudioInputStream sourceStream, 
+							  AudioFormat.Encoding targetEncoding) throws Exception {
+		AudioFormat sourceFormat=sourceStream.getFormat();
+		if (!quiet) {
+			System.out.println("Input format: "+sourceFormat);
+		}
+		// build the output format
+		AudioFormat targetFormat=new AudioFormat(targetEncoding,
+							 sourceFormat.getSampleRate(),
+							 AudioSystem.NOT_SPECIFIED,
+							 sourceFormat.getChannels(),
+							 AudioSystem.NOT_SPECIFIED,
+							 AudioSystem.NOT_SPECIFIED,
+							 false); // endianness doesn't matter
+		// construct a converted stream
+		AudioInputStream targetStream=null;
+		if (!AudioSystem.isConversionSupported(targetFormat, sourceFormat)) {
+			if (DEBUG && !quiet) {
+				System.out.println("Direct conversion not possible.");
+				System.out.println("Trying with intermediate PCM format.");
+			}
+			AudioFormat intermediateFormat=new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+								       sourceFormat.getSampleRate(),
+								       16,
+				 				       sourceFormat.getChannels(),
+								       2*sourceFormat.getChannels(), // frameSize
+								       sourceFormat.getSampleRate(),
+								       false);
+			if (AudioSystem.isConversionSupported(intermediateFormat, sourceFormat)) {
+				// intermediate conversion is supported
+				sourceStream=AudioSystem.getAudioInputStream(intermediateFormat, sourceStream);
+			}
+		}
+		targetStream=AudioSystem.getAudioInputStream(targetFormat, sourceStream);
+		if (targetStream==null) {
+			throw new Exception("conversion not supported");
+		}
+		if (!quiet) {
+			if (DEBUG) {
+				System.out.println("Got converted AudioInputStream: "+targetStream.getClass().getName());
+			}
+			System.out.println("Output format: "+targetStream.getFormat());
+		}
+		return targetStream;
+	}
+
+	public static AudioInputStream getConvertedStream(AudioInputStream sourceStream, 
+							  AudioFormat.Encoding targetEncoding) throws Exception {
+		AudioFormat sourceFormat=sourceStream.getFormat();
+		if (!quiet) {
+			System.out.println("Input format: "+sourceFormat);
+		}
+
+		// construct a converted stream
+		AudioInputStream targetStream=null;
+		if (!AudioSystem.isConversionSupported(targetEncoding, sourceFormat)) {
+			if (DEBUG && !quiet) {
+				System.out.println("Direct conversion not possible.");
+				System.out.println("Trying with intermediate PCM format.");
+			}
+			AudioFormat intermediateFormat=new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+								       sourceFormat.getSampleRate(),
+								       16,
+								       sourceFormat.getChannels(),
+								       2*sourceFormat.getChannels(), // frameSize
+								       sourceFormat.getSampleRate(),
+								       false);
+			if (AudioSystem.isConversionSupported(intermediateFormat, sourceFormat)) {
+				// intermediate conversion is supported
+				sourceStream=AudioSystem.getAudioInputStream(intermediateFormat, sourceStream);
+			}
+		}
+		targetStream=AudioSystem.getAudioInputStream(targetEncoding, sourceStream);
+		if (targetStream==null) {
+			throw new Exception("conversion not supported");
+		}
+		if (!quiet) {
+			if (DEBUG) {
+				System.out.println("Got converted AudioInputStream: "+targetStream.getClass().getName());
+			}
+			System.out.println("Output format: "+targetStream.getFormat());
+		}
+		return targetStream;
+	}
+
+
 	public static int writeFile(String inFilename) {
 		int writtenBytes=-1;
 		try {
-			AudioInputStream ais=getInStream(inFilename);
-			AudioFormat sourceFormat=ais.getFormat();
-			AudioFormat.Encoding targetEncoding=MPEG1L3;
 			AudioFileFormat.Type targetType=MP3;
-			
-			System.out.println("Input format: "+sourceFormat);
+			AudioInputStream ais=getInStream(inFilename);
+			ais=getConvertedStream(ais, MPEG1L3);
 			
 			// construct the target filename
 			String outFilename=stripExtension(inFilename)+"."+targetType.getExtension();
 			
-			// build the output format
-			AudioFormat outFormat=new AudioFormat(targetEncoding,
-							      sourceFormat.getSampleRate(),
-							      AudioSystem.NOT_SPECIFIED,
-							      sourceFormat.getChannels(),
-							      AudioSystem.NOT_SPECIFIED,
-							      AudioSystem.NOT_SPECIFIED,
-							      false); // endianness doesn't matter
-			// construct a converted stream
-			AudioInputStream outStream=null;
-			if (!AudioSystem.isConversionSupported(outFormat, sourceFormat)) {
-				if (DEBUG) {
-					System.out.println("Direct conversion not possible.");
-					System.out.println("Trying with intermediate PCM format.");
-				}
-				AudioFormat intermediateFormat=new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-									       sourceFormat.getSampleRate(),
-									       16,
-									       sourceFormat.getChannels(),
-									       2*sourceFormat.getChannels(), // frameSize
-									       sourceFormat.getSampleRate(),
-									       false);
-				if (AudioSystem.isConversionSupported(intermediateFormat, sourceFormat)) {
-					// intermediate conversion is supported
-					ais=AudioSystem.getAudioInputStream(intermediateFormat, ais);
-				}
-			}
-			outStream=AudioSystem.getAudioInputStream(outFormat, ais);
-			if (outStream==null) {
-				throw new Exception("conversion not supported");
-			}
-			if (DEBUG) {
-				System.out.println("Got converted AudioInputStream: "+outStream.getClass().getName());
-			}
-			System.out.println("Output format: "+outStream.getFormat());
 			// write the file
-			System.out.println("Writing "+outFilename+"...");
-			writtenBytes = AudioSystem.write(outStream, targetType, new File(outFilename));
-			if (DEBUG) {
+			if (!quiet) {
+				System.out.println("Writing "+outFilename+"...");
+			}
+			writtenBytes = AudioSystem.write(ais, targetType, new File(outFilename));
+			if (DEBUG && !quiet) {
 				System.out.println("Effective parameters of output file:");
 				try {
 					System.out.println("  Quality      = "+System.getProperty
@@ -144,16 +198,15 @@ public class Mp3Encoder {
 		} catch (Throwable t) {
 			if (dumpExceptions) {
 				t.printStackTrace();
-			} else {
+			} else if (!quiet) {
 				System.out.println("Error: "+t.getMessage());
 			}
 		}
 		return writtenBytes;
 	}
 
-	public static void main(String[] args) {
-		int firstFileIndex=-1;
-
+	// returns the first index in args where the files start
+	public static int parseArgs(String[] args) {
 		if (args.length==0) {
 			usage();
 		}
@@ -167,8 +220,7 @@ public class Mp3Encoder {
 				}
 
 				if (arg.length()>3 || arg.length()<2 || !arg.startsWith("-")) {
-					firstFileIndex=i;
-					break;
+					return i;
 				}
 				char cArg=arg.charAt(1);
 				// options without parameter
@@ -179,7 +231,10 @@ public class Mp3Encoder {
 					dumpExceptions=true;
 					continue;
 				} else if (cArg=='t') {
-					traceConverters=true;
+					org.tritonus.share.TDebug.TraceAudioConverter=true;
+					continue;
+				} else if (cArg=='s') {
+					quiet=true;
 					continue;
 				} else if (cArg=='V') {
 					try {
@@ -210,18 +265,24 @@ public class Mp3Encoder {
 					throw new Exception("Unrecognized option "+arg+".");
 				}
 			}
-			if (firstFileIndex==-1) {
-				throw new Exception("No input file(s) are given.");
-			}
+			throw new Exception("No input file(s) are given.");
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.exit(1);
 		}
-		if (traceConverters) {
-			org.tritonus.share.TDebug.TraceAudioConverter=true;
-		}
+		return 0; // statement not reached 
+	}
+
+	public static void main(String[] args) {
+		try {
+			System.out.println("Librarypath="+System.getProperty("java.library.path", ""));
+		} catch (Throwable t) {}
+
+		int firstFileIndex=parseArgs(args);
+
 		int inputFiles=0;
 		int success=0;
+		long totalTime=System.currentTimeMillis();
 		for (int i=firstFileIndex; i<args.length; i++) {
 			long time=System.currentTimeMillis();
 			int bytes=writeFile(args[i]);
@@ -231,13 +292,22 @@ public class Mp3Encoder {
 				if (bytes>0) {
 					success++;
 				}
-				System.out.println("Wrote "+bytes+" bytes in "
-						   +(time / 60000)+"m "+((time/1000) % 60)+"s  ("
-						   +(time/1000)+"s).");
+				if (!quiet) {
+					System.out.println("Wrote "+bytes+" bytes in "
+							   +(time / 60000)+"m "+((time/1000) % 60)+"s "
+							   +(time % 1000)+"ms ("
+							   +(time/1000)+"s).");
+				}
 			}
 		}
-		System.out.println("From "+inputFiles+" input file"+(inputFiles==1?"":"s")+", "
-				   +success+" file"+(success==1?" was":"s were")+" converted successfully.");
+		totalTime=System.currentTimeMillis()-totalTime;
+		if ((DEBUG && quiet) || !quiet) {
+			// this IS displayed in silent DEBUG mode
+			System.out.println("From "+inputFiles+" input file"+(inputFiles==1?"":"s")+", "
+					   +success+" file"+(success==1?" was":"s were")+" converted successfully in "
+					   +(totalTime / 60000)+"m "+((totalTime/1000) % 60)+"s  ("
+					   +(totalTime/1000)+"s).");
+		}
 		System.exit(0);
 	}
 
@@ -263,6 +333,7 @@ public class Mp3Encoder {
 		System.out.println("-V            VBR (variable bit rate) mode. Slower, but potentially better");
 		System.out.println("              quality. (Default off)");
 		System.out.println("-v            Be verbose.");
+		System.out.println("-s            Be silent.");
 		System.out.println("-e            Debugging: Dump stack trace of exceptions.");
 		System.out.println("-t            Debugging: trace execution of converters.");
 		System.out.println("-h | --help   Show this message.");
@@ -272,4 +343,5 @@ public class Mp3Encoder {
 }
 
 /*** Mp3Encoder.java ***/
+
 

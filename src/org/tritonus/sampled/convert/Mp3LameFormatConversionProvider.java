@@ -61,16 +61,13 @@ import org.tritonus.lowlevel.lame.Lame;
  * @author Florian Bomers
  */
 
-//TODO: - handle other sample rates ?
-//      - fill frame rate, frame size. Use frame rate for bit rate ?
-//      - don't replace sample size in bits, frame rate and frame size in 
-//        returned AudioFormats.
+//TODO: - fill frame rate, frame size. Use frame rate for bit rate ?
 //      - add decoding ? more work on LAME itself...
 //      - byte swapping support in LAME ?
 
 public class Mp3LameFormatConversionProvider
 	extends	TSimpleFormatConversionProvider {
-	
+
 	// estimated maximum size for an mpeg encoded frame
 	private static final int ENCODER_MAX_FRAME_SIZE=2048*16;
 	private static final int ENCODER_PCM_BUFFER_SIZE=2048*16;
@@ -99,65 +96,110 @@ public class Mp3LameFormatConversionProvider
 	 */
 
 	private static final AudioFormat[] OUTPUT_FORMATS = {
-		new AudioFormat(MPEG1L3, 8000, ALL, 1, ALL, ALL, false), //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 8000, ALL, 2, ALL, ALL, false), //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 8000, ALL, 1, ALL, ALL, true),  //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 8000, ALL, 2, ALL, ALL, true),  //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 11025, ALL, 1, ALL, ALL, false),//MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 11025, ALL, 2, ALL, ALL, false),//MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 11025, ALL, 1, ALL, ALL, true), //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 11025, ALL, 2, ALL, ALL, true), //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 12000, ALL, 1, ALL, ALL, false),//MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 12000, ALL, 2, ALL, ALL, false),//MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 12000, ALL, 1, ALL, ALL, true), //MPEG2DOT5L3
-		new AudioFormat(MPEG1L3, 12000, ALL, 2, ALL, ALL, true), //MPEG2DOT5L3
+	    new AudioFormat(MPEG2DOT5L3, 8000, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, 8000, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, 8000, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, 8000, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, 11025, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, 11025, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, 11025, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, 11025, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, 12000, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, 12000, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, 12000, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, 12000, ALL, 2, ALL, ALL, true),
 
-		new AudioFormat(MPEG1L3, 16000, ALL, 1, ALL, ALL, false),    //MPEG2L3
-		new AudioFormat(MPEG1L3, 16000, ALL, 2, ALL, ALL, false),    //MPEG2L3
-		new AudioFormat(MPEG1L3, 16000, ALL, 1, ALL, ALL, true),     //MPEG2L3
-		new AudioFormat(MPEG1L3, 16000, ALL, 2, ALL, ALL, true),     //MPEG2L3
-		new AudioFormat(MPEG1L3, 22050, ALL, 1, ALL, ALL, false),    //MPEG2L3
-		new AudioFormat(MPEG1L3, 22050, ALL, 2, ALL, ALL, false),    //MPEG2L3
-		new AudioFormat(MPEG1L3, 22050, ALL, 1, ALL, ALL, true),     //MPEG2L3
-		new AudioFormat(MPEG1L3, 22050, ALL, 2, ALL, ALL, true),     //MPEG2L3
-		new AudioFormat(MPEG1L3, 24000, ALL, 1, ALL, ALL, false),    //MPEG2L3
-		new AudioFormat(MPEG1L3, 24000, ALL, 2, ALL, ALL, false),    //MPEG2L3
-		new AudioFormat(MPEG1L3, 24000, ALL, 1, ALL, ALL, true),     //MPEG2L3
-		new AudioFormat(MPEG1L3, 24000, ALL, 2, ALL, ALL, true),     //MPEG2L3
+	    new AudioFormat(MPEG2L3, 16000, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, 16000, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, 16000, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, 16000, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, 22050, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, 22050, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, 22050, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, 22050, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, 24000, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, 24000, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, 24000, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, 24000, ALL, 2, ALL, ALL, true),
 
-		new AudioFormat(MPEG1L3, 32000, ALL, 1, ALL, ALL, false),
-		new AudioFormat(MPEG1L3, 32000, ALL, 2, ALL, ALL, false),
-		new AudioFormat(MPEG1L3, 32000, ALL, 1, ALL, ALL, true),
-		new AudioFormat(MPEG1L3, 32000, ALL, 2, ALL, ALL, true),
-		new AudioFormat(MPEG1L3, 44100, ALL, 1, ALL, ALL, false),
-		new AudioFormat(MPEG1L3, 44100, ALL, 2, ALL, ALL, false),
-		new AudioFormat(MPEG1L3, 44100, ALL, 1, ALL, ALL, true),
-		new AudioFormat(MPEG1L3, 44100, ALL, 2, ALL, ALL, true),
-		new AudioFormat(MPEG1L3, 48000, ALL, 1, ALL, ALL, false),
-		new AudioFormat(MPEG1L3, 48000, ALL, 2, ALL, ALL, false),
-		new AudioFormat(MPEG1L3, 48000, ALL, 1, ALL, ALL, true),
-		new AudioFormat(MPEG1L3, 48000, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG1L3, 8000, ALL, 1, ALL, ALL, false), //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 8000, ALL, 2, ALL, ALL, false), //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 8000, ALL, 1, ALL, ALL, true),  //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 8000, ALL, 2, ALL, ALL, true),  //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 11025, ALL, 1, ALL, ALL, false),//MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 11025, ALL, 2, ALL, ALL, false),//MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 11025, ALL, 1, ALL, ALL, true), //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 11025, ALL, 2, ALL, ALL, true), //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 12000, ALL, 1, ALL, ALL, false),//MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 12000, ALL, 2, ALL, ALL, false),//MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 12000, ALL, 1, ALL, ALL, true), //MPEG2DOT5L3
+	    new AudioFormat(MPEG1L3, 12000, ALL, 2, ALL, ALL, true), //MPEG2DOT5L3
+
+	    new AudioFormat(MPEG1L3, 16000, ALL, 1, ALL, ALL, false),    //MPEG2L3
+	    new AudioFormat(MPEG1L3, 16000, ALL, 2, ALL, ALL, false),    //MPEG2L3
+	    new AudioFormat(MPEG1L3, 16000, ALL, 1, ALL, ALL, true),     //MPEG2L3
+	    new AudioFormat(MPEG1L3, 16000, ALL, 2, ALL, ALL, true),     //MPEG2L3
+	    new AudioFormat(MPEG1L3, 22050, ALL, 1, ALL, ALL, false),    //MPEG2L3
+	    new AudioFormat(MPEG1L3, 22050, ALL, 2, ALL, ALL, false),    //MPEG2L3
+	    new AudioFormat(MPEG1L3, 22050, ALL, 1, ALL, ALL, true),     //MPEG2L3
+	    new AudioFormat(MPEG1L3, 22050, ALL, 2, ALL, ALL, true),     //MPEG2L3
+	    new AudioFormat(MPEG1L3, 24000, ALL, 1, ALL, ALL, false),    //MPEG2L3
+	    new AudioFormat(MPEG1L3, 24000, ALL, 2, ALL, ALL, false),    //MPEG2L3
+	    new AudioFormat(MPEG1L3, 24000, ALL, 1, ALL, ALL, true),     //MPEG2L3
+	    new AudioFormat(MPEG1L3, 24000, ALL, 2, ALL, ALL, true),     //MPEG2L3
+
+	    new AudioFormat(MPEG1L3, 32000, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG1L3, 32000, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG1L3, 32000, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG1L3, 32000, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG1L3, 44100, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG1L3, 44100, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG1L3, 44100, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG1L3, 44100, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG1L3, 48000, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG1L3, 48000, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG1L3, 48000, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG1L3, 48000, ALL, 2, ALL, ALL, true),
 	};
 
 	private static final AudioFormat[] INPUT_FORMATS = {
-	    new AudioFormat(8000, 16, ALL, true, false),
-	    new AudioFormat(8000, 16, ALL, true, true),
-	    new AudioFormat(11025, 16, ALL, true, false),
-	    new AudioFormat(11025, 16, ALL, true, true),
-	    new AudioFormat(12000, 16, ALL, true, false),
-	    new AudioFormat(12000, 16, ALL, true, true),
-	    new AudioFormat(16000, 16, ALL, true, false),
-	    new AudioFormat(16000, 16, ALL, true, true),
-	    new AudioFormat(22050, 16, ALL, true, false),
-	    new AudioFormat(22050, 16, ALL, true, true),
-	    new AudioFormat(24000, 16, ALL, true, false),
-	    new AudioFormat(24000, 16, ALL, true, true),
-	    new AudioFormat(32000, 16, ALL, true, false),
-	    new AudioFormat(32000, 16, ALL, true, true),
-	    new AudioFormat(44100, 16, ALL, true, false),
-	    new AudioFormat(44100, 16, ALL, true, true),
-	    new AudioFormat(48000, 16, ALL, true, false),
-	    new AudioFormat(48000, 16, ALL, true, true),
+	    new AudioFormat(8000, 16, 1, true, false),
+	    new AudioFormat(8000, 16, 1, true, true),
+	    new AudioFormat(11025, 16, 1, true, false),
+	    new AudioFormat(11025, 16, 1, true, true),
+	    new AudioFormat(12000, 16, 1, true, false),
+	    new AudioFormat(12000, 16, 1, true, true),
+	    new AudioFormat(16000, 16, 1, true, false),
+	    new AudioFormat(16000, 16, 1, true, true),
+	    new AudioFormat(22050, 16, 1, true, false),
+	    new AudioFormat(22050, 16, 1, true, true),
+	    new AudioFormat(24000, 16, 1, true, false),
+	    new AudioFormat(24000, 16, 1, true, true),
+	    new AudioFormat(32000, 16, 1, true, false),
+	    new AudioFormat(32000, 16, 1, true, true),
+	    new AudioFormat(44100, 16, 1, true, false),
+	    new AudioFormat(44100, 16, 1, true, true),
+	    new AudioFormat(48000, 16, 1, true, false),
+	    new AudioFormat(48000, 16, 1, true, true),
+
+	    new AudioFormat(8000, 16, 2, true, false),
+	    new AudioFormat(8000, 16, 2, true, true),
+	    new AudioFormat(11025, 16, 2, true, false),
+	    new AudioFormat(11025, 16, 2, true, true),
+	    new AudioFormat(12000, 16, 2, true, false),
+	    new AudioFormat(12000, 16, 2, true, true),
+	    new AudioFormat(16000, 16, 2, true, false),
+	    new AudioFormat(16000, 16, 2, true, true),
+	    new AudioFormat(22050, 16, 2, true, false),
+	    new AudioFormat(22050, 16, 2, true, true),
+	    new AudioFormat(24000, 16, 2, true, false),
+	    new AudioFormat(24000, 16, 2, true, true),
+	    new AudioFormat(32000, 16, 2, true, false),
+	    new AudioFormat(32000, 16, 2, true, true),
+	    new AudioFormat(44100, 16, 2, true, false),
+	    new AudioFormat(44100, 16, 2, true, true),
+	    new AudioFormat(48000, 16, 2, true, false),
+	    new AudioFormat(48000, 16, 2, true, true),
 	};
 
 
@@ -176,12 +218,12 @@ public class Mp3LameFormatConversionProvider
 	}
 
 
-	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, 
-						    AudioInputStream audioInputStream) {
+	public AudioInputStream getAudioInputStream(AudioFormat targetFormat,
+	        AudioInputStream audioInputStream) {
 		if (isConversionSupported(targetFormat,
 		                          audioInputStream.getFormat())) {
 			return new EncodedMpegAudioInputStream(
-			           targetFormat,
+			           getDefaultTargetFormat(targetFormat, audioInputStream.getFormat(), false),
 			           audioInputStream);
 		} else {
 			throw new IllegalArgumentException("conversion not supported");
@@ -205,9 +247,9 @@ public class Mp3LameFormatConversionProvider
 				//TDebug.out("-checking target format "+targetFormat);
 				//}
 				if (doMatch(targetFormat.getSampleRate(), sourceFormat.getSampleRate())
-				    && targetFormat.getEncoding().equals(targetEncoding)
-				    && doMatch(targetFormat.getChannels(), sourceFormat.getChannels())) {
-					targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
+				        && targetFormat.getEncoding().equals(targetEncoding)
+				        && doMatch(targetFormat.getChannels(), sourceFormat.getChannels())) {
+					targetFormat=getDefaultTargetFormat(targetFormat, sourceFormat, true);
 					//if (TDebug.TraceAudioConverter) {
 					//TDebug.out("-yes. added "+targetFormat);
 					//}
@@ -220,6 +262,7 @@ public class Mp3LameFormatConversionProvider
 				//}
 			}
 
+
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("<found "+result.size()+" matching formats.");
 			}
@@ -231,59 +274,70 @@ public class Mp3LameFormatConversionProvider
 			return EMPTY_FORMAT_ARRAY;
 		}
 	}
-    
-	protected AudioFormat getDefaultTargetFormat(AudioFormat.Encoding targetEncoding, 
-						     AudioFormat sourceFormat) {
+
+	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat,
+	        AudioFormat sourceFormat, boolean allowNotSpecified) {
 		// always set bits per sample to MPEG_BITS_PER_SAMPLE
 		// set framerate to MPEG_FRAME_RATE, framesize to FRAME_SIZE
-		// always retain sample rate, endianness, 	
-		// quick check
-		if ((sourceFormat.getChannels()>2)
-		    || (!targetEncoding.equals(MPEG1L3)
-			&& !targetEncoding.equals(MPEG2L3)
-			&& !targetEncoding.equals(MPEG2DOT5L3))
-		    || (!sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED))) {
-			return null;
+		// always retain sample rate, endianness,
+		float targetSampleRate=targetFormat.getSampleRate();
+		if (targetSampleRate==AudioSystem.NOT_SPECIFIED) {
+			targetSampleRate=sourceFormat.getSampleRate();
 		}
-		AudioFormat	targetFormat = new AudioFormat(
-							       targetEncoding,
-							       sourceFormat.getSampleRate(),
-							       MPEG_BITS_PER_SAMPLE,
-							       sourceFormat.getChannels(),
-							       getFrameSize(targetEncoding,
-									    sourceFormat.getSampleRate(),
-									    MPEG_BITS_PER_SAMPLE,
-									    sourceFormat.getChannels(),
-									    MPEG_FRAME_RATE,
-									    false,
-									    0),
-							       MPEG_FRAME_RATE,
-							       sourceFormat.isBigEndian());
-		return targetFormat;
+		if ((!allowNotSpecified && targetSampleRate==AudioSystem.NOT_SPECIFIED)
+		        || (targetSampleRate!=AudioSystem.NOT_SPECIFIED
+			    && sourceFormat.getSampleRate()!=AudioSystem.NOT_SPECIFIED
+			    && targetSampleRate!=sourceFormat.getSampleRate())) {
+			throw new IllegalArgumentException("Illegal sample rate ("+targetSampleRate+") !");
+		}
+		int targetChannels=targetFormat.getChannels();
+		if (targetChannels==AudioSystem.NOT_SPECIFIED) {
+			targetChannels=sourceFormat.getChannels();
+		}
+		if ((!allowNotSpecified && targetChannels==AudioSystem.NOT_SPECIFIED)
+		        || (targetChannels!=AudioSystem.NOT_SPECIFIED
+			    && sourceFormat.getChannels()!=AudioSystem.NOT_SPECIFIED
+			    && targetChannels!=sourceFormat.getChannels())) {
+			throw new IllegalArgumentException("Illegal number of channels ("+targetChannels+") !");
+		}
+		AudioFormat newTargetFormat = new AudioFormat(targetFormat.getEncoding(),
+		                              targetSampleRate,
+		                              MPEG_BITS_PER_SAMPLE,
+		                              targetChannels,
+		                              getFrameSize(targetFormat.getEncoding(),
+		                                           targetSampleRate,
+		                                           MPEG_BITS_PER_SAMPLE,
+		                                           targetChannels,
+		                                           MPEG_FRAME_RATE,
+		                                           false,
+		                                           0),
+		                              MPEG_FRAME_RATE,
+		                              false);
+		return newTargetFormat;
 	}
 
-    // implementation from TSimpleFormatConversionProvider
+	// implementation from TSimpleFormatConversionProvider
 	protected int getFrameSize(
-				   AudioFormat.Encoding encoding,
-				   float sampleRate,
-				   int sampleSize,
-				   int channels,
-				   float frameRate,
-				   boolean bigEndian,
-				   int oldFrameSize) {
-	    if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)
-		|| encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
-		return super.getFrameSize(
-				   encoding,
-				   sampleRate,
-				   sampleSize,
-				   channels,
-				   frameRate,
-				   bigEndian,
-				   oldFrameSize);
-	    }
-	    // return default frame rate for MPEG
-	    return MPEG_FRAME_RATE;
+	    AudioFormat.Encoding encoding,
+	    float sampleRate,
+	    int sampleSize,
+	    int channels,
+	    float frameRate,
+	    boolean bigEndian,
+	    int oldFrameSize) {
+		if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)
+		        || encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
+			return super.getFrameSize(
+			           encoding,
+			           sampleRate,
+			           sampleSize,
+			           channels,
+			           frameRate,
+			           bigEndian,
+			           oldFrameSize);
+		}
+		// return default frame rate for MPEG
+		return MPEG_FRAME_RATE;
 	}
 
 
@@ -296,10 +350,10 @@ public class Mp3LameFormatConversionProvider
 		private byte[] pcmBuffer;
 		private byte[] encodedBuffer;
 
-		public EncodedMpegAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream) {
-			super(outputFormat, -1);
-			pcmStream = inputStream;
-			encoder=new Lame(inputStream.getFormat());
+		public EncodedMpegAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream) {
+			super(targetFormat, -1);
+			pcmStream = sourceStream;
+			encoder=new Lame(sourceStream.getFormat());
 			pcmBuffer=new byte[ENCODER_PCM_BUFFER_SIZE];
 			encodedBuffer=new byte[ENCODER_MAX_FRAME_SIZE];
 		}
@@ -319,9 +373,9 @@ public class Mp3LameFormatConversionProvider
 					int readBytes=pcmStream.read(pcmBuffer);
 					// what to do in case of readBytes==0 ?
 					if (readBytes>0) {
-						encodedBytes=encoder.encodeBuffer(pcmBuffer, 0, 
-										  readBytes, 
-										  encodedBuffer);
+						encodedBytes=encoder.encodeBuffer(pcmBuffer, 0,
+						                                  readBytes,
+						                                  encodedBuffer);
 						buffer=encodedBuffer;
 					} else {
 						// take the larger buffer for the remaining frame(s)

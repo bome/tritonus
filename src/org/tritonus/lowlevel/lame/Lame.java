@@ -96,8 +96,8 @@ public class Lame
 	 * Throws IllegalArgumentException when parameters are not supported
 	 * by LAME.
 	 */
-	public Lame(AudioFormat af) {
-		initParams(af);
+	public Lame(AudioFormat sourceFormat) {
+		initParams(sourceFormat);
 	}
 
 	/**
@@ -105,32 +105,32 @@ public class Lame
 	 * Throws IllegalArgumentException when parameters are not supported
 	 * by LAME.
 	 */
-	public Lame(AudioFormat af, int bitRate, int channelMode, int quality, boolean VBR) {
-		initParams(af, bitRate, channelMode, quality, VBR);
+	public Lame(AudioFormat sourceFormat, int bitRate, int channelMode, int quality, boolean VBR) {
+		initParams(sourceFormat, bitRate, channelMode, quality, VBR);
 	}
 
-	private void initParams(AudioFormat af) {
+	private void initParams(AudioFormat sourceFormat) {
 		readParameters();
-		initParams(af, DEFAULT_BIT_RATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, DEFAULT_VBR);
+		initParams(sourceFormat, DEFAULT_BIT_RATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, DEFAULT_VBR);
 	}
 		
-	private void initParams(AudioFormat af, int bitRate, int channelMode, int quality, boolean VBR) {
+	private void initParams(AudioFormat sourceFormat, int bitRate, int channelMode, int quality, boolean VBR) {
 		// simple check that bitrate is not too high for MPEG2 and MPEG2.5
 		// todo: exception ?
-		if (af.getSampleRate()<32000 && bitRate>160) {
+		if (sourceFormat.getSampleRate()<32000 && bitRate>160) {
 			bitRate=160;
 		}
 		if (TDebug.TraceAudioConverter) {
-			TDebug.out("LAME parameters: channels="+af.getChannels()
-				   +"  sample rate="+((int) Math.round(af.getSampleRate())+"Hz")
+			TDebug.out("LAME parameters: channels="+sourceFormat.getChannels()
+				   +"  sample rate="+((int) Math.round(sourceFormat.getSampleRate())+"Hz")
 				   +"  bitrate="+bitRate+"KBit/s");
 			TDebug.out("                 channelMode="+chmode2string(channelMode)
 				   +"   quality="+quality2string(quality)
-				   +"   VBR="+VBR+"  bigEndian="+af.isBigEndian());
+				   +"   VBR="+VBR+"  bigEndian="+sourceFormat.isBigEndian());
 		}
-		int result=nInitParams(af.getChannels(), (int) Math.round(af.getSampleRate()), 
+		int result=nInitParams(sourceFormat.getChannels(), (int) Math.round(sourceFormat.getSampleRate()), 
 				       bitRate, channelMode, quality,
-				       VBR, af.isBigEndian());
+				       VBR, sourceFormat.isBigEndian());
 		if (result==OUT_OF_MEMORY) {
 			close();
 			throw new OutOfMemoryError("out of memory");
