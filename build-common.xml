@@ -31,10 +31,11 @@
 	      value="${java.home}/lib/ext" />
   </target>
 
-  <target name="prepare" depends="init">
-    <mkdir dir="${build}" />
-    <mkdir dir="${dist}" />
-  </target>
+<target name="prepare" depends="init">
+  <mkdir dir="${build}" />
+  <mkdir dir="${dist}" />
+  <mkdir dir="${javadoc.dir}"/>
+</target>
 
 
   <!-- compile targets are in build.xml/build-aspectj.xml -->
@@ -299,11 +300,16 @@
   </target>
 
 
-  <target name="clean"
-	  depends="init">
-    <delete dir="${build}" />
-    <delete dir="${dist}" />
-  </target>
+<target name="clean" depends="init,clean-javadoc">
+  <delete dir="${build}" />
+  <delete dir="${dist}" />
+</target>
+
+
+<target name="clean-javadoc" depends="init">
+  <delete dir="${javadoc.dir}"/>
+</target>
+
 
 
   <target name="plugins-upload"
@@ -350,12 +356,25 @@
 
 
 <!-- documentation -->
-<target name="javadoc" depends="init">
-  <mkdir dir="${javadoc.dir}"/>
+<target name="javadoc-all" depends="javadoc-tritonus,javadoc-javasound"/>
+
+<target name="javadoc-tritonus" depends="prepare">
   <javadoc
 	   package="true" sourcepath="${src}" destdir="${javadoc.dir}"
-	   packagenames="javax.sound.*,org.tritonus.*"
-	   excludepackagenames="org.tritonus.midi.device.java,org.tritonus.debug,org.tritonus.midi.device.midishare,org.tritonus.sampled.convert.javalayer"
+	   packagenames="org.tritonus.*"
+	   excludepackagenames="org.tritonus.debug,org.tritonus.midi.device.midishare,org.tritonus.sampled.convert.javalayer"
+	   Windowtitle="Tritonus API"
+	   additionalparam="-breakiterator">
+  </javadoc>
+  <!-- additionalparam="-breakiterator" -->
+</target>
+
+
+<target name="javadoc-javasound" depends="prepare">
+  <javadoc
+	   package="true" sourcepath="${src}" destdir="${javadoc.dir}"
+	   packagenames="javax.sound.*"
+	   Windowtitle="Java Sound API"
 	   additionalparam="-breakiterator">
   </javadoc>
   <!-- additionalparam="-breakiterator" -->
@@ -363,7 +382,7 @@
 
 
 <target name="javadoc-upload"
-	depends="javadoc">
+	depends="javadoc-tritonus">
   <exec
 	dir="${basedir}"
 	executable="rsync">

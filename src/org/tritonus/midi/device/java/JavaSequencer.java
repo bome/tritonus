@@ -363,8 +363,8 @@ public class JavaSequencer
 		Override this method if you want to use a different
 		time base.
 
-		@returns the system time in microseconds
-	 */
+		@return the system time in microseconds
+	*/
 	protected long getTimeInMicroseconds()
 	{
 		return System.currentTimeMillis() * 1000;
