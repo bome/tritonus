@@ -7,7 +7,7 @@
 #include	"org_tritonus_lowlevel_alsa_AlsaSeq_Event.h"
 #include	"HandleFieldHandler.hh"
 
-static int DEBUG = 1;
+static int DEBUG = 0;
 static FILE*	debug_file = NULL;
 
 static HandleFieldHandler<snd_seq_event_t*>	handler;
@@ -174,7 +174,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getTimestamp
 (JNIEnv* env, jobject obj)
 {
 	snd_seq_event_t*	handle;
-	long			lTimestamp;
+	jlong			lTimestamp;
 
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getTimestamp(): begin\n"); }
 	handle = handler.getHandle(env, obj);
@@ -184,7 +184,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getTimestamp
 	}
 	else	// time
 	{
-		lTimestamp = (jlong) handle->time.time.tv_sec * (jlong) 1E9 + (jlong) handle->time.time.tv_nsec;
+		lTimestamp = (jlong) handle->time.time.tv_sec * (jlong) 1000000000 + (jlong) handle->time.time.tv_nsec;
 	}
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getTimestamp(): end\n"); }
 	return lTimestamp;
@@ -345,31 +345,42 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getQueueControl
 (JNIEnv* env, jobject obj, jintArray anValues, jlongArray alValues)
 {
-	// TODO:
-// 	snd_seq_event_t*	handle;
-// 	jint*			panValues;
-// 	jlong*			palValues;
+	snd_seq_event_t*	handle;
+	jint*			panValues;
+	jlong*			palValues;
 
-// 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getQueueControl(): begin\n"); }
-// 	handle = handler.getHandle(env, obj);
-// 	checkArrayLength(env, anValues, 5);
-// 	panValues = env->GetIntArrayElements(anValues, NULL);
-// 	if (panValues == NULL)
-// 	{
-// 		throwRuntimeException(env, "GetIntArrayElements() failed");
-// 	}
-// 	palValues = env->GetLongArrayElements(alValues, NULL);
-// 	if (palValues == NULL)
-// 	{
-// 		throwRuntimeException(env, "GetLongArrayElements() failed");
-// 	}
-// 	panValues[0] = handle->data.note.channel;
-// 	panValues[1] = handle->data.note.note;
-// 	panValues[2] = handle->data.note.velocity;
-// 	panValues[3] = handle->data.note.off_velocity;
-// 	panValues[4] = handle->data.note.duration;
-// 	env->ReleaseIntArrayElements(anValues, panValues, 0);
-// 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getQueueControl(): end\n"); }
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getQueueControl(): begin\n"); }
+	handle = handler.getHandle(env, obj);
+	checkArrayLength(env, anValues, 2);
+	checkArrayLength(env, alValues, 1);
+	panValues = env->GetIntArrayElements(anValues, NULL);
+	if (panValues == NULL)
+	{
+		throwRuntimeException(env, "GetIntArrayElements() failed");
+	}
+	palValues = env->GetLongArrayElements(alValues, NULL);
+	if (palValues == NULL)
+	{
+		throwRuntimeException(env, "GetLongArrayElements() failed");
+	}
+	panValues[0] = handle->data.queue.queue;
+	int	nType = handle->type;
+
+	if (nType == SND_SEQ_EVENT_TEMPO)
+	{
+		panValues[1] = handle->data.queue.param.value;
+	}
+	else if (nType == SND_SEQ_EVENT_SETPOS_TICK)
+	{
+		palValues[0] = handle->data.queue.param.time.tick;
+	}
+	else if (nType == SND_SEQ_EVENT_SETPOS_TIME)
+	{
+		palValues[0] = (jlong) handle->data.queue.param.time.time.tv_sec * (jlong) 1000000000 + (jlong) handle->data.queue.param.time.time.tv_nsec;
+	}
+	env->ReleaseIntArrayElements(anValues, panValues, 0);
+	env->ReleaseLongArrayElements(alValues, palValues, 0);
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getQueueControl(): end\n"); }
 }
 
 
@@ -377,11 +388,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getQueueControl
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaSeq_Event
  * Method:    getVar
- * Signature: ([Ljava/lang/Object;)V
+ * Signature: ()[B
  */
-JNIEXPORT void JNICALL
+JNIEXPORT jbyteArray JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getVar
-(JNIEnv* env, jobject obj, jobjectArray aObjValues)
+(JNIEnv* env, jobject obj)
 {
 	snd_seq_event_t*	handle;
 	jbyteArray		abData;
@@ -394,9 +405,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getVar
 		throwRuntimeException(env, "NewByteArray() failed");
 	}
 	env->SetByteArrayRegion(abData, (jsize) 0, (jsize) handle->data.ext.len, (jbyte*) handle->data.ext.ptr);
-	checkArrayLength(env, aObjValues, 1);
-	env->SetObjectArrayElement(aObjValues, 0, abData);
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_getVar(): end\n"); }
+	return abData;
 }
 
 
@@ -521,7 +531,6 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setQueueControl
 		handle->data.queue.param.time.time.tv_sec = lTime / 1000000000;
 		handle->data.queue.param.time.time.tv_nsec = lTime % 1000000000;
 	}
-
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setQueueControl(): end\n"); }
 }
 
