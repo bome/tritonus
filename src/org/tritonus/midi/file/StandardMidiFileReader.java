@@ -436,7 +436,6 @@ public class StandardMidiFileReader
 
 
 
-	// TODO: should the bytes be read unsigned?
 	public static long readVariableLengthQuantity(DataInputStream dataInputStream, long[] alRemainingBytes)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -463,10 +462,11 @@ public class StandardMidiFileReader
 		throws	IOException
 	{
 		int	nByte = dataInputStream.readUnsignedByte();
-		if (nByte < 0)
-		{
-			throw new EOFException();
-		}
+// already done in DataInputStream.readUnsignedByte();
+// 		if (nByte < 0)
+// 		{
+// 			throw new EOFException();
+// 		}
 		alRemainingBytes[0]--;
 		return nByte;
 	}
