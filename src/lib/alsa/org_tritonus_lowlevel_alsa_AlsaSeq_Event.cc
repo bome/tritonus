@@ -587,8 +587,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setVar
 		throwRuntimeException(env, "malloc() failed");
 	}
 	env->GetByteArrayRegion(abData, nOffset, nLength, pData);
-	handle->data.ext.ptr = pData;
-	handle->data.ext.len = nLength;
+	snd_seq_ev_set_variable(handle, nLength, pData);
+// 	handle->data.ext.ptr = pData;
+// 	handle->data.ext.len = nLength;
 	// TODO: the memory allocated here is never free'd!!
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setVar(): end\n"); }
 }

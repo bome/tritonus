@@ -422,15 +422,20 @@ public class AlsaMidiOut
 
 	private void enqueueSysexMessage(SysexMessage message, long lTick)
 	{
+		// TDebug.out("enqueueSysexMessage()");
 		byte[]	abData = message.getMessage();
 		int	nLength = message.getLength();
-		if (abData[0] == SysexMessage.SYSTEM_EXCLUSIVE)
+		// TDebug.out("sysex len:" + nLength);
+		// TDebug.out("abData[0]:" + (abData[0] & 255));
+		if ((abData[0] & 0xFF) == SysexMessage.SYSTEM_EXCLUSIVE)
 		{
+			// TDebug.out("standard sysex branch");
 			sendVarEvent(AlsaSeq.SND_SEQ_EVENT_SYSEX, lTick,
 				     abData, 0, nLength);
 		}
 		else // SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE
 		{
+			// TDebug.out("special sysex branch");
 			sendVarEvent(AlsaSeq.SND_SEQ_EVENT_SYSEX, lTick,
 				     abData, 1, nLength - 1);
 		}
