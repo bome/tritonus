@@ -49,6 +49,7 @@ import	org.tritonus.share.sampled.mixer.TMixerInfo;
 import	org.tritonus.share.sampled.mixer.TSoftClip;
 import	org.tritonus.share.GlobalInfo;
 
+import	org.tritonus.lowlevel.alsa.AlsaPcm;
 
 
 
@@ -62,6 +63,8 @@ public class AlsaMixer
 	{
 		// hack for testing.
 		// new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 44100/*AudioSystem.NOT_SPECIFIED*/, 8, 1, 1, 44100/*AudioSystem.NOT_SPECIFIED*/, true),
+		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 11025/*AudioSystem.NOT_SPECIFIED*/, 16, 1, 2, 11025/*AudioSystem.NOT_SPECIFIED*/, false),
+
 		// Formats supported directely by esd.
 		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
 		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
@@ -97,16 +100,15 @@ public class AlsaMixer
 		new DataLine.Info(TargetDataLine.class, FORMATS, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED),
 	};
 
-	/*	The number of the sound card this mixer is representing.
+	/*	The name of the sound card this mixer is representing.
 	 */
-	private int	m_nCard;
 	private String	m_strPcmName;
 
 
 
 	public AlsaMixer()
 	{
-		this("plug:0,0");
+		this(0);
 	}
 
 
@@ -132,12 +134,12 @@ public class AlsaMixer
 		      Arrays.asList(TARGET_LINE_INFOS));
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("AlsaMixer.<init>: beginning.");
+			TDebug.out("AlsaMixer.<init>(String): begin.");
 		}
 		m_strPcmName = strPcmName;
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("AlsaMixer.<init>: end.");
+			TDebug.out("AlsaMixer.<init>(String): end.");
 		}
 	}
 
@@ -156,12 +158,34 @@ public class AlsaMixer
 	// TODO: allow real close and reopen of mixer
 	public void open()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.open(): begin");
+		}
+
+		// currently does nothing
+
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.open(): end");
+		}
 	}
 
 
 
 	public void close()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.close(): begin");
+		}
+
+		// currently does nothing
+
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.close(): end");
+		}
 	}
 
 
@@ -171,74 +195,17 @@ public class AlsaMixer
 	//////////////// Mixer //////////////////////////////////////
 
 
-	public Line getLine(Line.Info info)
-		throws	LineUnavailableException
-	{
-		DataLine.Info	dataLineInfo = (DataLine.Info) info;
-		Class		lineClass = info.getLineClass();
-		AudioFormat[]	aFormats = dataLineInfo.getFormats();
-		AudioFormat	format = null;
-		if (lineClass == SourceDataLine.class)
-		{
-			format = getSupportedSourceFormat(aFormats);
-			return getSourceDataLine(format, dataLineInfo.getMaxBufferSize());
-		}
-		else if (lineClass == Clip.class)
-		{
-			format = getSupportedSourceFormat(aFormats);
-			return getClip(format);
-		}
-		else if (lineClass == TargetDataLine.class)
-		{
-			format = getSupportedTargetFormat(aFormats);
-			return getTargetDataLine(format, dataLineInfo.getMaxBufferSize());
-		}
-		else
-		{
-			throw new LineUnavailableException("unknown line class: " + lineClass);
-		}
-	}
-
-
-	private AudioFormat getSupportedSourceFormat(AudioFormat[] aFormats)
-	{
-		for (int i = 0; i < aFormats.length; i++)
-		{
-			if (isSourceFormatSupported(aFormats[i]))
-			{
-				return aFormats[i];
-			}
-		}
-		throw new IllegalArgumentException("no line matchine one of the passed formats");
-	}
-
-
-
-	private AudioFormat getSupportedTargetFormat(AudioFormat[] aFormats)
-	{
-		for (int i = 0; i < aFormats.length; i++)
-		{
-			if (isTargetFormatSupported(aFormats[i]))
-			{
-				return aFormats[i];
-			}
-		}
-		throw new IllegalArgumentException("no line matchine one of the passed formats");
-	}
-
-
-/*
-	public Line.Info getLineInfo(Line.Info info)
-	{
-		// TODO:
-		return null;
-	}
-*/
-
-
 	public int getMaxLines(Line.Info info)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getMaxLines(): begin");
+		}
 		// TODO:
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getMaxLines(): end");
+		}
 		return 0;
 	}
 
@@ -249,9 +216,13 @@ public class AlsaMixer
 
 
 	// nBufferSize is in bytes!
-	private SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
+	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getSourceDataLine(): begin");
+		}
 		if (TDebug.TraceMixer)
 		{
 			TDebug.out("AlsaMixer.getSourceDataLine(): format: " + format);
@@ -267,14 +238,22 @@ public class AlsaMixer
 		{
 			TDebug.out("AlsaMixer.getSourceDataLine(): returning: " + sourceDataLine);
 		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getSourceDataLine(): end");
+		}
 		return sourceDataLine;
 	}
 
 
 	// nBufferSize is in bytes!
-	private TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
+	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getTargetDataLine(): begin");
+		}
 		int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
 		AlsaTargetDataLine	targetDataLine = new AlsaTargetDataLine(this, format, nBufferSizeInBytes);
 		// targetDataLine.start();
@@ -282,25 +261,29 @@ public class AlsaMixer
 		{
 			TDebug.out("AlsaMixer.getTargetDataLine(): returning: " + targetDataLine);
 		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getTargetDataLine(): end");
+		}
 		return targetDataLine;
 	}
 
 
 
-	private Clip getClip(AudioFormat format)
+	protected Clip getClip(AudioFormat format)
 		throws	LineUnavailableException
 	{
-		// return new AlsaClip(this);
-		return new TSoftClip(this, format);
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getClip(): begin");
+		}
+		Clip	clip = new TSoftClip(this, format);
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("AlsaMixer.getClip(): end");
+		}
+		return clip;
 	}
-
-
-
-
-	// -------------------------------------------------------------
-
-
-
 }
 
 
