@@ -37,17 +37,7 @@ extends	Esd
 	 *	This field is long because on 64 bit architectures, the native
 	 *	size of ints may be 64 bit.
 	 */
-	private long			m_lNativeFd;
-
-
-
-	/**	Holds player id of the stream in EsounD.
-	 *	This field is long because on 64 bit architectures, the native
-	 *	size of ints may be 64 bit.
-	 */
-	private long			m_lNativePlayerId;
-
-
+	private long			m_lNativeHandle;
 
 
 
