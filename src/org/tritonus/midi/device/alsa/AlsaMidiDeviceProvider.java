@@ -44,6 +44,8 @@ public class AlsaMidiDeviceProvider
 {
 	// perhaps move to superclass
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];
+	private static final int	READ_CAPABILITY = AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ;
+	private static final int	WRITE_CAPABILITY = AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE;
 
 	private static List		m_devices;
 	private static AlsaSeq	m_alsaSeq;
@@ -149,7 +151,7 @@ public class AlsaMidiDeviceProvider
 			MidiDevice	device = null;
 			if ((nType & (AlsaSeq.SND_SEQ_PORT_TYPE_SYNTH | AlsaSeq.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE | AlsaSeq.SND_SEQ_PORT_TYPE_SAMPLE)) != 0)
 			{
-				boolean	bWriteSubscriptionAllowed = (nCapability & AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE) != 0;
+				boolean	bWriteSubscriptionAllowed = (nCapability & WRITE_CAPABILITY) == WRITE_CAPABILITY;
 				if (bWriteSubscriptionAllowed)
 				{
 					device = new AlsaSynthesizer(nClient, nPort);
@@ -161,8 +163,8 @@ public class AlsaMidiDeviceProvider
 			}
 			else	// ordinary midi port
 			{
-				boolean	bReadSubscriptionAllowed = (nCapability & AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ) != 0;
-				boolean	bWriteSubscriptionAllowed = (nCapability & AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE) != 0;
+				boolean	bReadSubscriptionAllowed = (nCapability & READ_CAPABILITY) == READ_CAPABILITY;
+				boolean	bWriteSubscriptionAllowed = (nCapability & WRITE_CAPABILITY) == WRITE_CAPABILITY;
 				if (bReadSubscriptionAllowed || bWriteSubscriptionAllowed)
 				{
 					device = new AlsaMidiDevice(nClient, nPort, bReadSubscriptionAllowed, bWriteSubscriptionAllowed);
