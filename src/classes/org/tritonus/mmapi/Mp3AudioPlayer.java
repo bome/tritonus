@@ -22,14 +22,16 @@
 
 package	org.tritonus.mmapi;
 
+import javax.microedition.media.protocol.DataSource;
+
 
 
 public class Mp3AudioPlayer
 extends TAudioPlayer
 {
-	public Mp3AudioPlayer()
+	public Mp3AudioPlayer(DataSource source)
 	{
-		super();
+		super(source);
 	}
 }
 
