@@ -33,13 +33,14 @@ main(int argc, char** argv)
 	printf("This program is free software. You are allowed to use, modify and redistribute it under the term of the GNU General Public License.\n");
 	printf("-\n");
 
-	nReturn = snd_seq_open(&seq, SND_SEQ_OPEN);
+	nReturn = snd_seq_open(&seq, "hw", SND_SEQ_OPEN_DUPLEX, 0);
 	if (nReturn < 0)
 	{
 		printf("snd_seq_open failed.");
 		exit(1);
 	}
-	snd_seq_block_mode(seq, 1);
+	snd_seq_nonblock(seq, SND_SEQ_NONBLOCK);
+	// snd_seq_block_mode(seq, 1);
 	nClientId = snd_seq_client_id(seq);
 	if (nClientId < 0)
 	{
@@ -118,7 +119,7 @@ sendEvent(snd_seq_t*		seq,
 	int	nReturn = 0;
 
 	nReturn = snd_seq_event_output(seq, pEvent);
-	// IDEA: execute flush only if event wants to circumvent queues?
+	// IDEA: execute drain only if event wants to circumvent queues?
 	if (nReturn < 0)
 	{
 		// throwRuntimeException(env, "snd_seq_event_output failed");
@@ -127,9 +128,9 @@ sendEvent(snd_seq_t*		seq,
 	do
 	{
 		errno = 0;
-		printf("before flushing output\n");
-		nReturn = snd_seq_flush_output(seq);
-		printf("after flushing output\n");
+		printf("before draining output\n");
+		nReturn = snd_seq_drain_output(seq);
+		printf("after draining output\n");
 	}
 	while (nReturn == -1 && errno == EINTR);
 	if (nReturn < 0)
@@ -137,7 +138,7 @@ sendEvent(snd_seq_t*		seq,
 		printf("return: %d\n", nReturn);
 		printf("errno: %d\n", errno);
 		perror("abc");
-		// throwRuntimeException(env, "snd_seq_flush_output failed");
+		// throwRuntimeException(env, "snd_seq_drain_output failed");
 	}
 }
 
