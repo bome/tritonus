@@ -91,6 +91,10 @@ public class TDebug
 	public static boolean	TraceAlsaSequencer = getBooleanProperty("TraceAlsaSequencer");
 	public static boolean	TraceAlsaMidiChannel = getBooleanProperty("TraceAlsaMidiChannel");
 	public static boolean	TraceMshMidiDevice = getBooleanProperty("TraceMshMidiDevice");
+	// TODO: should replace TSequencer and AlsaSequencer
+	public static boolean	TraceSequencer = getBooleanProperty("TraceSequencer");
+	// TODO: should replace TMidiDevice et al.
+	public static boolean	TraceMidiDevice = getBooleanProperty("TraceMidiDevice");
 
 
 
