@@ -96,16 +96,6 @@ typedef struct {
 				layer) also knows about the gap */
 } ogg_packet;
 
-/* typedef struct { */
-/*   unsigned char *data; */
-/*   int storage; */
-/*   int fill; */
-/*   int returned; */
-
-/*   int unsynced; */
-/*   int headerbytes; */
-/*   int bodybytes; */
-/* } ogg_sync_state; */
 
 /* Ogg BITSTREAM PRIMITIVES: bitstream ************************/
 
@@ -145,23 +135,8 @@ extern long  oggpackB_bytes(oggpack_buffer *b);
 extern long  oggpackB_bits(oggpack_buffer *b);
 extern unsigned char *oggpackB_get_buffer(oggpack_buffer *b);
 
-/* Ogg BITSTREAM PRIMITIVES: encoding **************************/
-
-extern int      ogg_stream_packetin(ogg_stream_state *os, ogg_packet *op);
-extern int      ogg_stream_pageout(ogg_stream_state *os, ogg_page *og);
-extern int      ogg_stream_flush(ogg_stream_state *os, ogg_page *og);
-
 /* Ogg BITSTREAM PRIMITIVES: decoding **************************/
 
-/* extern int      ogg_sync_init(ogg_sync_state *oy); */
-/* extern int      ogg_sync_clear(ogg_sync_state *oy); */
-/* extern int      ogg_sync_reset(ogg_sync_state *oy); */
-/* extern int	ogg_sync_destroy(ogg_sync_state *oy); */
-
-/* extern char    *ogg_sync_buffer(ogg_sync_state *oy, long size); */
-/* extern int      ogg_sync_wrote(ogg_sync_state *oy, long bytes); */
-/* extern long     ogg_sync_pageseek(ogg_sync_state *oy,ogg_page *og); */
-/* extern int      ogg_sync_pageout(ogg_sync_state *oy, ogg_page *og); */
 extern int      ogg_stream_pagein(ogg_stream_state *os, ogg_page *og);
 extern int      ogg_stream_packetout(ogg_stream_state *os,ogg_packet *op);
 extern int      ogg_stream_packetpeek(ogg_stream_state *os,ogg_packet *op);
