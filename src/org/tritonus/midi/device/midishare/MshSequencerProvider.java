@@ -41,26 +41,44 @@ import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 import	org.tritonus.util.GlobalInfo;
 
+import	org.tritonus.TDebug;
+import	org.tritonus.midi.device.TMidiDeviceInfo;
 
 
 public class MshSequencerProvider
 	extends		MidiDeviceProvider
 {
-	private MidiDevice.Info		m_info;
+	/*
+	 *	The Sun jdk 1.3 creates new instances of service provider
+	 *	classes on each request. Due to that, and because
+	 *	MidiDevice.Infos are
+	 *	compared by object reference, we need a static instance.
+	 */
+	private static MidiDevice.Info		m_info;
 
 
 	public MshSequencerProvider()
 	{
-		m_info = new MidiDevice.Info(
-			"Tritonus MidiShare sequencer",
-			GlobalInfo.getVendor(),
-			"this sequencer uses MidiShare",
-			GlobalInfo.getVersion());
+		TDebug.out("MshSequencerProvider.<init>: called");
+		// Thread.dumpStack();
+		synchronized (MshSequencerProvider.class)
+		{
+			if (m_info == null)
+			{
+				m_info = new TMidiDeviceInfo(
+					"Tritonus MidiShare sequencer",
+					GlobalInfo.getVendor(),
+					"this sequencer uses MidiShare",
+					GlobalInfo.getVersion());
+			}
+		}
 	}
 
 
 	public MidiDevice.Info[] getDeviceInfo()
 	{
+		TDebug.out("MshSequencerProvider.getDeviceInfo(): called");
+		// Thread.dumpStack();
 		MidiDevice.Info[]	infos = new MidiDevice.Info[1];
 		infos[0] = m_info;
 		return infos;
@@ -69,6 +87,8 @@ public class MshSequencerProvider
 
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
+		TDebug.out("MshSequencerProvider.getDevice(): called with info: " + info);
+		// Thread.dumpStack();
 		if (info.equals(m_info))
 		{
 			return new MshSequencer(m_info);
@@ -78,6 +98,7 @@ public class MshSequencerProvider
 			throw new IllegalArgumentException("no device for " + info);
 		}
 	}
+
 
 }
 

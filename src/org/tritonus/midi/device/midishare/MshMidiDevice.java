@@ -27,17 +27,17 @@
 
 package	org.tritonus.midi.device.midishare;
 
-
+/*
 import	com.sun.java.util.collections.ArrayList;
 import	com.sun.java.util.collections.Iterator;
 import	com.sun.java.util.collections.List;
+*/
 
 
-/*
 import	java.util.ArrayList;
 import	java.util.List;
 import	java.util.Iterator;
-*/
+
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiEvent;
@@ -49,6 +49,7 @@ import	javax.sound.midi.Transmitter;
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
 import	org.tritonus.midi.device.TMidiDevice;
+import	org.tritonus.midi.device.TMidiDeviceInfo;
 import	org.tritonus.util.GlobalInfo;
 
 import	grame.midishare.Midi;
@@ -72,7 +73,7 @@ public class MshMidiDevice
 	
 	public MshMidiDevice()
 	{
-		super(new MidiDevice.Info("MidiShare MIDI client",
+		super(new TMidiDeviceInfo("MidiShare MIDI client",
 					 GlobalInfo.getVendor(),
 					 "this client uses MidiShare",
 					 GlobalInfo.getVersion()));
@@ -324,6 +325,8 @@ public class MshMidiDevice
 			// TODO: remove subscription
 		}
 	}
+
+
 
 }
 

@@ -27,16 +27,16 @@
 
 package	org.tritonus.midi.device.midishare;
 
-
+/*
 import	com.sun.java.util.collections.ArrayList;
 import	com.sun.java.util.collections.List;
 import	com.sun.java.util.collections.Iterator;
+*/
 
-/*
 import	java.util.ArrayList;
 import	java.util.List;
 import	java.util.Iterator;
-*/
+
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
@@ -52,20 +52,33 @@ public class MshMidiDeviceProvider
 	// perhaps move to superclass
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];
 
-	private List		m_devices;
+	/*
+	 *	The Sun jdk 1.3 creates new instances of service provider
+	 *	classes on each request. Due to that, and because
+	 *	MidiDevice.Infos are
+	 *	compared by object reference, we need a static instance.
+	 */
+	private static List		m_devices;
 
 
 	public MshMidiDeviceProvider()
 	{
-		TDebug.out("MshMidiDeviceProvider: called");
-		m_devices = new ArrayList();
-		MshMidiDevice device = new MshMidiDevice();
-		m_devices.add(device);
+		TDebug.out("MshMidiDeviceProvider.<init>: called");
+		synchronized (MshMidiDeviceProvider.class)
+		{
+			if (m_devices == null)
+			{
+				m_devices = new ArrayList();
+				MshMidiDevice device = new MshMidiDevice();
+				m_devices.add(device);
+			}
+		}
 	}
 
 
 	public MidiDevice.Info[] getDeviceInfo()
 	{
+		TDebug.out("MshMidiDeviceProvider.getDeviceInfo(): called");
 		List		infos = new ArrayList();
 		Iterator	iterator = m_devices.iterator();
 		while (iterator.hasNext())
@@ -78,8 +91,10 @@ public class MshMidiDeviceProvider
 	}
 
 
+
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
+		TDebug.out("MshMidiDeviceProvider.getDevice(): called");
 		Iterator	iterator = m_devices.iterator();
 		while (iterator.hasNext())
 		{

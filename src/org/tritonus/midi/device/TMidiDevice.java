@@ -390,6 +390,21 @@ public abstract class TMidiDevice
 		}
 	}
 
+
+
+	/*
+	 *	This is needed only because MidiDevice.Info's constructor
+	 *	is protected (in the Sun jdk1.3).
+	 */
+	public class Info
+		extends MidiDevice.Info
+	{
+		public Info(String a, String b, String c, String d)
+		{
+			super(a, b, c, d);
+		}
+	}
+
 }
 
 
