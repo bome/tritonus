@@ -9,8 +9,9 @@ prefix=@prefix@
 JAVADIR=$(prefix)
 JAVAEXTPATH=$(JAVADIR)/@REL_JAVAEXTPATH@
 
-JAVAC=javac
-#JAVAC=guavac
+JAVAC=@COMPILER@
+DEF_CLASSPATH=@DEF_CLASSPATH@
+
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -24,7 +25,8 @@ DISTDIR = @DIST_DIR@
 JL_SRC = @JL_DIR@
 
 %.class: %.java
-	export CLASSPATH=$(DESTDIR):$(JL_SRC):src:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $<
+	$(JAVAC) -classpath $(DEF_CLASSPATH):$(JL_SRC):src:$$CLASSPATH -d $(DESTDIR) $<
+	@#export CLASSPATH=$(DEF_CLASSPATH):$(JL_SRC):src:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $<
 
 
 SRCDIR_PUB = src/javax/sound
@@ -75,7 +77,10 @@ PLUGINS=$(LIBDEST_MP3) $(LIBDEST_GSM) $(LIBDEST_SHARE) $(LIBDEST_JL)
 LIBS=$(LIBDEST_CORE) $(LIBDEST_SHARE) $(LIBDEST_REMAINING) $(LIBDEST_MP3) $(LIBDEST_JL) $(LIBDEST_GSM)
 
 LIBDEST_ABSOLUTE_PREFIX=@SRC_ABSOLUTE_PATH@/$(DISTDIR)
+META_INF_DIR=$(DESTDIR)/META-INF/services
 
+
+vpath %.jar $(DISTDIR)
 vpath %.java $(SRCDIR_PUB)/midi
 vpath %.java $(SRCDIR_PUB)/midi/spi
 vpath %.java $(SRCDIR_PUB)/sampled
@@ -234,54 +239,69 @@ convert:
 builddir:
 	@$(MKDIR_P) $(DESTDIR)
 
-.PHONY: distdir
-distdir:
-	@$(MKDIR_P) $(DISTDIR)
+#.PHONY: $(DISTDIR)
+#$(DISTDIR):
+#	@$(MKDIR_P) $(DISTDIR)
 
-.PHONY: metainfdir
-metainfdir:
-	@rm -rf $(DESTDIR)/META-INF
-	@$(MKDIR_P) $(DESTDIR)/META-INF
-	@$(MKDIR_P) $(DESTDIR)/META-INF/services
+#.PHONY: $(META_INF_DIR)
+#$(META_INF_DIR):
+#	@rm -rf $(DESTDIR)/META-INF
+#	@$(MKDIR_P) $(DESTDIR)/META-INF
+#	@$(MKDIR_P) $(DESTDIR)/META-INF/services
 
-.PHONY: $(LIBDEST_CORE)
-$(LIBDEST_CORE): $(OBJ) distdir
+#.PHONY: $(LIBDEST_CORE)
+$(LIBDEST_CORE): $(OBJ)
 	@echo Creating $(LIBDEST_CORE)
+	@$(MKDIR_P) $(DISTDIR)
 	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_core/manifest.mf \
 		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_CORE) $(PACKSRCDIR_CORE)
 
-.PHONY: $(LIBDEST_SHARE)
-$(LIBDEST_SHARE):	$(OBJ) distdir
+#.PHONY: $(LIBDEST_SHARE)
+$(LIBDEST_SHARE): $(OBJ)
 	@echo Creating $(LIBDEST_SHARE)
+	@$(MKDIR_P) $(DISTDIR)
 	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_SHARE) $(PACKSRCDIR_SHARE)
 
-.PHONY: $(LIBDEST_REMAINING)
-$(LIBDEST_REMAINING):	$(OBJ) distdir metainfdir
+#.PHONY: $(LIBDEST_REMAINING)
+$(LIBDEST_REMAINING): $(OBJ)
 	@echo Creating $(LIBDEST_REMAINING)
-	@$(RM_F) $(DESTDIR)/META-INF/services/javax*
-	@cp src/packaging/tritonus_core/META-INF/services/javax* $(DESTDIR)/META-INF/services/
+	@$(MKDIR_P) $(DISTDIR)
+	@rm -rf $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF/services
+	@#$(RM_F) $(DESTDIR)/META-INF/services/javax*
+	@cp src/packaging/tritonus_core/META-INF/services/javax* $(META_INF_DIR)/
 	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_REMAINING) \
 		$(PACKSRCDIR_REMAINING) META-INF/services/
 
-.PHONY: $(LIBDEST_MP3)
-$(LIBDEST_MP3):	$(OBJ) distdir metainfdir
+#.PHONY: $(LIBDEST_MP3)
+$(LIBDEST_MP3):	$(OBJ)
 	@echo Creating $(LIBDEST_MP3)
-	@$(RM_F) $(DESTDIR)/META-INF/services/javax*
-	@cp src/packaging/tritonus_mp3/META-INF/services/javax* $(DESTDIR)/META-INF/services/
+	@$(MKDIR_P) $(DISTDIR)
+	@rm -rf $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF/services
+	@#$(RM_F) $(DESTDIR)/META-INF/services/javax*
+	@cp src/packaging/tritonus_mp3/META-INF/services/javax* $(META_INF_DIR)/
 	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_mp3/manifest.mf \
 		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_MP3) $(PACKSRCDIR_MP3) META-INF/services/
 
-.PHONY: $(LIBDEST_GSM)
-$(LIBDEST_GSM):	$(OBJ) distdir metainfdir
+#.PHONY: $(LIBDEST_GSM)
+$(LIBDEST_GSM):	$(OBJ)
 	@echo Creating $(LIBDEST_GSM)
-	@$(RM_F) $(DESTDIR)/META-INF/services/javax*
-	@cp src/packaging/tritonus_gsm/META-INF/services/javax* $(DESTDIR)/META-INF/services/
+	@$(MKDIR_P) $(DISTDIR)
+	@rm -rf $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF/services
+	@#$(RM_F) $(DESTDIR)/META-INF/services/javax*
+	@cp src/packaging/tritonus_gsm/META-INF/services/javax* $(META_INF_DIR)/
 	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_gsm/manifest.mf \
 		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_GSM) $(PACKSRCDIR_GSM) META-INF/services/
 
-.PHONY: javalayer.jar
-javalayer.jar:	$(OBJ) distdir
+#.PHONY: javalayer.jar
+javalayer.jar:	$(OBJ)
 	@echo Creating $(LIBDEST_JL)
+	@$(MKDIR_P) $(DISTDIR)
 	@cp $(SRCDIR_JL)/*.ser $(DESTDIR)/javazoom/jl/decoder/
 	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_JL) $(PACKSRCDIR_JL)
 
@@ -291,6 +311,14 @@ jar_index: $(LIBS)
 	@cd $(DISTDIR) ; jar -i $(LIBDEST_CORE)
 	@cd $(DISTDIR) ; jar -i $(LIBDEST_MP3)
 	@cd $(DISTDIR) ; jar -i $(LIBDEST_GSM)
+
+.PHONY: jikesinc
+jikesinc: builddir $(SRC)
+	@(if test "$(JAVAC)" != "jikes" ; then \
+		echo "This is only available with jikes as compiler." ; exit 1 ; fi)
+	@echo "This will not build the jars. You need to include the directory \"$(DESTDIR)\" in the CLASSPATH."
+	@export CLASSPATH=$(DEF_CLASSPATH):$$CLASSPATH; $(JAVAC) ++ -d $(DESTDIR) $(SRCTMP)
+
 
 .PHONY: doc
 doc:	all 
@@ -346,7 +374,7 @@ TAGS: $(SRCTMP)
 	etags $(SRCTMP)
 
 
-dist:
+userdist:
 	echo tritonus-`cat version` >.fname
 	-rm -rf `cat .fname`
 	mkdir `cat .fname`

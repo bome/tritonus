@@ -85,6 +85,10 @@ esac
 
 AC_PREFIX_PROGRAM(javac)
 
+dnl check for jikes. Note: cannot use variable "JAVAC" as it is already used
+dnl in the check for prefix above
+AC_CHECK_PROG(COMPILER, jikes, jikes, javac)
+
 # set installation directory of plug-ins (extension directory)
 REL_JAVAEXTPATH=jre/lib/ext
 AC_SUBST(REL_JAVAEXTPATH)
@@ -163,6 +167,40 @@ DIST_DIR="dist"
 AC_SUBST(BUILD_DIR)
 AC_SUBST(DIST_DIR)
 AC_SUBST(JAR_INDEX)
+dnl set default for classpath. This may be changed below if Jikes is used
+DEF_CLASSPATH=${BUILD_DIR}
+AC_SUBST(DEF_CLASSPATH)
+
+
+
+dnl $$fb added
+dnl -------------- Features ---------
+dnl Compiler user option
+WARN_MSG=
+AC_MSG_CHECKING(use of jikes compiler)
+AC_ARG_WITH(jikes, 
+  [  --without-jikes            Do not use jikes compiler]
+  [                           [default: use jikes if available]],
+  CONFIG_JIKES="${withval}", CONFIG_JIKES="default")
+if test "${CONFIG_JIKES}" = "default" ; then
+	if test "${COMPILER}" = "jikes" ; then
+		CONFIG_JIKES="yes"
+	else
+		CONFIG_JIKES="no"
+	fi
+elif test "${CONFIG_JIKES}" = "yes" && test "${COMPILER}" != "jikes" ; then
+	WARN_MSG="you have selected jikes, but it is not available on your system !"
+	CONFIG_JIKES="no"
+elif test "${CONFIG_JIKES}" = "no" ; then
+	COMPILER=javac
+fi
+AC_MSG_RESULT(${CONFIG_JIKES})
+if test "x${WARN_MSG}" != "x" ; then
+	AC_MSG_WARN(${WARN_MSG})
+fi
+if test "${CONFIG_JIKES}" = "yes" ; then
+	DEF_CLASSPATH=${DEF_CLASSPATH}:${prefix}/jre/lib/rt.jar
+fi
 
 AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
