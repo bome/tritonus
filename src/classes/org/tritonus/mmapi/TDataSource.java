@@ -35,15 +35,19 @@ import	javax.microedition.media.MediaException;
 import	javax.microedition.media.protocol.ContentDescriptor;
 import	javax.microedition.media.protocol.DataSource;
 import	javax.microedition.media.protocol.SourceStream;
+import org.tritonus.share.TDebug;
 
 
 
 public abstract class TDataSource
 extends DataSource
 {
-	private static final Control[]	EMPTY_CONTROL_ARRAY = new Control[0];
+	protected static final Control[]	EMPTY_CONTROL_ARRAY = new Control[0];
+
 	private TControllable	m_controllable;
 	private boolean		m_bConnected = false;
+	private boolean		m_bStarted = false;
+	private String		m_strContentType;
 
 
 
@@ -52,13 +56,6 @@ extends DataSource
 	{
 		super(strLocator);
 		m_controllable = new TDataSourceControllable(EMPTY_CONTROL_ARRAY);
-	}
-
-
-
-	protected boolean isConnected()
-	{
-		return m_bConnected;
 	}
 
 
@@ -80,6 +77,160 @@ extends DataSource
 	}
 
 
+
+	protected void setContentType(String strContentType)
+	{
+		m_strContentType = strContentType;
+	}
+
+
+
+
+	public String getContentType()
+	{
+		// The following check may throw an IllegalStateException.
+		checkConnected();
+
+		return m_strContentType;
+	}
+
+
+
+	public void connect()
+		throws IOException
+	{
+		if (! isConnected())
+		{
+			doConnect();
+			setConnected(true);
+		}
+	}
+
+
+	protected void doConnect()
+		throws IOException
+	{
+	}
+
+
+
+
+	public void disconnect()
+	{
+		if (isConnected())
+		{
+			try
+			{
+				stop();
+				doDisconnect();
+				setConnected(false);
+			}
+			catch (IOException e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+			}
+		}
+	}
+
+
+	protected void doDisconnect()
+		throws IOException
+	{
+	}
+
+
+
+
+	public void start()
+		throws IOException
+	{
+		// The following check may throw an IllegalStateException.
+		checkConnected();
+
+		if (! isStarted())
+		{
+			doStart();
+			setStarted(true);
+		}
+	}
+
+
+	protected void doStart()
+		throws IOException
+	{
+	}
+
+
+
+
+	public void stop()
+		throws IOException
+	{
+		if (isStarted())
+		{
+			doStop();
+			setStarted(false);
+		}
+	}
+
+
+	protected void doStop()
+		throws IOException
+	{
+	}
+
+
+
+
+	// custom methods
+
+
+	private synchronized void setConnected(boolean bConnected)
+	{
+		m_bConnected = bConnected;
+	}
+
+
+
+	protected boolean isConnected()
+	{
+		return m_bConnected;
+	}
+
+
+
+	private synchronized void setStarted(boolean bStarted)
+	{
+		m_bStarted = bStarted;
+	}
+
+
+
+	protected boolean isStarted()
+	{
+		return m_bStarted;
+	}
+
+
+
+	/**	Checks if the DataSource is connected.
+		If this condition is not met,
+		an IllegalStateException is throw.
+
+		@throws IllegalStateException Thrown if the DataSource is
+		not connected.
+	*/
+	protected void checkConnected()
+	{
+		if (! isConnected())
+		{
+			throw new IllegalStateException("DataSource is not connected.");
+		}
+	}
+
+
+	///////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////
 
 	protected class TDataSourceControllable
 	extends TControllable
