@@ -60,6 +60,7 @@ public class TDebug
 
 	// sampled specific implementation
 	public static boolean	TraceAlsaNative = getBooleanProperty("TraceAlsaNative");
+	public static boolean	TraceEsdNative = getBooleanProperty("TraceEsdNative");
 	public static boolean	TraceLine = getBooleanProperty("TraceLine");
 	public static boolean	TraceDataLine = getBooleanProperty("TraceDataLine");
 	public static boolean	TraceMixer = getBooleanProperty("TraceMixer");
