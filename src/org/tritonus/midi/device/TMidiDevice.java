@@ -100,6 +100,7 @@ public abstract class TMidiDevice
 
 
 	public void open()
+		throws	MidiUnavailableException
 	{
 		if (! isOpen())
 		{
@@ -115,6 +116,7 @@ public abstract class TMidiDevice
 	 *	opening.
 	 */
 	protected void openImpl()
+		throws	MidiUnavailableException
 	{
 	}
 
