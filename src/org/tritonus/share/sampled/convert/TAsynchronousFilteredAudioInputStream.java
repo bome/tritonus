@@ -100,7 +100,8 @@ public abstract class TAsynchronousFilteredAudioInputStream
 		}
 		else
 		{
-			return m_abSingleByte[0];
+			//$$fb 2001-04-14 nobody really knows that...
+			return m_abSingleByte[0] & 0xFF;
 		}
 	}
 

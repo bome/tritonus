@@ -161,7 +161,7 @@ public abstract class TSynchronousFilteredAudioInputStream
 				// what in this case ??? Let's hope it never occurs.
 			return -1;
 		}
-		return temp[0];
+		return temp[0] & 0xFF;
 	}
 
 
