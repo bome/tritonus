@@ -38,8 +38,8 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
 //import	javax.sound.midi.Synthesizer;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.midi.MidiUtils;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.MidiUtils;
 
 
 

@@ -27,7 +27,7 @@ package	org.tritonus.lowlevel.alsa;
 
 import	javax.sound.midi.MidiEvent;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 /**	The lowest level of interface to the ALSA sequencer.
  */

@@ -41,9 +41,9 @@ import	java.util.Iterator;
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.lowlevel.alsa.ASequencer;
+// import	org.tritonus.lowlevel.alsa.ASequencer;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 public class MshMidiDeviceProvider

@@ -33,7 +33,7 @@ import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.SysexMessage;
 import	javax.sound.midi.MetaMessage;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
 
 

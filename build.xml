@@ -25,14 +25,9 @@
 	</target>
 
 	<target name="compile" depends="prepare">
-		<javac
-			srcdir="src"
-			destdir="${build}"
-			includes="javax/sound/**"
-			filtering="on"/>
 		<javac srcdir="src"
 			destdir="${build}"
-			includes="org/tritonus/**"
+			includes="javax/sound/**,org/tritonus/**"
 			excludes="org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**"
 			filtering="on"/>
 	</target>

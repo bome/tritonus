@@ -46,11 +46,11 @@ import	javax.sound.midi.MidiUnavailableException;
 import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.lowlevel.alsa.ASequencer;
-import	org.tritonus.midi.device.TMidiDevice;
-import	org.tritonus.midi.device.TMidiDeviceInfo;
-import	org.tritonus.util.GlobalInfo;
+import	org.tritonus.share.TDebug;
+// import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.share.midi.TMidiDevice;
+import	org.tritonus.share.midi.TMidiDeviceInfo;
+import	org.tritonus.share.GlobalInfo;
 
 import	grame.midishare.Midi;
 

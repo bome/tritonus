@@ -37,7 +37,7 @@ import	javax.sound.midi.SysexMessage;
 import	javax.sound.midi.MetaMessage;
 import	javax.sound.midi.InvalidMidiDataException;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 public class ASequencer

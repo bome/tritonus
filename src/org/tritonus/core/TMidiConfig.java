@@ -46,8 +46,8 @@ import	javax.sound.midi.spi.MidiFileReader;
 import	javax.sound.midi.spi.MidiFileWriter;
 import	javax.sound.midi.spi.SoundbankReader;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.ArraySet;
 
 
 

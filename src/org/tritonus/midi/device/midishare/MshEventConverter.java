@@ -34,11 +34,11 @@ import	javax.sound.midi.SysexMessage;
 import	javax.sound.midi.MetaMessage;
 import	javax.sound.midi.InvalidMidiDataException;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.midi.*;
-
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.MidiUtils;
 
 import	grame.midishare.*;
+
 
 
 final public class MshEventConverter {

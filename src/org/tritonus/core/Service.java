@@ -38,8 +38,8 @@ import	java.io.InputStreamReader;
 import	java.io.IOException;
 import	java.net.URL;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.ArraySet;
 
 
 

@@ -38,10 +38,10 @@ import	javax.sound.sampled.spi.AudioFileReader;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.TDebug;
 import	org.tritonus.core.TMidiConfig;
 import	org.tritonus.core.TAudioConfig;
 import	org.tritonus.core.Service;
+import	org.tritonus.share.TDebug;
 
 
 

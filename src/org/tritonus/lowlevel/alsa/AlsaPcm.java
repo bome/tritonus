@@ -26,7 +26,7 @@
 package	org.tritonus.lowlevel.alsa;
 
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 public class AlsaPcm

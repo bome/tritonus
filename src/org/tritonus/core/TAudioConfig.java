@@ -36,8 +36,8 @@ import	javax.sound.sampled.spi.AudioFileReader;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.ArraySet;
 
 
 

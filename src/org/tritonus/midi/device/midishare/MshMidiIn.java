@@ -30,7 +30,7 @@ package	org.tritonus.midi.device.midishare;
 import	javax.sound.midi.MidiEvent;
 import	javax.sound.midi.InvalidMidiDataException;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 import grame.midishare.*;
 

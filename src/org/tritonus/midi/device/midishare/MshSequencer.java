@@ -41,8 +41,8 @@ import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiSystem;
 
 
-import	org.tritonus.TDebug;
-import	org.tritonus.midi.device.TSequencer;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.TSequencer;
 import	org.tritonus.midi.device.midishare.*;
 
 

@@ -47,7 +47,8 @@ import	javax.sound.midi.SysexMessage;
 import	javax.sound.midi.Track;
 import	javax.sound.midi.spi.MidiFileReader;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.TMidiFileFormat;
 
 
 

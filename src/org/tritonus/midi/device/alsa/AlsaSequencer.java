@@ -37,9 +37,9 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.MidiUnavailableException;
 import	javax.sound.midi.MidiDevice;
 
-import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
-import	org.tritonus.midi.device.TSequencer;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.TSequencer;
 
 
 

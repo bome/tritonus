@@ -27,8 +27,9 @@ package	org.tritonus.lowlevel.lame;
 
 import	java.io.IOException;
 import javax.sound.sampled.AudioFormat;
-import org.tritonus.TDebug;
-import org.tritonus.sampled.Encodings;
+
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.Encodings;
 
 public class Lame
 {

@@ -44,9 +44,9 @@ import	javax.sound.sampled.spi.AudioFileWriter;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.TAudioConfig;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.core.TAudioConfig;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.ArraySet;
 
 
 public class AudioSystem

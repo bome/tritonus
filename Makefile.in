@@ -110,31 +110,33 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PUB)/sampled/*.java \
 	$(SRCDIR_PUB)/sampled/spi/*.java \
 	$(SRCDIR_PRIV)/*.java \
+	$(SRCDIR_PRIV)/share/*.java \
 	$(SRCDIR_PRIV)/lowlevel/alsa/*.java \
 	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
 	$(SRCDIR_PRIV)/lowlevel/gsm/*.java \
 	$(SRCDIR_PRIV)/lowlevel/saint/*.java \
 	$(SRCDIR_PRIV)/lowlevel/lame/*.java \
-	$(SRCDIR_PRIV)/sampled/*.java \
+	$(SRCDIR_PRIV)/share/sampled/*.java \
+	$(SRCDIR_PRIV)/share/sampled/convert/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/gsm/*.java \
 	$(SRCDIR_PRIV)/sampled/file/*.java \
 	$(SRCDIR_PRIV)/sampled/file/gsm/*.java \
-	$(SRCDIR_PRIV)/sampled/mixer/*.java \
+	$(SRCDIR_PRIV)/share/sampled/mixer/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/alsa/*.java \
+	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/esd/*.java \
-	$(SRCDIR_PRIV)/midi/*.java \
-	$(SRCDIR_PRIV)/midi/device/*.java \
+	$(SRCDIR_PRIV)/share/midi/*.java \
+	$(SRCDIR_PRIV)/share/midi/device/*.java \
 	$(SRCDIR_PRIV)/midi/device/alsa/*.java \
+	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
 	$(SRCDIR_PRIV)/midi/file/*.java \
 	$(SRCDIR_PRIV)/util/*.java \
 	$(SRCDIR_JL)/*.java \
+	$(SRCDIR_JESD)/*.java \
 	)
 
-#	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
 #	$(SRCDIR_PRIV)/midi/device/saint/*.java \
-#	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
-#	$(SRCDIR_JESD)/*.java \
 
 SRC:=$(notdir $(SRCTMP))
 OBJ:=$(SRC:.java=.class)

@@ -33,10 +33,10 @@ import	java.util.Iterator;
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
-import	org.tritonus.util.GlobalInfo;
-import	org.tritonus.midi.device.TMidiDeviceInfo;
+import	org.tritonus.share.GlobalInfo;
+import	org.tritonus.share.midi.TMidiDeviceInfo;
 
 
 

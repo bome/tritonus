@@ -29,7 +29,7 @@ package	javax.sound.sampled.spi;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

@@ -41,7 +41,7 @@ import	javax.sound.midi.Sequence;
 import	javax.sound.midi.Track;
 import	javax.sound.midi.spi.MidiFileWriter;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

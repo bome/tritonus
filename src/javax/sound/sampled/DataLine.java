@@ -30,8 +30,8 @@ import	java.util.List;
 import	java.util.Arrays;
 import	java.util.Iterator;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioFormats;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioFormats;
 
 
 
