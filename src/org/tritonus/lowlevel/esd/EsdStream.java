@@ -30,14 +30,8 @@ import	java.io.IOException;
 
 
 public class EsdStream
+extends	Esd
 {
-	static
-	{
-		System.loadLibrary("esdtritonus");
-	}
-
-
-
 	/**	Holds socket fd to EsounD.
 	 *	This field is long because on 64 bit architectures, the native
 	 *	size of ints may be 64 bit.

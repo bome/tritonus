@@ -28,14 +28,20 @@ package	org.tritonus.lowlevel.esd;
 
 
 
-public interface Esd
+public class Esd
 {
-    public static final int		ESD_STREAM	= 0x0000;
-    public static final int		ESD_PLAY	= 0x1000;
-    public static final int		ESD_BITS8	= 0x0000;
-    public static final int		ESD_BITS16	= 0x0001;
-    public static final int		ESD_MONO	= 0x0010;
-    public static final int		ESD_STEREO	= 0x0020;
+	public static final int		ESD_STREAM	= 0x0000;
+	public static final int		ESD_PLAY	= 0x1000;
+	public static final int		ESD_BITS8	= 0x0000;
+	public static final int		ESD_BITS16	= 0x0001;
+	public static final int		ESD_MONO	= 0x0010;
+	public static final int		ESD_STEREO	= 0x0020;
+
+
+	static
+	{
+		System.loadLibrary("tritonusesd");
+	}
 }
 
 

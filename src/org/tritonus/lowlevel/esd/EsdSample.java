@@ -30,14 +30,8 @@ import	java.io.IOException;
 
 
 public class EsdSample
+extends	Esd
 {
-	static
-	{
-		System.loadLibrary("esdtritonus");
-	}
-
-
-
 	/**	Holds socket fd to EsounD.
 	 *	This variable is only used by native code.
 	 *	This field is long because on 64 bit architectures, the native
