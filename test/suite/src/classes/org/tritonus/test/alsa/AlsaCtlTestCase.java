@@ -22,9 +22,9 @@
 
 package org.tritonus.test.alsa;
 
-import	junit.framework.TestCase;
+import junit.framework.TestCase;
 
-import	org.tritonus.lowlevel.alsa.AlsaCtl;
+import org.tritonus.lowlevel.alsa.AlsaCtl;
 
 
 

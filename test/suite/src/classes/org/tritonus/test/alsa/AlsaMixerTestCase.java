@@ -22,12 +22,12 @@
 
 package org.tritonus.test.alsa;
 
-import	java.util.List;
+import java.util.List;
 
-import	junit.framework.TestCase;
+import junit.framework.TestCase;
 
-import	org.tritonus.lowlevel.alsa.AlsaCtl;
-import	org.tritonus.lowlevel.alsa.AlsaMixer;
+//import org.tritonus.lowlevel.alsa.AlsaCtl;
+import org.tritonus.lowlevel.alsa.AlsaMixer;
 
 
 

@@ -4,7 +4,7 @@
 
 package org.tritonus.test.alsa;
 
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
 
 
 public class AlsaSeqTestCase
