@@ -5,7 +5,7 @@
 #include	<jni.h>
 
 void
-throwRuntimeException(JNIEnv *env, char* pStrMessage);
+throwRuntimeException(JNIEnv *env, const char* pStrMessage);
 void
 checkArrayLength(JNIEnv *env, jarray array, int nRequiredLength);
 void

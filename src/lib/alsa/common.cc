@@ -9,7 +9,7 @@ static bool DEBUG = false;
 
 
 void
-throwRuntimeException(JNIEnv *env, char* pStrMessage)
+throwRuntimeException(JNIEnv *env, const char* pStrMessage)
 {
 	static  jclass	runtimeExceptionClass = NULL;
 
