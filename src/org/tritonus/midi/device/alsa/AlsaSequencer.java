@@ -260,14 +260,6 @@ public class AlsaSequencer
 
 
 
-	public long getTickLength()
-	{
-		// TODO:
-		return -1;
-	}
-
-
-
 	public long getTickPosition()
 	{
 		return m_controlASequencer.getQueuePositionTick(getQueue());
@@ -278,14 +270,6 @@ public class AlsaSequencer
 	public void setTickPosition(long lTick)
 	{
 		m_controlASequencer.setQueuePositionTick(getControlPort(), getQueue(), lTick);
-	}
-
-
-
-	public long getMicrosecondLength()
-	{
-		// TODO:
-		return -1;
 	}
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -103,6 +103,21 @@ public abstract class TSequencer
 	{
 		return m_sequence;
 	}
+
+
+
+	public long getTickLength()
+	{
+		return getSequence().getTickLength();
+	}
+
+
+
+	public long getMicrosecondLength()
+	{
+		return getSequence().getMicrosecondLength();
+	}
+
 
 
 
