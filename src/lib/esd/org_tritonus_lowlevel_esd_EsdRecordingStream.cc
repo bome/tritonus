@@ -5,30 +5,11 @@
 #include	<assert.h>
 #include	<stdio.h>
 #include	<unistd.h>
-#include	<esd.h>
-#include	"../common/HandleFieldHandler.hh"
+#include	"common.h"
 #include	"org_tritonus_lowlevel_esd_EsdRecordingStream.h"
 
 
-static int	DEBUG = 0;
-
 static HandleFieldHandler<int>	handler;
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_esd_EsdRecordingStream
- * Method:    close
- * Signature: ()V
- */
-JNIEXPORT void JNICALL
-Java_org_tritonus_lowlevel_esd_EsdRecordingStream_close
-(JNIEnv *env, jobject obj)
-{
-	int		nFd = handler.getHandle(env, obj);
-	close(nFd);
-	handler.setHandle(env, obj, -1);
-}
 
 
 
@@ -41,8 +22,7 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_esd_EsdRecordingStream_open
   (JNIEnv *env, jobject obj, jint nFormat, jint nSampleRate)
 {
-	// cerr << "Java_org_tritonus_lowlevel_esd_EsdStream_write: Format: " << nFormat << "\n";
-	// cerr << "Java_org_tritonus_lowlevel_esd_EsdStream_write: Sample Rate: " << nSampleRate << "\n";
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdRecordingStream_open(): begin\n"); }
 	int		nFd = esd_record_stream/*_fallback*/(nFormat, nSampleRate, NULL, "abc");
 	if (nFd < 0)
 	{
@@ -51,6 +31,7 @@ Java_org_tritonus_lowlevel_esd_EsdRecordingStream_open
 		// env->ThrowNew(cls, "exc: cannot create esd stream");
 	}
 	handler.setHandle(env, obj, nFd);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdRecordingStream_open(): end\n"); }
 }
 
 
@@ -60,9 +41,11 @@ Java_org_tritonus_lowlevel_esd_EsdRecordingStream_open
  * Method:    read
  * Signature: ([BII)I
  */
-JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read
-  (JNIEnv *env, jobject obj, jbyteArray abData, jint nOffset, jint nLength)
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read
+(JNIEnv *env, jobject obj, jbyteArray abData, jint nOffset, jint nLength)
 {
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read(): begin\n"); }
 	// int		i;
 	int		nFd = handler.getHandle(env, obj);
 	// signed char*	data;
@@ -86,14 +69,47 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read
 	{
 		env->SetByteArrayRegion(abData, nOffset, nBytesRead, buffer);
 	}
-	if (DEBUG)
+	if (debug_flag)
 	{
 		printf("Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read: Length: %d\n", (int) nLength);
 		printf("Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read: Read: %d\n", nBytesRead);
 	}
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdRecordingStream_read(): end\n"); }
 	return nBytesRead;
 }
 
+
+
+/*
+ * Class:     org_tritonus_lowlevel_esd_EsdRecordingStream
+ * Method:    close
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_esd_EsdRecordingStream_close
+(JNIEnv *env, jobject obj)
+{
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdRecordingStream_close(): begin\n"); }
+	int		nFd = handler.getHandle(env, obj);
+	close(nFd);
+	handler.setHandle(env, obj, -1);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdRecordingStream_close(): end\n"); }
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_esd_EsdStream
+ * Method:    setTrace
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_esd_EsdRecordingStream_setTrace
+(JNIEnv* env, jclass cls, jboolean bTrace)
+{
+	debug_flag = bTrace;
+	debug_file = stderr;
+}
 
 
 /*** org_tritonus_lowlevel_esd_EsdRecordingStream.cc ***/

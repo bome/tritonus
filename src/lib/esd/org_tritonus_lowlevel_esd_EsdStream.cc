@@ -33,7 +33,7 @@
 
 static int	DEBUG = 0;
 
-static HandleFieldHandler<int>	fd_handler;
+static HandleFieldHandler<int>	handler;
 
 
 
@@ -46,11 +46,10 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_esd_EsdStream_open
 (JNIEnv *env, jobject obj, jint nFormat, jint nSampleRate)
 {
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_open(): begin\n"); }
-	// cerr << "Java_org_tritonus_lowlevel_esd_EsdStream_write: Format: " << nFormat << "\n";
-	// cerr << "Java_org_tritonus_lowlevel_esd_EsdStream_write: Sample Rate: " << nSampleRate << "\n";
 	int		nFd;
 	char		name[20];
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_open(): begin\n"); }
 	sprintf(name, "trit%d", (int) obj);	// DANGEROUS!!
 	// printf("name: %s\n", name);
 	errno = 0;
@@ -66,7 +65,7 @@ Java_org_tritonus_lowlevel_esd_EsdStream_open
 	}
 	// printf("fd: %d\n", nFd);
 	//perror("abc");
-	fd_handler.setHandle(env, obj, nFd);
+	handler.setHandle(env, obj, nFd);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_open(): end\n"); }
 }
 
@@ -82,7 +81,7 @@ Java_org_tritonus_lowlevel_esd_EsdStream_write
 (JNIEnv *env, jobject obj, jbyteArray abData, jint nOffset, jint nLength)
 {
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_write(): begin\n"); }
-	int		nFd = fd_handler.getHandle(env, obj);
+	int		nFd = handler.getHandle(env, obj);
 	signed char*	data = env->GetByteArrayElements(abData, NULL);
 	int		nWritten = write(nFd, data + nOffset, nLength);
 	env->ReleaseByteArrayElements(abData, data, JNI_ABORT);
@@ -107,9 +106,9 @@ Java_org_tritonus_lowlevel_esd_EsdStream_close
 (JNIEnv *env, jobject obj)
 {
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_close(): begin\n"); }
-	int		nFd = fd_handler.getHandle(env, obj);
+	int		nFd = handler.getHandle(env, obj);
 	close(nFd);
-	fd_handler.setHandle(env, obj, -1);
+	handler.setHandle(env, obj, -1);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_close(): end\n"); }
 }
 
