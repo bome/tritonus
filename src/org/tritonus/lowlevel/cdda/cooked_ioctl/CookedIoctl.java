@@ -26,28 +26,21 @@
 package	org.tritonus.lowlevel.cdda.cooked_ioctl;
 
 
-import	org.tritonus.lowlevel.cdda.CDDA;
 import	org.tritonus.share.TDebug;
 
 
 
-/**	Low-level interface to reading CDs
+/**	Reading audio CDs using the 'cooked ioctl' interface.
  */
 public class CookedIoctl
-	implements	CDDA
 {
-	/**	Size of a cdda frame in bytes.
-	 */
-	public static final int		FRAME_SIZE = 2352;
-
-
 	static
 	{
-		if (TDebug.TraceCDDA) { TDebug.out("CookedIoctl.<clinit>(): loading native library tritonuscdda"); }
-		System.loadLibrary("tritonuscdda");
-		if (TDebug.TraceCDDA) { TDebug.out("CookedIoctl.<clinit>(): loaded"); }
+		if (TDebug.TraceCdda) { TDebug.out("CookedIoctl.<clinit>(): loading native library tritonuscooked_ioctl"); }
+		System.loadLibrary("tritonuscooked_ioctl");
+		if (TDebug.TraceCdda) { TDebug.out("CookedIoctl.<clinit>(): loaded"); }
 		// TODO: ????
-		setTrace(true /*TDebug.TraceCDDANative*/);
+		setTrace(TDebug.TraceCddaNative);
 	}
 
 
@@ -61,15 +54,15 @@ public class CookedIoctl
 
 
 	// TODO: parameter strDevicename (or something else sensible)
-	public CookedIoctl()
+	public CookedIoctl(String strDevice)
 	{
-		if (TDebug.TraceCDDA) { System.out.println("CookedIoctl.<init>: begin"); }
-		int	nResult = open();
+		if (TDebug.TraceCdda) { System.out.println("CookedIoctl.<init>: begin"); }
+		int	nResult = open(strDevice);
 		if (nResult < 0)
 		{
-			throw new RuntimeException("cannot open /dev/cdrom");
+			throw new RuntimeException("cannot open" + strDevice);
 		}
-		if (TDebug.TraceCDDA) { System.out.println("CookedIoctl.<init>: end"); }
+		if (TDebug.TraceCdda) { System.out.println("CookedIoctl.<init>: end"); }
 	}
 
 
@@ -79,7 +72,7 @@ public class CookedIoctl
 	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
 	 *	client id.
 	 */
-	private native int open();
+	private native int open(String strDevice);
 
 	/**	OUTDATED!
 		Closes the sequencer.
@@ -95,7 +88,14 @@ public class CookedIoctl
 	 *	anStartTrack[x]	start sector of the track x.
 	 *	anType[x]	type of track x.
 	 */
-	public native int readTOC(int[] anValues, int[] anStartTrack, int[] anType);
+	public native int readTOC(int[] anValues,
+			   int[] anStartFrame,
+			   int[] anLength,
+			   int[] anType,
+			   boolean[] abCopy,
+			   boolean[] abPre,
+			   int[] anChannels);
+
 
 
 	/**	Reads one or more raw frames from the CD.
