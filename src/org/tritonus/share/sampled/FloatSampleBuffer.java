@@ -38,32 +38,95 @@ import	org.tritonus.share.TDebug;
 
 /**
  * A class for small buffers of samples in linear, 32-bit
- * floating point format. All samples are normalized to the
- * interval [-1.0...1.0].
+ * floating point format. 
  * <p>
  * It is supposed to be a replacement of the byte[] stream
  * architecture of JavaSound, especially for chains of
  * AudioInputStreams. Ideally, all involved AudioInputStreams
  * handle reading into a FloatSampleBuffer. 
  * <p>
- * Using a FloatSampleBuffer for streaming has some advantages:
+ * Specifications:
+ * <ol>
+ * <li>Channels are separated, i.e. for stereo there are 2 float arrays
+ *     with the samples for the left and right channel
+ * <li>All data is handled in samples, where one sample means
+ *     one float value in each channel
+ * <li>All samples are normalized to the interval [-1.0...1.0]
+ * </ol>
+ * <p>
+ * When a cascade of AudioInputStreams use FloatSampleBuffer for
+ * processing, they may implement the interface FloatSampleInput.
+ * This signals that this stream may provide float buffers
+ * for reading. The data is <i>not</i> converted back to bytes,
+ * but stays in a single buffer that is passed from stream to stream.
+ * For that serves the read(FloatSampleBuffer) method, which is
+ * then used as replacement for the byte-based read functions of
+ * AudioInputStream.<br>
+ * However, backwards compatibility must always be retained, so
+ * even when an AudioInputStream implements FloatSampleInput,
+ * it must work the same way when any of the byte-based read methods
+ * is called.<br>
+ * As an example, consider the following set-up:<br>
  * <ul>
- * <li>no conversions from bytes have to be done during processing
+ * <li>auAIS is an AudioInputStream (AIS) that reads from an AU file
+ *     in 8bit pcm at 8000Hz. It does not implement FloatSampleInput.
+ * <li>pcmAIS1 is an AIS that reads from auAIS and converts the data 
+ *     to PCM 16bit. This stream implements FloatSampleInput, i.e. it 
+ *     can generate float audio data from the ulaw samples.
+ * <li>pcmAIS2 reads from pcmAIS1 and adds a reverb.
+ *     It operates entirely on floating point samples.
+ * <li>The method that reads from pcmAIS2 (i.e. AudioSystem.write) does 
+ *     not handle floating point samples. 
+ * </ul>
+ * So, what happens when a block of samples is read from pcmAIS2 ?
+ * <ol>
+ * <li>the read(byte[]) method of pcmAIS2 is called
+ * <li>pcmAIS2 always operates on floating point samples, so
+ *     it uses an own instance of FloatSampleBuffer and initializes
+ *     it with the number of samples requested in the read(byte[])
+ *     method.
+ * <li>It queries pcmAIS1 for the FloatSampleInput interface. As it
+ *     implements it, pcmAIS2 calls the read(FloatSampleBuffer) method
+ *     of pcmAIS1.
+ * <li>pcmAIS1 notes that its underlying stream does not support floats,
+ *     so it instantiates a byte buffer which can hold the number of
+ *     samples of the FloatSampleBuffer passed to it. It calls the
+ *     read(byte[]) method of auAIS.
+ * <li>auAIS fills the buffer with the bytes.
+ * <li>pcmAIS1 calls the <code>initFromByteArray</code> method of
+ *     the float buffer to initialize it with the 8 bit data.
+ * <li>Then pcmAIS1 processes the data: as the float buffer is
+ *     normalized, it does nothing with the buffer - and returns
+ *     control to pcmAIS2. The SampleSizeInBits field of the
+ *     AudioFormat of pcmAIS1 defines that it should be 16 bits.
+ * <li>pcmAIS2 receives the filled buffer from pcmAIS1 and does
+ *     its processing on the buffer - it adds the reverb.
+ * <li>As pcmAIS2's read(byte[]) method had been called, pcmAIS2
+ *     calls the <code>convertToByteArray</code> method of
+ *     the float buffer to fill the byte buffer with the
+ *     resulting samples.
+ * </ol>
+ * <p>
+ * To summarize, here are some advantages when using a FloatSampleBuffer 
+ * for streaming:
+ * <ul>
+ * <li>no conversions from/to bytes need to be done during processing
  * <li>the sample size in bits is irrelevant - normalized range
  * <li>higher quality for processing
- * <li>separated channels
+ * <li>separated channels (easy process/remove/add channels)
  * <li>potentially less copying of audio data, as processing
  * of the float samples is generally done in-place. The same
  * instance of a FloatSampleBuffer may be used from the data source
  * to the final data sink.
  * </ul>
- * Simple benchmarks showed that the computational power
- * used by the conversion to and from float
- * is neglectible without dithering, and significantly higher
- * with dithering. An own implementation of a random number
- * generator may improve this.
  * <p>
- * It supports &quot;lazy&quot; deletion of samples and channels:
+ * Simple benchmarks showed that the processing needs
+ * for the conversion to and from float is about the same as
+ * when converting it to shorts or ints without dithering, 
+ * and significantly higher with dithering. An own implementation 
+ * of a random number generator may improve this.
+ * <p>
+ * &quot;Lazy&quot; deletion of samples and channels:<br>
  * <ul>
  * <li>When the sample count is reduced, the arrays are not resized, but
  * only the member variable <code>sampleCount</code> is reduced. A subsequent
@@ -89,9 +152,9 @@ import	org.tritonus.share.TDebug;
  * on the same instance of FloatSampleBuffer. Some converters
  * may decrease the sample count (e.g. sample rate converter) and
  * delete channels (e.g. PCM2PCM converter). So, processing of one
- * chunk will decrease both. For the next chunk, all starts
+ * block will decrease both. For the next block, all starts
  * from the beginning. With the lazy mechanism, all float arrays
- * are only created once for processing all chunks.<br>
+ * are only created once for processing all blocks.<br>
  * Having lazy disabled would require for each chunk that is processed
  * <ol>
  * <li>new instantiation of all channel arrays
@@ -102,6 +165,7 @@ import	org.tritonus.share.TDebug;
  * the reduction of the sample count.
  * </ol>
  * <p>
+ * Dithering:<br>
  * By default, this class uses dithering for reduction 
  * of sample width (e.g. original data was 16bit, target 
  * data is 8bit). As dithering may be needed in other cases 
@@ -116,6 +180,8 @@ import	org.tritonus.share.TDebug;
  * here</a>.
  *
  * @author Florian Bomers
+ * @see FloatSampleInput
+ * @see FloatSampleOutput
  */
 
 public class FloatSampleBuffer {
