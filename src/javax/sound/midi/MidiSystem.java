@@ -73,20 +73,15 @@ public class MidiSystem
 		throws	MidiUnavailableException
 	{
 		Iterator	providers = TMidiConfig.getMidiDeviceProviders();
-		MidiDevice	device = null;
 		while (providers.hasNext())
 		{
 			MidiDeviceProvider	provider = (MidiDeviceProvider) providers.next();
-			try
+			if (provider.isDeviceSupported(info))
 			{
 				return provider.getDevice(info);
 			}
-			catch (IllegalArgumentException e)
-			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-			}
 		}
-		throw new MidiUnavailableException("no device found for " + info);
+		throw new IllegalArgumentException("no device found for " + info);
 	}
 
 
