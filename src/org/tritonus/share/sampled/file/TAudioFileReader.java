@@ -57,6 +57,39 @@ import	org.tritonus.share.TDebug;
 public abstract class TAudioFileReader
 	extends	AudioFileReader
 {
+	private int	m_nMarkLimit = -1;
+	private boolean	m_bRereading;
+
+
+	protected TAudioFileReader(int nMarkLimit)
+	{
+		this(nMarkLimit, false);
+	}
+
+
+
+	protected TAudioFileReader(int nMarkLimit, boolean bRereading)
+	{
+		m_nMarkLimit = nMarkLimit;
+		m_bRereading = bRereading;
+	}
+
+
+
+	private int getMarkLimit()
+	{
+		return m_nMarkLimit;
+	}
+
+
+
+	private boolean isRereading()
+	{
+		return m_bRereading;
+	}
+
+
+
 	/**	Get an AudioFileFormat object for a File.
 		This method calls getAudioFileFormat(InputStream, long).
 		Subclasses should not override this method unless there are
@@ -136,7 +169,20 @@ public abstract class TAudioFileReader
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): begin"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
+		inputStream.mark(getMarkLimit());
+		AudioFileFormat	audioFileFormat = null;
+		try
+		{
+			audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
+		}
+		finally
+		{
+			/* TODO: required semantics is unclear: should reset()
+			   be executed only when there is an exception or
+			   should it be done always?
+			*/
+			inputStream.reset();
+		}
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): end"); }
 		return audioFileFormat;
 	}
@@ -226,6 +272,7 @@ public abstract class TAudioFileReader
 		}
 		finally
 		{
+			// TODO: really? Isn't it necessary to do subsequent reads when there is data read from the AudioInputStream?
 			inputStream.close();
 		}
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): end"); }
@@ -250,7 +297,22 @@ public abstract class TAudioFileReader
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): begin"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
-		AudioInputStream	audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
+		AudioInputStream	audioInputStream = null;
+		inputStream.mark(getMarkLimit());
+		try
+		{
+			audioInputStream = getAudioInputStream(inputStream, lFileLengthInBytes);
+		}
+		catch (UnsupportedAudioFileException e)
+		{
+			inputStream.reset();
+			throw e;
+		}
+		catch (IOException e)
+		{
+			inputStream.reset();
+			throw e;
+		}
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): end"); }
 		return audioInputStream;
 	}
@@ -279,8 +341,20 @@ public abstract class TAudioFileReader
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin"); }
+		if (isRereading())
+		{
+			inputStream = new BufferedInputStream(inputStream, getMarkLimit());
+			inputStream.mark(getMarkLimit());
+		}
 		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
-		AudioInputStream	audioInputStream = new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+		if (isRereading())
+		{
+			inputStream.reset();
+		}
+		AudioInputStream	audioInputStream =
+			new AudioInputStream(inputStream,
+					     audioFileFormat.getFormat(),
+					     audioFileFormat.getFrameLength());
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): end"); }
 		return audioInputStream;
 	}
