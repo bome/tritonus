@@ -624,55 +624,6 @@ public class AlsaSeq
 
 
 
-	/**	Wait for an event.
-	 *	Calls snd_seq_event_input().
-	 *	and put the data elements of the returned event
-	 *	into the passed arrays.
-	 *	anValues[0]	type
-	 *	anValues[1]	flags
-	 *	anValues[2]	tag
-	 *
-	 *	anValues[3]	queue
-	 *
-	 *	anValues[4]	source client
-	 *	anValues[5]	source port
-	 *
-	 *	anValues[6]	dest client
-	 *	anValues[7]	dest port
-	 *
-	 *	The values starting with index 8 depend on the type of event.
-	 *
-	 *	SND_SEQ_EVENT_NOTE,
-	 *	SND_SEQ_EVENT_NOTEON,
-	 *	SND_SEQ_EVENT_NOTEOFF:
-	 *	anValues[08]	channel
-	 *	anValues[09]	note
-	 *	anValues[10]	velocity
-	 *	anValues[11]	off_velocity
-	 *	anValues[12]	duration
-	 *
-	 *	SND_SEQ_EVENT_KEYPRESS,
-	 *	SND_SEQ_EVENT_CONTROLLER,
-	 *	SND_SEQ_EVENT_PGMCHANGE,
-	 *	SND_SEQ_EVENT_CHANPRESS,
-	 *	SND_SEQ_EVENT_PITCHBEND,
-	 *	SND_SEQ_EVENT_CONTROL14, ??
-	 *	SND_SEQ_EVENT_NONREGPARAM, ??
-	 *	SND_SEQ_EVENT_REGPARAM: ??
-	 *	anValues[08]	channel
-	 *	anValues[09]	param
-	 *	anValues[10]	values
-	 *
-	 *
-	 *	returns true if an event was received. Above values are
-	 *	only valid if this is true!
-	 *
-	 *	Throws RuntimeExceptions in certain cases.
-	 */
-	public native boolean getEvent(int[] anValues, long[] alValues, Object[] aValues);
-
-
-
 	private static native void setTrace(boolean bTrace);
 
 
@@ -685,7 +636,6 @@ public class AlsaSeq
 
 
 
-	// TODO: perhaps remove
 	public Iterator getPortInfos(int nClient)
 	{
 		return new PortInfoIterator(nClient);
@@ -738,46 +688,6 @@ public class AlsaSeq
 	public native int dropOutputBuffer();
 	public native int dropInput();
 	public native int dropInputBuffer();
-
-
-
-	/////////////////////////// sending MIDI messages
-
-
-	///////////////// receiving of events ///////////////////////
-
-
-
-	///////////////////////////////////////////////////////////
-
-
-
-
-	private void outputCommonFields(
-		int nType, int nFlags, int nTag, int nQueue, long lTime,
-		int nSourcePort, int nDestClient, int nDestPort)
-	{
-		TDebug.out("AlsaSeq.sendNoteEvent():");
-		TDebug.out("\t nType:" + nType);
-		TDebug.out("\t nFlags:" + nFlags);
-		TDebug.out("\t nTag:" + nTag);
-		TDebug.out("\t nQueue:" + nQueue);
-		TDebug.out("\t lTime:" + lTime);
-		TDebug.out("\t nSourcePort:" + nSourcePort);
-		TDebug.out("\t nDestClient:" + nDestClient);
-		TDebug.out("\t nDestPort:" + nDestPort);
-	}
-
-
-	private void outputNoteFields(
-		int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
-	{
-		TDebug.out("\t nChannel:" + nChannel);
-		TDebug.out("\t nNote:" + nNote);
-		TDebug.out("\t nVelocity:" + nVelocity);
-		TDebug.out("\t nOffVelocity:" + nOffVelocity);
-		TDebug.out("\t nDuration:" + nDuration);
-	}
 
 
 
@@ -838,10 +748,85 @@ public class AlsaSeq
 		public native int getDestClient();
 		public native int getDestPort();
 
+
+
+		/*	Retrieves the parameters of a note event.
+		 *	This method is suitable for the following event types:
+		 *	SND_SEQ_EVENT_NOTE
+		 *	SND_SEQ_EVENT_NOTEON
+		 *	SND_SEQ_EVENT_NOTEOFF
+		 *	SND_SEQ_EVENT_KEYPRESS
+		 *
+		 *	After return, the array will contain:
+		 *	anValues[0]	channel
+		 *	anValues[1]	note
+		 *	anValues[2]	velocity
+		 *	anValues[3]	off_velocity
+		 *	anValues[4]	duration
+		 */
 		public native void getNote(int[] anValues);
+
+
+
+		/*	Retrieves the parameters of a control event.
+		 *	This method is suitable for the following event types:
+		 *	SND_SEQ_EVENT_CONTROLLER
+		 *	SND_SEQ_EVENT_PGMCHANGE
+		 *	SND_SEQ_EVENT_CHANPRESS
+		 *	SND_SEQ_EVENT_PITCHBEND
+		 *	SND_SEQ_EVENT_CONTROL14
+		 *	SND_SEQ_EVENT_NONREGPARAM
+		 *	SND_SEQ_EVENT_REGPARAM
+		 *	SND_SEQ_EVENT_SONGPOS
+		 *	SND_SEQ_EVENT_SONGSEL
+		 *	SND_SEQ_EVENT_QFRAME
+		 *	SND_SEQ_EVENT_TIMESIGN
+		 *	SND_SEQ_EVENT_KEYSIGN
+		 *
+		 *	After return, the array will contain:
+		 *	anValues[0]	channel
+		 *	anValues[1]	param
+		 *	anValues[2]	value
+		 */
 		public native void getControl(int[] anValues);
+
+
+
+		/*	Retrieves the parameters of a queue control event.
+		 *	This method is suitable for the following event types:
+		 *	SND_SEQ_EVENT_START
+		 *	SND_SEQ_EVENT_CONTINUE
+		 *	SND_SEQ_EVENT_STOP
+		 *	SND_SEQ_EVENT_SETPOS_TICK
+		 *	SND_SEQ_EVENT_SETPOS_TIME
+		 *	SND_SEQ_EVENT_TEMPO
+		 *	SND_SEQ_EVENT_CLOCK
+		 *	SND_SEQ_EVENT_TICK
+		 *	SND_SEQ_EVENT_SYNC
+		 *	SND_SEQ_EVENT_SYNC_POS
+		 *
+		 *	After return, the array will contain:
+		 *	anValues[0]	queue
+		 *	anValues[1]	value
+		 *	alValues[0]	time
+		 */
 		public native void getQueueControl(int[] anValues, long[] alValues);
-		public native void getVar(Object[] aValues);
+
+
+
+		/*	Retrieves the parameters of a variable-length event.
+		 *	This method is suitable for the following event types:
+		 *	SND_SEQ_EVENT_SYSEX = 130
+		 *	SND_SEQ_EVENT_BOUNCE
+		 *	SND_SEQ_EVENT_USR_VAR0
+		 *	SND_SEQ_EVENT_USR_VAR1
+		 *	SND_SEQ_EVENT_USR_VAR2
+		 *	SND_SEQ_EVENT_USR_VAR3
+		 *	SND_SEQ_EVENT_USR_VAR4
+		 *
+		 */
+		public native byte[] getVar();
+
 
 		public native void setCommon(int nType, int nFlags, int nTag, int nQueue, long lTimestamp, int nSourceClient, int nSourcePort, int nDestClient, int nDestPort);
 
