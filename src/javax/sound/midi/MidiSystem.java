@@ -82,6 +82,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new MidiUnavailableException("no device found for " + info);
@@ -186,6 +190,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -206,6 +214,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -226,6 +238,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -246,6 +262,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -266,6 +286,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new InvalidMidiDataException();
@@ -294,6 +318,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		if (TDebug.TraceMidiSystem)
@@ -454,7 +482,7 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceMidiSystem)
+				if (TDebug.TraceMidiSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -536,6 +564,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new IllegalArgumentException ();
@@ -558,6 +590,10 @@ public class MidiSystem
 			}
 			catch (IllegalArgumentException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		throw new IllegalArgumentException ();

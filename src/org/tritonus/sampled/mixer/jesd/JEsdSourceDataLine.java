@@ -134,6 +134,10 @@ public class JEsdSourceDataLine
 		}
 		catch (JEsdException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			throw new LineUnavailableException(/*TODO: */);
 		}
 	}
@@ -152,22 +156,22 @@ public class JEsdSourceDataLine
 
 
 /*
-	public void start()
-	{
-		setStarted(true);
-		setActive(true);
-		if (TDebug.TraceSourceDataLine)
-		{
-			TDebug.out("JEsdSourceDataLine.start(): channel started.");
-		}
-	}
+  public void start()
+  {
+  setStarted(true);
+  setActive(true);
+  if (TDebug.TraceSourceDataLine)
+  {
+  TDebug.out("JEsdSourceDataLine.start(): channel started.");
+  }
+  }
 
 
 
-	public void stop()
-	{
-		setStarted(false);
-	}
+  public void stop()
+  {
+  setStarted(false);
+  }
 */
 
 
@@ -218,6 +222,10 @@ public class JEsdSourceDataLine
 				  }
 				  catch (InterruptedException e)
 				  {
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				  }
 				  }
 				*/
@@ -261,7 +269,7 @@ public class JEsdSourceDataLine
 
 	// IDEA: move inner classes to TSourceTargetDataLine
 	public class JEsdSourceDataLineGainControl
-		extends		FloatControl
+	extends		FloatControl
 	{
 		/*
 		 *	These variables should be static. However, Java 1.1

@@ -78,16 +78,23 @@ public class TMidiConfig
 		}
 		catch (ClassNotFoundException e)
 		{
-			TDebug.out(e);
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 /*
-		catch (ExceptionInInitializerError e)
-		{
-			TDebug.out(e);
-			TDebug.out("---> embedded exception:");
-			Throwable	t = e.getException();
-			TDebug.out(t);
-		}
+  catch (ExceptionInInitializerError e)
+  {
+  if (TDebug.TraceAllExceptione)
+{
+  TDebug.out(e);
+  TDebug.out("---> embedded exception:");
+
+  Throwable	t = e.getException();
+  TDebug.out(t);
+  }
+  }
 */
 	}
 
@@ -114,6 +121,10 @@ public class TMidiConfig
 					}
 					catch (IllegalArgumentException e)
 					{
+						if (TDebug.TraceAllExceptions)
+						{
+							TDebug.out(e);
+						}
 					}
 					if (device instanceof Synthesizer)
 					{

@@ -28,6 +28,8 @@ package	javax.sound.sampled;
 import	java.util.Collection;
 import	java.util.Arrays;
 
+import	org.tritonus.share.TDebug;
+
 
 
 public abstract class EnumControl
@@ -47,8 +49,16 @@ public abstract class EnumControl
 			      Object value)
 	{
 		super(type);
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("EnumControl.<init>: begin");
+		}
 		m_values = Arrays.asList(aValues);
 		setValue(value);
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("EnumControl.<init>: end");
+		}
 	}
 
 

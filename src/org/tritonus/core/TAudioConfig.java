@@ -68,7 +68,10 @@ public class TAudioConfig
 		}
 		catch (ClassNotFoundException e)
 		{
-			TDebug.out(e);
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 	}
 

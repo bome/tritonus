@@ -787,6 +787,10 @@ public class ASequencer
 			}
 			catch (InterruptedException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		// TDebug.out("after getEvent()");
@@ -812,7 +816,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -838,7 +842,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -865,7 +869,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -890,6 +894,10 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 			message = shortMessage;
 			break;
@@ -912,7 +920,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -938,7 +946,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -964,7 +972,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -1000,7 +1008,7 @@ public class ASequencer
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceASequencer)
+				if (TDebug.TraceASequencer || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}

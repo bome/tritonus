@@ -123,6 +123,10 @@ public class TNotifier
 					}
 					catch (InterruptedException e)
 					{
+						if (TDebug.TraceAllExceptions)
+						{
+							TDebug.out(e);
+						}
 					}
 				}
 				entry = (NotifyEntry) m_entries.remove(0);

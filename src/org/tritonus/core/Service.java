@@ -85,28 +85,28 @@ public class Service
 				}
 				catch (ClassNotFoundException e)
 				{
-					if (TDebug.TraceService)
+					if (TDebug.TraceService || TDebug.TraceAllExceptions)
 					{
 						TDebug.out(e);
 					}
 				}
 				catch (InstantiationException e)
 				{
-					if (TDebug.TraceService)
+					if (TDebug.TraceService || TDebug.TraceAllExceptions)
 					{
 						TDebug.out(e);
 					}
 				}
 				catch (IllegalAccessException e)
 				{
-					if (TDebug.TraceService)
+					if (TDebug.TraceService || TDebug.TraceAllExceptions)
 					{
 						TDebug.out(e);
 					}
 				}
 				catch (Throwable e)
 				{
-					if (TDebug.TraceService)
+					if (TDebug.TraceService || TDebug.TraceAllExceptions)
 					{
 						TDebug.out(e);
 					}
@@ -128,7 +128,10 @@ public class Service
 		}
 		catch (IOException e)
 		{
-			TDebug.out(e);
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		if (configs != null)
 		{
@@ -146,7 +149,10 @@ public class Service
 				}
 				catch (IOException e)
 				{
-					TDebug.out(e);
+					if (TDebug.TraceAllExceptions || TDebug.TraceAllExceptions)
+					{
+						TDebug.out(e);
+					}
 				}
 				if (input != null)
 				{
@@ -175,7 +181,10 @@ public class Service
 					}
 					catch (IOException e)
 					{
-						TDebug.out(e);
+						if (TDebug.TraceAllExceptions)
+						{
+							TDebug.out(e);
+						}
 					}
 				}
 			}

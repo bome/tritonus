@@ -192,11 +192,19 @@ public class StandardMidiFileReader
 		}
 		catch (InvalidMidiDataException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}
@@ -215,11 +223,19 @@ public class StandardMidiFileReader
 		}
 		catch (InvalidMidiDataException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}

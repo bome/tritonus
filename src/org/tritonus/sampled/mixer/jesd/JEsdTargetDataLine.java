@@ -68,8 +68,8 @@ public class JEsdTargetDataLine
 		      new DataLine.Info(TargetDataLine.class,
 					format,
 					nBufferSize)/*,
-						      // TODO: has info object to change if format or buffer size are changed later?
-						      format, nBufferSize*/);
+						    // TODO: has info object to change if format or buffer size are changed later?
+						    format, nBufferSize*/);
 	}
 
 
@@ -115,9 +115,9 @@ public class JEsdTargetDataLine
 		}
 		int	nOutFormat = JEsd.ESD_STREAM | JEsd.ESD_PLAY | JEsdUtils.getJEsdFormat(format);
 /*
-		m_esdStream = new JEsdRecordingStream();
-		m_esdStream.open(nOutFormat,
-				 (int) format.getSampleRate());
+  m_esdStream = new JEsdRecordingStream();
+  m_esdStream.open(nOutFormat,
+  (int) format.getSampleRate());
 */
 		try
 		{
@@ -129,6 +129,10 @@ public class JEsdTargetDataLine
 		}
 		catch (JEsdException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			throw new LineUnavailableException(/*TODO: */);
 		}
 	}
@@ -149,22 +153,22 @@ public class JEsdTargetDataLine
 
 
 /*
-	public void start()
-	{
-		setStarted(true);
-		setActive(true);
-		if (TDebug.TraceTargetDataLine)
-		{
-			TDebug.out("JEsdTargetDataLine.start(): channel started.");
-		}
-	}
+  public void start()
+  {
+  setStarted(true);
+  setActive(true);
+  if (TDebug.TraceTargetDataLine)
+  {
+  TDebug.out("JEsdTargetDataLine.start(): channel started.");
+  }
+  }
 
 
 
-	public void stop()
-	{
-		setStarted(false);
-	}
+  public void stop()
+  {
+  setStarted(false);
+  }
 */
 
 
@@ -246,7 +250,7 @@ public class JEsdTargetDataLine
 
 
 	public class JEsdTargetDataLineGainControl
-		extends		FloatControl
+	extends		FloatControl
 	{
 		/*
 		 *	These variables should be static. However, Java 1.1

@@ -26,19 +26,22 @@
 package	org.tritonus.share.sampled.mixer;
 
 
+import	java.util.ArrayList;
 import	java.util.Collection;
 import	java.util.Iterator;
 import	java.util.Set;
 
+import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.Line;
 import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.Port;
 import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.TargetDataLine;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.ArraySet;
+
 
 
 // TODO: global controls (that use the system mixer)
@@ -54,17 +57,57 @@ public abstract class TMixer
 	private Collection	m_supportedTargetFormats;
 	private Collection	m_supportedSourceLineInfos;
 	private Collection	m_supportedTargetLineInfos;
+	private Collection	m_supportedPortLineInfos;
 	private Set		m_openSourceDataLines;
 	private Set		m_openTargetDataLines;
 
 
+	/**	constructor for mixers without ports.
+	 */
+	protected TMixer(Mixer.Info mixerInfo,
+			 Line.Info lineInfo,
+			 Collection supportedSourceFormats,
+			 Collection supportedTargetFormats,
+			 Collection supportedSourceLineInfos,
+			 Collection supportedTargetLineInfos)
+	{
+		this(mixerInfo,
+		     lineInfo,
+		     supportedSourceFormats,
+		     supportedTargetFormats,
+		     supportedSourceLineInfos,
+		     supportedTargetLineInfos,
+		     new ArrayList());
+	}
 
-	public TMixer(Mixer.Info mixerInfo,
-		      Line.Info lineInfo,
-		      Collection supportedSourceFormats,
-		      Collection supportedTargetFormats,
-		      Collection supportedSourceLineInfos,
-		      Collection supportedTargetLineInfos)
+
+
+	/**	Constructor for mixers with only ports.
+	 */
+	protected TMixer(Mixer.Info mixerInfo,
+			 Line.Info lineInfo,
+			 Collection supportedPortLineInfos)
+	{
+		this(mixerInfo,
+		     lineInfo,
+		     new ArrayList(),
+		     new ArrayList(),
+		     new ArrayList(),
+		     new ArrayList(),
+		     supportedPortLineInfos);
+	}
+
+
+
+	/**	Constructor for mixers with both normal lines and ports.
+	 */
+	protected TMixer(Mixer.Info mixerInfo,
+			 Line.Info lineInfo,
+			 Collection supportedSourceFormats,
+			 Collection supportedTargetFormats,
+			 Collection supportedSourceLineInfos,
+			 Collection supportedTargetLineInfos,
+			 Collection supportedPortLineInfos)
 	{
 		super(null,	// TMixer
 		      lineInfo);
@@ -73,6 +116,7 @@ public abstract class TMixer
 		m_supportedTargetFormats = supportedTargetFormats;
 		m_supportedSourceLineInfos = supportedSourceLineInfos;
 		m_supportedTargetLineInfos = supportedTargetLineInfos;
+		m_supportedPortLineInfos = supportedPortLineInfos;
 		m_openSourceDataLines = new ArraySet();
 		m_openTargetDataLines = new ArraySet();
 	}
@@ -83,7 +127,7 @@ public abstract class TMixer
 	{
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("TMixer.isLineSupported(): called");
+			TDebug.out("TMixer.getMixerInfo(): called");
 		}
 		return m_mixerInfo;
 	}
@@ -94,7 +138,7 @@ public abstract class TMixer
 	{
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("TMixer.isLineSupported(): called");
+			TDebug.out("TMixer.getSourceLineInfo(): called");
 		}
 		return (Line.Info[]) m_supportedSourceLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
 	}
@@ -105,7 +149,7 @@ public abstract class TMixer
 	{
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("TMixer.isLineSupported(): called");
+			TDebug.out("TMixer.getTargetLineInfo(): called");
 		}
 		return (Line.Info[]) m_supportedTargetLineInfos.toArray(EMPTY_LINE_INFO_ARRAY);
 	}
@@ -116,7 +160,7 @@ public abstract class TMixer
 	{
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("TMixer.getSourceLineInfo(): info to test: " + info);
+			TDebug.out("TMixer.getSourceLineInfo(Line.Info): info to test: " + info);
 		}
 		// TODO:
 		return EMPTY_LINE_INFO_ARRAY;
@@ -128,7 +172,7 @@ public abstract class TMixer
 	{
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("TMixer.getTargetLineInfo(): info to test: " + info);
+			TDebug.out("TMixer.getTargetLineInfo(Line.Info): info to test: " + info);
 		}
 		// TODO:
 		return EMPTY_LINE_INFO_ARRAY;
@@ -151,6 +195,10 @@ public abstract class TMixer
 		{
 			return isLineSupportedImpl(info, m_supportedTargetLineInfos);
 		}
+		else if (lineClass.equals(Port.class))
+		{
+			return isLineSupportedImpl(info, m_supportedPortLineInfos);
+		}
 		else
 		{
 			return false;
@@ -164,6 +212,9 @@ public abstract class TMixer
 		Iterator	iterator = supportedLineInfos.iterator();
 		while (iterator.hasNext())
 		{
+			// Object	obj =  iterator.next();
+			// System.out.println("line info:" + obj);
+			// Line.Info	info2 = (Line.Info) obj;
 			Line.Info	info2 = (Line.Info) iterator.next();
 			if (info2.matches(info))
 			{
@@ -179,7 +230,7 @@ public abstract class TMixer
   not implemented here:
   getLine(Line.Info)
   getMaxLines(Line.Info)
- */
+*/
 
 
 
@@ -221,7 +272,7 @@ public abstract class TMixer
 
 
 	public boolean isSynchronizationSupported(Line[] aLines,
-				boolean bMaintainSync)
+						  boolean bMaintainSync)
 	{
 		return false;
 	}

@@ -88,6 +88,10 @@ public class AlsaSynthesizer
 		}
 		catch (MidiUnavailableException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		for (int i = 0; i < 16; i++)
 		{

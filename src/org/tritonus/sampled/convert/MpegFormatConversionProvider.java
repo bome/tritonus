@@ -485,14 +485,14 @@ public class MpegFormatConversionProvider
 			}
 			catch (BitstreamException e)
 			{
-				if (TDebug.TraceAudioConverter)
+				if (TDebug.TraceAudioConverter || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
 			}
 			catch (DecoderException e)
 			{
-				if (TDebug.TraceAudioConverter)
+				if (TDebug.TraceAudioConverter || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}

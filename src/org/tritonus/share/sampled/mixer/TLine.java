@@ -294,6 +294,10 @@ public abstract class TLine
 		}
 		catch (IllegalArgumentException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			// TDebug.out("TLine.isSupportedControl(): returning false");
 			return false;
 		}

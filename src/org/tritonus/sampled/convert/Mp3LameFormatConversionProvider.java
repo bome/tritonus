@@ -391,13 +391,17 @@ public class Mp3LameFormatConversionProvider
 				if (encoder==null) {
 					m_circularBuffer.close();
 				}
-			} catch (ArrayIndexOutOfBoundsException e) {
-				if (TDebug.TraceAudioConverter) {
+			} catch (ArrayIndexOutOfBoundsException e)
+			{
+				if (TDebug.TraceAudioConverter || TDebug.TraceAllExceptions)
+				{
 					TDebug.out(e);
 				}
 			}
-			catch (IOException e) {
-				if (TDebug.TraceAudioConverter) {
+			catch (IOException e)
+			{
+				if (TDebug.TraceAudioConverter || TDebug.TraceAllExceptions)
+				{
 					TDebug.out(e);
 				}
 			}

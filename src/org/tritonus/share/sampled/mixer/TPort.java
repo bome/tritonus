@@ -49,7 +49,7 @@ import	org.tritonus.share.TDebug;
 
 
 
-/**	Base class for classes implementing Line.
+/**	Base class for ...
  */
 public class TPort
 	extends TLine

@@ -26,6 +26,9 @@
 package	javax.sound.sampled;
 
 
+import	org.tritonus.share.TDebug;
+
+
 
 public abstract class Control
 {
@@ -35,7 +38,15 @@ public abstract class Control
 
 	protected Control(Type type)
 	{
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("Control.<init>: begin");
+		}
 		m_type = type;
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("Control.<init>: end");
+		}
 	}
 
 

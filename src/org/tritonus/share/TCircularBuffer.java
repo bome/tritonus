@@ -144,6 +144,10 @@ public class TCircularBuffer
 					}
 					catch (InterruptedException e)
 					{
+						if (TDebug.TraceAllExceptions)
+						{
+							TDebug.out(e);
+						}
 					}
 				}
 				int	nAvailable = Math.min(availableRead(), nRemainingBytes);
@@ -210,13 +214,17 @@ public class TCircularBuffer
 					}
 					catch (InterruptedException e)
 					{
+						if (TDebug.TraceAllExceptions)
+						{
+							TDebug.out(e);
+						}
 					}
 				}
 				int	nAvailable = Math.min(availableWrite(), nRemainingBytes);
 				while (nAvailable > 0)
 				{
 					int	nToWrite = Math.min(nAvailable, m_nSize - getWritePos());
-				//TDebug.out("src buf size= " + abData.length + ", offset = " + nOffset + ", dst buf size=" + m_abData.length + " write pos=" + getWritePos() + " len=" + nToWrite);
+					//TDebug.out("src buf size= " + abData.length + ", offset = " + nOffset + ", dst buf size=" + m_abData.length + " write pos=" + getWritePos() + " len=" + nToWrite);
 					System.arraycopy(abData, nOffset, m_abData, getWritePos(), nToWrite);
 					m_nWritePos += nToWrite;
 					nOffset += nToWrite;

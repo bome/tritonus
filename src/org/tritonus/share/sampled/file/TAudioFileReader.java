@@ -43,12 +43,15 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
+import	org.tritonus.share.TDebug;
+
+
+
 /**
  * Base class for audio file readers.
  *
  * @author Matthias Pfisterer
  */
-
 public abstract class TAudioFileReader
 	extends	AudioFileReader
 {
@@ -95,11 +98,19 @@ public abstract class TAudioFileReader
 		}
 		catch (UnsupportedAudioFileException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}
@@ -117,11 +128,19 @@ public abstract class TAudioFileReader
 		}
 		catch (UnsupportedAudioFileException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			inputStream.close();
 			throw e;
 		}

@@ -26,6 +26,7 @@
 package	javax.sound.sampled;
 
 
+import	org.tritonus.share.TDebug;
 
 
 
@@ -44,6 +45,10 @@ public interface Port
 			}
 			catch (ClassNotFoundException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 			}
 			return null;
 		}

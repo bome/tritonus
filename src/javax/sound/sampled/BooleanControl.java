@@ -26,6 +26,9 @@
 package	javax.sound.sampled;
 
 
+import	org.tritonus.share.TDebug;
+
+
 
 public abstract class BooleanControl
 	extends		Control
@@ -48,12 +51,22 @@ public abstract class BooleanControl
 	{
 		super(type);
 
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("BooleanControl.<init>: begin");
+		}
+		/* $$mp 2001-02-06: TODO: what's the matter with this?
+		 */
 		//$$fb 2000-12-02: incompatible with Sun implementation...
 		//setValue(bInitialValue);
 		m_bValue = bInitialValue;
 
 		m_strTrueLabel = strTrueLabel;
 		m_strFalseLabel = strFalseLabel;
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("BooleanControl.<init>: end");
+		}
 	}
 
 

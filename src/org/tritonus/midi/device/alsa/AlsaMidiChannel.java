@@ -83,7 +83,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -102,7 +102,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -121,7 +121,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -140,7 +140,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -166,7 +166,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -192,7 +192,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -218,7 +218,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -238,7 +238,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -264,7 +264,7 @@ public class AlsaMidiChannel
 		}
 		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaMidiChannel)
+			if (TDebug.TraceAlsaMidiChannel || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}

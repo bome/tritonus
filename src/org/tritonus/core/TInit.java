@@ -184,7 +184,7 @@ public class TInit
 				}
 				catch (Throwable e)
 				{
-					if (TDebug.TraceInit)
+					if (TDebug.TraceInit || TDebug.TraceAllExceptions)
 					{
 						TDebug.out(e);
 					}

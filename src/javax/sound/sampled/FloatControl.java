@@ -26,6 +26,9 @@
 package	javax.sound.sampled;
 
 
+import	org.tritonus.share.TDebug;
+
+
 
 public abstract class FloatControl
 	extends		Control
@@ -60,6 +63,10 @@ public abstract class FloatControl
 			       String strMaxLabel)
 	{
 		super(type);
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("FloatControl.<init>: begin");
+		}
 		m_fMinimum = fMinimum;
 		m_fMaximum = fMaximum;
 		m_fPrecision = fPrecision;
@@ -73,6 +80,10 @@ public abstract class FloatControl
 		m_strMinLabel = strMinLabel;
 		m_strMidLabel = strMidLabel;
 		m_strMaxLabel = strMaxLabel;
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("FloatControl.<init>: end");
+		}
 	}
 
 

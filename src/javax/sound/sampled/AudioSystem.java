@@ -64,7 +64,7 @@ public class AudioSystem
 	/**	MixerProviderAction for getMixerInfo().
 	 */
 	private static class GetMixerInfoMixerProviderAction
-		implements	MixerProviderAction
+	implements	MixerProviderAction
 	{
 		private Collection	m_mixerInfos = new ArrayList();
 
@@ -132,7 +132,7 @@ public class AudioSystem
 	/**	MixerProviderAction for getMixer().
 	 */
 	private static class GetMixerMixerProviderAction
-		implements	MixerProviderAction
+	implements	MixerProviderAction
 	{
 		private Mixer.Info	m_info = null;
 		private Mixer		m_mixer = null;
@@ -161,7 +161,7 @@ public class AudioSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -207,7 +207,7 @@ public class AudioSystem
 	/**	MixerAction for getSourceLineInfo().
 	 */
 	private static class GetSourceLineInfoMixerAction
-		implements	MixerAction
+	implements	MixerAction
 	{
 		private Line.Info	m_info = null;
 		private Set		m_infos;
@@ -253,7 +253,7 @@ public class AudioSystem
 	/**	MixerAction for getTargetLineInfo().
 	 */
 	private static class GetTargetLineInfoMixerAction
-		implements	MixerAction
+	implements	MixerAction
 	{
 		private Line.Info	m_info = null;
 		private Set		m_infos;
@@ -299,7 +299,7 @@ public class AudioSystem
 	/**	MixerAction for isLineSupported().
 	 */
 	private static class IsLineSupportedMixerAction
-		implements	MixerAction
+	implements	MixerAction
 	{
 		private Line.Info	m_info = null;
 		private boolean		m_bSupported = false;
@@ -344,7 +344,7 @@ public class AudioSystem
 	/**	MixerAction for getLine().
 	 */
 	private static class GetLineMixerAction
-		implements	MixerAction
+	implements	MixerAction
 	{
 		private Line.Info	m_info = null;
 		private Line		m_line = null;
@@ -375,14 +375,14 @@ public class AudioSystem
 			catch (LineUnavailableException e)
 			{
 				m_bLineTypeSupported = true;
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -433,7 +433,7 @@ public class AudioSystem
 	/**	FormatConversionProviderAction for getTargetEncodings().
 	 */
 	private static class GetTargetEncodingsFormatConversionProviderAction
-		implements	FormatConversionProviderAction
+	implements	FormatConversionProviderAction
 	{
 		private Object		m_sourceDescription;
 		private Collection	m_targetEncodings;
@@ -462,8 +462,8 @@ public class AudioSystem
 				// TODO: not directely implementable. Contact Sun.
 				//$$fb 2000-08-15: see workaround below
 				/*
-				encodings = formatConversionProvider.getTargetEncodings(
-					(AudioFormat.Encoding) m_sourceDescription);
+				  encodings = formatConversionProvider.getTargetEncodings(
+				  (AudioFormat.Encoding) m_sourceDescription);
 				*/
 			}
 			else if (m_sourceDescription instanceof AudioFormat)
@@ -476,7 +476,7 @@ public class AudioSystem
 				// TODO: debug message
 			}
 			m_targetEncodings.addAll(Arrays.asList(encodings));
-				// continue the iteration
+			// continue the iteration
 			return false;
 		}
 
@@ -497,15 +497,15 @@ public class AudioSystem
 
 	//$$fb 2000-08-15: added for workaround below
 	private static void doEncodingActionWorkaround(boolean bigEndian, AudioFormat.Encoding encoding, 
-					  GetTargetEncodingsFormatConversionProviderAction action) {
+						       GetTargetEncodingsFormatConversionProviderAction action) {
 		AudioFormat format=new AudioFormat(
-						   encoding, 
-						   NOT_SPECIFIED, // sample rate
-						   NOT_SPECIFIED, // sample size in bits
-						   NOT_SPECIFIED, // channels
-						   NOT_SPECIFIED, // frame size
-						   NOT_SPECIFIED, // frame rate,
-						   bigEndian);
+			encoding, 
+			NOT_SPECIFIED, // sample rate
+			NOT_SPECIFIED, // sample size in bits
+			NOT_SPECIFIED, // channels
+			NOT_SPECIFIED, // frame size
+			NOT_SPECIFIED, // frame rate,
+			bigEndian);
 		action.setSourceDescription(format);
 		doFormatConversionProviderIteration(action);
 	}
@@ -516,7 +516,7 @@ public class AudioSystem
 		//$$fb 2000-08-15: workaround
 		//return getTargetEncodings((Object) sourceEncoding);
 		GetTargetEncodingsFormatConversionProviderAction action = 
-		new GetTargetEncodingsFormatConversionProviderAction();
+			new GetTargetEncodingsFormatConversionProviderAction();
 		doEncodingActionWorkaround(false, sourceEncoding, action);
 		doEncodingActionWorkaround(true, sourceEncoding, action);
 		return action.getEncodings();
@@ -545,7 +545,7 @@ public class AudioSystem
 	/**	FormatConversionProviderAction for isConversionSupported().
 	 */
 	private static class IsConversionSupportedFormatConversionProviderAction
-		implements	FormatConversionProviderAction
+	implements	FormatConversionProviderAction
 	{
 		private AudioFormat		m_sourceFormat;
 		/*
@@ -573,15 +573,15 @@ public class AudioSystem
 			boolean bSupported = false;
 			if (m_targetDescription instanceof AudioFormat.Encoding)
 			{
-					bSupported = formatConversionProvider.isConversionSupported(
-						(AudioFormat.Encoding) m_targetDescription,
-						m_sourceFormat);
+				bSupported = formatConversionProvider.isConversionSupported(
+					(AudioFormat.Encoding) m_targetDescription,
+					m_sourceFormat);
 			}
 			else if (m_targetDescription instanceof AudioFormat)
 			{
-					bSupported = formatConversionProvider.isConversionSupported(
-						(AudioFormat) m_targetDescription,
-						m_sourceFormat);
+				bSupported = formatConversionProvider.isConversionSupported(
+					(AudioFormat) m_targetDescription,
+					m_sourceFormat);
 			}
 			else
 			{
@@ -616,7 +616,7 @@ public class AudioSystem
 	/**	FormatConversionProviderAction for getAudioInputStream().
 	 */
 	private static class GetAudioInputStreamFormatConversionProviderAction
-		implements	FormatConversionProviderAction
+	implements	FormatConversionProviderAction
 	{
 		private AudioInputStream	m_sourceAudioInputStream;
 		private Object			m_targetDescription;
@@ -663,7 +663,7 @@ public class AudioSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -781,7 +781,7 @@ public class AudioSystem
   }
   catch (IllegalArgumentException e)
   {
-  if (TDebug.TraceAudioSystem)
+  if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
   {
   TDebug.out("failed");
   TDebug.out(e);
@@ -802,7 +802,7 @@ public class AudioSystem
   // $$fb 19 Dec 99: Here I think, sample size in bits and framesize should
   // be set to NOT_SPECIFIED, as we cannot assume that it stays
   // the same with the new encoding.
-*/
+  */
 	/* $$mp19991220: Yes, possible optimisation:
 	   find all formats with the given encoding that can be
 	   generated by conversion from the stream. Then pick the
@@ -824,7 +824,7 @@ public class AudioSystem
 	/**	AudioFileReaderAction for getAudioFileFormat().
 	 */
 	private static class GetAudioFileFormatAudioFileReaderAction
-		implements	AudioFileReaderAction
+	implements	AudioFileReaderAction
 	{
 		private Object			m_source = null;
 		private AudioFileFormat		m_audioFileFormat = null;
@@ -871,7 +871,7 @@ public class AudioSystem
 			}
 			catch (UnsupportedAudioFileException e)
 			{
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -942,7 +942,7 @@ public class AudioSystem
 	/**	AudioFileReaderAction for getAudioInputStream().
 	 */
 	private static class GetAudioInputStreamAudioFileReaderAction
-		implements	AudioFileReaderAction
+	implements	AudioFileReaderAction
 	{
 		private Object			m_source = null;
 		private AudioInputStream	m_audioInputStream = null;
@@ -989,7 +989,7 @@ public class AudioSystem
 			}
 			catch (UnsupportedAudioFileException e)
 			{
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -1097,7 +1097,7 @@ public class AudioSystem
 	/**	AudioFileWriterAction for isFileTypeSupported().
 	 */
 	private static class IsFileTypeSupportedAudioFileWriterAction
-		implements	AudioFileWriterAction
+	implements	AudioFileWriterAction
 	{
 		private AudioFileFormat.Type	m_fileType;
 		private AudioInputStream	m_audioInputStream;
@@ -1206,6 +1206,10 @@ public class AudioSystem
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		return action.isSupported();
 	}
@@ -1215,7 +1219,7 @@ public class AudioSystem
 	/**	AudioFileWriterAction for write().
 	 */
 	private static class WriteAudioFileWriterAction
-		implements	AudioFileWriterAction
+	implements	AudioFileWriterAction
 	{
 		private AudioInputStream	m_audioInputStream;
 		private AudioFileFormat.Type	m_fileType;
@@ -1289,7 +1293,7 @@ public class AudioSystem
 			}
 			catch (IllegalArgumentException e)
 			{
-				if (TDebug.TraceAudioSystem)
+				if (TDebug.TraceAudioSystem || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}
@@ -1388,7 +1392,7 @@ public class AudioSystem
 		if (TDebug.TraceAudioSystem)
 		{
 			TDebug.out(">AudioSystem.doMixerProviderIteration()");
-			}
+		}
 		while (mixerProviders.hasNext() && ! bCompleted)
 		{
 			MixerProvider	mixerProvider = (MixerProvider) mixerProviders.next();

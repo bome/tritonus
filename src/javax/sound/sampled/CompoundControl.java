@@ -29,6 +29,8 @@ package	javax.sound.sampled;
 import	java.util.Arrays;
 import	java.util.Collection;
 
+import	org.tritonus.share.TDebug;
+
 
 
 public abstract class CompoundControl
@@ -44,7 +46,15 @@ public abstract class CompoundControl
 				 Control[] aMemberControls)
 	{
 		super(type);
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("CompoundControl.<init>: begin");
+		}
 		m_memberControls = Arrays.asList(aMemberControls);
+		if (TDebug.TraceControl)
+		{
+			TDebug.out("CompoundControl.<init>: end");
+		}
 	}
 
 
@@ -79,4 +89,3 @@ public abstract class CompoundControl
 
 
 /*** CompoundControl.java ***/
-

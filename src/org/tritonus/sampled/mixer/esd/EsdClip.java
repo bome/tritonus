@@ -81,6 +81,10 @@ public class EsdClip
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			throw new LineUnavailableException();
 		}
 	}
@@ -120,7 +124,7 @@ public class EsdClip
 			}
 			catch (IOException e)
 			{
-				if (TDebug.TraceClip)
+				if (TDebug.TraceClip || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}

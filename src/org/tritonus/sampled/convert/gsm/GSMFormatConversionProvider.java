@@ -205,7 +205,10 @@ public class GSMFormatConversionProvider
 			}
 			catch (IOException e)
 			{
-				TDebug.out(e);
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				m_circularBuffer.close();
 				return;
 			}
@@ -216,7 +219,10 @@ public class GSMFormatConversionProvider
 			}
 			catch (InvalidGSMFrameException e)
 			{
-				TDebug.out(e);
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				m_circularBuffer.close();
 				return;
 			}
@@ -316,7 +322,10 @@ public class GSMFormatConversionProvider
 			}
 			catch (IOException e)
 			{
-				TDebug.out(e);
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				m_circularBuffer.close();
 				return;
 			}

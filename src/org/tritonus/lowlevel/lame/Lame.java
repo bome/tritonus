@@ -66,10 +66,17 @@ public class Lame
 
 	static
 	{
-		try {
+		try
+		{
 			System.loadLibrary("lametritonus");
 			libAvailable=true;
-		} catch (UnsatisfiedLinkError e) {
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			linkError=e.getMessage();
 		}
 	}
@@ -135,14 +142,14 @@ public class Lame
 			close();
 			throw new OutOfMemoryError("out of memory");
 		} else
-		if (result==NOT_INITIALIZED) {
-			close();
-			throw new RuntimeException("not initialized");
-		} else
-		if (result<0) {
-			close();
-			throw new IllegalArgumentException("parameters not supported by LAME (returned "+result+")");
-		}
+			if (result==NOT_INITIALIZED) {
+				close();
+				throw new RuntimeException("not initialized");
+			} else
+				if (result<0) {
+					close();
+					throw new IllegalArgumentException("parameters not supported by LAME (returned "+result+")");
+				}
 		// provide effective parameters to user-space
 		try {
 			System.setProperty(PROPERTY_PREFIX + "effective.quality", 
@@ -157,7 +164,13 @@ public class Lame
 					   String.valueOf(getEffectiveSampleRate()));
 			System.setProperty(PROPERTY_PREFIX + "effective.encoding", 
 					   getEffectiveEncoding().toString());
-		} catch (Throwable t) {
+		}
+		catch (Throwable t)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(t);
+			}
 		}
 	}
 
@@ -284,7 +297,13 @@ public class Lame
 			System.setProperty(PROPERTY_PREFIX + "bitrate", String.valueOf(DEFAULT_BIT_RATE));
 			System.setProperty(PROPERTY_PREFIX + "chmode", chmode2string(DEFAULT_CHANNEL_MODE));
 			System.setProperty(PROPERTY_PREFIX + "vbr", String.valueOf(DEFAULT_VBR));
-		} catch (Throwable t) {
+		}
+		catch (Throwable t)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(t);
+			}
 		}
 	}
 
@@ -367,7 +386,12 @@ public class Lame
 		try {
 			strValue = System.getProperty(strPropertyName, strValue);
 		}
-		catch (Exception e) {
+		catch (Exception e)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		strValue=strValue.toLowerCase();
 		boolean	bValue=false;
@@ -391,7 +415,12 @@ public class Lame
 		try {
 			strValue = System.getProperty(strPropertyName, def);
 		}
-		catch (Exception e) {
+		catch (Exception e)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		return strValue;
 	}
@@ -403,7 +432,12 @@ public class Lame
 			String strValue = System.getProperty(strPropertyName, String.valueOf(def));
 			value=new Integer(strValue).intValue();
 		}
-		catch (Throwable e) {
+		catch (Throwable e)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		return value;
 	}

@@ -73,7 +73,12 @@ public class WaveAudioFileReader extends TAudioFileReader {
 			advanceChunk(dis, chunkLength, 0);
 			try {
 				thisKey = dis.readInt();
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				// $$fb: when we come here, we skipped past the end of the wave file
 				// without finding the chunk.
 				// IMHO, this is not an IOException, as there are incarnations

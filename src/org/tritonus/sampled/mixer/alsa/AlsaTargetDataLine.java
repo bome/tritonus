@@ -72,8 +72,8 @@ public class AlsaTargetDataLine
 		      new DataLine.Info(TargetDataLine.class,
 					format,
 					nBufferSize)/*,
-						      // TODO: has info object to change if format or buffer size are changed later?
-						      format, nBufferSize*/);
+						    // TODO: has info object to change if format or buffer size are changed later?
+						    format, nBufferSize*/);
 	}
 
 
@@ -126,6 +126,10 @@ public class AlsaTargetDataLine
 		}
 		catch (Exception e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			throw new LineUnavailableException();
 		}
 		int	nReturn;
@@ -412,7 +416,7 @@ public class AlsaTargetDataLine
 
 
 	public class AlsaTargetDataLineGainControl
-		extends		FloatControl
+	extends		FloatControl
 	{
 		/*
 		 *	These variables should be static. However, Java 1.1

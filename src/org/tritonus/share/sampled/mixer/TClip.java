@@ -94,6 +94,10 @@ public class TClip
 		}
 		catch (IOException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			throw new LineUnavailableException("IOException occured");
 		}
 	}
@@ -108,55 +112,55 @@ public class TClip
 		DataLine.Info	info = new DataLine.Info(Clip.class,
 							 audioFormat, -1/*nBufferSize*/);
 /*
-		setLineInfo(info);
-		int	nFrameSize = audioFormat.getFrameSize();
-		long	lTotalLength = audioInputStream.getFrameLength() * nFrameSize;
-		int	nFormat = Esd.ESD_STREAM | Esd.ESD_PLAY | EsdUtils.getEsdFormat(audioFormat);
-		if (TDebug.TraceClip)
-		{
-			TDebug.out("format: " + nFormat);
-			TDebug.out("sample rate: " + audioFormat.getSampleRate());
-		}
-		// m_esdSample.open(nFormat, (int) audioFormat.getSampleRate(), (int) lTotalLength);
-		if (TDebug.TraceClip)
-		{
-			TDebug.out("size in esd: " + audioInputStream.getFrameLength() * nFrameSize);
-		}
-		int	nBufferLength = BUFFER_FRAMES * nFrameSize;
-		byte[]	abData = new byte[nBufferLength];
-		int	nBytesRead = 0;
-		int	nTotalBytes = 0;
-		while (nBytesRead != -1)
-		{
-			try
-			{
-				nBytesRead = audioInputStream.read(abData, 0, abData.length);
-			}
-			catch (IOException e)
-			{
-				if (TDebug.TraceClip)
-				{
-					TDebug.out(e);
-				}
-			}
-			if (nBytesRead >= 0)
-			{
-				nTotalBytes += nBytesRead;
-				if (TDebug.TraceClip)
-				{
-					TDebug.out("TClip.open(): total bytes: " + nTotalBytes);
-					TDebug.out("TClip.open(): Trying to write: " + nBytesRead);
-				}
-				int	nBytesWritten = 0; //m_esdSample.write(abData, 0, nBytesRead);
-				if (TDebug.TraceClip)
-				{
-					TDebug.out("TClip.open(): Written: " + nBytesWritten);
-				}
-			}
-		}
-		// to trigger the events
-		// open();
-*/
+  setLineInfo(info);
+  int	nFrameSize = audioFormat.getFrameSize();
+  long	lTotalLength = audioInputStream.getFrameLength() * nFrameSize;
+  int	nFormat = Esd.ESD_STREAM | Esd.ESD_PLAY | EsdUtils.getEsdFormat(audioFormat);
+  if (TDebug.TraceClip)
+  {
+  TDebug.out("format: " + nFormat);
+  TDebug.out("sample rate: " + audioFormat.getSampleRate());
+  }
+  // m_esdSample.open(nFormat, (int) audioFormat.getSampleRate(), (int) lTotalLength);
+  if (TDebug.TraceClip)
+  {
+  TDebug.out("size in esd: " + audioInputStream.getFrameLength() * nFrameSize);
+  }
+  int	nBufferLength = BUFFER_FRAMES * nFrameSize;
+  byte[]	abData = new byte[nBufferLength];
+  int	nBytesRead = 0;
+  int	nTotalBytes = 0;
+  while (nBytesRead != -1)
+  {
+  try
+  {
+  nBytesRead = audioInputStream.read(abData, 0, abData.length);
+  }
+  catch (IOException e)
+  {
+  if (TDebug.TraceClip || TDebug.TraceAllExceptions)
+  {
+  TDebug.out(e);
+  }
+  }
+  if (nBytesRead >= 0)
+  {
+  nTotalBytes += nBytesRead;
+  if (TDebug.TraceClip)
+  {
+  TDebug.out("TClip.open(): total bytes: " + nTotalBytes);
+  TDebug.out("TClip.open(): Trying to write: " + nBytesRead);
+  }
+  int	nBytesWritten = 0; //m_esdSample.write(abData, 0, nBytesRead);
+  if (TDebug.TraceClip)
+  {
+  TDebug.out("TClip.open(): Written: " + nBytesWritten);
+  }
+  }
+  }
+  // to trigger the events
+  // open();
+  */
 	}
 
 

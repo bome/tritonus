@@ -212,6 +212,10 @@ public class EsdSourceDataLine
 				  }
 				  catch (InterruptedException e)
 				  {
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				  }
 				  }
 				*/

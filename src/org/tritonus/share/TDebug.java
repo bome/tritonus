@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,9 @@ public class TDebug
 
 	private static String indent="";
 
+	// meta-general
+	public static boolean	TraceAllExceptions = getBooleanProperty("TraceAllExceptions");
+
 	// general
 	public static boolean	TraceInit = getBooleanProperty("TraceInit");
 	public static boolean	TraceCircularBuffer = getBooleanProperty("TraceCircularBuffer");
@@ -61,6 +64,7 @@ public class TDebug
 	public static boolean	TraceAudioFileWriter = getBooleanProperty("TraceAudioFileWriter");
 	public static boolean	TraceAudioConverter = getBooleanProperty("TraceAudioConverter");
 	public static boolean	TraceAudioOutputStream = getBooleanProperty("TraceAudioOutputStream");
+	public static boolean	TraceControl = getBooleanProperty("TraceControl");
 
 	// midi common implementation
 	public static boolean	TraceMidiSystem = getBooleanProperty("TraceMidiSystem");

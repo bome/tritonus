@@ -136,6 +136,10 @@ public class AlsaSourceDataLine
 		}
 		catch (Exception e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 			throw new LineUnavailableException();
 		}
 		int	nReturn;
@@ -191,15 +195,15 @@ public class AlsaSourceDataLine
 
 
 /*
-	public void start()
-	{
-		setStarted(true);
-		setActive(true);
-		if (TDebug.TraceSourceDataLine)
-		{
-			TDebug.out("AlsaSourceDataLine.start(): channel started.");
-		}
-	}
+  public void start()
+  {
+  setStarted(true);
+  setActive(true);
+  if (TDebug.TraceSourceDataLine)
+  {
+  TDebug.out("AlsaSourceDataLine.start(): channel started.");
+  }
+  }
 */
 
 
@@ -284,7 +288,7 @@ public class AlsaSourceDataLine
 				int	nWritten = m_alsaPcm.write(m_abFragmentBuffer, 0, m_abFragmentBuffer.length);
 				if (nWritten < 0)
 				{
-				TDebug.out("AlsaSourceDataLine.write(): " + Alsa.getStringError(nWritten));
+					TDebug.out("AlsaSourceDataLine.write(): " + Alsa.getStringError(nWritten));
 				}
 				m_nFragmentBufferUsedBytes = 0;
 			}
@@ -324,11 +328,11 @@ public class AlsaSourceDataLine
 
 
 /*
-  // TODO: check if should block
-  public int writeImpl(byte[] abData, int nOffset, int nLength)
-  {
-  if (TDebug.TraceSourceDataLine)
-  {
+// TODO: check if should block
+public int writeImpl(byte[] abData, int nOffset, int nLength)
+{
+if (TDebug.TraceSourceDataLine)
+{
   TDebug.out("AlsaSourceDataLine.write(): called.");
   }
   if (nLength > 0 && !isActive())

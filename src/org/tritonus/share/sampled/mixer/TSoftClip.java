@@ -105,7 +105,7 @@ public class TSoftClip
 			}
 			catch (IOException e)
 			{
-				if (TDebug.TraceClip)
+				if (TDebug.TraceClip || TDebug.TraceAllExceptions)
 				{
 					TDebug.out(e);
 				}

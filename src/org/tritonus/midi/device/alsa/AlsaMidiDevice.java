@@ -285,6 +285,10 @@ public class AlsaMidiDevice
 			}
 			catch (RuntimeException e)
 			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
 				return false;
 			}
 		}

@@ -26,6 +26,9 @@
 package	javax.sound.midi;
 
 
+import	org.tritonus.share.TDebug;
+
+
 
 public class MetaMessage
     extends	MidiMessage
@@ -94,6 +97,10 @@ public class MetaMessage
 		}
 		catch (InvalidMidiDataException e)
 		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
 		}
 		return message;
 	}
