@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -161,7 +161,11 @@ public class AlsaMidiDevice
 			 */
 			m_nTimestampingQueue = m_aSequencer.allocQueue();
 			m_aSequencer.startQueue(m_nOwnPort, getTimestampingQueue());
-			m_alsaMidiIn = new AlsaMidiIn(m_aSequencer, m_nOwnPort, getClient(), getPort(), getTimestampingQueue(), this);
+			m_alsaMidiIn = new AlsaMidiIn(
+				m_aSequencer, m_nOwnPort,
+				getClient(), getPort(),
+				getTimestampingQueue(), true,
+				this);
 			m_alsaMidiIn.start();
 		}
 		if (getUseOut())
