@@ -42,72 +42,85 @@ public class AlsaDataLineMixerProvider
 	private static boolean	sm_bInitialized = false;
 
 
-
 	public AlsaDataLineMixerProvider()
 	{
 		super();
 		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): begin"); }
-		if (! sm_bInitialized)
+		if (! sm_bInitialized && ! isDisabled())
 		{
-			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): initializing..."); }
-			int[]	anCards = AlsaCtl.getCards();
-			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): num cards: " + anCards.length); }
-			for (int i = 0; i < anCards.length; i++)
+			if (! Alsa.isLibraryAvailable())
 			{
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>():card #" + i + ": " + anCards[i]); }
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): creating Ctl object..."); }
-				String	strPcmName = "hw:" + anCards[i];
-				// String	strPcmName = AlsaDataLineMixer.getPcmName(anCards[i]);
-				AlsaCtl	ctl = null;
-				try
-				{
-					ctl = new AlsaCtl(strPcmName,
-							  0 /* TODO: is this open mode or direction? */);
-				}
-				catch (Exception e)
-				{
-					if (TDebug.TraceMixerProvider || TDebug.TraceAllExceptions) { TDebug.out(e); }
-					continue;
-				}
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): calling getCardInfo()..."); }
-				int[]	anValues = new int[2];
-				String[]	astrValues = new String[6];
-				ctl.getCardInfo(anValues, astrValues);
-				if (TDebug.TraceMixerProvider)
-				{
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): ALSA sound card:");
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): id: " + astrValues[0]);
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): abbreviation: " + astrValues[1]);
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): name: " + astrValues[2]);
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): long name: " + astrValues[3]);
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): mixer id: " + astrValues[4]);
-					TDebug.out("AlsaDataLineMixerProvider.<init>(): mixer name: " + astrValues[5]);
-				}
-				int[]	anDevices = ctl.getPcmDevices();
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): num devices: " + anDevices.length); }
-				// TODO: combine devices into one AlsaDataLineMixer?
-				// pass device number to AlsaDataLineMixer constructor?
-				for (int nDevice = 0; nDevice < anDevices.length; nDevice++)
-				{
-					if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): device #" + nDevice + ": " +  anDevices[nDevice]); }
-				}
-				// ctl.close();
-
-				/*
-				  We do not use strPcmName because the mixer may choose to open as 'plughw', while for ctl, the device name always has to be 'hw'.
-				 */
-				AlsaDataLineMixer	mixer = new AlsaDataLineMixer(anCards[i]);
-				super.addMixer(mixer);
+				disable();
 			}
-			sm_bInitialized = true;
+			else
+			{
+				staticInit();
+				sm_bInitialized = true;
+			}
 		}
 		else
 		{
-			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): already initialized"); }
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): already initialized or disabled"); }
 		}
 
-
 		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): end"); }
+	}
+
+
+
+	protected void staticInit()
+	{
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): begin"); }
+		int[]	anCards = AlsaCtl.getCards();
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): num cards: " + anCards.length); }
+		for (int i = 0; i < anCards.length; i++)
+		{
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit():card #" + i + ": " + anCards[i]); }
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): creating Ctl object..."); }
+			String	strPcmName = "hw:" + anCards[i];
+			// String	strPcmName = AlsaDataLineMixer.getPcmName(anCards[i]);
+			AlsaCtl	ctl = null;
+			try
+			{
+				ctl = new AlsaCtl(strPcmName,
+						  0 /* TODO: is this open mode or direction? */);
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceMixerProvider || TDebug.TraceAllExceptions) { TDebug.out(e); }
+				continue;
+			}
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): calling getCardInfo()..."); }
+			int[]	anValues = new int[2];
+			String[]	astrValues = new String[6];
+			ctl.getCardInfo(anValues, astrValues);
+			if (TDebug.TraceMixerProvider)
+			{
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): ALSA sound card:");
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): id: " + astrValues[0]);
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): abbreviation: " + astrValues[1]);
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): name: " + astrValues[2]);
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): long name: " + astrValues[3]);
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): mixer id: " + astrValues[4]);
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): mixer name: " + astrValues[5]);
+			}
+			int[]	anDevices = ctl.getPcmDevices();
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): num devices: " + anDevices.length); }
+			// TODO: combine devices into one AlsaDataLineMixer?
+			// pass device number to AlsaDataLineMixer constructor?
+			for (int nDevice = 0; nDevice < anDevices.length; nDevice++)
+			{
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): device #" + nDevice + ": " +  anDevices[nDevice]); }
+			}
+			// ctl.close();
+
+			/*
+			  We do not use strPcmName because the mixer may choose to open as 'plughw', while for ctl, the device name always has to be 'hw'.
+			*/
+			AlsaDataLineMixer	mixer = new AlsaDataLineMixer(anCards[i]);
+			super.addMixer(mixer);
+		}
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): end"); }
 	}
 }
 
