@@ -285,6 +285,10 @@ public class ASequencer0
 	public static final String SND_SEQ_GROUP_DEVICE =	"device";
 	public static final String SND_SEQ_GROUP_APPLICATION =	"application";
 
+
+	public static final boolean	DEBUG = false;
+
+
 	static
 	{
 		System.loadLibrary("tritonusalsa");
@@ -305,7 +309,7 @@ public class ASequencer0
 
 	public ASequencer0()
 	{
-		if (true)
+		if (DEBUG)
 		{
 			System.out.println("ASequencer0.<init>:");
 			Thread.dumpStack();
