@@ -185,7 +185,6 @@ extends TestCase
 	{
 		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
 		Player	player = Manager.createPlayer(strLocator);
-		boolean	bExceptionThrown;
 
 		TestMethod	realizeMethod = new TestMethod()
 			{
