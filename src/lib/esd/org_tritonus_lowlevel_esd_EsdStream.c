@@ -1,5 +1,5 @@
 /* 
- *	org_tritonus_lowlevel_esd_EsdStream.cc
+ *	org_tritonus_lowlevel_esd_EsdStream.c
  */
 
 /*
@@ -22,7 +22,6 @@
  *
  */
 
-
 #include	<assert.h>
 #include	<errno.h>
 #include	<stdio.h>
@@ -30,10 +29,10 @@
 #include	"common.h"
 #include	"org_tritonus_lowlevel_esd_EsdStream.h"
 
-
+// TODO: remove, replace by debug_flag
 static int	DEBUG = 0;
 
-static HandleFieldHandler<int>	handler;
+HandleFieldHandlerDeclaration(handler, int)
 
 
 
@@ -46,7 +45,7 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_esd_EsdStream_open
 (JNIEnv *env, jobject obj, jint nFormat, jint nSampleRate)
 {
-	int		nFd;
+	int		nFd = -1;
 	char		name[20];
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_open(): begin\n"); }
@@ -65,7 +64,7 @@ Java_org_tritonus_lowlevel_esd_EsdStream_open
 	}
 	// printf("fd: %d\n", nFd);
 	//perror("abc");
-	handler.setHandle(env, obj, nFd);
+	setHandle(env, obj, nFd);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_open(): end\n"); }
 }
 
@@ -80,11 +79,15 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_esd_EsdStream_write
 (JNIEnv *env, jobject obj, jbyteArray abData, jint nOffset, jint nLength)
 {
+	int		nFd = -1;
+	signed char*	data = NULL;
+	int		nWritten = -1;
+
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_write(): begin\n"); }
-	int		nFd = handler.getHandle(env, obj);
-	signed char*	data = env->GetByteArrayElements(abData, NULL);
-	int		nWritten = write(nFd, data + nOffset, nLength);
-	env->ReleaseByteArrayElements(abData, data, JNI_ABORT);
+	nFd = getHandle(env, obj);
+	data = (*env)->GetByteArrayElements(env, abData, NULL);
+	nWritten = write(nFd, data + nOffset, nLength);
+	(*env)->ReleaseByteArrayElements(env, abData, data, JNI_ABORT);
 	if (DEBUG)
 	{
 		printf("Java_org_tritonus_lowlevel_esd_EsdStream_write: Length: %d\n", (int) nLength);
@@ -105,10 +108,11 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_esd_EsdStream_close
 (JNIEnv *env, jobject obj)
 {
+	int		nFd = -1;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_close(): begin\n"); }
-	int		nFd = handler.getHandle(env, obj);
+	nFd = getHandle(env, obj);
 	close(nFd);
-	handler.setHandle(env, obj, -1);
+	setHandle(env, obj, -1);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_esd_EsdStream_close(): end\n"); }
 }
 
@@ -128,4 +132,4 @@ Java_org_tritonus_lowlevel_esd_EsdStream_setTrace
 }
 
 
-/*** org_tritonus_lowlevel_esd_EsdStream.cc ***/
+/*** org_tritonus_lowlevel_esd_EsdStream.c ***/

@@ -26,6 +26,18 @@
 #include	<string>
 #include	<jni.h>
 
+// the C macros that will replace the template class
+#if 0
+#define HandleFieldHandlerDeclaration(variableName, type) \
+HandleFieldHandlerDeclaration(variableName, type, )
+
+#define HandleFieldHandlerDeclaration(variableName, type, fieldName) \
+static char* ; \
+static jfieldID  ; \
+static int      ;
+
+#endif
+
 
 template<class _handle_type>
 class HandleFieldHandler

@@ -20,9 +20,20 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef _DEBUG_H
+#define _DEBUG_H
 
-static bool	debug_flag = false;
+#include <stdio.h>
+
+
+#define FALSE 0
+#define TRUE 1
+
+
+static int	debug_flag = FALSE;
 static FILE*	debug_file = NULL;
 
+
+#endif /* _DEBUG_H */
 
 /*** debug.h ***/

@@ -10,7 +10,7 @@ JAVAEXTLIBPATH=$(JAVADIR)/$(REL_JAVAEXTLIBPATH)
 OSNAME=@OSNAME@
 ARCHNAME=@ARCHNAME@
 CC=@CC@
-CPPFLAGS=-g -Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
+CPPFLAGS=-g -Wall -Werror -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -36,8 +36,7 @@ JNIOBJ=\
 	org_tritonus_lowlevel_esd_EsdStream.o
 
 OBJ=\
-	$(JNIOBJ) \
-	handlers.o
+	$(JNIOBJ)
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
@@ -55,7 +54,7 @@ JNICLASSES=\
 all: $(LIBDEST)
 
 $(LIBDEST):	$(OBJ)
-	$(CXX) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
+	$(CC) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
