@@ -32,6 +32,7 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
 
 
@@ -181,7 +182,7 @@ public class AlsaUtils
 
 		for (int nFormat = 0; nFormat < sm_aFormatTable.length; nFormat++)
 		{
-			if (sm_aFormatTable[nFormat] != null && sm_aFormatTable[nFormat].matches(audioFormat))
+			if (sm_aFormatTable[nFormat] != null && AudioFormats.matches(sm_aFormatTable[nFormat], audioFormat))
 			{
 				return nFormat;
 			}

@@ -3,6 +3,8 @@
 
 org.tritonus.midi.device.alsa.AlsaSequencerProvider
 org.tritonus.midi.device.alsa.AlsaMidiDeviceProvider
+#org.tritonus.midi.device.midishare.MshSequencerProvider
+#org.tritonus.midi.device.midishare.MshMidiDeviceProvider
 
 # end
 #

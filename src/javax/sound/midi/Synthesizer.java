@@ -53,11 +53,11 @@ public abstract interface Synthesizer
 
 	public Instrument[] getLoadedInstruments();
 
-	public void loadAllInstruments(Soundbank soundbank);
+	public boolean loadAllInstruments(Soundbank soundbank);
 
-	public void unloadAllInstuments(Soundbank soundbank);
+	public void unloadAllInstruments(Soundbank soundbank);
 
-	public void loadInstruments(Soundbank soundbank, Patch[] aPatches);
+	public boolean loadInstruments(Soundbank soundbank, Patch[] aPatches);
 
 	public void unloadInstruments(Soundbank soundbank, Patch[] aPatches);
 }

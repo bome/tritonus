@@ -31,6 +31,7 @@ import	java.util.Arrays;
 import	java.util.Iterator;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFormats;
 
 
 
@@ -133,7 +134,7 @@ public interface DataLine
 			while (formats.hasNext())
 			{
 				AudioFormat	format = (AudioFormat) formats.next();
-				if (format.matches(audioFormat))
+				if (AudioFormats.matches(format, audioFormat))
 				{
 					return true;
 				}

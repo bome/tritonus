@@ -38,6 +38,8 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.MidiUnavailableException;
 import	javax.sound.midi.InvalidMidiDataException;
 import	javax.sound.midi.MidiDevice;
+import	javax.sound.midi.MidiSystem;
+
 
 import	org.tritonus.TDebug;
 import	org.tritonus.midi.device.TSequencer;

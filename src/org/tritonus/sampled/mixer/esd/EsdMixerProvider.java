@@ -36,9 +36,23 @@ import	org.tritonus.sampled.mixer.TMixerProvider;
 public class EsdMixerProvider
 	extends	TMixerProvider
 {
-	protected Mixer createDefaultMixer()
+	static
 	{
-		return new EsdMixer();
+	}
+
+
+
+	public EsdMixerProvider()
+	{
+		/*
+		 *	PROBLEM: this adds a new mixer to the static data
+		 *	structures in TMixerProvicer each time this class
+		 *	is instantiated.
+		 *	addMixer() cannot be called from a static initializer
+		 *	because addMixer() is non-static. It has to be
+		 *	non-static to be able to call this.getClass().
+		 */
+		addMixer(new EsdMixer());
 	}
 }
 

@@ -39,9 +39,6 @@ LIBDEST=tritonus.jar
 LIBDEST_JL=javalayer.jar
 LIBDEST_MP3SP=mp3sp.jar
 LIBDEST_GSM=tritonus_gsm.jar
-#CONFIGFILENAME=Configuration.properties
-#CONFIGFILE=$(SRCDIR_PRIV)/$(CONFIGFILENAME)
-#CONFIGFILE2=$(OBJDIR_PRIV)/$(CONFIGFILENAME)
 
 
 vpath %.java $(SRCDIR_PUB)/midi
@@ -65,6 +62,7 @@ vpath %.java $(SRCDIR_PRIV)/sampled/mixer/jesd
 vpath %.java $(SRCDIR_PRIV)/midi
 vpath %.java $(SRCDIR_PRIV)/midi/device
 vpath %.java $(SRCDIR_PRIV)/midi/device/alsa
+vpath %.java $(SRCDIR_PRIV)/midi/device/midishare
 vpath %.java $(SRCDIR_PRIV)/midi/device/saint
 vpath %.java $(SRCDIR_PRIV)/midi/file
 vpath %.java $(SRCDIR_PRIV)/util
@@ -92,6 +90,7 @@ vpath %.class $(OBJDIR_PRIV)/sampled/mixer/jesd
 vpath %.class $(OBJDIR_PRIV)/midi
 vpath %.class $(OBJDIR_PRIV)/midi/device
 vpath %.class $(OBJDIR_PRIV)/midi/device/alsa
+vpath %.class $(OBJDIR_PRIV)/midi/device/midishare
 vpath %.class $(OBJDIR_PRIV)/midi/device/saint
 vpath %.class $(OBJDIR_PRIV)/midi/file
 vpath %.class $(OBJDIR_PRIV)/util
@@ -119,6 +118,7 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/midi/*.java \
 	$(SRCDIR_PRIV)/midi/device/*.java \
 	$(SRCDIR_PRIV)/midi/device/alsa/*.java \
+	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
 	$(SRCDIR_PRIV)/midi/device/saint/*.java \
 	$(SRCDIR_PRIV)/midi/file/*.java \
 	$(SRCDIR_PRIV)/util/*.java \

@@ -45,6 +45,7 @@ import	javax.sound.sampled.Mixer;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.mixer.TMixer;
+import	org.tritonus.sampled.mixer.TMixerInfo;
 import	org.tritonus.sampled.mixer.TSoftClip;
 import	org.tritonus.util.GlobalInfo;
 
@@ -60,7 +61,7 @@ public class EsdMixer
 	private static AudioFormat[]	FORMATS =
 	{
 		// hack for testing.
-		// new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, 44100/*AudioSystem.NOT_SPECIFIED*/, 8, 1, 1, 44100/*AudioSystem.NOT_SPECIFIED*/, true),
+		// new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025/*AudioSystem.NOT_SPECIFIED*/, 16, 1, 2, 11025/*AudioSystem.NOT_SPECIFIED*/, false),
 		// Formats supported directely by esd.
 		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
 		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
@@ -100,7 +101,7 @@ public class EsdMixer
 
 	public EsdMixer()
 	{
-		super(new Mixer.Info(
+		super(new TMixerInfo(
 			"Esd Mixer",
 			GlobalInfo.getVendor(),
 			"Mixer for the Enlightened Sound Daemon (esd) running on the local machine",

@@ -37,6 +37,7 @@ import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.TargetDataLine;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.util.ArraySet;
 
 
@@ -237,7 +238,7 @@ public abstract class TMixer
 		while (iterator.hasNext())
 		{
 			AudioFormat	supportedFormat = (AudioFormat) iterator.next();
-			if (supportedFormat.matches(format))
+			if (AudioFormats.matches(supportedFormat, format))
 			{
 				return true;
 			}
@@ -257,7 +258,7 @@ public abstract class TMixer
 		while (iterator.hasNext())
 		{
 			AudioFormat	supportedFormat = (AudioFormat) iterator.next();
-			if (supportedFormat.matches(format))
+			if (AudioFormats.matches(supportedFormat, format))
 			{
 				return true;
 			}

@@ -32,6 +32,7 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.FloatSampleBuffer;
 import	org.tritonus.sampled.Encodings;
@@ -139,7 +140,7 @@ public class PCM2PCMConversionProvider
 		AudioFormat sourceFormat=sourceStream.getFormat();
 
 		// the non-conversion case
-		if (sourceFormat.matches(targetFormat)) {
+		if (AudioFormats.matches(sourceFormat, targetFormat)) {
 			return sourceStream;
 		}
 		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
@@ -205,7 +206,7 @@ public class PCM2PCMConversionProvider
 	                                     AudioFormat sourceFormat) {
 		targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
 
-		boolean res=sourceFormat.matches(targetFormat)
+		boolean res=AudioFormats.matches(sourceFormat, targetFormat)
 		            || (
 		                doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
 		                && doMatch(targetFormat.getSampleRate(), sourceFormat.getSampleRate())

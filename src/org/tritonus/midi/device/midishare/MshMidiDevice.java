@@ -79,6 +79,10 @@ public class MshMidiDevice
 					 GlobalInfo.getVersion()));
 		m_bUseIn = true;
 		m_bUseOut = true;
+		if (TDebug.TraceMshMidiDevice)
+		{
+			TDebug.out("MshMidiDevice.<init>(): called.");
+		}
 	}
 	
 
@@ -125,7 +129,7 @@ public class MshMidiDevice
 	protected void openImpl() throws MidiUnavailableException
 	{
 		int i;
-		TDebug.out("MidiShareMidiDevice.openImpl(): called");
+		TDebug.out("MshMidiDevice.openImpl(): called");
 		
 		try {
 		
@@ -236,6 +240,16 @@ public class MshMidiDevice
 	public Receiver getReceiver()
 		throws	MidiUnavailableException
 	{
+		/*
+		 *	Another quick&dirty solution. In the Sun jdk1.3,
+		 *	MidiDevice.getReceiver() does not open the MidiDevice
+		 *	the Receiver is fetched from. Since the user program
+		 *	has no way to find out the MidiDevice from a Receiver
+		 *	object, it cannot open the MidiDevice itself.
+		 *	So we have to do it here.
+		 *	open() is guaranteed to be idempotent.
+		 */
+		open();
 		// TODO: check number
 		return new MshReceiver();
 	}
@@ -244,6 +258,10 @@ public class MshMidiDevice
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
+		/*
+		 *	See the comment in getReceiver().
+		 */
+		open();
 		// TODO: check number
 		return new MshTransmitter();
 	}

@@ -45,6 +45,7 @@ import	javax.sound.midi.Patch;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.midi.device.TMidiDeviceInfo;
 import	org.tritonus.util.GlobalInfo;
 
 
@@ -63,7 +64,7 @@ public class AlsaSynthesizer
 	public AlsaSynthesizer(int nClient, int nPort)
 	{
 		super(
-			new MidiDevice.Info(
+			new TMidiDeviceInfo(
 				"ALSA Synthesizer (" + nClient + ":" + nPort + ")",
 				GlobalInfo.getVendor(),
 				"Synthesizer based on the ALSA sequencer",
@@ -182,21 +183,23 @@ public class AlsaSynthesizer
 
 
 
-	public void loadAllInstruments(Soundbank soundbank)
+	public boolean loadAllInstruments(Soundbank soundbank)
+	{
+		return false;
+	}
+
+
+
+	public void unloadAllInstruments(Soundbank soundbank)
 	{
 	}
 
 
 
-	public void unloadAllInstuments(Soundbank soundbank)
+
+	public boolean loadInstruments(Soundbank soundbank, Patch[] aPatches)
 	{
-	}
-
-
-
-
-	public void loadInstruments(Soundbank soundbank, Patch[] aPatches)
-	{
+		return false;
 	}
 
 

@@ -94,7 +94,7 @@ public class AudioUtils
 		while (possibleFormats.hasNext())
 		{
 			AudioFormat	format = (AudioFormat) possibleFormats.next();
-			if (format.matches(sourceFormat))
+			if (AudioFormats.matches(format, sourceFormat))
 			{
 				return true;
 			}

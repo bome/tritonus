@@ -76,7 +76,7 @@ public class Service
 					Class	cls = Class.forName(strClassName);
 					if (TDebug.TraceService)
 					{
-						System.out.println("now creating instance");
+						System.out.println("now creating instance of " + cls);
 					}
 					Object	instance = cls.newInstance();
 					providers.add(instance);

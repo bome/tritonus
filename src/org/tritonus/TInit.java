@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -47,15 +47,6 @@ import	org.tritonus.util.Service;
 
 public class TInit
 {
-/*
-	private static interface ClassRegistrationAction
-	{
-		public void register(Class clazz)
-			throws	Exception;
-	}
-*/
-
-
 	private static interface ProviderRegistrationAction
 	{
 		public void register(Object provider)
@@ -66,122 +57,111 @@ public class TInit
 
 	static
 	{
-		// MidiDeviceProviders
-		registerClasses(MidiDeviceProvider.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
-							TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
-						}
-				});
+		ProviderRegistrationAction	action = null;
 
+		// MidiDeviceProviders
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
+						TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
+					}
+			};
+		registerClasses(MidiDeviceProvider.class, action);
 
 
 		// MidiFileReaders
-		registerClasses(MidiFileReader.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							MidiFileReader	provider = (MidiFileReader) obj;
-							TMidiConfig.addMidiFileReader(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MidiFileReader	provider = (MidiFileReader) obj;
+						TMidiConfig.addMidiFileReader(provider);
+					}
+			};
+		registerClasses(MidiFileReader.class, action);
 
-		if (TDebug.TraceInit)
-		{
-			TDebug.out("TInit.<clinit>(): registered all midiFileReaders");
-		}
 
 		// MidiFileWriters
-		registerClasses(MidiFileWriter.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							MidiFileWriter	provider = (MidiFileWriter) obj;
-							TMidiConfig.addMidiFileWriter(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MidiFileWriter	provider = (MidiFileWriter) obj;
+						TMidiConfig.addMidiFileWriter(provider);
+					}
+			};
+		registerClasses(MidiFileWriter.class, action);
 
-
-
-
-		if (TDebug.TraceInit)
-		{
-			TDebug.out("TInit.<clinit>(): registered all midiFileWriters");
-		}
 
 		// SoundbankReaders
-		registerClasses(SoundbankReader.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							SoundbankReader	provider = (SoundbankReader) obj;
-							TMidiConfig.addSoundbankReader(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						SoundbankReader	provider = (SoundbankReader) obj;
+						TMidiConfig.addSoundbankReader(provider);
+					}
+			};
+		registerClasses(SoundbankReader.class, action);
 
-
-
-
-		if (TDebug.TraceInit)
-		{
-			TDebug.out("TInit.<clinit>(): registered all soundbankReaders");
-		}
 
 		// AudioFileReaders
-		registerClasses(AudioFileReader.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							AudioFileReader	provider = (AudioFileReader) obj;
-							TAudioConfig.addAudioFileReader(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						AudioFileReader	provider = (AudioFileReader) obj;
+						TAudioConfig.addAudioFileReader(provider);
+					}
+			};
+		registerClasses(AudioFileReader.class, action);
 
 
 		// AudioFileWriters
-		registerClasses(AudioFileWriter.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							AudioFileWriter	provider = (AudioFileWriter) obj;
-							TAudioConfig.addAudioFileWriter(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						AudioFileWriter	provider = (AudioFileWriter) obj;
+						TAudioConfig.addAudioFileWriter(provider);
+					}
+			};
+		registerClasses(AudioFileWriter.class, action);
 
 
 		// FormatConversionProviders
-		registerClasses(FormatConversionProvider.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							FormatConversionProvider	provider = (FormatConversionProvider) obj;
-							TAudioConfig.addFormatConversionProvider(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						FormatConversionProvider	provider = (FormatConversionProvider) obj;
+						TAudioConfig.addFormatConversionProvider(provider);
+					}
+			};
+		registerClasses(FormatConversionProvider.class, action);
+
 
 		// MixerProviders
-		registerClasses(MixerProvider.class, new ProviderRegistrationAction()
-				{
-					public void register(Object obj)
-						throws	Exception
-						{
-							MixerProvider	provider = (MixerProvider) obj;
-							TAudioConfig.addMixerProvider(provider);
-						}
-				});
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MixerProvider	provider = (MixerProvider) obj;
+						TAudioConfig.addMixerProvider(provider);
+					}
+			};
+		registerClasses(MixerProvider.class, action);
 	}
-
-
-
 
 
 
@@ -190,7 +170,7 @@ public class TInit
 	{
 		if (TDebug.TraceInit)
 		{
-			TDebug.out("TInit.registerClasses(): before getting of resource string");
+			TDebug.out("TInit.registerClasses(): registering for: " + providerClass);
 		}
 		Iterator	providers = Service.providers(providerClass);
 		if (providers != null)

@@ -31,6 +31,17 @@ import	org.tritonus.TDebug;
 
 public class Alsa
 {
+	static
+	{
+		if (TDebug.TraceAlsaNative)
+		{
+			System.out.println("Alsa.<clinit>(): loading native library tritonusalsa");
+		}
+		System.loadLibrary("tritonusalsa");
+	}
+
+
+
 	public static final int	SND_CARDS = 8;
 
 

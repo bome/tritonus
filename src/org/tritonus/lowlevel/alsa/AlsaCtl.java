@@ -35,6 +35,17 @@ public class AlsaCtl
 
 
 
+	static
+	{
+		if (TDebug.TraceAlsaNative)
+		{
+			System.out.println("AlsaCtl.<clinit>(): loading native library tritonusalsa");
+		}
+		System.loadLibrary("tritonusalsa");
+	}
+
+
+
 	public AlsaCtl(int nCard)
 		throws	Exception
 	{

@@ -72,8 +72,8 @@ public interface Mixer
 		private String		m_strVersion;
 
 
-		// originally: protected
-		public Info(String strName,
+
+		protected Info(String strName,
 			    String strVendor,
 			    String strDescription,
 			    String strVersion)

@@ -38,6 +38,7 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.util.ArraySet;
 
 /**
@@ -125,7 +126,7 @@ public abstract class TMatrixFormatConversionProvider
 		{
 			Map.Entry	entry = (Map.Entry) iterator.next();
 			AudioFormat	format = (AudioFormat) entry.getKey();
-			if (format.matches(sourceFormat))
+			if (AudioFormats.matches(format, sourceFormat))
 			{
 				Collection	targetEncodings = (Collection) entry.getValue();
 				return (AudioFormat.Encoding[]) targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
@@ -155,7 +156,7 @@ public abstract class TMatrixFormatConversionProvider
 		{
 			Map.Entry	entry = (Map.Entry) iterator.next();
 			AudioFormat	format = (AudioFormat) entry.getKey();
-			if (format.matches(sourceFormat))
+			if (AudioFormats.matches(format, sourceFormat))
 			{
 				Map	targetEncodings = (Map) entry.getValue();
 				Collection	targetFormats = (Collection) targetEncodings.get(targetEncoding);

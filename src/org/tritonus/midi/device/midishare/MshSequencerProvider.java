@@ -59,8 +59,11 @@ public class MshSequencerProvider
 
 	public MshSequencerProvider()
 	{
-		TDebug.out("MshSequencerProvider.<init>: called");
-		// Thread.dumpStack();
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("MshSequencerProvider.<init>: called");
+			// Thread.dumpStack();
+		}
 		synchronized (MshSequencerProvider.class)
 		{
 			if (m_info == null)
@@ -77,8 +80,11 @@ public class MshSequencerProvider
 
 	public MidiDevice.Info[] getDeviceInfo()
 	{
-		TDebug.out("MshSequencerProvider.getDeviceInfo(): called");
-		// Thread.dumpStack();
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("MshSequencerProvider.getDeviceInfo(): called");
+			// Thread.dumpStack();
+		}
 		MidiDevice.Info[]	infos = new MidiDevice.Info[1];
 		infos[0] = m_info;
 		return infos;
@@ -87,8 +93,11 @@ public class MshSequencerProvider
 
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
-		TDebug.out("MshSequencerProvider.getDevice(): called with info: " + info);
-		// Thread.dumpStack();
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("MshSequencerProvider.getDevice(): called with info: " + info);
+			// Thread.dumpStack();
+		}
 		if (info.equals(m_info))
 		{
 			return new MshSequencer(m_info);

@@ -40,6 +40,7 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.AudioFileWriter;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.sampled.AudioUtils;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.Encodings;
@@ -381,7 +382,7 @@ public abstract class TAudioFileWriter
 			{
 				TDebug.out("TAudioFileWriter.isAudioFormatSupportedImpl(): matching against format : " + handledFormat);
 			}
-			if (handledFormat.matches(audioFormat))
+			if (AudioFormats.matches(handledFormat, audioFormat))
 			{
 				if (TDebug.TraceAudioFileWriter)
 				{

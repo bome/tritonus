@@ -104,11 +104,11 @@ public class AlsaSequencer
 
 	protected void openImpl()
 	{
-		m_controlASequencer = new ASequencer("Tritonus ALSA sequencer (control)");
+		m_controlASequencer = new ASequencer("Tritonus ALSA Sequencer (control)");
 		m_nControlClient = m_controlASequencer.getClientId();
 		m_nControlPort = m_controlASequencer.createPort("control port", ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ, 0, ASequencer.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
-		m_dataASequencer = new ASequencer("Tritonus ALSA sequencer (data)");
+		m_dataASequencer = new ASequencer("Tritonus ALSA Sequencer (data)");
 		m_nDataClient = m_dataASequencer.getClientId();
 		m_nDataPort = m_dataASequencer.createPort("data port", ASequencer.SND_SEQ_PORT_CAP_WRITE | ASequencer.SND_SEQ_PORT_CAP_SUBS_WRITE | ASequencer.SND_SEQ_PORT_CAP_READ | ASequencer.SND_SEQ_PORT_CAP_SUBS_READ, 0, ASequencer.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 

@@ -77,10 +77,10 @@ public interface MidiDevice
 
 
 
-		public /*protected*/ Info(String strName,
-					  String strVendor,
-					  String strDescription,
-					  String strVersion)
+		protected Info(String strName,
+			       String strVendor,
+			       String strDescription,
+			       String strVersion)
 		{
 			m_strName = strName;
 			m_strVendor = strVendor;

@@ -63,7 +63,10 @@ public class MshMidiDeviceProvider
 
 	public MshMidiDeviceProvider()
 	{
-		TDebug.out("MshMidiDeviceProvider.<init>: called");
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("MshMidiDeviceProvider.<init>: called");
+		}
 		synchronized (MshMidiDeviceProvider.class)
 		{
 			if (m_devices == null)
@@ -78,7 +81,10 @@ public class MshMidiDeviceProvider
 
 	public MidiDevice.Info[] getDeviceInfo()
 	{
-		TDebug.out("MshMidiDeviceProvider.getDeviceInfo(): called");
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("MshMidiDeviceProvider.getDeviceInfo(): called");
+		}
 		List		infos = new ArrayList();
 		Iterator	iterator = m_devices.iterator();
 		while (iterator.hasNext())
@@ -94,7 +100,10 @@ public class MshMidiDeviceProvider
 
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
-		TDebug.out("MshMidiDeviceProvider.getDevice(): called");
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("MshMidiDeviceProvider.getDevice(): called");
+		}
 		Iterator	iterator = m_devices.iterator();
 		while (iterator.hasNext())
 		{

@@ -32,6 +32,7 @@ import	java.util.Iterator;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.util.ArraySet;
 
 
@@ -175,7 +176,7 @@ public abstract class TSimpleFormatConversionProvider
 		while (iterator.hasNext())
 		{
 			AudioFormat	format = (AudioFormat) iterator.next();
-			if (format.matches(sourceFormat))
+			if (AudioFormats.matches(format, sourceFormat))
 			{
 				return true;
 			}
@@ -191,7 +192,7 @@ public abstract class TSimpleFormatConversionProvider
 		while (iterator.hasNext())
 		{
 			AudioFormat	format = (AudioFormat) iterator.next();
-			if (format.matches(targetFormat))
+			if (AudioFormats.matches(format, targetFormat))
 			{
 				return true;
 			}

@@ -27,6 +27,7 @@ package	org.tritonus.lowlevel.alsa;
 
 import	javax.sound.midi.MidiEvent;
 
+import	org.tritonus.TDebug;
 
 /**	The lowest level of interface to the ALSA sequencer.
  */
@@ -291,6 +292,10 @@ public class ASequencer0
 
 	static
 	{
+		if (TDebug.TraceASequencer)
+		{
+			System.out.println("ASequencer0.<clinit>(): loading native library tritonusalsa");
+		}
 		System.loadLibrary("tritonusalsa");
 	}
 

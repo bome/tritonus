@@ -45,6 +45,7 @@ import	javax.sound.sampled.Mixer;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.mixer.TMixer;
+import	org.tritonus.sampled.mixer.TMixerInfo;
 import	org.tritonus.sampled.mixer.TSoftClip;
 import	org.tritonus.util.GlobalInfo;
 
@@ -103,7 +104,7 @@ public class AlsaMixer
 
 	public AlsaMixer(int nCard)
 	{
-		super(new Mixer.Info(
+		super(new TMixerInfo(
 			"Alsa Mixer (" + nCard + ")",
 			GlobalInfo.getVendor(),
 			"Mixer for the Advanced Linux Sound Architecture (card " + nCard + ")",

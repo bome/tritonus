@@ -33,6 +33,7 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFormats;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.Encodings;
 
@@ -100,7 +101,7 @@ public class UlawFormatConversionProvider
 		AudioFormat sourceFormat=sourceStream.getFormat();
 		// the non-conversion case
 		// TODO: does this work OK when some fields are AudioSystem.NOT_SPECIFIED ?
-		if (sourceFormat.matches(targetFormat)) {
+		if (AudioFormats.matches(sourceFormat, targetFormat)) {
 			return sourceStream;
 		}
 		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())

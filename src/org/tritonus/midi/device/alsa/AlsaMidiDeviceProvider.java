@@ -46,16 +46,22 @@ public class AlsaMidiDeviceProvider
 	// perhaps move to superclass
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];
 
-	private List		m_devices;
-	private ASequencer	m_aSequencer;
+	private static List		m_devices;
+	private static ASequencer	m_aSequencer;
 
 
 
 	public AlsaMidiDeviceProvider()
 	{
-		m_devices = new ArrayList();
-		m_aSequencer = new ASequencer("Tritonus ALSA device manager");
-		scanPorts();
+		synchronized (AlsaMidiDeviceProvider.class)
+		{
+			if (m_devices == null)
+			{
+				m_devices = new ArrayList();
+				m_aSequencer = new ASequencer("Tritonus ALSA device manager");
+				scanPorts();
+			}
+		}
 	}
 
 
@@ -131,30 +137,30 @@ public class AlsaMidiDeviceProvider
 					m_devices.add(device);
 				}
 /*
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
-				{
-					TDebug.out("gm");
-				}
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
-				{
-					TDebug.out("gs");
-				}
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
-				{
-					TDebug.out("xg");
-				}
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_SYNTH) != 0)
-				{
-					TDebug.out("synth");
-				}
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
-				{
-					TDebug.out("direct sample");
-				}
-				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
-				{
-					TDebug.out("sample");
-				}
+  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GM) != 0)
+  {
+  TDebug.out("gm");
+  }
+  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GS) != 0)
+  {
+  TDebug.out("gs");
+  }
+  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_XG) != 0)
+  {
+  TDebug.out("xg");
+  }
+  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_SYNTH) != 0)
+  {
+  TDebug.out("synth");
+  }
+  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) != 0)
+  {
+  TDebug.out("direct sample");
+  }
+  if ((nType & ASequencer.SND_SEQ_PORT_TYPE_SAMPLE) != 0)
+  {
+  TDebug.out("sample");
+  }
 */
 			}
 		}

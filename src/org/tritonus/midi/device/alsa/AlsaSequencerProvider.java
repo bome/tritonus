@@ -36,6 +36,7 @@ import	javax.sound.midi.spi.MidiDeviceProvider;
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
 import	org.tritonus.util.GlobalInfo;
+import	org.tritonus.midi.device.TMidiDeviceInfo;
 
 
 
@@ -43,17 +44,23 @@ import	org.tritonus.util.GlobalInfo;
 public class AlsaSequencerProvider
 	extends		MidiDeviceProvider
 {
-	private MidiDevice.Info		m_info;
+	private static MidiDevice.Info		m_info;
 
 
 
 	public AlsaSequencerProvider()
 	{
-		m_info = new MidiDevice.Info(
-			"Tritonus ALSA sequencer",
-			GlobalInfo.getVendor(),
-			"this sequencer uses the ALSA sequencer",
-			GlobalInfo.getVersion());
+		synchronized (AlsaSequencerProvider.class)
+		{
+			if (m_info == null)
+			{
+				m_info = new TMidiDeviceInfo(
+					"Tritonus ALSA sequencer",
+					GlobalInfo.getVendor(),
+					"this sequencer uses the ALSA sequencer",
+					GlobalInfo.getVersion());
+			}
+		}
 	}
 
 

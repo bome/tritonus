@@ -29,20 +29,23 @@ package	org.tritonus.sampled.mixer.alsa;
 import	javax.sound.sampled.Mixer;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.sampled.mixer.TAdvancedMixerProvider;
-
+import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.Alsa;
+import	org.tritonus.sampled.mixer.TMixerProvider;
 
 
 
 public class AlsaMixerProvider
-	extends	TAdvancedMixerProvider
+	extends	TMixerProvider
 {
 	public AlsaMixerProvider()
 	{
 		super();
 		int	nNumCards = Alsa.getCards();
-		System.out.println("num cards: " + nNumCards);
+		if (TDebug.TraceMixerProvider)
+		{
+			System.out.println("AlsaMixerProvider.<init>(): num cards: " + nNumCards);
+		}
 		for (int i = 0; i < nNumCards; i++)
 		{
 			Alsa.loadCard(i);
