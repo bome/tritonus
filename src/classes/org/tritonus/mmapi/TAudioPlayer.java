@@ -10,103 +10,54 @@ import	javax.microedition.media.MediaException;
 import	javax.microedition.media.Player;
 import	javax.microedition.media.PlayerListener;
 import	javax.microedition.media.TimeBase;
+import javax.microedition.media.protocol.DataSource;
 
 
 
 public class TAudioPlayer
 extends TPlayer
 {
-	public TAudioPlayer()
+	public TAudioPlayer(DataSource source)
 	{
-		super();
+		super(source);
 	}
 
 
-	// Player methods
 
-	// TODO:
-	public void realize()
-		throws MediaException
+	protected void doRealize()
 	{
 	}
 
 
 
 	// TODO:
-	public void prefetch()
-		throws MediaException
+	protected void doPrefetch()
 	{
 	}
 
 
 
-	// TODO:
-	public void start()
-		throws MediaException
+	protected void doStart()
 	{
 	}
 
 
 
-	// TODO:
-	public void stop()
+	protected void doStop()
 	{
 	}
 
 
 
-	// TODO:
-	public void deallocate()
+	protected void doDeallocate()
 	{
 	}
 
 
 
-	// TODO:
-	public void close()
+	protected void doClose()
 	{
 	}
-
-
-
-	// TODO:
-	public long setMediaTime(long lNow)
-	{
-		return -1;
-	}
-
-
-
-	// TODO:
-	public long getMediaTime()
-	{
-		return -1;
-	}
-
-
-
-	// TODO:
-	public int getState()
-	{
-		return -1;
-	}
-
-
-
-	// TODO:
-	public long getDuration()
-	{
-		return -1;
-	}
-
-
-
-	public void setLoopCount(int nCount)
-	{
-		// TODO:
-	}
-
-
 }
 
 
