@@ -12,6 +12,7 @@ IDEAS
 TODO
 ----
 
+- in src/lib/alsa, change constants_check.h to constants_check.c and include it into the object list of in Makefile.in. This is to isolate its effects.
 - rename DEBUG to debug_flag for all native libs
 - separate static inner classes in all native/lowlevel classes
 - some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
