@@ -70,8 +70,15 @@ public class Cdparanoia
 
 
 
-	/**	Opens the device.
-		Calls cdda_identify(), cdda_open(), paranoia_init()
+	/**	Searches the device.
+		Calls cdda_identify().
+
+		@return 0 on success, negative values on error.
+	*/
+	private native int find(String strDevice);
+
+	/**	Opens and initializes the device.
+		Calls cdda_open(), paranoia_init()
 		and paranoia_modeset().
 
 		@return 0 on success, negative values on error.

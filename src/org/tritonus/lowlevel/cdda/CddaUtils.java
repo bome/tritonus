@@ -33,7 +33,7 @@ import	org.tritonus.share.TDebug;
 
 
 
-/**
+/** Gets the preferred CDDA implementation.
  */
 public class CddaUtils
 {
