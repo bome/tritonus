@@ -90,6 +90,9 @@ public class TDebug
 	public static boolean	TraceSequencer = getBooleanProperty("TraceSequencer");
 	public static boolean	TraceMidiDevice = getBooleanProperty("TraceMidiDevice");
 
+	// misc
+	public static boolean	TraceCdda = getBooleanProperty("TraceCdda");
+
 
 
 
