@@ -113,11 +113,11 @@ public class EsdMixer
 		      Arrays.asList(TARGET_LINE_INFOS));
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("EsdMixer.<init>: beginning.");
+			TDebug.out("EsdMixer.<init>: begin");
 		}
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("EsdMixer.<init>: end.");
+			TDebug.out("EsdMixer.<init>: end");
 		}
 	}
 
@@ -128,112 +128,55 @@ public class EsdMixer
 	// TODO: allow real close and reopen of mixer
 	public void open()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.open(): begin");
+		}
+
+		// currently does nothing
+
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.open(): end");
+		}
 	}
 
 
 
 	public void close()
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.close(): begin");
+		}
+
+		// currently does nothing
+
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.close(): end");
+		}
 	}
 
-
-	// TODO: should do this to be able to report open/active lines
-	// with getSourceLines() and getTargetLines()
-	/*
-	  public void registerChannel(EsdChannel channel)
-	  {
-	  int	nFlowID = channel.getFlowID();
-	  synchronized (m_channels)
-	  {
-	  m_channels.put(new Integer(nFlowID), channel);
-	  }
-	  }
-
-
-
-	  public void unregisterChannel(EsdChannel channel)
-	  {
-	  int	nFlowID = channel.getFlowID();
-	  synchronized (m_channels)
-	  {
-	  m_channels.remove(new Integer(nFlowID));
-	  }
-	  }
-	*/
 
 
 
 	//////////////// Mixer //////////////////////////////////////
 
 
-	public Line getLine(Line.Info info)
-		throws	LineUnavailableException
-	{
-		DataLine.Info	dataLineInfo = (DataLine.Info) info;
-		Class		lineClass = info.getLineClass();
-		AudioFormat[]	aFormats = dataLineInfo.getFormats();
-		AudioFormat	format = null;
-		if (lineClass == SourceDataLine.class)
-		{
-			format = getSupportedSourceFormat(aFormats);
-			return getSourceDataLine(format, dataLineInfo.getMaxBufferSize());
-		}
-		else if (lineClass == Clip.class)
-		{
-			format = getSupportedSourceFormat(aFormats);
-			return getClip(format);
-		}
-		else if (lineClass == TargetDataLine.class)
-		{
-			format = getSupportedTargetFormat(aFormats);
-			return getTargetDataLine(format, dataLineInfo.getMaxBufferSize());
-		}
-		else
-		{
-			throw new LineUnavailableException("unknown line class: " + lineClass);
-		}
-	}
-
-
-	private AudioFormat getSupportedSourceFormat(AudioFormat[] aFormats)
-	{
-		for (int i = 0; i < aFormats.length; i++)
-		{
-			if (isSourceFormatSupported(aFormats[i]))
-			{
-				return aFormats[i];
-			}
-		}
-		throw new IllegalArgumentException("no line matchine one of the passed formats");
-	}
-
-
-
-	private AudioFormat getSupportedTargetFormat(AudioFormat[] aFormats)
-	{
-		for (int i = 0; i < aFormats.length; i++)
-		{
-			if (isTargetFormatSupported(aFormats[i]))
-			{
-				return aFormats[i];
-			}
-		}
-		throw new IllegalArgumentException("no line matchine one of the passed formats");
-	}
-
-
-/*
-	public Line.Info getLineInfo(Line.Info info)
-	{
-		// TODO:
-		return null;
-	}
-*/
-
-
 	public int getMaxLines(Line.Info info)
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getMaxLines(): begin");
+		}
+
 		// TODO:
+
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getMaxLines(): end");
+		}
 		return 0;
 	}
 
@@ -243,9 +186,13 @@ public class EsdMixer
 
 
 	// nBufferSize is in bytes!
-	private SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
+	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getSourceDataLine(): begin");
+		}
 		if (TDebug.TraceMixer)
 		{
 			TDebug.out("EsdMixer.getSourceDataLine(): format: " + format);
@@ -257,20 +204,28 @@ public class EsdMixer
 		}
 		// int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
 		EsdSourceDataLine	sourceDataLine = new EsdSourceDataLine(this, format, nBufferSize);
-		// registerChannel(sourceDataLine);
 		sourceDataLine.start();
 		if (TDebug.TraceMixer)
 		{
 			TDebug.out("EsdMixer.getSourceDataLine(): returning: " + sourceDataLine);
 		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getSourceDataLine(): end");
+		}
 		return sourceDataLine;
 	}
 
 
+
 	// nBufferSize is in bytes!
-	private TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
+	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getTargetDataLine(): begin");
+		}
 		int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
 		EsdTargetDataLine	targetDataLine = new EsdTargetDataLine(this, format, nBufferSizeInBytes);
 		// registerChannel(sourceDataLine);
@@ -279,16 +234,28 @@ public class EsdMixer
 		{
 			TDebug.out("EsdMixer.getTargetDataLine(): returning: " + targetDataLine);
 		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getTargetDataLine(): end");
+		}
 		return targetDataLine;
 	}
 
 
 
-	private Clip getClip(AudioFormat format)
+	protected Clip getClip(AudioFormat format)
 		throws	LineUnavailableException
 	{
-		// return new EsdClip(this);
-		return new TSoftClip(this, format);
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getClip(): begin");
+		}
+		Clip	clip = new TSoftClip(this, format);
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("EsdMixer.getClip(): end");
+		}
+		return clip;
 	}
 
 
