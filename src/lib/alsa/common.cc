@@ -4,6 +4,8 @@
 
 #include	"common.h"
 
+static bool DEBUG = false;
+
 
 
 void
@@ -11,10 +13,15 @@ throwRuntimeException(JNIEnv *env, char* pStrMessage)
 {
 	static  jclass	runtimeExceptionClass = NULL;
 
+	if (env->ExceptionOccurred() != NULL)
+	{
+		if (DEBUG) { env->ExceptionDescribe(); }
+		env->ExceptionClear();
+	}
 	if (runtimeExceptionClass == NULL)
 	{
 		runtimeExceptionClass = env->FindClass("java/lang/RuntimeException");
-		// printf("RTE: %p\n", runtimeExceptionClass);
+		if (DEBUG) { printf("RTE: %p\n", runtimeExceptionClass); }
 		if (runtimeExceptionClass == NULL)
 		{
 			env->FatalError("cannot get class object for java.lang.RuntimeException");
