@@ -315,7 +315,7 @@ public class EsdSourceDataLine
 		m_bMuted = bMuted;
 		if (m_bMuted)
 		{
-			m_esdStream.setVolume(0, 0);
+			// m_esdStream.setVolume(0, 0);
 		}
 		else
 		{
@@ -337,8 +337,8 @@ public class EsdSourceDataLine
 		float	fRightDb = m_fGain - m_fPan * 15.0F;
 		float	fLeftLinear = (float) TVolumeUtils.log2lin(fLeftDb);
 		float	fRightLinear = (float) TVolumeUtils.log2lin(fRightDb);
-		m_esdStream.setVolume((int) (fLeftLinear * 256),
-				      (int) (fRightLinear * 256));
+// 		m_esdStream.setVolume((int) (fLeftLinear * 256),
+// 				      (int) (fRightLinear * 256));
 	}
 
 
