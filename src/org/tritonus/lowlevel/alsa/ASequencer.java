@@ -229,6 +229,19 @@ public class ASequencer
 	}
 
 
+
+	/**	Returns tempo in MPQ.
+	 */
+	public int getQueueTempo(int nQueue)
+	{
+		int[]	anValues = new int[2];
+		getQueueTempo(nQueue,
+			      anValues);
+		return anValues[0] * anValues[1];
+	}
+
+
+
 	/////////////////////////// sending MIDI messages
 
 

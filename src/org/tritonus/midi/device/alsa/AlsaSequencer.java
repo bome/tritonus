@@ -56,15 +56,13 @@ public class AlsaSequencer
 	private int		m_nQueue;
 	private AlsaMidiIn	m_alsaMidiIn;
 	private AlsaMidiOut	m_alsaMidiOut;
-	private float		m_fTempoInMPQ;
-	private float		m_fTempoFactor;
+	private Thread		m_loaderThread;
 
 
 
 	public AlsaSequencer(MidiDevice.Info info)
 	{
 		super(info);
-		m_fTempoInMPQ = 500000;
 	}
 
 
@@ -147,10 +145,11 @@ public class AlsaSequencer
 	{
 /*	TODO:
 	setTempoInMPQ(500000);
- */
+*/
 		m_controlASequencer.setQueueTempo(getQueue(), getSequence().getResolution(), 500000/*getBPM() * getFactor()*/);
 		startSeq();
-		loadSequenceToNative();
+		m_loaderThread = new LoaderThread();
+		m_loaderThread.start();
 	}
 
 
@@ -204,58 +203,19 @@ public class AlsaSequencer
 
 
 
-	public float getTempoInBPM()
+	protected float getTempoNative()
 	{
-		return 6.0E7F / getTempoInMPQ();
+		return m_controlASequencer.getQueueTempo(getQueue());
 	}
 
 
 
-	public void setTempoInBPM(float fBPM)
+	protected void setTempoNative(float fRealMPQ)
 	{
-		setTempoInMPQ(6.0E7F / fBPM);
-	}
-
-
-
-	public float getTempoInMPQ()
-	{
-		return m_fTempoInMPQ;
-	}
-
-
-
-	public void setTempoInMPQ(float fMPQ)
-	{
-		m_fTempoInMPQ = fMPQ;
-		setTempoImpl();
-	}
-
-
-
-	public float getTempoFactor()
-	{
-		return m_fTempoFactor;
-	}
-
-
-
-	public void setTempoFactor(float fFactor)
-	{
-		m_fTempoFactor = fFactor;
-		setTempoImpl();
-	}
-
-
-
-	private void setTempoImpl()
-	{
-		float	fRealTempo = getTempoInMPQ() * getTempoFactor();
-		if (TDebug.TraceAlsaSequencer)
+		if (m_controlASequencer != null)
 		{
-			TDebug.out("AlsaSequencer.setTempoImpl(): real tempo: " + fRealTempo);
+			m_controlASequencer.setQueueTempo(getQueue(), getSequence().getResolution(), (int) fRealMPQ);
 		}
-		m_controlASequencer.setQueueTempo(getQueue(), getSequence().getResolution(), (int) fRealTempo);
 	}
 
 
@@ -429,6 +389,10 @@ public class AlsaSequencer
 			anTrackPositions[nBestTrack]++;
 			MidiMessage	message = event.getMessage();
 			long		lTick = event.getTick();
+			if (TDebug.TraceAlsaSequencer)
+			{
+				TDebug.out("AlsaSequencer.loadSequenceToNative(): enqueueing event with tick " + lTick);
+			}
 			m_alsaMidiOut.enqueueMessage(message, lTick);
 		}
 	}
@@ -555,6 +519,24 @@ public class AlsaSequencer
 			// TODO: remove subscription
 		}
 	}
+
+
+
+
+	private class LoaderThread
+		extends	Thread
+	{
+		public LoaderThread()
+		{
+		}
+
+
+		public void run()
+		{
+			loadSequenceToNative();
+		}
+	}
+
 
 
 /*

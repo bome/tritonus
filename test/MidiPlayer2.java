@@ -78,6 +78,8 @@ public class MidiPlayer2
 	 */
 	private static boolean		DEBUG = true;
 
+	private static Sequencer	sm_sequencer = null;
+
 
 
 	public static void main(String[] args)
@@ -175,17 +177,16 @@ public class MidiPlayer2
 		 *	Now, we need a Sequencer to play the Sequence.
 		 *	Here, we simply request the default sequencer.
 		 */
-		Sequencer	sequencer = null;
 		try
 		{
-			sequencer = MidiSystem.getSequencer();
+			sm_sequencer = MidiSystem.getSequencer();
 		}
 		catch (MidiUnavailableException e)
 		{
 			e.printStackTrace();
 			System.exit(1);
 		}
-		if (sequencer == null)
+		if (sm_sequencer == null)
 		{
 			System.out.println("MidiPlayer2.main(): can't get a Sequencer");
 			System.exit(1);
@@ -201,13 +202,14 @@ public class MidiPlayer2
 		 *
 		 *	Thanks to Espen Riskedal for finding this trick.
 		 */
-		sequencer.addMetaEventListener(new MetaEventListener()
+		sm_sequencer.addMetaEventListener(new MetaEventListener()
 					       {
 						       public void meta(MetaMessage event)
 							       {
 								       if (event.getType() == 47)
 								       {
 									       System.out.println("before exit");
+									       sm_sequencer.close();
 									       System.exit(0);
 								       }
 							       }
@@ -221,7 +223,7 @@ public class MidiPlayer2
 		 */
 		try
 		{
-			sequencer.open();
+			sm_sequencer.open();
 		}
 		catch (MidiUnavailableException e)
 		{
@@ -229,7 +231,7 @@ public class MidiPlayer2
 			System.exit(1);
 		}
 
-		sequencer.addMetaEventListener(
+		sm_sequencer.addMetaEventListener(
 			new MetaEventListener()
 			{
 				public void meta(MetaMessage message)
@@ -240,7 +242,7 @@ public class MidiPlayer2
 					}
 			});
 
-		int[]	anControllers = sequencer.addControllerEventListener(
+		int[]	anControllers = sm_sequencer.addControllerEventListener(
 			new ControllerEventListener()
 			{
 				public void controlChange(ShortMessage message)
@@ -266,7 +268,7 @@ public class MidiPlayer2
 		 */
 		try
 		{
-			sequencer.setSequence(sequenceStream);
+			sm_sequencer.setSequence(sequenceStream);
 		}
 		catch (InvalidMidiDataException e)
 		{
@@ -295,7 +297,7 @@ public class MidiPlayer2
 				Synthesizer	synth = MidiSystem.getSynthesizer();
 				synth.open();
 				Receiver	synthReceiver = synth.getReceiver();
-				Transmitter	seqTransmitter = sequencer.getTransmitter();
+				Transmitter	seqTransmitter = sm_sequencer.getTransmitter();
 				seqTransmitter.setReceiver(synthReceiver);
 			}
 			catch (MidiUnavailableException e)
@@ -315,7 +317,7 @@ public class MidiPlayer2
 			try
 			{
 				Receiver	midiReceiver = MidiSystem.getReceiver();
-				Transmitter	midiTransmitter = sequencer.getTransmitter();
+				Transmitter	midiTransmitter = sm_sequencer.getTransmitter();
 				midiTransmitter.setReceiver(midiReceiver);
 			}
 			catch (MidiUnavailableException e)
@@ -336,7 +338,7 @@ public class MidiPlayer2
 			try
 			{
 				Receiver	dumpReceiver = new DumpReceiver(System.out);
-				Transmitter	dumpTransmitter = sequencer.getTransmitter();
+				Transmitter	dumpTransmitter = sm_sequencer.getTransmitter();
 				dumpTransmitter.setReceiver(dumpReceiver);
 			}
 			catch (MidiUnavailableException e)
@@ -348,7 +350,7 @@ public class MidiPlayer2
 		/*
 		 *	Now, we can start over.
 		 */
-		sequencer.start();
+		sm_sequencer.start();
 		try
 		{
 			Thread.sleep(10000000);

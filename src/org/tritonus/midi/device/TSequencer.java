@@ -69,6 +69,8 @@ public abstract class TSequencer
 	 */
 	private Set[]		m_aControllerListeners;
 
+	// private float		m_fTempoInMPQ;
+	private float		m_fTempoFactor;
 
 
 	protected TSequencer(MidiDevice.Info info)
@@ -76,7 +78,13 @@ public abstract class TSequencer
 		super(info);
 		m_sequence = null;
 		m_metaListeners = new ArraySet();
-		m_aControllerListeners = new Set[128];	
+		m_aControllerListeners = new Set[128];
+		m_fTempoFactor = 1.0F;
+/*
+  TODO: find a way of safe calling
+		setTempoFactor(1.0F);
+		setTempoInMPQ(500000);
+*/
 	}
 
 
@@ -108,6 +116,90 @@ public abstract class TSequencer
 
 
 
+	public float getTempoInBPM()
+	{
+		return 6.0E7F / getTempoInMPQ();
+	}
+
+
+
+	public void setTempoInBPM(float fBPM)
+	{
+		setTempoInMPQ(6.0E7F / fBPM);
+	}
+
+
+
+	public float getTempoInMPQ()
+	{
+		return getTempoNative() * getTempoFactor();
+	}
+
+
+
+	public void setTempoInMPQ(float fMPQ)
+	{
+		float	fRealTempo = fMPQ / getTempoFactor();
+		if (TDebug.TraceTSequencer)
+		{
+			TDebug.out("TSequencer.setTempoInMPQ(): real tempo: " + fRealTempo);
+		}
+		setTempoNative(fRealTempo);
+	}
+
+
+
+	public void setTempoFactor(float fFactor)
+	{
+		/*
+		 *	Get nominal tempo, using the old tempo factor.
+		 */
+		float	fNominalTempo = getTempoInMPQ();
+		m_fTempoFactor = fFactor;
+		/*
+		 *	Calculate the new real tempo, using the new tempo
+		 *	factor.
+		 */
+		float	fRealTempo = fNominalTempo / fFactor;
+		if (TDebug.TraceTSequencer)
+		{
+			TDebug.out("TSequencer.setTempoFactor(): real tempo: " + fRealTempo);
+		}
+		setTempoNative(fRealTempo);
+	}
+
+
+
+	public float getTempoFactor()
+	{
+		return m_fTempoFactor;
+	}
+
+
+
+	/**	Get the tempo of the native sequencer part.
+	 *	This method has to be defined by subclasses according
+	 *	to the native facilities they use for sequenceing.
+	 *	The implementation should not take into account the
+	 *	tempo factor. This is handled elsewhere.
+	 *
+	 *	@return the real tempo of the native sequencer in MPQ
+	 */
+	protected abstract float getTempoNative();
+
+
+
+	/**	Change the tempo of the native sequencer part.
+	 *	This method has to be defined by subclasses according
+	 *	to the native facilities they use for sequenceing.
+	 *	The implementation should not take into account the
+	 *	tempo factor. This is handled elsewhere.
+	 */
+	protected abstract void setTempoNative(float fMPQ);
+
+
+
+	// TODO: what should be the behaviour if no Sequence is set?
 	public long getTickLength()
 	{
 		return getSequence().getTickLength();
@@ -115,6 +207,7 @@ public abstract class TSequencer
 
 
 
+	// TODO: what should be the behaviour if no Sequence is set?
 	public long getMicrosecondLength()
 	{
 		return getSequence().getMicrosecondLength();

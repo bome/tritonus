@@ -342,9 +342,20 @@ public class ASequencer0
 	public native void setQueueTempo(int nQueue, int nResolution, int nTempo);
 
 
+	/**	Get the current tempo of a queue.
+	 *	Calls snd_seq_get_queue_tempo()
+	 *	and put the data elements of the returned struct
+	 *	into the passed arrays.
+	 *	anValues[0]	tempo (us/tick)
+	 *	anValues[1]	resolution (ticks/quarter)
+	 */
+	public native void getQueueTempo(int nQueue,
+					  int[] anValues);
+
+
 	/**	Get information about a queue.
 	 *	Calls snd_seq_get_queue_status()
-	 *	and put the data elements of the returned event
+	 *	and put the data elements of the returned struct
 	 *	into the passed arrays.
 	 *	anValues[0]	number of events (= queue size)
 	 *	anValues[1]	running flag

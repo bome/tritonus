@@ -638,6 +638,41 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_ASequencer0
+ * Method:    getQueueTempo
+ * Signature: (I[I)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
+(JNIEnv *env, jobject obj, jint nQueue, jintArray anValues)
+{
+	jint*	values = NULL;
+	int	nLength;
+	snd_seq_queue_tempo_t	queueTempo;
+	snd_seq_t*	seq = getNativeSeq(env, obj);
+	int		nReturn = snd_seq_get_queue_tempo(seq, nQueue, &queueTempo);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_seq_get_queue_tempo failed");
+	}
+	nLength = (*env)->GetArrayLength(env, anValues);
+	if (nLength < 2)
+	{
+		throwRuntimeException(env, "array does not have enough elements (2 required)");
+	}
+	values = (*env)->GetIntArrayElements(env, anValues, NULL);
+	if (values == NULL)
+	{
+		throwRuntimeException(env, "GetIntArrayElements failed");
+	}
+	values[0] = queueTempo.tempo;
+	values[1] = queueTempo.ppq;
+	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_ASequencer0
  * Method:    getSystemInfo
  * Signature: ([I)V
  */

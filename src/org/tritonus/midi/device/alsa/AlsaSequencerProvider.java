@@ -33,6 +33,7 @@ import	java.util.Iterator;
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
+import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
 
 
@@ -63,6 +64,8 @@ public class AlsaSequencerProvider
 
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
+		// TDebug.out("m_info: " + m_info);
+		// TDebug.out("info: " + info);
 		if (info.equals(m_info))
 		{
 			return new AlsaSequencer(m_info);
