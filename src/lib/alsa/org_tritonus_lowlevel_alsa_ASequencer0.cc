@@ -8,6 +8,7 @@
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_ASequencer0.h"
 #include	"constants_check.h"
+#include	"HandleFieldHandler.hh"
 
 static int DEBUG = 0;
 
@@ -16,46 +17,8 @@ static void
 sendEvent(JNIEnv *env, snd_seq_t* seq, snd_seq_event_t* pEvent);
 
 
+static HandleFieldHandler<snd_seq_t*>	handler;
 
-static jfieldID
-getNativeSeqFieldID(JNIEnv *env)
-{
-	static jfieldID	nativeSeqFieldID = NULL;
-
-	if (nativeSeqFieldID == NULL)
-	{
-		// TODO: use a passed object rather than the name of the class
-		jclass	cls = (*env)->FindClass(env, "org/tritonus/lowlevel/alsa/ASequencer0");
-		if (cls == NULL)
-		{
-			throwRuntimeException(env, "cannot get class object for org.tritonus.lowlevel.alsa.ASequencer0");
-		}
-		nativeSeqFieldID = (*env)->GetFieldID(env, cls, "m_lNativeSeq", "J");
-		if (nativeSeqFieldID == NULL)
-		{
-			throwRuntimeException(env, "cannot get field ID for m_lNativeSeq of class Seq");
-		}
-	}
-	return nativeSeqFieldID;
-}
-
-
-
-static snd_seq_t*
-getNativeSeq(JNIEnv *env, jobject obj)
-{
-	jfieldID	fieldID = getNativeSeqFieldID(env);
-	return (snd_seq_t*) (*env)->GetLongField(env, obj, fieldID);
-}
-
-
-
-static void
-setNativeSeq(JNIEnv *env, jobject obj, snd_seq_t* seq)
-{
-	jfieldID	fieldID = getNativeSeqFieldID(env);
-	(*env)->SetLongField(env, obj, fieldID, (jlong) seq);
-}
 
 
 
@@ -75,7 +38,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_allocQueue(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	nQueue = snd_seq_alloc_queue(seq);
 	if (nQueue < 0)
 	{
@@ -106,7 +69,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_close
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_close(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_close(seq);
 	if (nReturn < 0)
 	{
@@ -136,16 +99,16 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&portInfo, 0, sizeof(portInfo));
-	name = (*env)->GetStringUTFChars(env, strName, NULL);
+	name = env->GetStringUTFChars(strName, NULL);
 	if (name == NULL)
 	{
 		throwRuntimeException(env, "GetStringUTFChars failed");
 	}
 	strncpy(portInfo.name, name, 63);
 	portInfo.name[64] = 0;
-	(*env)->ReleaseStringUTFChars(env, strName, name);
+	env->ReleaseStringUTFChars(strName, name);
 	// portInfo.capability = SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE | SND_SEQ_PORT_CAP_READ;
 	portInfo.capability = nCapabilities;
 	portInfo.cap_group = nGroupPermissions;
@@ -177,11 +140,10 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 {
 	jstring		strName;
 	jstring		strGroupName;
-	jboolean	bIsCopy;
 	jint*		pnValues;
 
 	checkArrayLength(env, anValues, 4);
-	pnValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopy);
+	pnValues = env->GetIntArrayElements(anValues, NULL);
 	if (pnValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
@@ -190,16 +152,13 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 	pnValues[1] = clientInfo->type;
 	pnValues[2] = clientInfo->filter;
 	pnValues[3] = clientInfo->num_ports;
-	if (bIsCopy)
-	{
-		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
-	}
+	env->ReleaseIntArrayElements(anValues, pnValues, 0);
 
 	checkArrayLength(env, astrValues, 2);
-	strName = (*env)->NewStringUTF(env, clientInfo->name);
-	(*env)->SetObjectArrayElement(env, astrValues, 0, strName);
-	strGroupName = (*env)->NewStringUTF(env, clientInfo->group);
-	(*env)->SetObjectArrayElement(env, astrValues, 1, strGroupName);
+	strName = env->NewStringUTF(clientInfo->name);
+	env->SetObjectArrayElement(astrValues, 0, strName);
+	strGroupName = env->NewStringUTF(clientInfo->group);
+	env->SetObjectArrayElement(astrValues, 1, strGroupName);
 }
 
 
@@ -207,16 +166,15 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 static void
 fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jintArray anValues, jobjectArray astrValues)
 {
-	int		nLength;
+	// int		nLength;
 	jstring		strName;
 	jstring		strGroupName;
-	jboolean	bIsCopy;
 	jint*		pnValues;
 
 	// printf("4a\n");
 	checkArrayLength(env, anValues, 10);
 	// printf("4b\n");
-	pnValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopy);
+	pnValues = env->GetIntArrayElements(anValues, NULL);
 	if (pnValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
@@ -233,25 +191,22 @@ fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jint
 	pnValues[8] = portInfo->read_use;
 	pnValues[9] = portInfo->write_use;
 	// printf("4d\n");
-	if (bIsCopy)
-	{
-		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
-	}
+	env->ReleaseIntArrayElements(anValues, pnValues, 0);
 	// printf("4e\n");
 	checkArrayLength(env, astrValues, 2);
 	// printf("4f\n");
 	// printf("name: %s\n", portInfo->name);
-	strName = (*env)->NewStringUTF(env, portInfo->name);
+	strName = env->NewStringUTF(portInfo->name);
 	if (strName == NULL)
 	{
 		printf("NewString failed\n");
 	}
 	// printf("4g\n");
 	// this causes a segment violation
-	(*env)->SetObjectArrayElement(env, astrValues, 0, strName);
+	env->SetObjectArrayElement(astrValues, 0, strName);
 	// printf("4h\n");
-	strGroupName = (*env)->NewStringUTF(env, portInfo->group);
-	(*env)->SetObjectArrayElement(env, astrValues, 1, strGroupName);
+	strGroupName = env->NewStringUTF(portInfo->group);
+	env->SetObjectArrayElement(astrValues, 1, strGroupName);
 	// printf("4i\n");
 }
 
@@ -274,7 +229,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getClientInfo(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
 	nReturn = snd_seq_get_any_client_info(seq, nClient, &clientInfo);
 	if (nReturn < 0)
@@ -309,15 +264,13 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 	jobject			objectRef;
 	jint*			panValues;
 	jlong*			palValues;
-	jboolean		bIsCopyI;
-	jboolean		bIsCopyL;
 	jbyteArray		byteArray;
 
 	if (DEBUG)
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 
 	/*
 	 *	snd_seq_event_input() results in a blocking read on a
@@ -350,7 +303,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 		throwRuntimeException(env, "snd_seq_event_input failed");
 	}
 	checkArrayLength(env, anValues, 13);
-	panValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopyI);
+	panValues = env->GetIntArrayElements(anValues, NULL);
 	// printf("4\n");
 	if (panValues == NULL)
 	{
@@ -358,7 +311,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 	}
 
 	checkArrayLength(env, alValues, 1);
-	palValues = (*env)->GetLongArrayElements(env, alValues, &bIsCopyL);
+	palValues = env->GetLongArrayElements(alValues, NULL);
 	// printf("6\n");
 	if (palValues == NULL)
 	{
@@ -440,8 +393,8 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 		 *	is only 32-bit-aligned.
 		 */
 		objectRef = *((jobject*) pEvent->data.raw32.d);
-		(*env)->SetObjectArrayElement(env, aObjValues, 0, objectRef);
-		(*env)->DeleteGlobalRef(env, objectRef);
+		env->SetObjectArrayElement(aObjValues, 0, objectRef);
+		env->DeleteGlobalRef(objectRef);
 		break;
 
 	case SND_SEQ_EVENT_SYSEX:
@@ -453,38 +406,32 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 	case SND_SEQ_EVENT_USR_VAR4:
 	{
 		jbyteArray	abData;
-		abData = (*env)->NewByteArray(env, pEvent->data.ext.len);
+		abData = env->NewByteArray(pEvent->data.ext.len);
 		if (abData == NULL)
 		{
 			throwRuntimeException(env, "NewByteArray failed");
 		}
-		(*env)->SetByteArrayRegion(env, abData, 0, pEvent->data.ext.len, pEvent->data.ext.ptr);
+		env->SetByteArrayRegion(abData, (jsize) 0, (jsize) pEvent->data.ext.len, (jbyte*) pEvent->data.ext.ptr);
 		checkArrayLength(env, aObjValues, 1);
-		(*env)->SetObjectArrayElement(env, aObjValues, 0, abData);
+		env->SetObjectArrayElement(aObjValues, 0, abData);
 	}
 	break;
 	}
 
 
 
-	if (bIsCopyI == JNI_TRUE)
-	{
-		(*env)->ReleaseIntArrayElements(env, anValues, panValues, 0);
-	}
-	if (bIsCopyL == JNI_TRUE)
-	{
-		(*env)->ReleaseLongArrayElements(env, alValues, palValues, 0);
-	}
+	env->ReleaseIntArrayElements(anValues, panValues, 0);
+	env->ReleaseLongArrayElements(alValues, palValues, 0);
 
 	if ((pEvent->flags & SND_SEQ_EVENT_LENGTH_MASK) == SND_SEQ_EVENT_LENGTH_VARUSR)
 	{
-		byteArray = (*env)->NewByteArray(env, pEvent->data.ext.len);
+		byteArray = env->NewByteArray(pEvent->data.ext.len);
 		if (byteArray == NULL)
 		{
 			throwRuntimeException(env, "NewByteArray failed");
 		}
-		(*env)->SetByteArrayRegion(env, byteArray, 0, pEvent->data.ext.len, pEvent->data.ext.ptr);
-		(*env)->SetObjectArrayElement(env, aObjValues, 0, byteArray);
+		env->SetByteArrayRegion(byteArray, (jsize) 0, (jsize) pEvent->data.ext.len, (jbyte*) pEvent->data.ext.ptr);
+		env->SetObjectArrayElement(aObjValues, 0, byteArray);
 	}
 	// TODO: should events be freed with snd_seq_free_event()?
 	if (DEBUG)
@@ -514,7 +461,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): begin\n");
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): client: %d\n", (int) nClient);
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
 	clientInfo.client = nClient;
 	nReturn = snd_seq_query_next_client(seq, &clientInfo);
@@ -560,7 +507,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&portInfo, 0, sizeof(portInfo));
 	portInfo.client = nClient;
 	portInfo.port = nPort;
@@ -609,7 +556,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_get_queue_status(seq, nQueue, &queueStatus);
 	if (nReturn < 0)
 	{
@@ -617,7 +564,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	}
 
 	checkArrayLength(env, anValues, 3);
-	values = (*env)->GetIntArrayElements(env, anValues, NULL);
+	values = env->GetIntArrayElements(anValues, NULL);
 	if (values == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
@@ -625,17 +572,17 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	values[0] = queueStatus.events;
 	values[1] = queueStatus.running;
 	values[2] = queueStatus.flags;
-	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+	env->ReleaseIntArrayElements(anValues, values, 0);
 
 	checkArrayLength(env, alValues, 2);
-	lvalues = (*env)->GetLongArrayElements(env, alValues, NULL);
+	lvalues = env->GetLongArrayElements(alValues, NULL);
 	if (lvalues == NULL)
 	{
 		throwRuntimeException(env, "GetLongArrayElements failed");
 	}
 	lvalues[0] = queueStatus.tick;
 	lvalues[1] = (jlong) queueStatus.time.tv_sec * 1000000000 + queueStatus.time.tv_nsec;
-	(*env)->ReleaseLongArrayElements(env, alValues, lvalues, 0);
+	env->ReleaseLongArrayElements(alValues, lvalues, 0);
 	if (DEBUG)
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus(): end\n");
@@ -662,7 +609,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_get_queue_tempo(seq, nQueue, &queueTempo);
 	if (nReturn < 0)
 	{
@@ -670,14 +617,14 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
 	}
 
 	checkArrayLength(env, anValues, 2);
-	values = (*env)->GetIntArrayElements(env, anValues, NULL);
+	values = env->GetIntArrayElements(anValues, NULL);
 	if (values == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
 	}
 	values[0] = queueTempo.tempo;
 	values[1] = queueTempo.ppq;
-	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+	env->ReleaseIntArrayElements(anValues, values, 0);
 	if (DEBUG)
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo(): end\n");
@@ -704,14 +651,14 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_system_info(seq, &systemInfo);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_system_info failed");
 	}
 	checkArrayLength(env, anValues, 4);
-	values = (*env)->GetIntArrayElements(env, anValues, NULL);
+	values = env->GetIntArrayElements(anValues, NULL);
 	if (values == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
@@ -720,7 +667,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo
 	values[1] = systemInfo.clients;
 	values[2] = systemInfo.ports;
 	values[3] = systemInfo.channels;
-	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+	env->ReleaseIntArrayElements(anValues, values, 0);
 	if (DEBUG)
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo(): end\n");
@@ -757,7 +704,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_open
 	// printf("3\n");
 	snd_seq_nonblock(seq, SND_SEQ_NONBLOCK);
 	// printf("4\n");
-	setNativeSeq(env, obj, seq);
+	handler.setHandle(env, obj, seq);
 	// printf("5\n");
 	nReturn = snd_seq_client_id(seq);
 	// printf("6\n");
@@ -797,7 +744,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendControlEvent
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendControlEvent(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -852,7 +799,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendNoteEvent
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendNoteEvent(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -919,7 +866,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 
 	memset(&event, 0, sizeof(event));
 
@@ -954,7 +901,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendObjectEvent
 	 *	getEvent(). There must be only one getEvent() that deletes
 	 *	the reference (not trivial if a port has multiple subscribers).
 	 */
-	globalRef = (*env)->NewGlobalRef(env, objectRef);
+	globalRef = env->NewGlobalRef(objectRef);
 	if (globalRef == NULL)
 	{
 		throwRuntimeException(env, "NewGlobalRef failed");
@@ -996,7 +943,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -1063,7 +1010,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&event, 0, sizeof(event));
 
 	event.type = nType;
@@ -1086,7 +1033,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendVarEvent
 	event.dest.client = nDestClient;
 	event.dest.port = nDestPort;
 
-	data = (*env)->GetByteArrayElements(env, abData, NULL);
+	data = env->GetByteArrayElements(abData, NULL);
 	if (data == NULL)
 	{
 		throwRuntimeException(env, "GetByteArrayElements failed");
@@ -1161,14 +1108,14 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setClientName
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setClientName(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
 	nReturn = snd_seq_get_client_info(seq, &clientInfo);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_get_client_info failed");
 	}
-	name = (*env)->GetStringUTFChars(env, strName, NULL);
+	name = env->GetStringUTFChars(strName, NULL);
 	if (name == NULL)
 	{
 		throwRuntimeException(env, "GetStringUTFChars failed");
@@ -1205,7 +1152,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueLocked
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueLocked(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&owner, 0, sizeof(owner));
 	// owner.queue = nQueue;
 	nReturn = snd_seq_get_queue_owner(seq, nQueue, &owner);
@@ -1246,7 +1193,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_setQueueTempo(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&tempo, 0, sizeof(tempo));
 	tempo.queue = nQueue;
 	tempo.ppq = nResolution;
@@ -1287,7 +1234,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_subscribePort(): begin\n");
 	}
-	seq = getNativeSeq(env, obj);
+	seq = handler.getHandle(env, obj);
 	memset(&subs, 0, sizeof(subs));
 
 	subs.sender.client = nSenderClient;

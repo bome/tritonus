@@ -24,7 +24,7 @@ Java_org_tritonus_lowlevel_alsa_Alsa_getStringError
 	{
 		throwRuntimeException(env, "snd_strerror() failed");
 	}
-	strError = (*env)->NewStringUTF(env, err);
+	strError = env->NewStringUTF(err);
 	if (strError == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
