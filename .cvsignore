@@ -2,6 +2,7 @@ Makefile
 javax
 org
 javazoom
+com
 config.status
 config.log
 config.cache
