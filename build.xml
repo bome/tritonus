@@ -4,12 +4,14 @@
 		<property name="src" value="src" />
 		<property name="build" value="build" />
 		<property name="dist"  value="dist" />
+		<!--
+			Remove the next line if you don't have jikes.
+			In this case, javac will be used for compiling.
+		-->
 		<property name="build.compiler"  value="jikes" />
 		<filter token="version" value="0.3.1" />
 		<filter token="year" value="2000" />
-<!--
-		<ant dir="../javalayer" />
--->
+
 		<available
 			classname="grame.midishare.Midi"
 			property="midishare-present" />
@@ -25,8 +27,16 @@
 		<mkdir dir="${build}" />
 	</target>
 
+	<!--
+		This target assumes that the javalayer code is in a directory
+		'javalayer' that is parallel to 'tritonus'.
+	-->
+	<target name="build-javalayer" depends="init">
+		<ant dir="../javalayer" />
+	</target>
+
 	<target name="compile" depends="prepare">
-		<javac srcdir="src"
+		<javac srcdir="${src}"
 			destdir="${build}"
 			includes="javax/sound/**,org/tritonus/**"
 			excludes="org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**" />
@@ -35,10 +45,10 @@
 	<target name="compile-midishare"
 		depends="prepare"
 		if="midishare-present">
-		<javac srcdir="src"
+		<javac srcdir="${src}"
 			destdir="${build}"
 			includes="org/tritonus/midi/device/midishare/**"
-			filtering="on"/>
+			filtering="off"/>
 	</target>
 
 	<target name="compile-libs"
@@ -70,75 +80,102 @@
 	</target>
 
 	<target name="dist"
-		depends="compile,compile-midishare,compile-libs">
+		depends="compile,compile-midishare,compile-libs,build-javalayer">
 		<mkdir dir="${dist}" />
+
 		<jar jarfile="${dist}/tritonus_core.jar"
 			basedir="${build}"
-			includes="javax/sound/**" />
+			includes="javax/sound/**,org/tritonus/core/**" />
+
 		<jar jarfile="${dist}/tritonus_share.jar"
 			basedir="${build}"
 			includes="org/tritonus/share/" />
-		<mkdir dir="${dist}/tritonus_remaining" />
-		<copydir src="${build}" dest="${dist}/tritonus_remaining"
-			includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/" />
-<!--
-			includes="javax/sound/**,org/tritonus/core/**" />
--->
-		<copydir
-			src="${src}/packaging/tritonus_core"
-			dest="${dist}/tritonus_remaining"
-			includes="**" />
-		<jar
-			jarfile="${dist}/tritonus_remaining.jar"
-			basedir="${dist}/tritonus_remaining" />
-		<mkdir dir="${dist}/tritonus_mp3" />
-		<copydir src="${build}" dest="${dist}/tritonus_mp3"
-			includes="org/tritonus/sampled/convert/Mpeg*,org/tritonus/sampled/file/Mpeg*" />
-		<copydir
-			src="${src}/packaging/tritonus_mp3"
-			dest="${dist}/tritonus_mp3"
-			includes="**" />
-		<jar
-			jarfile="${dist}/tritonus_mp3.jar"
-			basedir="${dist}/tritonus_mp3" />
 
-		<mkdir dir="${dist}/tritonus_gsm" />
-		<copydir src="${build}" dest="${dist}/tritonus_gsm"
-			includes="org/tritonus/lowlevel/gsm/,org/tritonus/sampled/convert/gsm/,org/tritonus/sampled/file/gsm/" />
-		<copydir
-			src="${src}/packaging/tritonus_gsm"
-			dest="${dist}/tritonus_gsm"
-			includes="**" />
-		<jar
-			jarfile="${dist}/tritonus_gsm.jar"
-			basedir="${dist}/tritonus_gsm" />
-		<!-- TODO: delete temporary directory -->
+		<jar	jarfile="${dist}/tritonus_remaining.jar" >
+			<fileset dir="${build}" >
+				<include name="org/tritonus/lowlevel/" />
+				<include name="org/tritonus/midi/" />
+				<include name="org/tritonus/sampled/" />
+			</fileset>
+			<fileset dir ="${src}/packaging/tritonus_core" />
+		</jar>
+
+		<jar	jarfile="${dist}/tritonus_mp3.jar" >
+			<fileset
+				dir="${build}" >
+				<include name="org/tritonus/sampled/convert/Mpeg*" />
+				<include name="org/tritonus/sampled/file/Mpeg*" />
+			</fileset>
+			<fileset
+				dir="${src}/packaging/tritonus_mp3" />
+		</jar>
+
+		<jar	jarfile="${dist}/tritonus_gsm.jar" >
+			<fileset
+				dir="${build}" >
+				<include name="org/tritonus/lowlevel/gsm/" />
+				<include name="org/tritonus/sampled/convert/gsm/" />
+				<include name="org/tritonus/sampled/file/gsm/" />
+			</fileset>
+			<fileset
+				dir="${src}/packaging/tritonus_gsm" />
+		</jar>
 	</target>
 
+	<!--
+		The following two targets should depend on uninstall, so that
+		old files are safely removed. However, there is a problem with
+		ant deleting symbolic links (VM crash), so it is left out
+		for the moment.
+
+		Also note that these targets only work for jdk >= 1.2.
+	-->
 	<target name="install" depends="dist">
-		<copydir
-			src="${dist}"
-			dest="${java_ext_path}"
-			includes="*.jar" />
+		<copy
+			todir="${java_ext_path}" >
+			<fileset
+				dir="${dist}" >
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 	</target>
 
-	<target name="install-link" depends="dist, uninstall">
+	<target name="install-link" depends="dist">
 		<exec
 			dir="${java_ext_path}"
-			command="ln -s ${dist}/*.jar ${java_ext_path}"
-			output="/dev/null" />
+			executable="ln" >
+			<arg line="-s ${basedir}/${dist}/tritonus_core.jar ${java_ext_path}" />
+		</exec>
+		<exec
+			dir="${java_ext_path}"
+			executable="ln" >
+			<arg line="-s ${basedir}/${dist}/tritonus_share.jar ${java_ext_path}" />
+		</exec>
+		<exec
+			dir="${java_ext_path}"
+			executable="ln" >
+			<arg line="-s ${basedir}/${dist}/tritonus_remaining.jar ${java_ext_path}" />
+		</exec>
+		<exec
+			dir="${java_ext_path}"
+			executable="ln" >
+			<arg line="-s ${basedir}/${dist}/tritonus_mp3.jar ${java_ext_path}" />
+		</exec>
+		<exec
+			dir="${java_ext_path}"
+			executable="ln" >
+			<arg line="-s ${basedir}/${dist}/tritonus_gsm.jar ${java_ext_path}" />
+		</exec>
 	</target>
 
 	<target name="uninstall" depends="init">
 		<echo message="ext path: ${java_ext_path}" />
-		<delete
-			dir="${java_ext_path}"
-			includes="./javalayer.jar" />
-		<delete file="${java_ext_path}/javalayer.jar" />
+		<delete file="${java_ext_path}/tritonus*.jar" />
 	</target>
 
 	<target name="clean" depends="init">
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
+		<ant dir="../javalayer" target="clean" />
 	</target>
 </project>
