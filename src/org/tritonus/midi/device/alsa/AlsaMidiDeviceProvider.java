@@ -100,7 +100,10 @@ public class AlsaMidiDeviceProvider
 		{
 			ASequencer.ClientInfo	clientInfo = (ASequencer.ClientInfo) clients.next();
 			int	nClient = clientInfo.getClientId();
-			// TDebug.out("client: " + nClient);
+			if (TDebug.TracePortScan)
+			{
+				TDebug.out("AlsaMidiDeviceProvider.scanPorts(): client: " + nClient);
+			}
 			Iterator	ports = m_aSequencer.getPortInfos(nClient);
 			// TDebug.out("" + clients);
 			while (ports.hasNext())
@@ -108,8 +111,11 @@ public class AlsaMidiDeviceProvider
 				ASequencer.PortInfo	portInfo = (ASequencer.PortInfo) ports.next();
 				int	nPort = portInfo.getPort();
 				int	nType = portInfo.getType();
-				// TDebug.out("port: " + nPort);
-				// TDebug.out("type: " + nType);
+				if (TDebug.TracePortScan)
+				{
+					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): port: " + nPort);
+					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): type: " + nType);
+				}
 				if ((nType & ASequencer.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
 				{
 					// TDebug.out("generic midi");
