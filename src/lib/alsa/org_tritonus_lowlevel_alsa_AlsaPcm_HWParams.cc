@@ -18,7 +18,7 @@ static HandleFieldHandler<snd_pcm_hw_params_t*>	handler;
 
 
 snd_pcm_format_mask_t*
-getFormatMaskNativeHandle(JNIEnv *env, jobject obj);
+getFormatMaskNativeHandle(JNIEnv* env, jobject obj);
 
 
 /*
@@ -37,7 +37,7 @@ setDirection(JNIEnv* env, jint nDirection, jintArray anDirection)
 
 
 snd_pcm_hw_params_t*
-getHWParamsNativeHandle(JNIEnv *env, jobject obj)
+getHWParamsNativeHandle(JNIEnv* env, jobject obj)
 {
 	return handler.getHandle(env, obj);
 }
@@ -51,7 +51,7 @@ getHWParamsNativeHandle(JNIEnv *env, jobject obj)
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_malloc
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -76,7 +76,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_malloc
  */
 JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_free
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 
@@ -95,7 +95,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_free
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRate___3J
-(JNIEnv *env, jobject obj, jlongArray alValues)
+(JNIEnv* env, jobject obj, jlongArray alValues)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -121,7 +121,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRate___3J
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getSBits
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -142,7 +142,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getSBits
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFifoSize
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -163,7 +163,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFifoSize
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getAccess
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -184,7 +184,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getAccess
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormat
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -204,7 +204,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormat
  */
 JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormatMask
-(JNIEnv *env, jobject obj, jobject objFormatMask)
+(JNIEnv* env, jobject obj, jobject objFormatMask)
 {
 	snd_pcm_hw_params_t*	handle;
 	snd_pcm_format_mask_t*	formatMask;
@@ -225,7 +225,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormatMask
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getSubformat
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -246,7 +246,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getSubformat
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannels
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -267,7 +267,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannels
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannelsMin
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -288,7 +288,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannelsMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannelsMax
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -309,7 +309,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannelsMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRate___3I
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -330,7 +330,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRate___3I
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRateMin
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -353,7 +353,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRateMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRateMax
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -376,7 +376,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRateMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTime
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -399,7 +399,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTime
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTimeMin
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -422,7 +422,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTimeMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTimeMax
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -445,7 +445,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTimeMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSize
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -468,7 +468,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSize
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSizeMin
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -491,7 +491,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSizeMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSizeMax
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -514,7 +514,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSizeMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriods
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -537,7 +537,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriods
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodsMin
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -560,7 +560,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodsMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodsMax
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -583,7 +583,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodsMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTime
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -606,7 +606,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTime
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTimeMin
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -629,7 +629,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTimeMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTimeMax
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -652,7 +652,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTimeMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSize
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -673,7 +673,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSize
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSizeMin
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -694,7 +694,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSizeMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSizeMax
-(JNIEnv *env, jobject obj)
+(JNIEnv* env, jobject obj)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -715,7 +715,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSizeMax
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTime
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -738,7 +738,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTime
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTimeMin
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
@@ -761,7 +761,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTimeMin
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTimeMax
-(JNIEnv *env, jobject obj, jintArray anDirection)
+(JNIEnv* env, jobject obj, jintArray anDirection)
 {
 	snd_pcm_hw_params_t*	handle;
 	int			nReturn;
