@@ -60,7 +60,7 @@ public class Esd
 		}
 		catch (Throwable t)
 		{
-			if (TDebug.TraceEsdNative) { TDebug.out(t); }
+			if (TDebug.TraceEsdNative || TDebug.TraceAllExceptions) { TDebug.out(t); }
 		}
 		if (TDebug.TraceEsdNative) { TDebug.out("Esd.loadNativeLibrary(): loaded"); }
 	}
