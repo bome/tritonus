@@ -25,12 +25,12 @@ public class saint
 		InputStream	orchestra = null;
 		InputStream	score = null;
 		OutputStream	output = null;
-		int		nOutputFormat = 0;
+		int		nOutputFormat = 10;	// s32l
 		int	c;
 
 		// TODO: what is this option "-prob" (real time stream simulation)
 		// TODO: option for audio input files
-		Getopt	g = new Getopt("saint", args, "hVbl:c:s:o:");
+		Getopt	g = new Getopt("saint", args, "hVb:c:s:o:f:");
 		while ((c = g.getopt()) != -1)
 		{
 			switch (c)
@@ -40,10 +40,6 @@ public class saint
 
 			case 'V':
 				printVersionAndExit();
-
-			case 'l':
-				nOutputFormat = 1;
-				break;
 
 			case 'b':
 				bitstream = new FileInputStream(g.getOptarg());
@@ -59,6 +55,10 @@ public class saint
 
 			case 'o':
 				output = new FileOutputStream(g.getOptarg());
+				break;
+
+			case 'f':
+				nOutputFormat = Integer.parseInt(g.getOptarg());
 				break;
 			}
 		}
@@ -77,9 +77,7 @@ public class saint
 		{
 			if (score != null)
 			{
-				// cerr << "1" << flush;
 				saint = new Saint(orchestra, score, output, nOutputFormat);
-				// cerr << "2" << flush;
 			}
 			else
 			{
@@ -114,5 +112,6 @@ public class saint
 		System.exit(0);
 	}
 }
+
 
 /*** saint.java ***/
