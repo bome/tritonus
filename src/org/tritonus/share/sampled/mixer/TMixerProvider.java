@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,7 +18,6 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
 
@@ -47,6 +45,8 @@ public abstract class TMixerProvider
 	private static final Mixer.Info[]	EMPTY_MIXER_INFO_ARRAY = new Mixer.Info[0];
 
 	private static Map	sm_mixerProviderStructs = new HashMap();
+
+	private boolean		m_bDisabled = false;
 
 
 
@@ -87,6 +87,20 @@ public abstract class TMixerProvider
 			if (TDebug.TraceMixerProvider) { TDebug.out("TMixerProvider.getMixerProviderStruct(): end"); }
 			return struct;
 		}
+	}
+
+
+
+	protected void disable()
+	{
+		if (TDebug.TraceMixerProvider) { TDebug.out("disabling " + getClass().getName()); }
+		m_bDisabled = true;
+	}
+
+
+	protected boolean isDisabled()
+	{
+		return m_bDisabled;
 	}
 
 
