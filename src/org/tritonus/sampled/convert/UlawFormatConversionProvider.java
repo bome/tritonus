@@ -178,7 +178,15 @@ public class UlawFormatConversionProvider
 			           sourceStream.getFormat().getFrameRate(),
 			           sourceStream.getFormat().isBigEndian()));
 			convertType=getConvertType(sourceStream.getFormat());
-			enableConvertInPlace();
+			switch (convertType) {
+			case UNSIGNED8: // fall through
+			case SIGNED8:   // fall through
+			case ALAW:
+				enableConvertInPlace();
+				break;
+			}
+
+
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}
