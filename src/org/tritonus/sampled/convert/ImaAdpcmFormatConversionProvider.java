@@ -83,15 +83,18 @@ extends TEncodingFormatConversionProvider
 		// mono
 		new AudioFormat(IMA_ADPCM, -1.0F, -1, 1, -1, -1.0F, false),
 		new AudioFormat(IMA_ADPCM, -1.0F, -1, 1, -1, -1.0F, true),
-	};
-
-
-	private static final AudioFormat[]	OUTPUT_FORMATS =
-	{
 		// mono, 16 bit signed
 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, false),
 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, true),
 	};
+
+
+// 	private static final AudioFormat[]	OUTPUT_FORMATS =
+// 	{
+// 		// mono, 16 bit signed
+// 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, false),
+// 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, true),
+// 	};
 
 	private static final int[] indexTable =
 	{
@@ -120,7 +123,7 @@ extends TEncodingFormatConversionProvider
 	public ImaAdpcmFormatConversionProvider()
 	{
 		super(Arrays.asList(INPUT_FORMATS),
-		      Arrays.asList(OUTPUT_FORMATS)/*,
+		      Arrays.asList(INPUT_FORMATS)/*,
 						     true, // new behaviour
 						     false*/); // bidirectional .. constants UNIDIR../BIDIR..?
 	}
