@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,8 @@ package	org.tritonus.sampled.mixer.esd;
 import	javax.sound.sampled.Mixer;
 import	javax.sound.sampled.spi.MixerProvider;
 
+import	org.tritonus.lowlevel.esd.Esd;
+import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
@@ -36,23 +38,42 @@ import	org.tritonus.share.sampled.mixer.TMixerProvider;
 public class EsdMixerProvider
 	extends	TMixerProvider
 {
-	static
-	{
-	}
+	private static boolean	sm_bInitialized = false;
 
 
 
 	public EsdMixerProvider()
 	{
-		/*
-		 *	PROBLEM: this adds a new mixer to the static data
-		 *	structures in TMixerProvicer each time this class
-		 *	is instantiated.
-		 *	addMixer() cannot be called from a static initializer
-		 *	because addMixer() is non-static. It has to be
-		 *	non-static to be able to call this.getClass().
-		 */
+		super();
+		if (TDebug.TraceMixerProvider) { TDebug.out("EsdMixerProvider.<init>(): begin"); }
+		if (! sm_bInitialized && ! isDisabled())
+		{
+			/// TODO: adapt!
+			if (! Esd.isLibraryAvailable())
+			{
+				disable();
+			}
+			else
+			{
+				staticInit();
+				sm_bInitialized = true;
+			}
+		}
+		else
+		{
+			if (TDebug.TraceMixerProvider) { TDebug.out("EsdMixerProvider.<init>(): already initialized or disabled"); }
+		}
+
+		if (TDebug.TraceMixerProvider) { TDebug.out("EsdMixerProvider.<init>(): end"); }
+	}
+
+
+
+	protected void staticInit()
+	{
+		if (TDebug.TraceMixerProvider) { TDebug.out("EsdMixerProvider.staticInit(): begin"); }
 		addMixer(new EsdMixer());
+		if (TDebug.TraceMixerProvider) { TDebug.out("EsdMixerProvider.staticInit(): end"); }
 	}
 }
 
