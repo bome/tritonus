@@ -1,5 +1,5 @@
 Makefile
-*.h
+org_tritonus_*.h
 *.o
 *.so*
 
