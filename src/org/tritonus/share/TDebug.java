@@ -83,14 +83,10 @@ public class TDebug
 	public static boolean	TraceAlsaSeqDetails = getBooleanProperty("TraceAlsaSeqDetails");
 	public static boolean	TraceAlsaSeqNative = getBooleanProperty("TraceAlsaSeqNative");
 	public static boolean	TracePortScan = getBooleanProperty("TracePortScan");
-	public static boolean	TraceAlsaMidiDevice = getBooleanProperty("TraceAlsaMidiDevice");
 	public static boolean	TraceAlsaMidiIn = getBooleanProperty("TraceAlsaMidiIn");
 	public static boolean	TraceAlsaMidiOut = getBooleanProperty("TraceAlsaMidiOut");
 	public static boolean	TraceAlsaMidiChannel = getBooleanProperty("TraceAlsaMidiChannel");
-	public static boolean	TraceMshMidiDevice = getBooleanProperty("TraceMshMidiDevice");
-	// TODO: should replace TSequencer and AlsaSequencer
 	public static boolean	TraceSequencer = getBooleanProperty("TraceSequencer");
-	// TODO: should replace TMidiDevice et al.
 	public static boolean	TraceMidiDevice = getBooleanProperty("TraceMidiDevice");
 
 
