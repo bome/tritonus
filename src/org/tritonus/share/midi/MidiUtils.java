@@ -26,12 +26,25 @@
 package	org.tritonus.share.midi;
 
 
+import	java.io.ByteArrayOutputStream;
+import	java.io.IOException;
+import	java.io.OutputStream;
+
 import	org.tritonus.share.TDebug;
 
 
 
+/**	Helper methods for reading and writing MIDI files.
+ */
 public class MidiUtils
 {
+	public static int getUnsignedInteger(byte b)
+	{
+		return (b < 0) ? (int) b + 256 : b;
+	}
+
+
+
 	public static int get14bitValue(int nLSB, int nMSB)
 	{
 		return (nLSB & 0x7F) | ((nMSB & 0x7F) << 7);
@@ -52,6 +65,66 @@ public class MidiUtils
 	}
 
 
+
+	public static byte[] getVariableLengthQuantity(long lValue)
+	{
+		ByteArrayOutputStream	data = new ByteArrayOutputStream();
+		try
+		{
+			writeVariableLengthQuantity(lValue, data);
+		}
+		catch (IOException e)
+		{
+			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+		}
+		return data.toByteArray();
+	}
+
+
+
+	public static int writeVariableLengthQuantity(long lValue, OutputStream outputStream)
+		throws	IOException
+	{
+		int	nLength = 0;
+		// IDEA: use a loop
+		boolean	bWritingStarted = false;
+		int	nByte = (int) ((lValue >> 21) & 0x7f);
+		if (nByte != 0)
+		{
+			if (outputStream != null)
+			{
+				outputStream.write(nByte | 0x80);
+			}
+			nLength++;
+			bWritingStarted = true;
+		}
+		nByte = (int) ((lValue >> 14) & 0x7f);
+		if (nByte != 0 || bWritingStarted)
+		{
+			if (outputStream != null)
+			{
+				outputStream.write(nByte | 0x80);
+			}
+			nLength++;
+			bWritingStarted = true;
+		}
+		nByte = (int) ((lValue >> 7) & 0x7f);
+		if (nByte != 0 || bWritingStarted)
+		{
+			if (outputStream != null)
+			{
+				outputStream.write(nByte | 0x80);
+			}
+			nLength++;
+		}
+		nByte = (int) (lValue & 0x7f);
+		if (outputStream != null)
+		{
+			outputStream.write(nByte);
+		}
+		nLength++;
+		return nLength;
+	}
 }
 
 
