@@ -39,6 +39,9 @@
   </target>
 
 
+  <target name="compile" depends="compile-api, compile-tritonus"/>
+
+
   <target name="compile-api" depends="prepare">
     <javac srcdir="${src.dir}"
 		   destdir="${build.dir}"
@@ -75,7 +78,7 @@
 
 
   <target name="test-midi"
-	  depends="test-midi-message,test-midi-device,test-midi-misc,test-midi-spi">
+	  depends="test-midi-message,test-midi-device,test-midi-misc,test-midi-midisystem,test-midi-spi">
   </target>
 
 
@@ -96,6 +99,16 @@
       <sysproperty key="tritonus.TraceAllExceptions" value="true"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.api.midi.device.MidiDeviceTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="test-midi-midisystem"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.api.midi.midisystem.MidiSystemTestCase"/>
     </junit>
   </target>
 
@@ -123,6 +136,11 @@
 
   <!-- TODO: add to depends: test-audiofilereader -->
   <target name="test-sampled"
+	  depends="test-sampled-line,test-sampled-misc">
+  </target>
+
+
+  <target name="test-sampled-line"
 	  depends="compile-api">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath.api"/>
@@ -132,8 +150,16 @@
   </target>
 
 
-  <target name="test-tritonus"
-	  depends="test-dataoutputstream,test-audiooutputstream">
+  <target name="test-sampled-misc"
+	  depends="compile-api">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath.api"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.api.sampled.misc.AudioFormatTestCase"/>
+      <test name="org.tritonus.test.api.sampled.misc.EncodingTestCase"/>
+      <test name="org.tritonus.test.api.sampled.misc.AudioFileFormatTestCase"/>
+      <test name="org.tritonus.test.api.sampled.misc.TypeTestCase"/>
+    </junit>
   </target>
 
 
@@ -154,6 +180,22 @@
   </target>
 
 
+  <target name="test-tritonus"
+		  depends="test-dataoutputstream,test-audiooutputstream, test-audiosystemshadow">
+  </target>
+
+
+  <target name="test-dataoutputstream"
+	  depends="compile-tritonus">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.tritonus.share.sampled.file.TSeekableDataOutputStreamTestCase"/>
+      <test name="org.tritonus.test.tritonus.share.sampled.file.TNonSeekableDataOutputStreamTestCase"/>
+    </junit>
+  </target>
+
+
   <target name="test-audiooutputstream"
 	  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
@@ -164,12 +206,12 @@
   </target>
 
 
-  <target name="test-dataoutputstream"
+  <target name="test-audiosystemshadow"
 	  depends="compile-tritonus">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
-      <test name="org.tritonus.test.TDataOutputStreamTestCase" />
+      <test name="org.tritonus.test.tritonus.share.sampled.AudioSystemShadowTestCase"/>
     </junit>
   </target>
 
@@ -322,7 +364,7 @@
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
-      <test name="org.tritonus.test.tritonus.TDirectSynthesizerTestCase" />
+      <test name="org.tritonus.test.tritonus.share.midi.TDirectSynthesizerTestCase" />
     </junit>
   </target>
 
