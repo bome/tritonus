@@ -238,6 +238,8 @@ public abstract class TSequencer
 
 	protected float getNominalTempoInMPQ()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getNominalTempoInMPQ(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getNominalTempoInMPQ(): end"); }
 		return m_fNominalTempoInMPQ;
 	}
 
@@ -245,17 +247,21 @@ public abstract class TSequencer
 
 	protected void setNominalTempoInMPQ(float fMPQ)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setNominalTempoInMPQ(): begin"); }
 		m_fNominalTempoInMPQ = fMPQ;
 		setRealTempo();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setNominalTempoInMPQ(): end"); }
 	}
 
 
 
 	protected void setRealTempo()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setRealTempo(): begin"); }
 		float	fRealTempo = getNominalTempoInMPQ() / getTempoFactor();
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setRealTempo(): real tempo: " + fRealTempo); }
 		setTempoImpl(fRealTempo);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setRealTempo(): end"); }
 	}
 
 
@@ -335,6 +341,8 @@ public abstract class TSequencer
 	// NOTE: has to be redefined if recording is done natively
 	public long getTickLength()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTickLength(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTickLength(): end"); }
 		return getSequence().getTickLength();
 	}
 
@@ -344,6 +352,8 @@ public abstract class TSequencer
 	// NOTE: has to be redefined if recording is done natively
 	public long getMicrosecondLength()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMicrosecondLength(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMicrosecondLength(): end"); }
 		return getSequence().getMicrosecondLength();
 	}
 
@@ -529,6 +539,8 @@ public abstract class TSequencer
 
 	public SyncMode getMasterSyncMode()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMasterSyncMode(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMasterSyncMode(): end"); }
 		return m_masterSyncMode;
 	}
 
@@ -536,6 +548,7 @@ public abstract class TSequencer
 
 	public void setMasterSyncMode(SyncMode syncMode)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setMasterSyncMode(): begin"); }
 		if (m_masterSyncModes.contains(syncMode))
 		{
 			m_masterSyncMode = syncMode;
@@ -545,20 +558,25 @@ public abstract class TSequencer
 		{
 			throw new IllegalArgumentException("sync mode not allowed: " + syncMode);
 		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setMasterSyncMode(): end"); }
 	}
 
 
 
 	protected void setMasterSyncModeImpl(SyncMode syncMode)
 	{
-		// TODO:
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setMasterSyncModeImpl(): begin"); }
+		// DO NOTHING
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setMasterSyncModeImpl(): end"); }
 	}
 
 
 
 	public SyncMode[] getMasterSyncModes()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMasterSyncModes(): begin"); }
 		SyncMode[]	syncModes = (SyncMode[]) m_masterSyncModes.toArray();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getMasterSyncModes(): end"); }
 		return syncModes;
 	}
 
@@ -566,6 +584,8 @@ public abstract class TSequencer
 
 	public SyncMode getSlaveSyncMode()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getSlaveSyncMode(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getSlaveSyncMode(): end"); }
 		return m_slaveSyncMode;
 	}
 
@@ -573,6 +593,7 @@ public abstract class TSequencer
 
 	public void setSlaveSyncMode(SyncMode syncMode)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSlaveSyncMode(): begin"); }
 		if (m_slaveSyncModes.contains(syncMode))
 		{
 			m_slaveSyncMode = syncMode;
@@ -582,20 +603,25 @@ public abstract class TSequencer
 		{
 			throw new IllegalArgumentException("sync mode not allowed: " + syncMode);
 		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSlaveSyncMode(): end"); }
 	}
 
 
 
 	protected void setSlaveSyncModeImpl(SyncMode syncMode)
 	{
-		// TODO:
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSlaveSyncModeImpl(): begin"); }
+		// DO NOTHING
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSlaveSyncModeImpl(): end"); }
 	}
 
 
 
 	public SyncMode[] getSlaveSyncModes()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getSlaveSyncModes(): begin"); }
 		SyncMode[]	syncModes = (SyncMode[]) m_slaveSyncModes.toArray();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getSlaveSyncModes(): end"); }
 		return syncModes;
 	}
 
