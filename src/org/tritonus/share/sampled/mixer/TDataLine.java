@@ -241,6 +241,14 @@ public abstract class TDataLine
 
 
 
+	public long getLongFramePosition()
+	{
+		// TODO:
+		return -1;
+	}
+
+
+
 	public long getMicrosecondPosition()
 	{
 		return (long) (getFramePosition() * getFormat().getFrameRate() * 1000000);
