@@ -6,7 +6,6 @@
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -20,12 +19,9 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
-
 package	org.tritonus.sampled.convert.gsm;
-
 
 import	java.io.DataInputStream;
 import	java.io.InputStream;
@@ -226,7 +222,7 @@ public class GSMFormatConversionProvider
 				  Not only errors, but also EOF is caught here.
 				 */
 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				m_circularBuffer.close();
+				getCircularBuffer().close();
 				return;
 			}
 
@@ -251,13 +247,13 @@ public class GSMFormatConversionProvider
 			catch (InvalidGSMFrameException e)
 			{
 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				m_circularBuffer.close();
+				getCircularBuffer().close();
 				return;
 			}
 
 /// end new version
 
-			m_circularBuffer.write(m_abBuffer);
+			getCircularBuffer().write(m_abBuffer);
 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): decoded GSM frame written"); }
 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): end"); }
 		}
@@ -340,14 +336,14 @@ public class GSMFormatConversionProvider
 				if (nRead != m_abBuffer.length)
 				{
 					if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedGSMAudioInputStream.execute(): not read whole 160 sample block (" + nRead + ")"); }
-					m_circularBuffer.close();
+					getCircularBuffer().close();
 					return;
 				}
 			}
 			catch (IOException e)
 			{
 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				m_circularBuffer.close();
+				getCircularBuffer().close();
 				if (TDebug.TraceAudioConverter) { TDebug.out("<"); }
 				return;
 			}
@@ -356,7 +352,7 @@ public class GSMFormatConversionProvider
 			        m_asBuffer[i] = TConversionTool.bytesToShort16(m_abBuffer, i * 2, isBigEndian());
 			}
 			m_encoder.encode(m_asBuffer, m_abFrameBuffer);
-			m_circularBuffer.write(m_abFrameBuffer);
+			getCircularBuffer().write(m_abFrameBuffer);
 			if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedGSMAudioInputStream.execute(): encoded GSM frame written"); }
 			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedGSMAudioInputStream.execute(): end"); }
 		}

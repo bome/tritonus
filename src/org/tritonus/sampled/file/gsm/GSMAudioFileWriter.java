@@ -64,6 +64,8 @@ public class GSMAudioFileWriter
 	{
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("GSMAudioFileWriter.<init>(): begin"); }
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("GSMAudioFileWriter.<init>(): end"); }
 	}
 }
 

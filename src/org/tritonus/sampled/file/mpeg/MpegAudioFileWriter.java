@@ -60,9 +60,12 @@ public class MpegAudioFileWriter extends THeaderlessAudioFileWriter {
 	    new AudioFormat(MPEG1L3, ALL, ALL, 2, ALL, ALL, true),
 	};
 
-	public MpegAudioFileWriter() {
+	public MpegAudioFileWriter()
+	{
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("MpegAudioFileWriter.<init>(): begin"); }
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("MpegAudioFileWriter.<init>(): end"); }
 	}
 }
 

@@ -52,8 +52,8 @@ public class VorbisAudioFileWriter
 
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	{
-		new AudioFormat(Encodings.getEncoding("OGG_VORBIS"), ALL, ALL, ALL, ALL, ALL, false),
-		new AudioFormat(Encodings.getEncoding("OGG_VORBIS"), ALL, ALL, ALL, ALL, ALL, true),
+		new AudioFormat(Encodings.getEncoding("VORBIS"), ALL, ALL, ALL, ALL, ALL, false),
+		new AudioFormat(Encodings.getEncoding("VORBIS"), ALL, ALL, ALL, ALL, ALL, true),
 	};
 
 
@@ -62,6 +62,8 @@ public class VorbisAudioFileWriter
 	{
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("VorbisAudioFileWriter.<init>(): begin"); }
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("VorbisAudioFileWriter.<init>(): end"); }
 	}
 }
 

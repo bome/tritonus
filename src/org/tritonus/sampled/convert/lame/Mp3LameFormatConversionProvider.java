@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -19,12 +18,9 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
-
 package	org.tritonus.sampled.convert.lame;
-
 
 import	java.io.File;
 import	java.io.FileOutputStream;
@@ -360,7 +356,7 @@ public class Mp3LameFormatConversionProvider
 					if (TDebug.TraceAudioConverter) {
 						TDebug.out("mp3 lame encoder is null (already at end of stream)");
 					}
-					m_circularBuffer.close();
+					getCircularBuffer().close();
 					return;
 				}
 				int encodedBytes=0;
@@ -382,10 +378,10 @@ public class Mp3LameFormatConversionProvider
 					}
 				}
 				if (encodedBytes>0) {
-					m_circularBuffer.write(buffer, 0, encodedBytes);
+					getCircularBuffer().write(buffer, 0, encodedBytes);
 				}
 				if (encoder==null) {
-					m_circularBuffer.close();
+					getCircularBuffer().close();
 				}
 			} catch (ArrayIndexOutOfBoundsException e)
 			{
