@@ -226,5 +226,6 @@ AC_OUTPUT(Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
 	src/lib/vorbis/Makefile
+	src/lib/pvorbis/Makefile
 	doc/Makefile
 	test/Makefile)

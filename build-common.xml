@@ -103,7 +103,7 @@
 	<fileset dir="${src}/packaging/tritonus_gsm" />
   </jar>
 
-  <!-- VORBIS: -->
+  <!-- (native) VORBIS: -->
   <jar jarfile="${dist}/tritonus_vorbis-${version}.jar" >
     <fileset dir="${build}" >
       <include name="org/tritonus/lowlevel/ogg/" />
@@ -117,6 +117,22 @@
       <include name="org/tritonus/debug/" />
     </fileset>
     <fileset dir="${src}/packaging/tritonus_vorbis" />
+  </jar>
+
+  <!-- (pure java) VORBIS: -->
+  <jar jarfile="${dist}/tritonus_pvorbis-${version}.jar" >
+    <fileset dir="${build}" >
+      <include name="org/tritonus/lowlevel/pogg/" />
+      <include name="org/tritonus/lowlevel/pvorbis/" />
+      <include name="org/tritonus/sampled/convert/pvorbis/" />
+      <include name="org/tritonus/sampled/file/pvorbis/" />
+      <!-- This is a hack needed for the debug build. Files in this
+      directory aren't needed for the release build. However, it
+      should do no harm if files laying around are included.
+      -->
+      <include name="org/tritonus/debug/" />
+    </fileset>
+    <fileset dir="${src}/packaging/tritonus_pvorbis" />
   </jar>
 
   <!-- JAVASEQUENCER: -->

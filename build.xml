@@ -38,6 +38,9 @@
 	  <compilerarg  value="-Xlint:unchecked"/>
       <include name="org/tritonus/lowlevel/dsp/" />
       <include name="org/tritonus/dsp/" />
+      <include name="org/tritonus/lowlevel/pogg/" />
+      <include name="org/tritonus/lowlevel/pvorbis/" />
+      <include name="org/tritonus/sampled/" />
     </javac>
   </target>
 
