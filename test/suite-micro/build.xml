@@ -46,6 +46,7 @@
       <formatter type="plain" />
       <test name="ManagerTestCase" />
       <test name="PlayerTestCase" />
+      <test name="DataSourceTestCase" />
     </junit>
   </target>
 
