@@ -256,7 +256,7 @@ public class VorbisAudioFileReader
 		}
 
 		AudioFormat	format = new AudioFormat(
-			Encodings.getEncoding("OGG_VORBIS"),
+			Encodings.getEncoding("VORBIS"),
 			fSampleRate,
 			AudioSystem.NOT_SPECIFIED /*???*/,
 			nChannels,
@@ -265,7 +265,7 @@ public class VorbisAudioFileReader
 			true);	// this value is chosen arbitrarily
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
-				AudioFileTypes.getType("Vorbis","ogg"),
+				AudioFileTypes.getType("Ogg","ogg"),
 				format,
 				nFrameSize,
 				nByteSize);
