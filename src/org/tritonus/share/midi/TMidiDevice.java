@@ -111,8 +111,8 @@ public abstract class TMidiDevice
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): begin"); }
 		if (! isOpen())
 		{
-			openImpl();
 			m_bOpen = true;
+			openImpl();
 		}
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): end"); }
 	}
