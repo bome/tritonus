@@ -84,29 +84,90 @@ Ignored Tokens
 	comment;
 
 Productions
+// -
 orcfile =
 	{orcfile} proc*;
 
+// -
 proc =
 	{instrdecl} instrdecl |
 	{opcodedecl} opcodedecl |
 	{globaldecl} globaldecl |
 	{templatedecl} templatedecl;
 
+// I
 instrdecl =
-	{instrdecl} instr identifier l_par identlist? r_par
-		l_brace opvardecl* block r_brace;
+	{instrdecl} instr identifier
+		l_par identlist? r_par
+		miditag?
+		l_brace vardecl* block r_brace;
 
+// I
+miditag =
+	{miditag} preset int_list;
+
+// I
 int_list =
 	{int_list} integer*;
 
+// O
 opcodedecl =
 	{opcodedecl} optype identifier l_par paramlist? r_par
 		l_brace opvardecl* block r_brace;
 
+// O
+optype =
+	{aopcode} aopcode |
+	{kopcode} kopcode |
+	{iopcode} iopcode |
+	{opcode} opcode;
+
+// O
+paramlist =
+	{paramlist} paramdecl paramlist_tail*;
+
+// O
+paramlist_tail =
+	{paramlist_tail} comma paramdecl;
+
+// O
+paramdecl =
+	{paramdecl} stype name;
+
+// G
 globaldecl =
 	{globaldecl} global l_brace globaldef* r_brace;
 
+// G
+globaldef =
+	{rtparam} rtparam |
+	{routedef} routedef|
+	{senddef} senddef |
+	{seqdef} seqdef |
+	{vardecl} vardecl;
+
+// G
+rtparam =
+	{srate} srate integer semicolon |
+	{krate} krate integer semicolon |
+	{inchannels} inchannels integer semicolon |
+	{outchannels} outchannels integer semicolon |
+	{interp} interp integer semicolon;
+
+// G
+routedef =
+	{routedef} route l_par identifier comma identlist? r_par semicolon;
+
+// G
+senddef =
+	{senddef} send l_par identifier [semicolon1]: semicolon exprlist? [semicolon2]: semicolon
+		identlist? r_par [semicolon3]: semicolon;
+
+// G
+seqdef =
+	{seqdef} sequence l_par identlist? r_par semicolon;
+
+// T
 templatedecl =
 	{templatedecl} template lt [identlist1]: identlist? gt
 		preset_clause?
@@ -115,53 +176,37 @@ templatedecl =
 		with [l_brace2]: l_brace mapblock? [r_brace2]: r_brace
 		[l_brace3]: l_brace vardecl* block [r_brace3]: r_brace;
 
+// T
 preset_clause =
 	{preset_clause} preset mapblock?;
 
+// T
 mapblock =
 	{mapblock} lt terminal_list gt mapblock_tail*;
 
+// T
 mapblock_tail =
 	{mapblock_tail} comma lt terminal_list gt;
 
+// T
 terminal_list =
 	{terminal_list} terminal terminal_list_tail*;
 
+// T
 terminal_list_tail =
 	{terminal_list_tail} comma terminal;
 
+// T
 terminal =
 	{identifier} identifier |
 	{constant} const |
 	{string} string;
 
-globaldef =
-	{rtparam} rtparam |
-	{vardecl} vardecl |
-	{routedef} routedef|
-	{senddef} senddef |
-	{seqdef} seqdef;
-
-rtparam =
-	{srate} srate integer semicolon |
-	{krate} krate integer semicolon |
-	{inchannels} inchannels integer semicolon |
-	{outchannels} outchannels integer semicolon |
-	{interp} interp integer semicolon;
-
-routedef =
-	{routedef} route l_par identifier comma identlist? r_par semicolon;
-
-senddef =
-	{senddef} send l_par identifier [semicolon1]: semicolon exprlist? [semicolon2]: semicolon
-		identlist? r_par [semicolon3]: semicolon;
-
-seqdef =
-	{seqdef} sequence l_par identlist? r_par semicolon;
-
+// IOT
 block =
 	{block} statement*;
 
+// IOT
 statement =
 	{assignment} lvalue assign expr semicolon |
 	{expression} expr semicolon |
@@ -178,96 +223,89 @@ statement =
 	{turnoff} turnoff semicolon |
 	{return} return l_par expr r_par semicolon;
 
+// IOT
 lvalue =
 	{simple} identifier |
 	{indexed} identifier l_bracket expr r_bracket;
 
 
+// IGT (-> IOGT)
 identlist =
 	{identlist} identifier identlist_tail*;
 
+// IGT (-> IOGT)
 identlist_tail =
 	{identlist_tail} comma identifier;
 
 
-paramlist =
-	{paramlist} paramdecl paramlist_tail*;
-
-paramlist_tail =
-	{paramlist_tail} comma paramdecl;
-
-
+// IGT (-> IOGT)
 vardecl =
-	{sigvar} taglist? stype namelist semicolon |
-//	{table} tabledecl semicolon |
+	{opvardecl} opvardecl |
 	{tablemap} tablemap identifier l_par identlist? r_par semicolon;
 
+// IOGT
 opvardecl =
-	{sigvar} taglist? otype namelist semicolon;
-//	{table} tabledecl semicolon;
+	{sigvar} taglist? stype namelist semicolon |
+	{tablevar} taglist table namelist semicolon |
+	{table} tabledecl semicolon;
 
-
-paramdecl =
-	{paramdecl} otype name;
-
-
-namelist =
-	{namelist} name namelist_tail*;
-
-namelist_tail =
-	{namelist_tail} comma name;
-
-
-name =
-	{simple} identifier |
-	{indexed} identifier l_bracket integer r_bracket |
-	{inchannels} identifier l_bracket inchannels r_bracket |
-	{outchannels} identifier l_bracket outchannels r_bracket;
-
-stype =
-	{ivar} ivar |
-	{ksig} ksig |
-	{asig} asig |
-	{table} table |
-	{oparray} oparray;
-
-otype =
-	{xsig} xsig |
-	{stype} stype;
-
-tabledecl =
-	{tabledecl} table [identifier1]: identifier
-		l_par [identifier2]: identifier comma exprstrlist r_par;
-
+// IOGT
 taglist =
 	{imports} imports |
 	{exports} exports |
 	{importsexports} imports exports |
 	{exportsimports} exports imports;
 
-optype =
-	{aopcode} aopcode |
-	{kopcode} kopcode |
-	{iopcode} iopcode |
-	{opcode} opcode;
+// IOGT
+stype =
+	{ivar} ivar |
+	{ksig} ksig |
+	{asig} asig |
+	{xsig} xsig |
+	{oparray} oparray;
 
+// IOGT
+tabledecl =
+	{tabledecl} table [identifier1]: identifier
+		l_par [identifier2]: identifier comma exprstrlist r_par;
+
+// IOGT
+namelist =
+	{namelist} name namelist_tail*;
+
+// IOGT
+namelist_tail =
+	{namelist_tail} comma name;
+
+// IOGT
+name =
+	{simple} identifier |
+	{indexed} identifier l_bracket integer r_bracket |
+	{inchannels} identifier l_bracket inchannels r_bracket |
+	{outchannels} identifier l_bracket outchannels r_bracket;
+
+// IOGT
 expr =
 	{orexpr} orexpr |
 	{alt} [orexpr1]: orexpr quest_mark [orexpr2]: orexpr colon [orexpr3]: orexpr;
 
+// IOGT
 orexpr =
 	{andexpr} andexpr |
 	{or} orexpr or andexpr;
 
+// IOGT
 andexpr =
 	{equalityexpr} equalityexpr |
 	{and} andexpr and equalityexpr;
 
+// IOGT
 equalityexpr =
 	{relationalexpr} relationalexpr |
 	{neq} equalityexpr neq relationalexpr |
 	{eq} equalityexpr eq relationalexpr;
 
+// IOGT
 relationalexpr =
 	{addexpr} addexpr |
 	{gt} relationalexpr gt addexpr |
@@ -275,25 +313,30 @@ relationalexpr =
 	{lteq} relationalexpr lteq addexpr |
 	{gteq} relationalexpr gteq addexpr;
 
+// IOGT
 addexpr =
 	{factor} factor |
 	{plus} addexpr plus factor |
 	{minus} addexpr minus factor;
 
+// IOGT
 factor =
 	{term} unaryminusterm |
 	{mult} factor mult unaryminusterm |
 	{div} factor div unaryminusterm;
 
+// IOGT
 unaryminusterm =
 	{term} notterm |
 	{not} minus notterm;
 
+// IOGT
 notterm =
 	{term} term |
 	{not} excl_mark term;
 
 
+// IOGT
 term =
 	{identifier} identifier |
 	{constant} const |
@@ -305,24 +348,30 @@ term =
 	{paren} l_par expr r_par;
 	
 
+// IOGT
 exprlist =
 	{exprlist} expr exprlist_tail*;
 
+// IOGT
 exprlist_tail =
 	{exprlist_tail} comma expr;
 
 
+// IOGT
 exprstrlist =
 	{exprstrlist} expr_or_string exprstrlist_tail*;
 
+// IOGT
 exprstrlist_tail =
 	{exprstrlist_tail} comma expr_or_string;
 
 
+// IOGT
 expr_or_string =
 	{expr} expr |
 	{string} string;
 
+// IOGT
 const =
 	{integer} integer |
 	{number} number;
