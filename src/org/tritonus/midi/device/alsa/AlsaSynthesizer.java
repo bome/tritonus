@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.midi.device.alsa;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;

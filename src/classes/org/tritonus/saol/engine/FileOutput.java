@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.saol.engine;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.saol.engine;
 
 import java.io.IOException;
 import java.io.File;
@@ -46,14 +49,16 @@ import  org.tritonus.share.sampled.file.AudioOutputStream;
 public class FileOutput
 extends AudioOutputStreamOutput
 {
-	public FileOutput(File outputFile, AudioFileFormat.Type targetType, AudioFormat audioFormat)
+	public FileOutput(File outputFile,
+					  AudioFileFormat.Type targetType,
+					  AudioFormat audioFormat)
 		throws IOException
 	{
 		super(AudioSystemShadow.getAudioOutputStream(
-			targetType,
-			audioFormat,
-			AudioSystem.NOT_SPECIFIED,
-			outputFile));
+				  targetType,
+				  audioFormat,
+				  AudioSystem.NOT_SPECIFIED,
+				  outputFile));
 	}
 }
 

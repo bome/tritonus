@@ -26,13 +26,15 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.midi.device.midishare;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
-
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;

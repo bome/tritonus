@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.lowlevel.cdda;
-
 
 import java.io.InputStream;
 import java.io.IOException;

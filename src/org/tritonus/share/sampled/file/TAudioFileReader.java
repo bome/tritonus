@@ -23,8 +23,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.share.sampled.file;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.share.sampled.file;
 
 import java.io.BufferedInputStream;
 import java.io.File;

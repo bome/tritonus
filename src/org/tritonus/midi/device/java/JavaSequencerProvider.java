@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.midi.device.java;
-
 
 import java.util.ArrayList;
 import java.util.List;

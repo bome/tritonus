@@ -22,6 +22,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
 package org.tritonus.saol.compiler;
 
 
@@ -54,10 +58,10 @@ public class SAOLGlobals
 
 
 	private SAOLGlobals(int nDefaultARate,
-			       int nDefaultKRate,
-			       int nDefaultInChannels,
-			       int nDefaultOutChannels,
-			       int nDefaultInterp)
+						int nDefaultKRate,
+						int nDefaultInChannels,
+						int nDefaultOutChannels,
+						int nDefaultInterp)
 	{
 		m_nARate = nDefaultARate;
 		m_nKRate = nDefaultKRate;

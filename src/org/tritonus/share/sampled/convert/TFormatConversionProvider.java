@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled.convert;
-
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;

@@ -23,6 +23,10 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
 package org.tritonus.sampled.convert;
 
 import java.util.HashSet;

@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.sampled.mixer.esd;
-
 
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.spi.MixerProvider;

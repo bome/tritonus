@@ -25,13 +25,17 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled.file;
-
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.DataOutputStream;
+
+
 
 /**
  * A TDataOutputStream that does not allow seeking.
@@ -39,8 +43,6 @@ import java.io.DataOutputStream;
  * @author Florian Bomers
  * @author Matthias Pfisterer
  */
-
-
 public class TNonSeekableDataOutputStream
 extends DataOutputStream
 implements TDataOutputStream

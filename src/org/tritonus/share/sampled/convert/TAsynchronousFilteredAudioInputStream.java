@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled.convert;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import javax.sound.sampled.AudioInputStream;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.TCircularBuffer;
+
 
 
 /** Base class for asynchronus converters.

@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.saol.compiler;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.saol.compiler;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.saol.sablecc.analysis.*;
@@ -44,8 +47,8 @@ extends DepthFirstAdapter
 
 
 	public TreeDivider(InstrumentTable instrumentTable,
-			   UserOpcodeTable opcodeTable,
-			   TemplateTable templateTable)
+					   UserOpcodeTable opcodeTable,
+					   TemplateTable templateTable)
 	{
 		m_instrumentTable = instrumentTable;
 		m_opcodeTable = opcodeTable;

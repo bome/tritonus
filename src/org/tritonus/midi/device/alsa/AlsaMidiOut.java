@@ -24,7 +24,6 @@
  *
  */
 
-
 package org.tritonus.midi.device.alsa;
 
 import javax.sound.midi.Sequence;

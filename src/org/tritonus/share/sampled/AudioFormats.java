@@ -25,6 +25,9 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled;
 
@@ -91,7 +94,7 @@ public class AudioFormats
 /* old version
 */
 		// as proposed by florian
-		return Encodings.equals(format1.getEncoding(), format2.getEncoding())
+		return format1.getEncoding().equals(format2.getEncoding())
 			&& (format2.getSampleSizeInBits()<=8
 			    || format1.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED
 			    || format2.getSampleSizeInBits()==AudioSystem.NOT_SPECIFIED
@@ -113,7 +116,7 @@ public class AudioFormats
 	public static boolean equals(AudioFormat format1,
 				      AudioFormat format2)
 	{
-		return Encodings.equals(format1.getEncoding(), format2.getEncoding())
+		return format1.getEncoding().equals(format2.getEncoding())
 			&& format1.getChannels() == format2.getChannels()
 			&& format1.getSampleSizeInBits() == format2.getSampleSizeInBits()
 			&& format1.getFrameSize() == format2.getFrameSize()

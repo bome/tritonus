@@ -23,9 +23,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.sampled.mixer.alsa;
-
 
 import java.util.Arrays;
 import java.util.ArrayList;

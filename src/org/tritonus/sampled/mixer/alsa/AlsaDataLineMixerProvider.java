@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.sampled.mixer.alsa;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.sampled.mixer.alsa;
 
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.spi.MixerProvider;

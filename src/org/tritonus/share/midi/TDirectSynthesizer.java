@@ -24,6 +24,9 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.midi;
 
@@ -35,6 +38,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
 import org.tritonus.share.TDebug;
+
 
 /* TODO: implement aquiring of a SourceDataLine, perhaps in a separate
    class TSoftwareSynthesizer.

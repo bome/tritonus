@@ -25,13 +25,16 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled.file;
-
 
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.io.IOException;
+
 
 
 /**
@@ -40,7 +43,6 @@ import java.io.IOException;
  * @author Florian Bomers
  * @author Matthias Pfisterer
  */
-
 public class TSeekableDataOutputStream
 extends RandomAccessFile
 implements TDataOutputStream

@@ -24,6 +24,9 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled;
 
@@ -35,6 +38,7 @@ import javax.sound.sampled.AudioFormat;
 
 import org.tritonus.share.ArraySet;
 import org.tritonus.share.sampled.AudioFormats;
+
 
 /**
  * A set where the elements are uniquely referenced by

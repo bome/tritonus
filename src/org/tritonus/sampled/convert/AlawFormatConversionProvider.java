@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.sampled.convert;
-
 
 import java.util.Arrays;
 
@@ -39,6 +41,7 @@ import org.tritonus.share.sampled.AudioFormats;
 import org.tritonus.share.sampled.TConversionTool;
 import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
+
 
 /**
  * This provider (currently) supports these conversions:

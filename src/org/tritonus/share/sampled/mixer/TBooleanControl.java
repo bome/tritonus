@@ -24,10 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled.mixer;
-
-
 
 import javax.sound.sampled.BooleanControl;
 
@@ -36,7 +37,7 @@ import org.tritonus.share.TDebug;
 
 
 
-/**	Base class for classes implementing Line.
+/**	Base class for classes implementing BooleanControl.
  */
 public class TBooleanControl
 extends BooleanControl

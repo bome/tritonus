@@ -26,7 +26,12 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
 package org.tritonus.midi.device.midishare;
+
 
 /**
  *	This interface is to mark Transmitters and Receivers that are

@@ -24,8 +24,11 @@
  *
  */
 
-package org.tritonus.midi.device.alsa;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.midi.device.alsa;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;

@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.lowlevel.cdda.cooked_ioctl;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package javax.sound.sampled;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package javax.sound.sampled;
 
 import java.io.BufferedInputStream;
 import java.io.File;

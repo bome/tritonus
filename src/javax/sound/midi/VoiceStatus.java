@@ -4,10 +4,6 @@
  *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
-package javax.sound.midi;
-
-
-
 /*
  *  Copyright (c) 1999 by Matthias Pfisterer
  *
@@ -27,6 +23,13 @@ package javax.sound.midi;
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
+
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
+package javax.sound.midi;
+
 
 
 public class VoiceStatus

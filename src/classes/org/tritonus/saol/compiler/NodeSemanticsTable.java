@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.saol.compiler;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.saol.compiler;
 
 import java.util.HashMap;
 
@@ -32,6 +35,7 @@ import org.tritonus.saol.sablecc.node.Node;
 
 
 /**	The instrument table.
+	TODO: use generics
  */
 public class NodeSemanticsTable
 extends HashMap

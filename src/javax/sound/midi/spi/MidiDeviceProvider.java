@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package javax.sound.midi.spi;
-
 
 import javax.sound.midi.MidiDevice;
 

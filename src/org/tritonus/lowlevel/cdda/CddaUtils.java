@@ -24,9 +24,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.lowlevel.cdda;
-
 
 import org.tritonus.lowlevel.cdda.CddaMidLevel;
 import org.tritonus.lowlevel.cdda.cdparanoia.CdparanoiaMidLevel;

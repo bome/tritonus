@@ -25,8 +25,11 @@
  *
  */
 
-package org.tritonus.sampled.file.gsm;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.sampled.file.gsm;
 
 import java.util.Arrays;
 

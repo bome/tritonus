@@ -23,15 +23,17 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.core;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
-import  java.util.Enumeration;
+import java.util.Enumeration;
 import java.util.Iterator;
-import  java.util.List;
+import java.util.List;
 import java.util.Set;
 
 import java.io.BufferedReader;

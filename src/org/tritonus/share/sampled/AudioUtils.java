@@ -23,9 +23,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share.sampled;
-
 
 import java.io.File;
 import java.io.FileOutputStream;

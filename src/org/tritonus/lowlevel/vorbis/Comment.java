@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.lowlevel.vorbis;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package org.tritonus.lowlevel.vorbis;
 
 import org.tritonus.lowlevel.ogg.Ogg;
 import org.tritonus.share.TDebug;

@@ -23,9 +23,11 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.lowlevel.alsa;
-
 
 import java.lang.UnsupportedOperationException;
 import java.util.Iterator;

@@ -24,6 +24,9 @@
  *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.share;
 
@@ -32,6 +35,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.tritonus.share.ArraySet;
+
+
 /**
  * A set where the elements are uniquely referenced by their
  * string representation as given by the objects toString()

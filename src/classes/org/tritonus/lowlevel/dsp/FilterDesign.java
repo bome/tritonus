@@ -22,9 +22,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
 package org.tritonus.lowlevel.dsp;
 
 import org.tritonus.share.TDebug;
+
+
 
 /**	Several methods to design digital filters.
 	This is a design method for FIR filters.

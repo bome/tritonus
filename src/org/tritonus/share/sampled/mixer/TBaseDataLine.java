@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,6 +22,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
 package org.tritonus.share.sampled.mixer;
 
 import java.util.Collection;
@@ -32,6 +36,7 @@ import java.util.Set;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Control;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.Line;
@@ -56,8 +61,8 @@ extends	TDataLine
 
 
 	public TBaseDataLine(TMixer mixer,
-			     DataLine.Info info,
-			     Collection controls)
+						 DataLine.Info info,
+						 Collection<Control> controls)
 	{
 		super(mixer,
 		      info,

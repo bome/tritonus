@@ -22,6 +22,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
+
 package javax.sound.sampled;
 
 import java.security.BasicPermission;

@@ -22,9 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package org.tritonus.sampled.file.mpeg;
-
 
 import java.io.InputStream;
 import java.io.IOException;

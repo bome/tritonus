@@ -22,8 +22,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package javax.sound.midi;
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
+package javax.sound.midi;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.midi.MidiUtils;
