@@ -30,8 +30,9 @@
       <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
     </javac>
     <javac srcdir="${src.classes}"
-	   debug="${debug}"
-	   destdir="${build}" >
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}" >
       <include name="org/tritonus/lowlevel/dsp/" />
       <include name="org/tritonus/dsp/" />
     </javac>
@@ -42,8 +43,9 @@
 	  depends="prepare"
 	  if="javalayer-present">
     <javac srcdir="${src}"
-	   debug="${debug}"
-	   destdir="${build}" >
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}" >
       <include name="org/tritonus/sampled/convert/javalayer/" />
     </javac>
   </target>
@@ -53,8 +55,9 @@
 	  depends="prepare"
 	  if="jorbis-present">
     <javac srcdir="${src}"
-	   debug="${debug}"
-	   destdir="${build}" >
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}" >
       <include name="org/tritonus/sampled/convert/jorbis/" />
       <include name="org/tritonus/sampled/file/jorbis/" />
     </javac>
@@ -64,8 +67,9 @@
 	  depends="prepare"
 	  if="midishare-present">
     <javac srcdir="${src}"
-	   debug="${debug}"
-	   destdir="${build}" >
+		   debug="${debug}"
+		   source="${source}"
+		   destdir="${build}" >
       <include name="org/tritonus/midi/device/midishare/" />
     </javac>
   </target>
