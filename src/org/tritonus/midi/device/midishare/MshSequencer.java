@@ -107,27 +107,20 @@ public class MidiShareSequencer
 		setTempoFactor(1.0F);
 		
 		Track[]	aTracks = sequence.getTracks();
-		int	mshEv, mshSeq;
-		MidiEvent event;
+		int mshEv, mshSeq, nTrack, nEv, eventNum = 0; 
+		
+		for (nTrack = 0; nTrack < aTracks.length; nTrack++){ eventNum+=aTracks[nTrack].size();}
+		if (Midi.FreeSpace() < eventNum) Midi.GrowSpace(eventNum);
 		
 		if ((mshSeq = Midi.NewSeq()) != 0) {
-			for (int nTrack = 0; nTrack < aTracks.length; nTrack++){
-				for (int nEv = 0; nEv<aTracks[nTrack].size() ; nEv++) {
-					event = aTracks[nTrack].get(nEv);
-					mshEv = MidiShareEventConverter.decodeEvent(event);
+			for (nTrack = 0; nTrack < aTracks.length; nTrack++){
+				for (nEv = 0; nEv<aTracks[nTrack].size() ; nEv++) {
+					mshEv = MidiShareEventConverter.decodeEvent(aTracks[nTrack].get(nEv));
 					if (mshEv != 0){
 						// Set the tracknumber
-						if (IsTempoMap(Midi.GetType(mshEv))) {
-							Midi.SetRefnum(mshEv,0);
-						}else{
-							Midi.SetRefnum(mshEv,Math.min(256,nTrack+1)); 
-						}
-					}else {
-						// reporting allocation error??
-						Midi.FreeSeq(mshSeq);
-						return;
+						Midi.SetRefnum(mshEv,IsTempoMap(Midi.GetType(mshEv)) ? 0 : Math.min(256,nTrack+1));
+						Midi.AddSeq(mshSeq,mshEv);
 					}
-					Midi.AddSeq(mshSeq,mshEv);
 				}
 			}
 			MidiPlayer.SetAllTrack(m_refNum,mshSeq,sequence.getResolution());
