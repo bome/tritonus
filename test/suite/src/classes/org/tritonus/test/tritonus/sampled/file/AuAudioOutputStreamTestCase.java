@@ -20,7 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.test;
+package org.tritonus.test.tritonus.sampled.file;
 
 import	java.io.BufferedInputStream;
 import	java.io.ByteArrayOutputStream;
