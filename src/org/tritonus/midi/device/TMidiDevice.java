@@ -205,7 +205,7 @@ public abstract class TMidiDevice
 		if (TDebug.TraceTMidiDevice)
 		{
 			TDebug.out("### [should be overridden] TMidiDevice.receive(): message " + message);
-		}w
+		}
 	}
 
 
@@ -363,7 +363,7 @@ public abstract class TMidiDevice
 			{
 				getReceiver().send(message, lTimeStamp);
 			}
-		}Receiver
+		}
 
 
 
