@@ -108,5 +108,5 @@ dnl Checks for library functions.
 AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
 	src/lib/esd/Makefile
-	src/lib/saint/Makefile
 	test/Makefile)
+dnl	src/lib/saint/Makefile

@@ -118,13 +118,13 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/midi/*.java \
 	$(SRCDIR_PRIV)/midi/device/*.java \
 	$(SRCDIR_PRIV)/midi/device/alsa/*.java \
-	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
-	$(SRCDIR_PRIV)/midi/device/saint/*.java \
 	$(SRCDIR_PRIV)/midi/file/*.java \
 	$(SRCDIR_PRIV)/util/*.java \
 	$(SRCDIR_JL)/*.java \
 	)
 
+#	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
+#	$(SRCDIR_PRIV)/midi/device/saint/*.java \
 #	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
 #	$(SRCDIR_JESD)/*.java \
 
@@ -215,10 +215,6 @@ convert:
 $(LIBDEST):	$(OBJ) #$(CONFIGFILE2)
 	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN) -C src/packaging/tritonus_core/ META-INF/services/
 
-#$(CONFIGFILE2): $(CONFIGFILE)
-#	mkdir -p $(OBJDIR_PRIV)
-#	cp $(CONFIGFILE) $(CONFIGFILE2)
-
 
 .PHONY: mp3jars
 mp3jars:	$(LIBDEST_JL) $(LIBDEST_MP3SP)
@@ -299,5 +295,5 @@ devdist:
 
 devdist-upload: devdist
 	echo tritonus-`date +%Y-%m-%d.tar.gz` >.fname
-	scp `cat .fname` pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/`cat .fname`
+	scp `cat .fname` pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
 	-rm -f .fname
