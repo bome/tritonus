@@ -26,7 +26,7 @@
 package	org.tritonus.share;
 
 import	java.io.PrintStream;
-
+import  java.util.StringTokenizer;
 
 
 public class TDebug
@@ -94,7 +94,17 @@ public class TDebug
 				indent="";
 			}
 		}
-		m_printStream.println(indent+strMessage);
+		String newMsg=null;
+		if (indent!="" && strMessage.indexOf("\n")>=0) {
+			newMsg="";
+			StringTokenizer tokenizer=new StringTokenizer(strMessage, "\n");
+			while (tokenizer.hasMoreTokens()) {
+				newMsg+=indent+tokenizer.nextToken()+"\n";
+			}
+		} else {
+			newMsg=indent+strMessage;
+		}
+		m_printStream.println(newMsg);
 		if (strMessage.length()>0 && strMessage.charAt(0)=='>') {
 				indent+="  ";
 		} 
