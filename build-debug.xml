@@ -9,19 +9,34 @@
 
 <project name="tritonus" default="dist" basedir=".">
 
+  <taskdef name="ajc"
+    classname="org.aspectj.tools.ant.taskdefs.Ajc" >
+ </taskdef>
+
 
   &common;
 
 
   <target name="compile" depends="prepare">
-    <javac srcdir="${src}"
+    <!-- Here, the compilation is separated into parts due to an obscure problem. Memory shortage? -->
+    <ajc srcdir="${src}"
 	   destdir="${build}"
-	   includes="javax/sound/,org/tritonus/"
-	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/,org/tritonus/sampled/cdda/" />
+	   includes="javax/sound/,org/tritonus/core/,org/tritonus/share/" />
+    <ajc srcdir="${src}"
+	 destdir="${build}"
+	 includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/"
+	 excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" >
+      <classpath>
+	<pathelement path="${classpath}"/>
+	<pathelement location="${build}"/>
+      </classpath>
+    </ajc>
+<!--
     <javac srcdir="${src.classes}"
 	   debug="on"
 	   destdir="${build}"
 	   includes="org/tritonus/lowlevel/dsp/" />
+-->
   </target>
 
   <target name="compile-javalayer-dependent"
@@ -49,5 +64,6 @@
 	   destdir="${build}"
 	   includes="org/tritonus/midi/device/midishare/" />
   </target>
+
 
 </project>

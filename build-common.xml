@@ -1,0 +1,338 @@
+<!--
+     Tritonus build
+     common definitions
+
+     This file is included by build.xml and build-aspectj.xml.
+-->
+  <!--taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"/-->
+
+  <target name="init">
+    <tstamp/>
+    <property name="src" value="${basedir}/src" />
+    <property name="build" value="${basedir}/build" />
+    <property name="dist"  value="${basedir}/dist" />
+    <property name="javadoc.dir"  value="${basedir}/doc/apidoc" />
+    <property name="src.classes" value="${src}/classes" />
+    <property name="src.misc" value="${src}/misc" />
+    <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar ../../javalayer/dist/javalayer.jar" />
+    <!--
+    Remove the next line if you don't have jikes.
+    In this case, javac will be used for compiling.
+    -->
+    <!--property name="build.compiler" value="jikes" /-->
+    <!--property name="build.compiler.fulldepend" value="true" /-->
+
+    <available
+	       classname="grame.midishare.Midi"
+	       property="midishare-present" />
+    <available
+	       classname="javazoom.jl.decoder.Decoder"
+	       property="javalayer-present" />
+    <available
+	       classname="com.jcraft.jorbis.JorbisException"
+	       property="jorbis-present" />
+
+    <property
+	      name="java_ext_path"
+	      value="${java.home}/lib/ext" />
+  </target>
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${dist}" />
+  </target>
+
+
+  <!-- compile targets are in build.xml/build-aspectj.xml -->
+
+  <target name="dist"
+	  depends="dist-common,dist-javalayer-dependent,dist-jorbis-dependent,dist-midishare-dependent" >
+  </target>
+
+
+  <target name="dist-common"
+	  depends="compile" >
+
+    <!-- CORE: contains public classes and SPI instantiation support -->
+    <jar jarfile="${dist}/tritonus_core.jar">
+      <fileset dir="${build}">
+	<include name="javax/sound/" />
+	<include name="org/tritonus/core/" />
+      </fileset>
+    </jar>
+
+    <!-- SHARE: contains base and auxiliary classes for all other jars -->
+    <jar jarfile="${dist}/tritonus_share.jar">
+      <fileset dir="${build}">
+	<include name="org/tritonus/share/" />
+      </fileset>
+    </jar>
+
+    <!-- ALSA: contains Alsa mixer and Alsa sequencer -->
+    <jar jarfile="${dist}/tritonus_alsa.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/alsa/" />
+	<include name="org/tritonus/sampled/mixer/alsa/" />
+	<include name="org/tritonus/midi/device/alsa/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_alsa" />
+    </jar>
+
+    <!-- ESD: contains Esd mixer -->
+    <jar jarfile="${dist}/tritonus_esd.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/esd/" />
+	<include name="org/tritonus/sampled/mixer/esd/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_esd" />
+    </jar>
+
+    <!-- GSM: -->
+    <jar jarfile="${dist}/tritonus_gsm.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/gsm/" />
+	<include name="org/tritonus/sampled/convert/gsm/" />
+	<include name="org/tritonus/sampled/file/gsm/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_gsm" />
+    </jar>
+
+    <!-- JAVASEQUENCER: -->
+    <jar jarfile="${dist}/tritonus_javasequencer.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/midi/device/java/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_javasequencer" />
+    </jar>
+
+    <!-- AOS: AudioOutputStream stuff-->
+    <jar jarfile="${dist}/tritonus_aos.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/sampled/file/*AudioOutputStream.class/" />
+	<include name="org/tritonus/sampled/file/*Tool.class/" />
+      </fileset>
+    </jar>
+
+    <!-- SRC: sample rate converter -->
+    <jar jarfile="${dist}/tritonus_src.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/sampled/convert/SampleRateConversionProvider.class" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_src" />
+    </jar>
+
+
+    <!-- CDDA: -->
+    <jar jarfile="${dist}/tritonus_cdda.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/cdda/" />
+	<include name="org/tritonus/sampled/cdda/" />
+      </fileset>
+    </jar>
+
+    <!-- DSP: -->
+    <jar jarfile="${dist}/tritonus_dsp.jar">
+      <fileset dir="${build}">
+	<include name="org/tritonus/lowlevel/dsp/" />
+      </fileset>
+    </jar>
+
+    <!-- REMAINING:: -->
+    <jar jarfile="${dist}/tritonus_remaining.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/midi/file/" />
+	<include name="org/tritonus/sampled/file/*.class" />
+	<include name="org/tritonus/sampled/convert/*.class" />
+      </fileset>
+      <fileset dir ="${src}/packaging/tritonus_core" />
+    </jar>
+  </target>
+
+
+  <target name="dist-javalayer-dependent"
+	  depends="compile,compile-javalayer-dependent"
+	  if="javalayer-present" >
+
+    <!-- MP3: -->
+    <jar jarfile="${dist}/tritonus_mp3.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/lame/" />
+	<include name="org/tritonus/sampled/convert/javalayer/" />
+	<include name="org/tritonus/sampled/convert/lame/" />
+	<include name="org/tritonus/sampled/file/mpeg/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_mp3" />
+    </jar>
+  </target>
+
+
+  <target name="dist-jorbis-dependent"
+	  depends="compile,compile-jorbis-dependent"
+	  if="jorbis-present" >
+
+    <!-- VORBIS: -->
+    <jar jarfile="${dist}/tritonus_vorbis.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/sampled/convert/vorbis/" />
+	<include name="org/tritonus/sampled/file/vorbis/" />
+      </fileset>
+      <fileset
+	       dir="${src}/packaging/tritonus_vorbis" />
+    </jar>
+  </target>
+
+
+  <target name="dist-midishare-dependent"
+	  depends="compile,compile-midishare-dependent"
+	  if="midishare-present" >
+
+    <!-- MIDISHARE: -->
+    <jar jarfile="${dist}/tritonus_midishare.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/midi/device/midishare/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_midishare" />
+    </jar>
+  </target>
+
+
+  <target name="compile-libs"
+	  depends="prepare" >
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native0.log" >
+      <arg line="-C src/lib/alsa" />
+    </exec>
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native1.log" >
+      <arg line="-C src/lib/esd" />
+    </exec>
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native2.log" >
+      <arg line="-C src/lib/lame" />
+    </exec>
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native3.log" >
+      <arg line="-C src/lib/saint" />
+    </exec>
+  </target>
+
+
+  <!--
+  The following two targets should depend on uninstall, so that
+  old files are safely removed. However, there is a problem with
+  ant deleting symbolic links (VM crash), so it is left out
+  for the moment.
+
+  Also note that these targets only work for jdk >= 1.2.
+  -->
+  <target name="install" depends="dist">
+    <copy
+	  todir="${java_ext_path}" >
+      <fileset
+	       dir="${dist}" >
+	<include name="*.jar" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="install-link" depends="dist">
+    <exec
+	  dir="${java_ext_path}"
+	  executable="ln" >
+      <arg line="-s ${basedir}/${dist}/tritonus_core.jar ${java_ext_path}" />
+    </exec>
+    <exec
+	  dir="${java_ext_path}"
+	  executable="ln" >
+      <arg line="-s ${basedir}/${dist}/tritonus_share.jar ${java_ext_path}" />
+    </exec>
+    <exec
+	  dir="${java_ext_path}"
+	  executable="ln" >
+      <arg line="-s ${basedir}/${dist}/tritonus_remaining.jar ${java_ext_path}" />
+    </exec>
+    <exec
+	  dir="${java_ext_path}"
+	  executable="ln" >
+      <arg line="-s ${basedir}/${dist}/tritonus_mp3.jar ${java_ext_path}" />
+    </exec>
+    <exec
+	  dir="${java_ext_path}"
+	  executable="ln" >
+      <arg line="-s ${basedir}/${dist}/tritonus_gsm.jar ${java_ext_path}" />
+    </exec>
+  </target>
+
+  <target name="uninstall" depends="init">
+    <echo message="ext path: ${java_ext_path}" />
+    <delete file="${java_ext_path}/tritonus*.jar" />
+  </target>
+
+
+  <target name="clean"
+	  depends="init">
+    <delete dir="${build}" />
+    <delete dir="${dist}" />
+  </target>
+
+
+  <target name="plugins-upload"
+	  depends="dist">
+    <exec
+	  dir="${dist}"
+	  executable="scp"
+	  output="upload.log" >
+      <arg line="${plugins} www.tritonus.org:vtritonus/htdocs/" />
+    </exec>
+  </target>
+
+
+
+  <!-- for saol -->
+  <target name="compile-saol" depends="prepare">
+    <!--sablecc
+    src="${src.misc}/"
+    outputdirectory="${src.classes}" /-->
+    <!-- currently, this has to be executed manually:
+    sablecc -d src/classes/ src/misc/saol.grammar -->
+    <javac srcdir="${src.classes}"
+	   depend="yes"
+	   debug="on"
+	   destdir="${build}"
+	   includes="org/tritonus/saol/"
+	   excludes="org/tritonus/whatever" />
+  </target>
+
+  <target name="dist-saol"
+	  depends="compile-saol" >
+
+    <jar jarfile="${dist}/saol.jar">
+      <fileset dir="${build}">
+	<include name="org/tritonus/saol/" />
+      </fileset>
+      <fileset dir="${src.classes}">
+	<include name="org/tritonus/saol/sablecc/lexer/lexer.dat" />
+	<include name="org/tritonus/saol/sablecc/parser/parser.dat" />
+      </fileset>
+    </jar>
+  </target>
+
+
+
+  <!-- documentation -->
+  <target name="javadoc" depends="init">
+    <mkdir dir="${javadoc.dir}"/>
+    <javadoc
+	     package="true" sourcepath="src" destdir="${javadoc.dir}"
+	     packagenames="javax.sound.*,org.tritonus.*,com.jcraft.*,javazoom.*"
+	     excludepackagenames="org.tritonus.midi.device.java" >
+    </javadoc>
+  </target>
