@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.c
+ *	org_tritonus_lowlevel_alsa_AlsaPcmSWParams.c
  */
 
 /*
@@ -21,7 +21,7 @@
  */
 
 #include "common.h"
-#include "org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.h"
+#include "org_tritonus_lowlevel_alsa_AlsaPcmSWParams.h"
 
 
 HandleFieldHandler(snd_pcm_sw_params_t*)
@@ -37,53 +37,53 @@ getSWParamsNativeHandle(JNIEnv *env, jobject obj)
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    malloc
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_malloc
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_malloc
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_malloc(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_malloc(): begin\n"); }
 	nReturn = snd_pcm_sw_params_malloc(&handle);
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_malloc(): handle: %p\n", handle); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_malloc(): handle: %p\n", handle); }
 	setHandle(env, obj, handle);
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_malloc(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_malloc(): end\n"); }
 	return nReturn;
 }
 
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    free
  * Signature: ()V
  */
 JNIEXPORT void JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_free
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_free
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
 
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_free(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_free(): begin\n"); }
 	handle = getHandle(env, obj);
 	snd_pcm_sw_params_free(handle);
-	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_free(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_free(): end\n"); }
 }
 
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getStartMode
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStartMode
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getStartMode
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -97,12 +97,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStartMode
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getXrunMode
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getXrunMode
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getXrunMode
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -116,12 +116,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getXrunMode
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getTStampMode
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getTStampMode
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getTStampMode
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -135,12 +135,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getTStampMode
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getSleepMin
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSleepMin
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getSleepMin
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -154,12 +154,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSleepMin
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getAvailMin
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getAvailMin
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getAvailMin
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -173,12 +173,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getAvailMin
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getXferAlign
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getXferAlign
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getXferAlign
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -193,12 +193,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getXferAlign
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getStartThreshold
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStartThreshold
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getStartThreshold
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -212,12 +212,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStartThreshold
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getStopThreshold
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStopThreshold
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getStopThreshold
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -230,12 +230,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStopThreshold
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getSilenceThreshold
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSilenceThreshold
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getSilenceThreshold
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -249,12 +249,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSilenceThreshold
 
 
 /*
- * Class:     org_tritonus_lowlevel_alsa_AlsaPcm_SWParams
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcmSWParams
  * Method:    getSilenceSize
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSilenceSize
+Java_org_tritonus_lowlevel_alsa_AlsaPcmSWParams_getSilenceSize
 (JNIEnv *env, jobject obj)
 {
 	snd_pcm_sw_params_t*	handle;
@@ -267,4 +267,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSilenceSize
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.c ***/
+/*** org_tritonus_lowlevel_alsa_AlsaPcmSWParams.c ***/

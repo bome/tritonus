@@ -42,9 +42,9 @@ JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaMixer.o \
 	org_tritonus_lowlevel_alsa_AlsaMixerElement.o \
 	org_tritonus_lowlevel_alsa_AlsaPcm.o \
-	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.o \
-	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.o \
-	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.o \
+	org_tritonus_lowlevel_alsa_AlsaPcmHWParams.o \
+	org_tritonus_lowlevel_alsa_AlsaPcmHWParamsFormatMask.o \
+	org_tritonus_lowlevel_alsa_AlsaPcmSWParams.o \
 	org_tritonus_lowlevel_alsa_AlsaSeq.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqClientInfo.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqEvent.o \
@@ -53,7 +53,7 @@ JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqQueueStatus.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqQueueTempo.o \
-	org_tritonus_lowlevel_alsa_AlsaSeqQueueTimer.o \
+	#org_tritonus_lowlevel_alsa_AlsaSeqQueueTimer.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqRemoveEvents.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqSystemInfo.o
 
@@ -73,9 +73,9 @@ JNICLASSFILES=\
 	AlsaMixer.class \
 	AlsaMixerElement.class \
 	AlsaPcm.class \
-	AlsaPcm$$HWParams.class \
-	AlsaPcm$$HWParams$$FormatMask.class \
-	AlsaPcm$$SWParams.class \
+	AlsaPcmHWParams.class \
+	AlsaPcmHWParamsFormatMask.class \
+	AlsaPcmSWParams.class \
 	AlsaSeq.class \
 	AlsaSeqClientInfo.class \
 	AlsaSeqEvent.class \
@@ -84,7 +84,7 @@ JNICLASSFILES=\
 	AlsaSeqQueueInfo.class \
 	AlsaSeqQueueStatus.class \
 	AlsaSeqQueueTempo.class \
-	AlsaSeqQueueTimer.class \
+	#AlsaSeqQueueTimer.class \
 	AlsaSeqRemoveEvents.class \
 	AlsaSeqSystemInfo.class
 
@@ -96,9 +96,9 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaMixer \
 	org.tritonus.lowlevel.alsa.AlsaMixerElement \
 	org.tritonus.lowlevel.alsa.AlsaPcm \
-	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams \
-	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams\$$FormatMask \
-	org.tritonus.lowlevel.alsa.AlsaPcm\$$SWParams \
+	org.tritonus.lowlevel.alsa.AlsaPcmHWParams \
+	org.tritonus.lowlevel.alsa.AlsaPcmHWParamsFormatMask \
+	org.tritonus.lowlevel.alsa.AlsaPcmSWParams \
 	org.tritonus.lowlevel.alsa.AlsaSeq \
 	org.tritonus.lowlevel.alsa.AlsaSeqClientInfo \
 	org.tritonus.lowlevel.alsa.AlsaSeqEvent \
@@ -107,7 +107,7 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaSeqQueueInfo \
 	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus \
 	org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo \
-	org.tritonus.lowlevel.alsa.AlsaSeqQueueTimer \
+	#org.tritonus.lowlevel.alsa.AlsaSeqQueueTimer \
 	org.tritonus.lowlevel.alsa.AlsaSeqRemoveEvents \
 	org.tritonus.lowlevel.alsa.AlsaSeqSystemInfo
 
