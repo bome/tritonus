@@ -39,6 +39,7 @@ public class TDebug
 	public static boolean	TraceInit = getBooleanProperty("TraceInit");
 	public static boolean	TraceConfiguration = getBooleanProperty("TraceConfiguration");
 	public static boolean	TraceCircularBuffer = getBooleanProperty("TraceCircularBuffer");
+	public static boolean	TraceService = getBooleanProperty("TraceService");
 
 	// sampled common implementation
 	public static boolean	TraceAudioSystem = getBooleanProperty("TraceAudioSystem");
