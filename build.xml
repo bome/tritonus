@@ -15,7 +15,7 @@
 
   <target name="compile" depends="prepare">
     <javac srcdir="${src}"
-	   debug="on"
+	   debug="${debug}"
 	   destdir="${build}" >
       <include name="javax/sound/" />
       <include name="org/tritonus/" />
@@ -27,7 +27,7 @@
       <exclude name="org/tritonus/debug/" />
     </javac>
     <javac srcdir="${src.classes}"
-	   debug="on"
+	   debug="${debug}"
 	   destdir="${build}" >
       <include name="org/tritonus/lowlevel/dsp/" />
       <include name="org/tritonus/dsp/" />
@@ -39,6 +39,7 @@
 	  depends="prepare"
 	  if="javalayer-present">
     <javac srcdir="${src}"
+	   debug="${debug}"
 	   destdir="${build}" >
       <include name="org/tritonus/sampled/convert/javalayer/" />
     </javac>
@@ -49,6 +50,7 @@
 	  depends="prepare"
 	  if="jorbis-present">
     <javac srcdir="${src}"
+	   debug="${debug}"
 	   destdir="${build}" >
       <include name="org/tritonus/sampled/convert/jorbis/" />
       <include name="org/tritonus/sampled/file/jorbis/" />
@@ -59,6 +61,7 @@
 	  depends="prepare"
 	  if="midishare-present">
     <javac srcdir="${src}"
+	   debug="${debug}"
 	   destdir="${build}" >
       <include name="org/tritonus/midi/device/midishare/" />
     </javac>
