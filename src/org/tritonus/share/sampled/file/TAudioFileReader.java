@@ -33,6 +33,7 @@ import	java.io.IOException;
 import	java.io.EOFException;
 
 import	java.net.URL;
+import	java.net.URLConnection;
 
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
@@ -136,7 +137,7 @@ public abstract class TAudioFileReader
 
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(URL): begin"); }
-		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+		long	lFileLengthInBytes = getDataLength(url);
 		InputStream	inputStream = url.openStream();
 		AudioFileFormat	audioFileFormat = null;
 		try
@@ -269,7 +270,7 @@ public abstract class TAudioFileReader
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): begin"); }
-		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+		long	lFileLengthInBytes = getDataLength(url);
 		InputStream	inputStream = url.openStream();
 		AudioInputStream	audioInputStream = null;
 		try
@@ -375,6 +376,22 @@ public abstract class TAudioFileReader
 	protected static int calculateFrameSize(int nSampleSize, int nNumChannels)
 	{
 		return ((nSampleSize + 7) / 8) * nNumChannels;
+	}
+
+
+
+	private static long getDataLength(URL url)
+		throws IOException
+	{
+		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+		URLConnection connection = url.openConnection();
+		connection.connect();
+		int nLength = connection.getContentLength();
+		if (nLength > 0)
+		{
+			lFileLengthInBytes = nLength;
+		}
+		return lFileLengthInBytes;
 	}
 
 
