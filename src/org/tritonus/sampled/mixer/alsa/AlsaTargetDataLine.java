@@ -7,7 +7,6 @@
 /*
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -21,35 +20,32 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
 
 package	org.tritonus.sampled.mixer.alsa;
 
+import java.io.IOException;
 
-import	java.io.IOException;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.Mixer;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.FloatControl;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.TargetDataLine;
-import	javax.sound.sampled.Mixer;
-
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TBaseDataLine;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.Alsa;
+import org.tritonus.lowlevel.alsa.AlsaPcm;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
 public class AlsaTargetDataLine
-	extends		AlsaBaseDataLine
-	implements	TargetDataLine
+extends AlsaBaseDataLine
+implements TargetDataLine
 {
 	private byte[]			m_abSwapBuffer;
 
@@ -160,23 +156,23 @@ public class AlsaTargetDataLine
 			TDebug.out("AlsaTargetDataLine.readImpl(): called.");
 			TDebug.out("AlsaTargetDataLine.readImpl(): wanted length: " + nLength);
 		}
+		int	nFrameSize = getFormat().getFrameSize();
 		int	nOriginalOffset = nOffset;
+		int	nFramesToRead = nLength / nFrameSize;
 		if (nLength > 0 && !isActive())
 		{
 			start();
 		}
 		if (!isOpen())
 		{
-			if (TDebug.TraceTargetDataLine)
-			{
-				TDebug.out("AlsaTargetDataLine.readImpl(): stream closed");
-			}
+			if (TDebug.TraceTargetDataLine) { TDebug.out("AlsaTargetDataLine.readImpl(): stream closed"); }
 		}
-		int	nBytesRead = (int) getAlsaPcm().readi(abData, nOffset, nLength);
-		if (nBytesRead < 0)
+		int	nFramesRead = (int) getAlsaPcm().readi(abData, nOffset, nFramesToRead);
+		if (nFramesRead < 0)
 		{
-			TDebug.out("AlsaTargetDataLine.readImpl(): " + Alsa.getStringError(nBytesRead));
+			TDebug.out("AlsaTargetDataLine.readImpl(): " + Alsa.getStringError(nFramesRead));
 		}
+		int	nBytesRead = nFramesRead * nFrameSize;
 		if (TDebug.TraceTargetDataLine)
 		{
 			TDebug.out("AlsaTargetDataLine.readImpl(): read (bytes): " + nBytesRead);

@@ -7,7 +7,6 @@
 /*
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -21,37 +20,34 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
 
 package	org.tritonus.sampled.mixer.alsa;
 
+import java.io.IOException;
 
-import	java.io.IOException;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.Mixer;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.FloatControl;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.Mixer;
-
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
-import	org.tritonus.lowlevel.alsa.AlsaPcm.SWParams;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TBaseDataLine;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.Alsa;
+import org.tritonus.lowlevel.alsa.AlsaPcm;
+import org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
+import org.tritonus.lowlevel.alsa.AlsaPcm.SWParams;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
 
 public class AlsaSourceDataLine
-	extends		AlsaBaseDataLine
-	implements	SourceDataLine
+extends AlsaBaseDataLine
+implements SourceDataLine
 {
 	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
 
@@ -109,6 +105,7 @@ public class AlsaSourceDataLine
 	public int available()
 	{
 		// TODO:
+		throwNYIException();
 		return -1;
 	}
 
@@ -141,9 +138,21 @@ public class AlsaSourceDataLine
 
 
 
-	/* TODO: check if should block
-	 */
-	public int writeImpl(byte[] abData, int nOffset, int nLength)
+	/** Write data to the line.
+
+	@param abData The buffer to use.
+
+	@param nOffset
+
+	@param nLength The length of the data that should be written,
+	in bytes. Can be less that the length of abData.
+
+	@return The number of bytes written. May be less than nLength.
+
+	*/
+
+	// TODO: check if should block
+	private int writeImpl(byte[] abData, int nOffset, int nLength)
 	{
 		if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): begin"); }
 		if (nLength > 0 && !isActive())
@@ -202,6 +211,14 @@ public class AlsaSourceDataLine
 	{
 	}
 
+
+
+	/** Throw a RuntimeException saying "not yet implemented".
+	 */
+	private void throwNYIException()
+	{
+		throw new RuntimeException("sorry, this feature is not yet implemented");
+	}
 
 
 	// IDEA: move inner classes to TBaseDataLine
