@@ -1,19 +1,20 @@
 /*
- *	org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.cc
+ *	org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.c
  */
 
-#include	<endian.h>	// currently not used
-// TODO: file bug to include this into the headers
-extern "C"
-{
-#include	<cdda_interface.h>
-#include	<cdda_paranoia.h>
-}
+#include <endian.h>
+#include <stdlib.h>
+#include <unistd.h>   /* should declare swab(), but doesn't seem so (gcc 2.95.4/glibc 2.3.1) */
+void swab(void*, void*, ssize_t);
 
-#include	"common.h"
-#include	"HandleFieldHandler.hh"
-#include	"org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.h"
-#include	"handle_t.hh"
+#include <cdda_interface.h>
+#include <cdda_paranoia.h>
+
+#include "../common/common.h"
+#include "../common/debug.h"
+#include "../common/HandleFieldHandler.h"
+#include "org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.h"
+#include "handle_t.h"
 
 // default value taken over from cdparanoia main.c
 static const int	MAX_RETRIES = 20;
@@ -28,10 +29,7 @@ getParanoiaMode()
 
 
 
-static int	DEBUG = 0;
-static FILE*	debug_file = NULL;
-
-static HandleFieldHandler<handle_t*>	handler;
+HandleFieldHandler(handle_t*)
 
 
 
@@ -45,20 +43,18 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 (JNIEnv *env, jobject obj, jstring strDevice)
 {
 	int	nReturn;
-	// TODO: fetch from strDevice
-	// char*	cd_dev = "/dev/cdrom";
 	const char*	cd_dev;
 	cdrom_drive*	cdrom = NULL;
 	handle_t*	pHandle;
 	int		nParanoiaMode;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): begin\n"); }
-	cd_dev = env->GetStringUTFChars(strDevice, NULL);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): begin\n"); }
+	cd_dev = (*env)->GetStringUTFChars(env, strDevice, NULL);
 	if (cd_dev == NULL)
 	{
 		return -1;
 	}
-	env->ReleaseStringUTFChars(strDevice, cd_dev);
+	(*env)->ReleaseStringUTFChars(env, strDevice, cd_dev);
 	nParanoiaMode = getParanoiaMode();
 	cdrom = cdda_identify(cd_dev, 0, NULL);
 	if (cdrom == NULL)
@@ -71,7 +67,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 		return -1;
 	}
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): drive endianess: %d\n", cdrom->bigendianp); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): drive endianess: %d\n", cdrom->bigendianp); }
 
 	pHandle = (handle_t*) malloc(sizeof(handle_t));
 	if (pHandle == NULL)
@@ -88,8 +84,8 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 	}
 	paranoia_modeset(pHandle->paranoia, nParanoiaMode);
 
-	handler.setHandle(env, obj, pHandle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): end\n"); }
+	setHandle(env, obj, pHandle);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): end\n"); }
 	return 0;
 }
 
@@ -107,9 +103,9 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close
 	handle_t*	handle;
 	cdrom_drive*	cdrom;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close(): begin\n"); }
 	// TODO: close paranoia pointer?
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if (handle != NULL)
 	{
 		cdrom = handle->drive;
@@ -118,7 +114,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close
 			cdda_close(cdrom);
 		}
 	}
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_close(): end\n"); }
 }
 
 
@@ -152,11 +148,11 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 	jint*		pnChannels;
 	int		nTrack;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): begin\n"); }
+	handle = getHandle(env, obj);
 	cdrom = handle->drive;
 	checkArrayLength(env, anValues, 2);
-	pnValues = env->GetIntArrayElements(anValues, NULL);
+	pnValues = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (pnValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
@@ -166,40 +162,40 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 	pnValues[1] = cdda_tracks(cdrom);
 	nFirstTrack = 1;
 	nLastTrack = cdda_tracks(cdrom);
-	env->ReleaseIntArrayElements(anValues, pnValues, 0);
+	(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
 
 	checkArrayLength(env, anStartFrame, 100);
-	pnStartFrame = env->GetIntArrayElements(anStartFrame, NULL);
+	pnStartFrame = (*env)->GetIntArrayElements(env, anStartFrame, NULL);
 	if (pnStartFrame == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
 	}
 	checkArrayLength(env, anLength, 100);
-	pnLength = env->GetIntArrayElements(anLength, NULL);
+	pnLength = (*env)->GetIntArrayElements(env, anLength, NULL);
 	if (pnLength == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
 	}
 	checkArrayLength(env, anType, 100);
-	pnType = env->GetIntArrayElements(anType, NULL);
+	pnType = (*env)->GetIntArrayElements(env, anType, NULL);
 	if (pnType == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
 	}
 	checkArrayLength(env, abCopy, 100);
-	pbCopy = env->GetBooleanArrayElements(abCopy, NULL);
+	pbCopy = (*env)->GetBooleanArrayElements(env, abCopy, NULL);
 	if (pbCopy == NULL)
 	{
 		throwRuntimeException(env, "GetBooleanArrayElements failed");
 	}
 	checkArrayLength(env, abPre, 100);
-	pbPre = env->GetBooleanArrayElements(abPre, NULL);
+	pbPre = (*env)->GetBooleanArrayElements(env, abPre, NULL);
 	if (pbPre == NULL)
 	{
 		throwRuntimeException(env, "GetBooleanArrayElements failed");
 	}
 	checkArrayLength(env, anChannels, 100);
-	pnChannels = env->GetIntArrayElements(anChannels, NULL);
+	pnChannels = (*env)->GetIntArrayElements(env, anChannels, NULL);
 	if (pnChannels == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
@@ -212,17 +208,17 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 		pbCopy[nTrack - nFirstTrack] = cdda_track_copyp(cdrom, nTrack);
 		pbPre[nTrack - nFirstTrack] = cdda_track_preemp(cdrom, nTrack);
 		pnChannels[nTrack - nFirstTrack] = cdda_track_channels(cdrom, nTrack);
-		if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): %d: %d %ld %ld\n", nTrack - nFirstTrack, nTrack, pnStartFrame[nTrack - nFirstTrack], pnLength[nTrack - nFirstTrack]); }
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): %d: %d %ld %ld\n", nTrack - nFirstTrack, nTrack, pnStartFrame[nTrack - nFirstTrack], pnLength[nTrack - nFirstTrack]); }
 	}
 
-	env->ReleaseIntArrayElements(anStartFrame, pnStartFrame, 0);
-	env->ReleaseIntArrayElements(anLength, pnLength, 0);
-	env->ReleaseIntArrayElements(anType, pnType, 0);
-	env->ReleaseBooleanArrayElements(abCopy, pbCopy, 0);
-	env->ReleaseBooleanArrayElements(abPre, pbPre, 0);
-	env->ReleaseIntArrayElements(anChannels, pnChannels, 0);
+	(*env)->ReleaseIntArrayElements(env, anStartFrame, pnStartFrame, 0);
+	(*env)->ReleaseIntArrayElements(env, anLength, pnLength, 0);
+	(*env)->ReleaseIntArrayElements(env, anType, pnType, 0);
+	(*env)->ReleaseBooleanArrayElements(env, abCopy, pbCopy, 0);
+	(*env)->ReleaseBooleanArrayElements(env, abPre, pbPre, 0);
+	(*env)->ReleaseIntArrayElements(env, anChannels, pnChannels, 0);
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): end\n"); }
 	return 0;
 }
 
@@ -242,15 +238,15 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_prepareTrack
 	cdrom_paranoia*	paranoia;
 	int		nFirstSector;
 	
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_prepareTrack(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_prepareTrack(): begin\n"); }
+	handle = getHandle(env, obj);
 	cdrom = handle->drive;
 	paranoia = handle->paranoia;
 
 	nFirstSector = cdda_track_firstsector(cdrom, nTrack);
 	// TODO: check return value
 	paranoia_seek(paranoia, nFirstSector, SEEK_SET);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_prepareTrack(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_prepareTrack(): end\n"); }
 	return 0;
 }
 
@@ -271,13 +267,13 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame
 	int16_t*	psBuffer;
 	jbyte*		pbData;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame(): begin\n"); }
+	handle = getHandle(env, obj);
 	cdrom = handle->drive;
 	paranoia = handle->paranoia;
 
 	checkArrayLength(env, abData, CD_FRAMESIZE_RAW * nCount);
-	pbData = env->GetByteArrayElements(abData, NULL);
+	pbData = (*env)->GetByteArrayElements(env, abData, NULL);
 	if (pbData == NULL)
 	{
 		throwRuntimeException(env, "GetByteArrayElements failed");
@@ -292,12 +288,10 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 	(void) memcpy(pbData, psBuffer, CD_FRAMESIZE_RAW);
 #else
-	// HACK; swab() seems to be not declared for C++
-	void swab(void*, void*, int);
 	swab(psBuffer, pbData, CD_FRAMESIZE_RAW);
 #endif
-	env->ReleaseByteArrayElements(abData, pbData, 0);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame(): end\n"); }
+	(*env)->ReleaseByteArrayElements(env, abData, pbData, 0);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readNextFrame(): end\n"); }
 	return 0;
 }
 
@@ -312,10 +306,10 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_setTrace
 (JNIEnv *env, jclass cls, jboolean bTrace)
 {
-	DEBUG = bTrace;
+	debug_flag = bTrace;
 	debug_file = stderr;
 }
 
 
 
-/*** org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.cc ***/
+/*** org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.c ***/

@@ -2,11 +2,8 @@
  *	handle_t.hh
  */
 
-extern "C"
-{
-#include	<cdda_interface.h>
-#include	<cdda_paranoia.h>
-}
+#include <cdda_interface.h>
+#include <cdda_paranoia.h>
 
 
 typedef struct
