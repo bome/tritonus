@@ -226,33 +226,43 @@ public class AlsaMidiOut
 			switch (shortMessage.getStatus())
 			{
 			case ShortMessage.MIDI_TIME_CODE:
+				sendMTCEvent(lTime, shortMessage.getData1());
 				break;
 
 			case ShortMessage.SONG_POSITION_POINTER:
+				sendSongPositionPointerEvent(lTime, get14bitValue(shortMessage.getData1(), shortMessage.getData2()));
 				break;
 
 			case ShortMessage.SONG_SELECT:
+				sendSongSelectEvent(lTime, shortMessage.getData1());
 				break;
 
 			case ShortMessage.TUNE_REQUEST:
+				sendTuneRequestEvent(lTime);
 				break;
 
 			case ShortMessage.TIMING_CLOCK:
+				sendMidiClockEvent(lTime);
 				break;
 
 			case ShortMessage.START:
+				sendStartEvent(lTime);
 				break;
 
 			case ShortMessage.CONTINUE:
+				sendContinueEvent(lTime);
 				break;
 
 			case ShortMessage.STOP:
+				sendStopEvent(lTime);
 				break;
 
 			case ShortMessage.ACTIVE_SENSING:
+				sendActiveSensingEvent(lTime);
 				break;
 
 			case ShortMessage.SYSTEM_RESET:
+				sendSystemResetEvent(lTime);
 				break;
 
 			default:
@@ -267,7 +277,7 @@ public class AlsaMidiOut
 
 
 
-	public static int get14bitValue(int nLSB, int nMSB)
+	private static int get14bitValue(int nLSB, int nMSB)
 	{
 		return (nLSB & 0x7F) | ((nMSB & 0x7F) << 7);
 	}
@@ -337,6 +347,93 @@ public class AlsaMidiOut
 	{
 		setCommon(nType, 0, lTime);
 		m_event.setControl(nChannel, nParam, nValue);
+		sendEvent();
+	}
+
+
+
+	private void sendMTCEvent(long lTime, int nData)
+	{
+		sendControlEvent(AlsaSeq.SND_SEQ_EVENT_QFRAME, lTime, 0, 0, nData);
+	}
+
+
+
+	private void sendSongPositionPointerEvent(long lTime, int nPosition)
+	{
+		sendControlEvent(AlsaSeq.SND_SEQ_EVENT_SONGPOS, lTime, 0, 0, nPosition);
+	}
+
+
+
+	private void sendSongSelectEvent(long lTime, int nSong)
+	{
+		sendControlEvent(AlsaSeq.SND_SEQ_EVENT_SONGSEL, lTime, 0, 0, nSong);
+	}
+
+
+
+	private void sendTuneRequestEvent(long lTime)
+	{
+		sendEvent(AlsaSeq.SND_SEQ_EVENT_TUNE_REQUEST, lTime);
+	}
+
+
+
+	private void sendMidiClockEvent(long lTime)
+	{
+		sendQueueControlEvent(AlsaSeq.SND_SEQ_EVENT_CLOCK, lTime, 0, 0, 0);
+	}
+
+
+
+	private void sendStartEvent(long lTime)
+	{
+		sendQueueControlEvent(AlsaSeq.SND_SEQ_EVENT_START, lTime, 0, 0, 0);
+	}
+
+
+
+	private void sendContinueEvent(long lTime)
+	{
+		sendQueueControlEvent(AlsaSeq.SND_SEQ_EVENT_CONTINUE, lTime, 0, 0, 0);
+	}
+
+
+
+	private void sendStopEvent(long lTime)
+	{
+		sendQueueControlEvent(AlsaSeq.SND_SEQ_EVENT_STOP, lTime, 0, 0, 0);
+	}
+
+
+
+	private void sendActiveSensingEvent(long lTime)
+	{
+		sendEvent(AlsaSeq.SND_SEQ_EVENT_SENSING, lTime);
+	}
+
+
+
+	private void sendSystemResetEvent(long lTime)
+	{
+		sendEvent(AlsaSeq.SND_SEQ_EVENT_RESET, lTime);
+	}
+
+
+
+	private void sendQueueControlEvent(int nType, long lTime, int nQueue, int nValue, long lControlTime)
+	{
+		setCommon(nType, 0, lTime);
+		m_event.setQueueControl(nQueue, nValue, lControlTime);
+		sendEvent();
+	}
+
+
+
+	private void sendEvent(int nType, long lTime)
+	{
+		setCommon(nType, 0, lTime);
 		sendEvent();
 	}
 
