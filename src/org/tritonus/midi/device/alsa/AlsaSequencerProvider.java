@@ -36,7 +36,7 @@ import	javax.sound.midi.spi.MidiDeviceProvider;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.GlobalInfo;
-import	org.tritonus.share.midi.TMidiDeviceInfo;
+import	org.tritonus.share.midi.TMidiDevice;
 
 
 
@@ -44,31 +44,35 @@ import	org.tritonus.share.midi.TMidiDeviceInfo;
 public class AlsaSequencerProvider
 	extends		MidiDeviceProvider
 {
-	private static MidiDevice.Info		m_info;
+	private static MidiDevice.Info		sm_info;
 
 
 
 	public AlsaSequencerProvider()
 	{
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaSequencerProvider.<init>(): begin"); }
 		synchronized (AlsaSequencerProvider.class)
 		{
-			if (m_info == null)
+			if (sm_info == null)
 			{
-				m_info = new TMidiDeviceInfo(
+				sm_info = new TMidiDevice.Info(
 					"Tritonus ALSA sequencer",
 					GlobalInfo.getVendor(),
 					"this sequencer uses the ALSA sequencer",
 					GlobalInfo.getVersion());
 			}
 		}
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaSequencerProvider.<init>(): end"); }
 	}
 
 
 
 	public MidiDevice.Info[] getDeviceInfo()
 	{
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaSequencerProvider.getDeviceInfo(): begin"); }
 		MidiDevice.Info[]	infos = new MidiDevice.Info[1];
-		infos[0] = m_info;
+		infos[0] = sm_info;
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaSequencerProvider.getDeviceInfo(): end"); }
 		return infos;
 	}
 
@@ -76,20 +80,19 @@ public class AlsaSequencerProvider
 
 	public MidiDevice getDevice(MidiDevice.Info info)
 	{
-		// TDebug.out("m_info: " + m_info);
-		// TDebug.out("info: " + info);
-		if (info != null && info.equals(m_info))
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaSequencerProvider.getDevice(): begin"); }
+		MidiDevice	device = null;
+		if (info != null && info.equals(sm_info))
 		{
-			return new AlsaSequencer(m_info);
+			device = new AlsaSequencer(sm_info);
 		}
-		else
+		if (device == null)
 		{
 			throw new IllegalArgumentException("no device for " + info);
 		}
+		if (TDebug.TraceMidiDeviceProvider) { TDebug.out("AlsaSequencerProvider.getDevice(): end"); }
+		return device;
 	}
-
-
-
 }
 
 
