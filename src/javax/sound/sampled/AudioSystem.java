@@ -509,12 +509,73 @@ public class AudioSystem
 
 
 
+	/**	FormatConversionProviderAction for isConversionSupported().
+	 */
+	private static class IsConversionSupportedFormatConversionProviderAction
+		implements	FormatConversionProviderAction
+	{
+		private AudioFormat		m_sourceFormat;
+		/*
+		 *	May be AudioFormat or AudioFormat.Encoding.
+		 */
+		private Object			m_targetDescription;
+		private boolean			m_bSupported;
+
+
+
+		public IsConversionSupportedFormatConversionProviderAction(
+			AudioFormat sourceFormat,
+			Object targetDescription)
+		{
+			m_sourceFormat = sourceFormat;
+			m_targetDescription = targetDescription;
+			m_bSupported = false;
+		}
+
+
+
+		public boolean handleFormatConversionProvider(
+			FormatConversionProvider formatConversionProvider)
+		{
+			boolean bSupported = false;
+			if (m_targetDescription instanceof AudioFormat.Encoding)
+			{
+					bSupported = formatConversionProvider.isConversionSupported(
+						(AudioFormat.Encoding) m_targetDescription,
+						m_sourceFormat);
+			}
+			else if (m_targetDescription instanceof AudioFormat)
+			{
+					bSupported = formatConversionProvider.isConversionSupported(
+						(AudioFormat) m_targetDescription,
+						m_sourceFormat);
+			}
+			else
+			{
+				// TODO: debug message
+			}
+			m_bSupported |= bSupported;
+			// interrupt the iteration depending on the result
+			return bSupported;
+		}
+
+
+
+		public boolean isSupported()
+		{
+			return m_bSupported;
+		}
+	}
+
+
+
 	public static boolean isConversionSupported(
 		AudioFormat.Encoding targetEncoding,
 		AudioFormat sourceFormat)
 	{
-		// TODO:
-		return false;
+		IsConversionSupportedFormatConversionProviderAction	action = new IsConversionSupportedFormatConversionProviderAction(sourceFormat, targetEncoding);
+		doFormatConversionProviderIteration(action);
+		return action.isSupported();
 	}
 
 
@@ -630,8 +691,9 @@ public class AudioSystem
 		AudioFormat targetFormat,
 		AudioFormat sourceFormat)
 	{
-		// TODO:
-		return false;
+		IsConversionSupportedFormatConversionProviderAction	action = new IsConversionSupportedFormatConversionProviderAction(sourceFormat, targetFormat);
+		doFormatConversionProviderIteration(action);
+		return action.isSupported();
 	}
 
 
