@@ -24,7 +24,7 @@
     Remove the next line if you don't have jikes.
     In this case, javac will be used for compiling.
     -->
-    <!--property name="build.compiler" value="jikes" /-->
+    <property name="build.compiler" value="jikes" />
     <!--property name="build.compiler.fulldepend" value="true" /-->
 
     <available
@@ -131,7 +131,7 @@
   </target>
 
   <target name="dist"
-	  depends="compile,compile-javalayer-dependent,compile-jorbis-dependent,compile-midishare-dependent,compile-libs" >
+	  depends="compile,compile-javalayer-dependent,compile-jorbis-dependent,compile-midishare-dependent" >
 
     <!-- CORE: contains public classes and SPI instantiation support -->
     <jar jarfile="${dist}/tritonus_core.jar">
