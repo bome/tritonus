@@ -67,16 +67,11 @@ public class CookedIoctl
 
 
 
-	/**	OUTDATED!
-		Opens the sequencer.
-	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
-	 *	client id.
+	/**	Opens the device.
 	 */
 	private native int open(String strDevice);
 
-	/**	OUTDATED!
-		Closes the sequencer.
-	 *	Calls snd_seq_close().
+	/**	Closes the device.
 	 */
 	public native void close();
 

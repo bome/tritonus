@@ -30,6 +30,7 @@
 	   debug="on"
 	   destdir="${build}" >
       <include name="org/tritonus/lowlevel/dsp/" />
+      <include name="org/tritonus/dsp/" />
     </javac>
   </target>
 

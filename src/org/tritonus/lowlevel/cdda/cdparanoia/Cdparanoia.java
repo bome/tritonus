@@ -59,38 +59,38 @@ public class Cdparanoia
 
 	public Cdparanoia(String strDevice)
 	{
-		if (TDebug.TraceCdda) { System.out.println("Cdparanoia.<init>: begin"); }
+		if (TDebug.TraceCdda) { TDebug.out("Cdparanoia.<init>: begin"); }
 		int	nResult = open(strDevice);
 		if (nResult < 0)
 		{
 			throw new RuntimeException("cannot open device '" + strDevice + "'");
 		}
-		if (TDebug.TraceCdda) { System.out.println("Cdparanoia.<init>: end"); }
+		if (TDebug.TraceCdda) { TDebug.out("Cdparanoia.<init>: end"); }
 	}
 
 
 
-	/**	OUTDATED!
-		Opens the sequencer.
-	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
-	 *	client id.
-	 */
+	/**	Opens the device.
+		Calls cdda_identify(), cdda_open(), paranoia_init()
+		and paranoia_modeset().
+
+		@return 0 on success, negative values on error.
+	*/
 	private native int open(String strDevice);
 
-	/**	OUTDATED!
-		Closes the sequencer.
-	 *	Calls snd_seq_close().
+	/**	Closes the device.
+	 *	Calls cdda_close().
 	 */
 	public native void close();
 
 
-	/*
-	 *	anValues[0]	first track
-	 *	anValues[1]	last track
-	 *
-	 *	anStartTrack[x]	start sector of the track x.
-	 *	anType[x]	type of track x.
-	 */
+	/*	Read the table of contents.
+		anValues[0]	first track
+		anValues[1]	last track
+
+		anStartTrack[x]	start sector of the track x.
+		anType[x]	type of track x.
+	*/
 	public native int readTOC(int[] anValues,
 			   int[] anStartFrame,
 			   int[] anLength,
@@ -114,7 +114,9 @@ public class Cdparanoia
 	 */
 	public native int readNextFrame(int nCount, byte[] abData);
 
+
 	private static native void setTrace(boolean bTrace);
+
 
 	/** Set the paranoia level.
 	    This setting influences the value that is used in the call

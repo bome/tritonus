@@ -14,7 +14,7 @@
     <property name="javadoc.dir"  value="${basedir}/doc/apidoc" />
     <property name="src.classes" value="${src}/classes" />
     <property name="src.misc" value="${src}/misc" />
-    <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar tritonus_src.jar tritonus_aos.jar tritonus_jorbis.jar tritonus_vorbis.jar ../../javalayer/dist/javalayer.jar" />
+    <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar tritonus_src.jar tritonus_aos.jar tritonus_jorbis.jar tritonus_vorbis.jar tritonus_dsp.jar ../../javalayer/dist/javalayer.jar" />
 
     <available
 	       classname="grame.midishare.Midi"
@@ -150,6 +150,7 @@
     <jar jarfile="${dist}/tritonus_dsp.jar">
       <fileset dir="${build}">
 	<include name="org/tritonus/lowlevel/dsp/" />
+	<include name="org/tritonus/dsp/" />
       </fileset>
     </jar>
 
@@ -311,7 +312,7 @@
 	  dir="${dist}"
 	  executable="scp"
 	  output="upload.log" >
-      <arg line="${plugins} www.tritonus.org:vtritonus/htdocs/" />
+      <arg line="-p ${plugins} www.tritonus.org:vtritonus/htdocs/" />
     </exec>
   </target>
 
@@ -348,12 +349,24 @@
 
 
 
-  <!-- documentation -->
-  <target name="javadoc" depends="init">
-    <mkdir dir="${javadoc.dir}"/>
-    <javadoc
-	     package="true" sourcepath="src" destdir="${javadoc.dir}"
-	     packagenames="javax.sound.*,org.tritonus.*,com.jcraft.*,javazoom.*"
-	     excludepackagenames="org.tritonus.midi.device.java" >
-    </javadoc>
-  </target>
+<!-- documentation -->
+<target name="javadoc" depends="init">
+  <mkdir dir="${javadoc.dir}"/>
+  <javadoc
+	   package="true" sourcepath="${src}" destdir="${javadoc.dir}"
+	   packagenames="javax.sound.*,org.tritonus.*"
+	   excludepackagenames="org.tritonus.midi.device.java,org.tritonus.debug,org.tritonus.midi.device.midishare,org.tritonus.sampled.convert.javalayer"
+	   additionalparam="-breakiterator">
+  </javadoc>
+  <!-- additionalparam="-breakiterator" -->
+</target>
+
+
+<target name="javadoc-upload"
+	depends="javadoc">
+  <exec
+	dir="${basedir}"
+	executable="rsync">
+    <arg line="-arvC ${javadoc.dir} tritonus.sourceforge.net:/home/groups/t/tr/tritonus/htdocs/" />
+  </exec>
+</target>
