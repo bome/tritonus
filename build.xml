@@ -37,16 +37,6 @@
 	       classname="com.jcraft.jorbis.JorbisException"
 	       property="jorbis-present" />
 
-    <!--
-    This assumes that the javalayer code is in a directory
-    'javalayer' that is parallel to 'tritonus'. If not, change
-    the value of the property.
-    -->
-    <!--property name="javalayer-path" value="../javalayer" />
-    <available
-	       file="${javalayer-path}/build.xml"
-	       property="javalayer-source-present" /-->
-
     <property
 	      name="java_ext_path"
 	      value="${java.home}/lib/ext" />
@@ -57,11 +47,6 @@
     <mkdir dir="${dist}" />
   </target>
 
-  <!--target name="build-javalayer"
-	  depends="init"
-	  if="javalayer-source-present">
-    <ant dir="${javalayer-path}" />
-  </target-->
 
   <target name="compile" depends="prepare">
     <javac srcdir="${src}"
@@ -102,36 +87,15 @@
 	   includes="org/tritonus/midi/device/midishare/" />
   </target>
 
-  <target name="compile-libs"
-	  depends="prepare" >
-    <exec
-	  dir="."
-	  executable="make"
-	  output="native0.log" >
-      <arg line="-C src/lib/alsa" />
-    </exec>
-    <exec
-	  dir="."
-	  executable="make"
-	  output="native1.log" >
-      <arg line="-C src/lib/esd" />
-    </exec>
-    <exec
-	  dir="."
-	  executable="make"
-	  output="native2.log" >
-      <arg line="-C src/lib/lame" />
-    </exec>
-    <exec
-	  dir="."
-	  executable="make"
-	  output="native3.log" >
-      <arg line="-C src/lib/saint" />
-    </exec>
-  </target>
+
 
   <target name="dist"
-	  depends="compile,compile-javalayer-dependent,compile-jorbis-dependent,compile-midishare-dependent" >
+	  depends="dist-common,dist-javalayer-dependent,dist-jorbis-dependent,dist-midishare-dependent" >
+  </target>
+
+
+  <target name="dist-common"
+	  depends="compile" >
 
     <!-- CORE: contains public classes and SPI instantiation support -->
     <jar jarfile="${dist}/tritonus_core.jar">
@@ -167,25 +131,6 @@
       <fileset dir="${src}/packaging/tritonus_esd" />
     </jar>
 
-    <!-- MP3: -->
-    <jar jarfile="${dist}/tritonus_mp3.jar" >
-      <fileset dir="${build}" >
-	<include name="org/tritonus/lowlevel/lame/" />
-	<include name="org/tritonus/sampled/convert/javalayer/" />
-	<include name="org/tritonus/sampled/convert/lame/" />
-	<include name="org/tritonus/sampled/file/mpeg/" />
-      </fileset>
-      <fileset dir="${src}/packaging/tritonus_mp3" />
-    </jar>
-
-    <!-- MIDISHARE: -->
-    <jar jarfile="${dist}/tritonus_midishare.jar" >
-      <fileset dir="${build}" >
-	<include name="org/tritonus/midi/device/midishare/" />
-      </fileset>
-      <fileset dir="${src}/packaging/tritonus_midishare" />
-    </jar>
-
     <!-- GSM: -->
     <jar jarfile="${dist}/tritonus_gsm.jar" >
       <fileset dir="${build}" >
@@ -194,26 +139,6 @@
 	<include name="org/tritonus/sampled/file/gsm/" />
       </fileset>
       <fileset dir="${src}/packaging/tritonus_gsm" />
-    </jar>
-
-    <!-- VORBIS: -->
-    <jar jarfile="${dist}/tritonus_vorbis.jar" >
-      <fileset dir="${build}" >
-	<include name="org/tritonus/sampled/convert/vorbis/" />
-	<include name="org/tritonus/sampled/file/vorbis/" />
-      </fileset>
-      <fileset
-	       dir="${src}/packaging/tritonus_vorbis" />
-    </jar>
-
-    <!-- SAINT: -->
-    <jar jarfile="${dist}/tritonus_saint.jar" >
-      <fileset
-	       dir="${build}" >
-	<include name="org/tritonus/lowlevel/saint/" />
-	<include name="org/tritonus/sampled/convert/gsm/" />
-	<include name="org/tritonus/sampled/file/gsm/" />
-      </fileset>
     </jar>
 
     <!-- JAVASEQUENCER: -->
@@ -261,6 +186,83 @@
       <fileset dir ="${src}/packaging/tritonus_core" />
     </jar>
   </target>
+
+
+  <target name="dist-javalayer-dependent"
+	  depends="compile,compile-javalayer-dependent"
+	  if="javalayer-present" >
+
+    <!-- MP3: -->
+    <jar jarfile="${dist}/tritonus_mp3.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/lame/" />
+	<include name="org/tritonus/sampled/convert/javalayer/" />
+	<include name="org/tritonus/sampled/convert/lame/" />
+	<include name="org/tritonus/sampled/file/mpeg/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_mp3" />
+    </jar>
+  </target>
+
+
+  <target name="dist-jorbis-dependent"
+	  depends="compile,compile-jorbis-dependent"
+	  if="jorbis-present" >
+
+    <!-- VORBIS: -->
+    <jar jarfile="${dist}/tritonus_vorbis.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/sampled/convert/vorbis/" />
+	<include name="org/tritonus/sampled/file/vorbis/" />
+      </fileset>
+      <fileset
+	       dir="${src}/packaging/tritonus_vorbis" />
+    </jar>
+  </target>
+
+
+  <target name="dist-midishare-dependent"
+	  depends="compile,compile-midishare-dependent"
+	  if="midishare-present" >
+
+    <!-- MIDISHARE: -->
+    <jar jarfile="${dist}/tritonus_midishare.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/midi/device/midishare/" />
+      </fileset>
+      <fileset dir="${src}/packaging/tritonus_midishare" />
+    </jar>
+  </target>
+
+
+  <target name="compile-libs"
+	  depends="prepare" >
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native0.log" >
+      <arg line="-C src/lib/alsa" />
+    </exec>
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native1.log" >
+      <arg line="-C src/lib/esd" />
+    </exec>
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native2.log" >
+      <arg line="-C src/lib/lame" />
+    </exec>
+    <exec
+	  dir="."
+	  executable="make"
+	  output="native3.log" >
+      <arg line="-C src/lib/saint" />
+    </exec>
+  </target>
+
 
   <!--
   The following two targets should depend on uninstall, so that
@@ -313,21 +315,13 @@
     <delete file="${java_ext_path}/tritonus*.jar" />
   </target>
 
-  <target name="clean"
-	  depends="tritonus-clean,javalayer-clean">
-  </target>
 
-  <target name="tritonus-clean"
+  <target name="clean"
 	  depends="init">
     <delete dir="${build}" />
     <delete dir="${dist}" />
   </target>
 
-  <target name="javalayer-clean"
-	  depends="init"
-	  if="javalayer-source-present">
-    <ant dir="${javalayer-path}" target="clean" />
-  </target>
 
   <target name="plugins-upload"
 	  depends="dist">
