@@ -1,0 +1,64 @@
+Tests mit JSInfo, Converter Test
+================================
+Es wird immer über die Funktion AudioSystem.isConversionPossible(AudioFormat, AudioFormat) getestet.
+
+--------
+source format: PCM_SIGNED, 1 channel(s), 16 bit samples, 2 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+target format: ALAW, 1 channel(s), 8 bit samples, 1 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.MpegFormatConversionProvider@ed1976dd
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.UlawFormatConversionProvider@f91976dd
+possible: true
+-
+possible solutions:
+- cancel alaw <-> ulaw completely (let smart converter do it)
+- seperate it into an own converter
+- derive Alaw-/UlawFCP from TMatrixFormatConversionProvider
+---
+source format: PCM_SIGNED, 1 channel(s), 8 bit samples, 1 byte frames, 48000.0 Hz, 48000.0 frames/second, little endian
+target format: PCM_SIGNED, 1 channel(s), 24 bit samples, 3 byte frames, 48000.0 Hz, 48000.0 frames/second, little endian
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.MpegFormatConversionProvider@ed1a7a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.UlawFormatConversionProvider@f91a7a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.AlawFormatConversionProvider@fdd27a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.PCM2PCMConversionProvider@fcae7a60
+possible: false
+-
+solution:
+In PCM2PCM FCP., add 24 and 32 bit formats to set of I/O formats passed to super class constructor
+additional suggestions:
+a) remove duplicate lines in OUTPUT_FORMATS
+b) rename OUTPUT_FORMATS to INOUT_FORMATS
+
+---
+source format: PCM_SIGNED, 1 channel(s), 8 bit samples, 1 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+target format: PCM_SIGNED, 2 channel(s), 8 bit samples, 2 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.MpegFormatConversionProvider@ed1a7a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.UlawFormatConversionProvider@f91a7a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.AlawFormatConversionProvider@fdd27a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.PCM2PCMConversionProvider@fcae7a60
+possible: false
+-
+solution:
+?? (this is presumably a fundamental solution of TEncodingProvider)
+---
+source format: PCM_SIGNED, 2 channel(s), 16 bit samples, 4 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+target format: PCM_UNSIGNED, 2 channel(s), 16 bit samples, 4 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.MpegFormatConversionProvider@ed1a7a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.UlawFormatConversionProvider@f91a7a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.AlawFormatConversionProvider@fdd27a60
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.PCM2PCMConversionProvider@fcae7a60
+possible: false
+-
+solution:
+discuss whether 16 bit unsigned is important
+---
+source format: PCM_SIGNED, 2 channel(s), 16 bit samples, 4 byte frames, 48000.0 Hz, 48000.0 frames/second, little endian
+target format: PCM_SIGNED, 2 channel(s), 16 bit samples, 4 byte frames, 44100.0 Hz, 44100.0 frames/second, little endian
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.MpegFormatConversionProvider@d06e6b3f
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.UlawFormatConversionProvider@c46e6b3f
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.AlawFormatConversionProvider@c1566b3f
+AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: org.tritonus.sampled.convert.PCM2PCMConversionProvider@c0226b3f
+possible: false
+-
+solution:
+mal hinmachen!
+---
