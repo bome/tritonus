@@ -29,6 +29,8 @@ package	org.tritonus.sampled.file;
 import	javax.sound.sampled.AudioFileFormat;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.AudioFileTypes;
+
 
 
 /**	FileFormatTypes used by the MPEG audio decoder.
@@ -37,19 +39,20 @@ import	org.tritonus.TDebug;
  */
  
 public class MpegFileFormatType
-	extends	AudioFileFormat.Type
+// extends	AudioFileFormat.Type
 {
-	public static final AudioFileFormat.Type	MPEG = new MpegFileFormatType("MPEG", "mpeg");
+	public static final AudioFileFormat.Type	MPEG = AudioFileTypes.getType("MPEG", "mpeg");
 	//$$fb 2000-08-15: added mp3 special file format for the correct extension
-	public static final AudioFileFormat.Type	MP3 = new MpegFileFormatType("MP3", "mp3");
+	public static final AudioFileFormat.Type	MP3 = AudioFileTypes.getType("MP3", "mp3");
 
 
-
+/*
 	public MpegFileFormatType(String strName,
 				  String strExtension)
 	{
 		super(strName, strExtension);
 	}
+*/
 }
 
 

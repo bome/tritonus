@@ -30,7 +30,7 @@ import	javax.sound.sampled.AudioFormat;
 
 import	org.tritonus.TDebug;
 
-
+// TODO: should be removed completely
 
 /**	Encodings used by the MPEG audio decoder.
  *
@@ -39,7 +39,7 @@ import	org.tritonus.TDebug;
 public class GSMEncoding
 	extends		AudioFormat.Encoding
 {
-	public static final AudioFormat.Encoding	GSM0610 = new GSMEncoding("GSM0610");
+	// public static final AudioFormat.Encoding	GSM0610 = new GSMEncoding("GSM0610");
 
 
 

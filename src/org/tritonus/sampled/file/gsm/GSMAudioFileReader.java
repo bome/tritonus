@@ -98,7 +98,7 @@ public class GSMAudioFileReader
 			1,
 			33,
 			50.0F,
-			true);
+			true);	// this value is chosen arbitrarily
 		return new TAudioFileFormat(AudioFileTypes.getType("GSM","gsm"), 
 					    format, 
 					    AudioSystem.NOT_SPECIFIED, 
@@ -114,6 +114,7 @@ public class GSMAudioFileReader
 		byte[]	abHeader = new byte[1];
 		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, abHeader);
 		SequenceInputStream	sequenceInputStream = new SequenceInputStream(new ByteArrayInputStream(abHeader), inputStream);
+		// TODO: reenable the magic check in getAudioFileFormat; again use SequenceInputStream
 		// return new AudioInputStream(sequenceInputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
 		return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
 	}

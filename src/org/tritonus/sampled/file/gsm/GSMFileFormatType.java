@@ -28,7 +28,7 @@ package	org.tritonus.sampled.file.gsm;
 
 import	javax.sound.sampled.AudioFileFormat;
 
-
+// TODO: should be removed completely
 
 /**	FileFormatType used by the GSM codec.
  *
@@ -37,7 +37,7 @@ import	javax.sound.sampled.AudioFileFormat;
 public class GSMFileFormatType
 	extends	AudioFileFormat.Type
 {
-	public static final AudioFileFormat.Type	GSM = new GSMFileFormatType("GSM", ".gsm");
+	// public static final AudioFileFormat.Type	GSM = new GSMFileFormatType("GSM", ".gsm");
 
 
 

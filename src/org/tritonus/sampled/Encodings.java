@@ -90,6 +90,14 @@ public class Encodings extends AudioFormat.Encoding {
 	 * provider should exclusively use this method for
 	 * retrieving instances of <code>AudioFormat.Encoding</code>.
 	 */
+	/*
+	  MP2000/09/11:
+	  perhaps it is not a good idea to allow user programs the creation of new
+	  encodings. The problem with it is that a plain typo will produce an encoding
+	  object that is not supported. Instead, some indication of an error should be
+	  signaled to the user program. And, there should be a second interface for
+	  service providers allowing them to register encodings supported by themselves.
+	 */
 	public static AudioFormat.Encoding getEncoding(String name) {
 		AudioFormat.Encoding res=(AudioFormat.Encoding) encodings.get(name);
 		if (res==null) {
