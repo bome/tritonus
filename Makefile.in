@@ -122,13 +122,13 @@ MP3SP_OBJ = \
 $(OBJDIR_PRIV)/sampled/file/TAudioFileFormat.class \
 $(OBJDIR_PRIV)/sampled/file/TAudioFileReader.class \
 $(OBJDIR_PRIV)/sampled/file/MpegAudioFileReader.class \
-$(OBJDIR_PRIV)/sampled/file/MpegAudioFileReader.class \
 $(OBJDIR_PRIV)/sampled/file/MpegEncoding.class \
 $(OBJDIR_PRIV)/sampled/file/MpegFileFormatType.class \
 $(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider.class \
 $(OBJDIR_PRIV)/sampled/convert/TMatrixFormatConversionProvider.class \
 $(OBJDIR_PRIV)/sampled/convert/TSimpleFormatConversionProvider.class \
 $(OBJDIR_PRIV)/sampled/convert/TFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TAsynchronousFilteredAudioInputStream.class \
 $(OBJDIR_PRIV)/TDebug.class \
 $(OBJDIR_PRIV)/util/ArraySet.class \
 $(OBJDIR_PRIV)/util/TCircularBuffer.class
