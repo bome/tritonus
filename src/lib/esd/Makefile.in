@@ -33,8 +33,7 @@ JAVAH = @JAVAH@
 
 JNIOBJ=\
 	org_tritonus_lowlevel_esd_EsdRecordingStream.o \
-	org_tritonus_lowlevel_esd_EsdStream.o \
-	org_tritonus_lowlevel_esd_EsdSample.o
+	org_tritonus_lowlevel_esd_EsdStream.o
 
 OBJ=\
 	$(JNIOBJ) \
@@ -44,13 +43,11 @@ JNIHEADERS:=$(JNIOBJ:.o=.h)
 
 JNICLASSFILES=\
 	EsdRecordingStream.class \
-	EsdStream.class \
-	EsdSample.class
+	EsdStream.class
 
 JNICLASSES=\
 	org.tritonus.lowlevel.esd.EsdRecordingStream \
-	org.tritonus.lowlevel.esd.EsdStream \
-	org.tritonus.lowlevel.esd.EsdSample
+	org.tritonus.lowlevel.esd.EsdStream
 
 #----------------- rules -------------------
 
