@@ -35,6 +35,11 @@ JAVAH = @JAVAH@
 JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaSeq.o \
 	org_tritonus_lowlevel_alsa_AlsaSeq_PortInfo.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_QueueInfo.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_QueueStatus.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_QueueTempo.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_QueueTimer.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_SystemInfo.o \
 	org_tritonus_lowlevel_alsa_Alsa.o \
 	org_tritonus_lowlevel_alsa_AlsaCtl.o \
 	org_tritonus_lowlevel_alsa_AlsaMixer.o \
@@ -61,7 +66,12 @@ JNICLASSFILES=\
 	AlsaPcm$$HWParams$$FormatMask.class \
 	AlsaPcm$$SWParams.class \
 	AlsaSeq.class \
-	AlsaSeq$$PortInfo.class
+	AlsaSeq$$PortInfo.class \
+	AlsaSeq$$QueueInfo.class \
+	AlsaSeq$$QueueStatus.class \
+	AlsaSeq$$QueueTempo.class \
+	AlsaSeq$$QueueTimer.class \
+	AlsaSeq$$SystemInfo.class
 
 
 JNICLASSES=\
@@ -74,7 +84,12 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams\$$FormatMask \
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$SWParams \
 	org.tritonus.lowlevel.alsa.AlsaSeq \
-	org.tritonus.lowlevel.alsa.AlsaSeq\$$PortInfo
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$PortInfo \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$QueueInfo \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$QueueStatus \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$QueueTempo \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$QueueTimer \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$SystemInfo
 
 #----------------- rules -------------------
 

@@ -86,8 +86,6 @@ getDebug()
 
 
 
-template class HandleFieldHandler<snd_seq_t*>;
-template class HandleFieldHandler<snd_seq_port_info_t*>;
 template class HandleFieldHandler<snd_ctl_t*>;
 template class HandleFieldHandler<snd_mixer_t*>;
 template class HandleFieldHandler<snd_mixer_elem_t*>;
@@ -95,6 +93,13 @@ template class HandleFieldHandler<snd_pcm_t*>;
 template class HandleFieldHandler<snd_pcm_hw_params_t*>;
 template class HandleFieldHandler<snd_pcm_format_mask_t*>;
 template class HandleFieldHandler<snd_pcm_sw_params_t*>;
+template class HandleFieldHandler<snd_seq_t*>;
+template class HandleFieldHandler<snd_seq_port_info_t*>;
+template class HandleFieldHandler<snd_seq_queue_info_t*>;
+template class HandleFieldHandler<snd_seq_queue_status_t*>;
+template class HandleFieldHandler<snd_seq_queue_tempo_t*>;
+template class HandleFieldHandler<snd_seq_queue_timer_t*>;
+template class HandleFieldHandler<snd_seq_system_info_t*>;
 
 
 
