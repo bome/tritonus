@@ -76,7 +76,7 @@ public interface PlayerListener
 
 	/**	TODO:
 	*/
-	public static final String	RECORD_ERROR = "ercordError";
+	public static final String	RECORD_ERROR = "recordError";
 
 
 	/**	TODO:
