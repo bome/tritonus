@@ -159,6 +159,8 @@ public class JorbisFormatConversionProvider
 	// TODO: recheck !!
 	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat)
 	{
+	    TDebug.out("getDefaultTargetFormat(): target format: " + targetFormat);
+	    TDebug.out("getDefaultTargetFormat(): source format: " + sourceFormat);
 		AudioFormat	newTargetFormat = null;
 		// return first of the matching formats
 		// pre-condition: the predefined target formats (FORMATS2) must be well-defined !
@@ -175,6 +177,17 @@ public class JorbisFormatConversionProvider
 		{
 			throw new IllegalArgumentException("conversion not supported");
 		}
+	    TDebug.out("getDefaultTargetFormat(): new target format: " + newTargetFormat);
+	    // hacked together...
+	    // ... only works for PCM target encoding ...
+	    newTargetFormat = new AudioFormat(targetFormat.getEncoding(),
+					      sourceFormat.getSampleRate(),
+					      newTargetFormat.getSampleSizeInBits(),
+					      newTargetFormat.getChannels(),
+					      newTargetFormat.getFrameSize(),
+					      sourceFormat.getSampleRate(),
+					      /*newTargetFormat.isBigEndian()*/false);
+	    TDebug.out("getDefaultTargetFormat(): really new target format: " + newTargetFormat);
 		return newTargetFormat;
 	}
 		

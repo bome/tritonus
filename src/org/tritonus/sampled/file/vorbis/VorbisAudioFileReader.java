@@ -53,7 +53,7 @@ import	com.jcraft.jorbis.Block;
  * @author Matthias Pfisterer
  */
 public class VorbisAudioFileReader
-	extends	TAudioFileReader
+extends TAudioFileReader
 {
 	// Note: this value is only an estimate
 	private static final int	MARK_LIMIT = 100000;
@@ -177,7 +177,7 @@ public class VorbisAudioFileReader
     
 		int	i = 0;
 		while (i < 2)
-		{
+		    {
 			while (i < 2)
 			{
 				int	result = oggSyncState.pageout(oggPage);
@@ -221,16 +221,19 @@ public class VorbisAudioFileReader
 				throw new UnsupportedAudioFileException("not a Vorbis stream: ended before finding all Vorbis headers");
 			}
 			oggSyncState.wrote(bytes);
-		}
+		    }
 
-		// Throw the comments plus a few lines about the bitstream we're
-		// decoding
-		byte[][]	ptr = vc.user_comments;
-		for (int j = 0; j < ptr.length; j++)
+		if (TDebug.TraceAudioFileReader)
 		{
-			if (ptr[j] == null)
-				break;
-			TDebug.out(new String(ptr[j], 0, ptr[j].length - 1));
+			// Throw the comments plus a few lines about the bitstream we're
+			// decoding
+			byte[][]	ptr = vc.user_comments;
+			for (int j = 0; j < ptr.length; j++)
+			{
+				if (ptr[j] == null)
+					break;
+				TDebug.out(new String(ptr[j], 0, ptr[j].length - 1));
+			}
 		}
 		int	nChannels = vi.channels;
 		float	fSampleRate = vi.rate;
@@ -252,17 +255,21 @@ public class VorbisAudioFileReader
 		    && lFileSizeInBytes <= Integer.MAX_VALUE)
 		{
 			nByteSize = (int) lFileSizeInBytes;
-			// TODO: check if we can calculate a useful value here
-			// nFrameSize = (int) (lFileSizeInBytes / 33);
+			/* Can we calculate a useful size?
+			   Peeking into ogginfo gives the insight that the only
+			   way seems to be reading through the file. This is
+			   something we do not want, at least not by default.
+			*/
+			// nFrameSize = (int) (lFileSizeInBytes / ...;
 		}
 
 		AudioFormat	format = new AudioFormat(
 			Encodings.getEncoding("VORBIS"),
 			fSampleRate,
-			AudioSystem.NOT_SPECIFIED /*???*/,
+			AudioSystem.NOT_SPECIFIED,
 			nChannels,
-			AudioSystem.NOT_SPECIFIED,	// gsm: 33,
-			AudioSystem.NOT_SPECIFIED,	// gsm: 50.0F,
+			AudioSystem.NOT_SPECIFIED,
+			AudioSystem.NOT_SPECIFIED,
 			true);	// this value is chosen arbitrarily
 		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): AudioFormat: " + format); }
 		AudioFileFormat	audioFileFormat =
