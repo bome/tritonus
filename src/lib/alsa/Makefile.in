@@ -28,7 +28,7 @@ LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/alsa/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
 # This is intended to be overridden. For instance:
-# EXTRALIBS=-lefence; make -e
+# export EXTRALIBS=-lefence; make -e
 EXTRALIBS=
 LIBS=-lasound $(EXTRALIBS)
 
