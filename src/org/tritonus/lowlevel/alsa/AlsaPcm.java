@@ -292,6 +292,14 @@ public class AlsaPcm
 	public native int setSWParamsSilenceSize(SWParams swParams, int n);
 	public native int setSWParams(SWParams swParams);
 
+	/**
+	   @param lOffset Offset where the data should be read from
+	   the buffer, in bytes.
+
+	   @lFrameCount Length of the data to write, in number of PCM
+	   frames.
+
+	 */
 	public native long writei(byte[] abBuffer, long lOffset, long lFrameCount);
 	public native long readi(byte[] abBuffer, long lOffset, long lFrameCount);
 
