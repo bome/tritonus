@@ -348,7 +348,6 @@ extends TestCase
 		Here, the following is tested:
 		- the management of the list of player listeners (add/remove)
 		- Basic callback
-		- correct player argument in callback
 	*/
 	public void testPlayerListenerBasic()
 		throws Exception
@@ -360,8 +359,7 @@ extends TestCase
 		player.addPlayerListener(listener);
 		player.start();
 		sleep();
-		assertTrue("basic callback", listener.isCalled());
-		assertEquals("player callback parameter", player, listener.getPlayer());
+		assertTrue("adding of PlayerListener", listener.isCalled());
 		player.stop();
 		player.removePlayerListener(listener);
 		listener.reset();
@@ -374,6 +372,8 @@ extends TestCase
 
 	/**	Event PlayerListener tests.
 		Here, specific events are tested.
+
+		- correct player argument in callback
 	*/
 	public void testPlayerListenerEvent()
 		throws Exception
@@ -381,8 +381,53 @@ extends TestCase
 		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
 		Player	player = Manager.createPlayer(strLocator);
 		TestPlayerListener	listener = new TestPlayerListener();
+		Long		mediaTime;
+		player.addPlayerListener(listener);
+		player.prefetch();
+
+		// STARTED
+		player.start();
+		sleep();
+		assertTrue("STARTED event", listener.isCalled());
+		assertEquals("player callback parameter", player, listener.getPlayer());
+		checkMediaTimePositive(listener);
+
+		// STOPPED
+		player.stop();
+		player.removePlayerListener(listener);
+		listener.reset();
+		player.start();
+		sleep();
+		assertTrue("STOPPED event", listener.isCalled());
+		assertEquals("player callback parameter", player, listener.getPlayer());
+		checkMediaTimePositive(listener);
+
+		// CLOSED
+		player.stop();
+		player.removePlayerListener(listener);
+		listener.reset();
+		player.start();
+		sleep();
+		assertTrue("CLOSED event", listener.isCalled());
+		assertEquals("player callback parameter", player, listener.getPlayer());
+		assertEquals("null event data", null, listener.getEventData());
+
+		// STOPPED AT TIME
+		// END OF MEDIA
+
+		// VOLUME CHANGED
+		// SIZE CHANGED
+
+		// RECORD STARTED
+		// RECORD STOPPED
 	}
 
+	private static void checkMediaTimePositive(TestPlayerListener listener)
+	{
+		Long	mediaTime = (Long) listener.getEventData();
+		long	lMediaTime = mediaTime.longValue();
+		assertTrue("media time positive", lMediaTime >= 0);
+	}
 
 
 	////////////////////////////////////////////////////////////////////
