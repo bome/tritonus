@@ -62,14 +62,14 @@ public class MpegAudioFileReader
 		{Encodings.getEncoding("MPEG2DOT5L3"), 
 		 Encodings.getEncoding("MPEG2DOT5L2"), 
 		 Encodings.getEncoding("MPEG2DOT5L1")},
-		{Encodings.getEncoding("MPEG2DOT5L3"), 
-		 Encodings.getEncoding("MPEG2DOT5L2"), 
-		 Encodings.getEncoding("MPEG2DOT5L1")},	/* reserved */
-		{Encodings.getEncoding("MPEG2L3"), 
-		 Encodings.getEncoding("MPEG2L2"), 
+		{null,
+		 null,
+		 null},	/* reserved */
+		{Encodings.getEncoding("MPEG2L3"),
+		 Encodings.getEncoding("MPEG2L2"),
 		 Encodings.getEncoding("MPEG2L1")},
-		{Encodings.getEncoding("MPEG1L3"), 
-		 Encodings.getEncoding("MPEG1L2"), 
+		{Encodings.getEncoding("MPEG1L3"),
+		 Encodings.getEncoding("MPEG1L2"),
 		 Encodings.getEncoding("MPEG1L1")},
 	};
 	private static final float[][]	sm_afSamplingRates =
