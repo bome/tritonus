@@ -63,6 +63,19 @@ public class ArraySet
 			return false;
 		}
 	}
+
+
+
+	public void add(int index, Object element)
+	{
+		throw new UnsupportedOperationException("ArraySet.add(int index, Object element) unsupported");
+	}
+
+	public Object set(int index, Object element)
+	{
+		throw new UnsupportedOperationException("ArraySet.set(int index, Object element) unsupported");
+	}
+
 }
 
 

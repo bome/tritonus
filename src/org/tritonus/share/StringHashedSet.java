@@ -96,15 +96,6 @@ public class StringHashedSet extends ArraySet {
 		}
 		return null;
 	}
-
-	public void add(int index, Object element) {
-		throw new UnsupportedOperationException("unsupported");
-	}
-
-	public Object set(int index, Object element) {
-		throw new UnsupportedOperationException("unsupported");
-	}
-
 }
 
 /*** StringHashedSet.java ***/
