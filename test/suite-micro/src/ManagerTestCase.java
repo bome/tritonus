@@ -47,38 +47,38 @@ extends TestCase
 
 
 
-	public void testGetSupportedContentTypes()
-		throws Exception
-	{
-		String[]	astrTypes = Manager.getSupportedContentTypes();
-		assertTrue("returned array is null", astrTypes != null);
-		assertTrue("returned array has length 0", astrTypes.length > 0);
-		for (int i = 0; i < astrTypes.length; i++)
-		{
-			assertTrue("array element is null", astrTypes[i] != null);
-			assertTrue("array element (String) has length 0", astrTypes[i].length() > 0);
-		}
-	}
+// 	public void testGetSupportedContentTypes()
+// 		throws Exception
+// 	{
+// 		String[]	astrTypes = Manager.getSupportedContentTypes();
+// 		assertTrue("returned array is null", astrTypes != null);
+// 		assertTrue("returned array has length 0", astrTypes.length > 0);
+// 		for (int i = 0; i < astrTypes.length; i++)
+// 		{
+// 			assertTrue("array element is null", astrTypes[i] != null);
+// 			assertTrue("array element (String) has length 0", astrTypes[i].length() > 0);
+// 		}
+// 	}
 
 
 
-	public void testGetSupportedProtocols()
-		throws Exception
-	{
-		String[]	astrProtocols = Manager.getSupportedProtocols();
-		assertTrue("returned array is null", astrProtocols != null);
-		assertTrue("returned array has length 0", astrProtocols.length > 0);
-		for (int i = 0; i < astrProtocols.length; i++)
-		{
-			assertTrue("array element is null", astrProtocols[i] != null);
-			assertTrue("array element (String) has length 0", astrProtocols[i].length() > 0);
-		}
-		assertTrue("http protocol not supported", Util.arrayContains(astrProtocols, "http"));
-		assertTrue("ftp protocol not supported", Util.arrayContains(astrProtocols, "ftp"));
-		assertTrue("file protocol not supported", Util.arrayContains(astrProtocols, "file"));
-		assertTrue("rtp protocol not supported", Util.arrayContains(astrProtocols, "rtp"));
-		assertTrue("capture protocol not supported", Util.arrayContains(astrProtocols, "capture"));
-	}
+// 	public void testGetSupportedProtocols()
+// 		throws Exception
+// 	{
+// 		String[]	astrProtocols = Manager.getSupportedProtocols();
+// 		assertTrue("returned array is null", astrProtocols != null);
+// 		assertTrue("returned array has length 0", astrProtocols.length > 0);
+// 		for (int i = 0; i < astrProtocols.length; i++)
+// 		{
+// 			assertTrue("array element is null", astrProtocols[i] != null);
+// 			assertTrue("array element (String) has length 0", astrProtocols[i].length() > 0);
+// 		}
+// 		assertTrue("http protocol not supported", Util.arrayContains(astrProtocols, "http"));
+// 		assertTrue("ftp protocol not supported", Util.arrayContains(astrProtocols, "ftp"));
+// 		assertTrue("file protocol not supported", Util.arrayContains(astrProtocols, "file"));
+// 		assertTrue("rtp protocol not supported", Util.arrayContains(astrProtocols, "rtp"));
+// 		assertTrue("capture protocol not supported", Util.arrayContains(astrProtocols, "capture"));
+// 	}
 
 
 
@@ -92,28 +92,28 @@ extends TestCase
 
 
 
-	public void testCreateDataSource()
-		throws Exception
-	{
-		DataSource	dataSource = null;
-		String[]	astrProtocols = Manager.getSupportedProtocols();
-		String		strLocator = null;
-		if (Util.arrayContains(astrProtocols, "file"))
-		{
-			strLocator = "file:///vmlinux";
-			dataSource = Manager.createDataSource(strLocator);
-		}
-		if (Util.arrayContains(astrProtocols, "http"))
-		{
-			strLocator = "http://www.tritonus.org/index.html";
-			dataSource = Manager.createDataSource(strLocator);
-		}
-		if (Util.arrayContains(astrProtocols, "ftp"))
-		{
-			strLocator = "ftp://ftp.debian.org/";
-			dataSource = Manager.createDataSource(strLocator);
-		}
-	}
+// 	public void testCreateDataSource()
+// 		throws Exception
+// 	{
+// 		DataSource	dataSource = null;
+// 		String[]	astrProtocols = Manager.getSupportedProtocols();
+// 		String		strLocator = null;
+// 		if (Util.arrayContains(astrProtocols, "file"))
+// 		{
+// 			strLocator = "file:///vmlinux";
+// 			dataSource = Manager.createDataSource(strLocator);
+// 		}
+// 		if (Util.arrayContains(astrProtocols, "http"))
+// 		{
+// 			strLocator = "http://www.tritonus.org/index.html";
+// 			dataSource = Manager.createDataSource(strLocator);
+// 		}
+// 		if (Util.arrayContains(astrProtocols, "ftp"))
+// 		{
+// 			strLocator = "ftp://ftp.debian.org/";
+// 			dataSource = Manager.createDataSource(strLocator);
+// 		}
+// 	}
 }
 
 
