@@ -1,16 +1,20 @@
 <?xml version="1.0"?>
 <project name="tritonus" default="dist" basedir=".">
+  <!--taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"/-->
+
   <target name="init">
     <tstamp/>
     <property name="src" value="${basedir}/src" />
     <property name="build" value="${basedir}/build" />
     <property name="dist"  value="${basedir}/dist" />
+    <property name="src.classes" value="${src}/classes" />
+    <property name="src.misc" value="${src}/misc" />
     <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar ../../javalayer/dist/javalayer.jar" />
     <!--
     Remove the next line if you don't have jikes.
     In this case, javac will be used for compiling.
     -->
-    <property name="build.compiler" value="jikes" />
+    <!--property name="build.compiler" value="jikes" /-->
     <!--property name="build.compiler.fulldepend" value="true" /-->
     <filter token="version" value="0.3.1" />
     <filter token="year" value="2000" />
@@ -56,12 +60,6 @@
 	   destdir="${build}"
 	   includes="javax/sound/,org/tritonus/"
 	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" />
-    <!-- for jsr-135 -->
-    <javac srcdir="${src}/classes"
-	   depend="yes"
-	   destdir="${build}"
-	   includes="javax/microedition/media/,org/tritonus/micro/"
-	   excludes="org/tritonus/whatever" />
   </target>
 
   <target name="compile-javalayer-dependent"
@@ -336,11 +334,43 @@
 	  depends="compile-micro" >
     <mkdir dir="${dist}" />
 
-    <!-- CORE: contains public classes and SPI instantiation support -->
     <jar jarfile="${dist}/tritonus_micro.jar">
       <fileset dir="${build}">
 	<include name="javax/microedition/media/" />
 	<include name="org/tritonus/micro/" />
+      </fileset>
+    </jar>
+  </target>
+
+
+
+
+    <!-- for saol -->
+  <target name="compile-saol" depends="prepare">
+    <!--sablecc
+	     src="${src.misc}/"
+	     outputdirectory="${src.classes}" /-->
+
+    <javac srcdir="${src.classes}"
+	   depend="yes"
+	   debug="on"
+	   destdir="${build}"
+	   includes="org/tritonus/saol/"
+	   excludes="org/tritonus/whatever" />
+  </target>
+
+  <target name="dist-saol"
+	  depends="compile-saol" >
+    <mkdir dir="${dist}" />
+
+    <jar jarfile="${dist}/saol.jar">
+      <fileset dir="${build}">
+	<!--include name="javax/microedition/media/" /-->
+	<include name="org/tritonus/saol/" />
+      </fileset>
+      <fileset dir="${src.classes}">
+	<include name="org/tritonus/saol/sablecc/lexer/lexer.dat" />
+	<include name="org/tritonus/saol/sablecc/parser/parser.dat" />
       </fileset>
     </jar>
   </target>
