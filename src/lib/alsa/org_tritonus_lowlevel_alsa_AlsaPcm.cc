@@ -31,6 +31,8 @@
 
 snd_pcm_hw_params_t*
 getHWParamsNativeHandle(JNIEnv *env, jobject obj);
+snd_pcm_format_mask_t*
+getFormatMaskNativeHandle(JNIEnv *env, jobject obj);
 snd_pcm_sw_params_t*
 getSWParamsNativeHandle(JNIEnv *env, jobject obj);
 
@@ -170,6 +172,29 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormat
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_format(handle, hwParams, (snd_pcm_format_t) nFormat);
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormat(): end\n"); }
+	return nReturn;
+}
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaPcm
+ * Method:    setHWParamsFormatMask
+ * Signature: (Lorg/tritonus/lowlevel/alsa/AlsaPcm$HWParams;Lorg/tritonus/lowlevel/alsa/AlsaPcm$HWParams$FormatMask;)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormatMask
+(JNIEnv *env, jobject obj, jobject objHwParams, jobject objFormatMask)
+{
+	snd_pcm_t*		handle;
+	snd_pcm_hw_params_t*	hwParams;
+	snd_pcm_format_mask_t*	formatMask;
+	int			nReturn;
+
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormatMask(): begin\n"); }
+	handle = handler.getHandle(env, obj);
+	hwParams = getHWParamsNativeHandle(env, objHwParams);
+	formatMask = getFormatMaskNativeHandle(env, objFormatMask);
+	nReturn = snd_pcm_hw_params_set_format_mask(handle, hwParams, formatMask);
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormatMask(): end\n"); }
 	return nReturn;
 }
 
