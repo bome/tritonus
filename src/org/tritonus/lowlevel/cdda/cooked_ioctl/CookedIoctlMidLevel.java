@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,40 +23,40 @@
  */
 
 
-package	org.tritonus.lowlevel.cdda.cooked_ioctl;
+package org.tritonus.lowlevel.cdda.cooked_ioctl;
 
 
-import	java.io.ByteArrayInputStream;
-import	java.io.ByteArrayOutputStream;
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.io.PrintStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
-import	java.net.URL;
-import	java.net.URLConnection;
-import	java.net.URLStreamHandler;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
-import	java.util.Arrays;
-import	java.util.Iterator;
-import	java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.Line;
-import	javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.cdda.CddaMidLevel;
-import	org.tritonus.lowlevel.cdda.CddaUtils;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.cdda.CddaMidLevel;
+import org.tritonus.lowlevel.cdda.CddaUtils;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
 
 
 public class CookedIoctlMidLevel
-	implements	CddaMidLevel
+implements CddaMidLevel
 {
 	private static int		PCM_FRAMES_PER_CDDA_FRAME = 588;
 	private static AudioFormat	CDDA_FORMAT = new AudioFormat(
@@ -144,7 +144,7 @@ public class CookedIoctlMidLevel
 
 
 	private class CddaAudioInputStream
-		extends	TAsynchronousFilteredAudioInputStream
+	extends	TAsynchronousFilteredAudioInputStream
 	{
 		private static final int	BUFFER_SIZE = CddaMidLevel.FRAME_SIZE;
 

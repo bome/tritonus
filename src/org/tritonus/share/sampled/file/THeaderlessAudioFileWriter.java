@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
- *  Copyright (c) 2000 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,15 +21,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
-import	java.io.IOException;
-import	java.util.Collection;
+import java.io.IOException;
+import java.util.Collection;
 
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -43,7 +43,7 @@ import	org.tritonus.share.TDebug;
 	@author Matthias Pfisterer
 */
 public class THeaderlessAudioFileWriter
-	extends TAudioFileWriter
+extends TAudioFileWriter
 {
 	protected THeaderlessAudioFileWriter(Collection<AudioFileFormat.Type> fileTypes,
 										 Collection<AudioFormat> audioFormats)

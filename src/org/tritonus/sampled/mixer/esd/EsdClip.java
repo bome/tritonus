@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,30 +23,30 @@
  */
 
 
-package	org.tritonus.sampled.mixer.esd;
+package org.tritonus.sampled.mixer.esd;
 
 
-import	java.io.IOException;
-import	java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.Clip;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.Mixer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.esd.EsdSample;
-import	org.tritonus.lowlevel.esd.Esd;
-import	org.tritonus.share.sampled.mixer.TDataLine;
-import	org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.esd.EsdSample;
+import org.tritonus.lowlevel.esd.Esd;
+import org.tritonus.share.sampled.mixer.TDataLine;
+import org.tritonus.share.sampled.mixer.TMixer;
 
 
 
 public class EsdClip
-	extends	TDataLine
-	implements	Clip
+extends	TDataLine
+implements Clip
 {
 	private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
 	private static final int	BUFFER_FRAMES = 16384;

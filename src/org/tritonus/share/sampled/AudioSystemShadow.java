@@ -24,23 +24,23 @@
  *
  */
 
-package	org.tritonus.share.sampled;
+package org.tritonus.share.sampled;
 
 
-import	java.io.File;
-import	java.io.OutputStream;
-import	java.io.IOException;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 
-import	org.tritonus.share.sampled.file.AudioOutputStream;
-import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
-import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
-import	org.tritonus.sampled.file.AiffAudioOutputStream;
-import	org.tritonus.sampled.file.AuAudioOutputStream;
-import	org.tritonus.sampled.file.WaveAudioOutputStream;
+import org.tritonus.share.sampled.file.AudioOutputStream;
+import org.tritonus.share.sampled.file.TDataOutputStream;
+import org.tritonus.share.sampled.file.TSeekableDataOutputStream;
+import org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
+import org.tritonus.sampled.file.AiffAudioOutputStream;
+import org.tritonus.sampled.file.AuAudioOutputStream;
+import org.tritonus.sampled.file.WaveAudioOutputStream;
 
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,18 +20,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.saol.compiler;
+package org.tritonus.saol.compiler;
 
 
-import	java.io.File;
-import	java.io.FileInputStream;
-import	java.io.ByteArrayOutputStream;
-import	java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 
 
 public class MemoryClassLoader
-	extends		ClassLoader
+extends ClassLoader
 {
 	public Class findClass(String strName,
 			       byte[] classData)

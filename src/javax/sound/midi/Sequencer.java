@@ -23,14 +23,14 @@
  */
 
 
-package	javax.sound.midi;
+package javax.sound.midi;
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
 
 public interface Sequencer
-extends	MidiDevice
+extends MidiDevice
 {
 	public static final int LOOP_CONTINUOUSLY = -1;
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,22 +20,22 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.mixer.alsa;
+package org.tritonus.sampled.mixer.alsa;
 
 
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.lowlevel.alsa.AlsaCtl;
-import	org.tritonus.lowlevel.alsa.AlsaCtlCardInfo;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.mixer.TMixerProvider;
+import org.tritonus.lowlevel.alsa.Alsa;
+import org.tritonus.lowlevel.alsa.AlsaCtl;
+import org.tritonus.lowlevel.alsa.AlsaCtlCardInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 
 public class AlsaDataLineMixerProvider
-	extends	TMixerProvider
+extends	TMixerProvider
 {
 	private static boolean	sm_bInitialized = false;
 

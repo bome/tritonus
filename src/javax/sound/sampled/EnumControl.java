@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,17 +23,17 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
-import	java.util.Collection;
-import	java.util.Arrays;
+import java.util.Collection;
+import java.util.Arrays;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public abstract class EnumControl
-	extends		Control
+extends Control
 {
 	private static final Object[]	EMPTY_OBJECT_ARRAY = new Object[0];
 
@@ -100,7 +100,7 @@ public abstract class EnumControl
 
 
 	public static class Type
-		extends	Control.Type
+	extends Control.Type
 	{
 		public static final Type	REVERB = new Type("REVERB");
 

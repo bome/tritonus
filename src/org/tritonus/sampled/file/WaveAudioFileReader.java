@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999,2000 by Florian Bomers <http://www.bomers.de>
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -24,24 +24,24 @@
  */
 
 
-package	org.tritonus.sampled.file;
+package org.tritonus.sampled.file;
 
 
-import	java.io.DataInputStream;
-import	java.io.File;
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.UnsupportedAudioFileException;
-import	javax.sound.sampled.spi.AudioFileReader;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.spi.AudioFileReader;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TAudioFileReader;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
+import org.tritonus.share.sampled.file.TAudioFileReader;
 
 
 /**

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -21,28 +21,28 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.convert.gsm;
+package org.tritonus.sampled.convert.gsm;
 
-import	java.io.DataInputStream;
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	java.util.Arrays;
-import	java.util.Iterator;
+import java.util.Arrays;
+import java.util.Iterator;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.gsm.InvalidGSMFrameException;
-import	org.tritonus.lowlevel.gsm.GSMDecoder;
-import	org.tritonus.lowlevel.gsm.Encoder;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
-import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
-import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
-import	org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.gsm.InvalidGSMFrameException;
+import org.tritonus.lowlevel.gsm.GSMDecoder;
+import org.tritonus.lowlevel.gsm.Encoder;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
+import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import org.tritonus.share.sampled.AudioFormats;
 
 
 
@@ -50,8 +50,8 @@ import	org.tritonus.share.sampled.AudioFormats;
 	@author Matthias Pfisterer
 */
 public class GSMFormatConversionProvider
-	extends		TSimpleFormatConversionProvider
-// extends		TEncodingFormatConversionProvider
+extends TSimpleFormatConversionProvider
+// extends TEncodingFormatConversionProvider
 {
 	/*	Debugging (profiling) hack.
 	 */
@@ -177,7 +177,7 @@ public class GSMFormatConversionProvider
 		of maintaining buffers and calling the decoder.
 	 */
 	public static class DecodedGSMAudioInputStream
-	extends		TAsynchronousFilteredAudioInputStream
+	extends TAsynchronousFilteredAudioInputStream
 	{
 		/*
 		  Seems like DataInputStream (opposite to InputStream) is only needed for
@@ -283,7 +283,7 @@ public class GSMFormatConversionProvider
 		of maintaining buffers and calling the encoder.
 	 */
 	public static class EncodedGSMAudioInputStream
-	extends		TAsynchronousFilteredAudioInputStream
+	extends TAsynchronousFilteredAudioInputStream
 	{
 		private AudioInputStream	m_decodedStream;
 		private Encoder			m_encoder;

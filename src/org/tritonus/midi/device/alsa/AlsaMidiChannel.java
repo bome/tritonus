@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,29 +23,28 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	java.util.ArrayList;
-import	java.util.Iterator;
-import	java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import	javax.sound.midi.MidiChannel;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.ShortMessage;
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.Transmitter;
-//import	javax.sound.midi.Synthesizer;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.MidiUtils;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.MidiUtils;
 
 
 
 // idea: put things that can implemented with "pure MIDI" into a base class TMidiChannel
 public class AlsaMidiChannel
-	implements	MidiChannel
+implements MidiChannel
 {
 	private Receiver	m_receiver;
 	private int		m_nChannel;

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,30 +20,30 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
-import	java.io.BufferedInputStream;
-import	java.io.File;
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.net.URL;
-import	java.util.Arrays;
-import	java.util.Collection;
-import	java.util.ArrayList;
-import	java.util.HashSet;
-import	java.util.Set;
-import	java.util.Iterator;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Iterator;
 
-import	javax.sound.sampled.spi.AudioFileReader;
-import	javax.sound.sampled.spi.AudioFileWriter;
-import	javax.sound.sampled.spi.FormatConversionProvider;
-import	javax.sound.sampled.spi.MixerProvider;
+import javax.sound.sampled.spi.AudioFileReader;
+import javax.sound.sampled.spi.AudioFileWriter;
+import javax.sound.sampled.spi.FormatConversionProvider;
+import javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.core.TAudioConfig;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.ArraySet;
+import org.tritonus.core.TAudioConfig;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.ArraySet;
 
 
 public class AudioSystem
@@ -61,7 +61,7 @@ public class AudioSystem
 	/**	MixerProviderAction for getMixerInfo().
 	 */
 	private static class GetMixerInfoMixerProviderAction
-	implements	MixerProviderAction
+	implements MixerProviderAction
 	{
 		private Collection<Mixer.Info>	m_mixerInfos = new ArrayList<Mixer.Info>();
 
@@ -129,7 +129,7 @@ public class AudioSystem
 	/**	MixerProviderAction for getMixer().
 	 */
 	private static class GetMixerMixerProviderAction
-	implements	MixerProviderAction
+	implements MixerProviderAction
 	{
 		private Mixer.Info	m_info = null;
 		private Mixer		m_mixer = null;
@@ -201,7 +201,7 @@ public class AudioSystem
 	/**	MixerAction for getSourceLineInfo().
 	 */
 	private static class GetSourceLineInfoMixerAction
-	implements	MixerAction
+	implements MixerAction
 	{
 		private Line.Info	m_info = null;
 		private Set<Line.Info>		m_infos;
@@ -247,7 +247,7 @@ public class AudioSystem
 	/**	MixerAction for getTargetLineInfo().
 	 */
 	private static class GetTargetLineInfoMixerAction
-	implements	MixerAction
+	implements MixerAction
 	{
 		private Line.Info	m_info = null;
 		private Set<Line.Info>		m_infos;
@@ -293,7 +293,7 @@ public class AudioSystem
 	/**	MixerAction for isLineSupported().
 	 */
 	private static class IsLineSupportedMixerAction
-	implements	MixerAction
+	implements MixerAction
 	{
 		private Line.Info	m_info = null;
 		private boolean		m_bSupported = false;
@@ -338,7 +338,7 @@ public class AudioSystem
 	/**	MixerAction for getLine().
 	 */
 	private static class GetLineMixerAction
-	implements	MixerAction
+	implements MixerAction
 	{
 		private Line.Info	m_info = null;
 		private Line		m_line = null;
@@ -421,7 +421,7 @@ public class AudioSystem
 	/**	FormatConversionProviderAction for getTargetEncodings().
 	 */
 	private static class GetTargetEncodingsFormatConversionProviderAction
-	implements	FormatConversionProviderAction
+	implements FormatConversionProviderAction
 	{
 		private Object		m_sourceDescription;
 		private Collection<AudioFormat.Encoding>	m_targetEncodings;
@@ -533,7 +533,7 @@ public class AudioSystem
 	/**	FormatConversionProviderAction for isConversionSupported().
 	 */
 	private static class IsConversionSupportedFormatConversionProviderAction
-	implements	FormatConversionProviderAction
+	implements FormatConversionProviderAction
 	{
 		private AudioFormat		m_sourceFormat;
 		/*
@@ -604,7 +604,7 @@ public class AudioSystem
 	/**	FormatConversionProviderAction for getAudioInputStream().
 	 */
 	private static class GetAudioInputStreamFormatConversionProviderAction
-	implements	FormatConversionProviderAction
+	implements FormatConversionProviderAction
 	{
 		private AudioInputStream	m_sourceAudioInputStream;
 		private Object			m_targetDescription;
@@ -809,7 +809,7 @@ public class AudioSystem
 	/**	AudioFileReaderAction for getAudioFileFormat().
 	 */
 	private static class GetAudioFileFormatAudioFileReaderAction
-	implements	AudioFileReaderAction
+	implements AudioFileReaderAction
 	{
 		private Object			m_source = null;
 		private AudioFileFormat		m_audioFileFormat = null;
@@ -918,7 +918,7 @@ public class AudioSystem
 	/**	AudioFileReaderAction for getAudioInputStream().
 	 */
 	private static class GetAudioInputStreamAudioFileReaderAction
-	implements	AudioFileReaderAction
+	implements AudioFileReaderAction
 	{
 		private Object			m_source = null;
 		private AudioInputStream	m_audioInputStream = null;
@@ -1049,7 +1049,7 @@ public class AudioSystem
 	/**	AudioFileWriterAction for isFileTypeSupported().
 	 */
 	private static class IsFileTypeSupportedAudioFileWriterAction
-	implements	AudioFileWriterAction
+	implements AudioFileWriterAction
 	{
 		private AudioFileFormat.Type	m_fileType;
 		private AudioInputStream	m_audioInputStream;
@@ -1156,7 +1156,7 @@ public class AudioSystem
 	/**	AudioFileWriterAction for write().
 	 */
 	private static class WriteAudioFileWriterAction
-	implements	AudioFileWriterAction
+	implements AudioFileWriterAction
 	{
 		private AudioInputStream	m_audioInputStream;
 		private AudioFileFormat.Type	m_fileType;

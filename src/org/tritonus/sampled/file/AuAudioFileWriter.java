@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999,2000,2001 by Florian Bomers <http://www.bomers.de>
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -24,21 +24,21 @@
  */
 
 
-package	org.tritonus.sampled.file;
+package org.tritonus.sampled.file;
 
 
-import	java.io.IOException;
-import	java.util.Arrays;
+import java.io.IOException;
+import java.util.Arrays;
 
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.AudioOutputStream;
-import	org.tritonus.share.sampled.file.TAudioFileWriter;
-import	org.tritonus.share.sampled.file.TDataOutputStream;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.file.AudioOutputStream;
+import org.tritonus.share.sampled.file.TAudioFileWriter;
+import org.tritonus.share.sampled.file.TDataOutputStream;
 
 
 /**

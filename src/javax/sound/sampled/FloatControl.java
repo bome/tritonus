@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,15 +23,15 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public abstract class FloatControl
-	extends		Control
+extends Control
 {
 	private static final String	DEFAULT_TRUE_LABEL = "true";
 	private static final String	DEFAULT_FALSE_LABEL = "false";
@@ -205,7 +205,7 @@ public abstract class FloatControl
 
 
 	public static class Type
-		extends	Control.Type
+	extends Control.Type
 	{
 		public static final Type	MASTER_GAIN = new Type("MASTER_GAIN");
 		public static final Type	AUX_SEND = new Type("AUX_SEND");

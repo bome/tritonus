@@ -23,10 +23,10 @@
  */
 
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
-import	java.io.IOException;
-import	javax.sound.sampled.AudioFormat;
+import java.io.IOException;
+import javax.sound.sampled.AudioFormat;
 
 /**
  * AudioOutputStream for files without a header; the input is written as it is

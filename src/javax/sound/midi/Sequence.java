@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,10 @@
  */
 
 
-package	javax.sound.midi;
+package javax.sound.midi;
 
-import	java.util.Iterator;
-import	java.util.Vector;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 // TODO: some synchronization now obsolete? (after change from ArrayList to Vector)

@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.share.midi;
+package org.tritonus.share.midi;
 
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiDevice;

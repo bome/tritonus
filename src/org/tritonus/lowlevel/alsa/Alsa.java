@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2000 - 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,10 @@
  */
 
 
-package	org.tritonus.lowlevel.alsa;
+package org.tritonus.lowlevel.alsa;
 
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 /**	Common ALSA functions.

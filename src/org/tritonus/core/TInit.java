@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  */
 
-package	org.tritonus.core;
+package org.tritonus.core;
 
 import java.util.Iterator;
 

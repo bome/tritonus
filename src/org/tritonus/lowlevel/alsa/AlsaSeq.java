@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,13 +22,13 @@
  */
 
 
-package	org.tritonus.lowlevel.alsa;
+package org.tritonus.lowlevel.alsa;
 
 
-import	java.lang.UnsupportedOperationException;
-import	java.util.Iterator;
+import java.lang.UnsupportedOperationException;
+import java.util.Iterator;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -1369,7 +1369,7 @@ public class AlsaSeq
 
 
 	private class ClientInfoIterator
-	implements	Iterator
+	implements Iterator
 	{
 		private int			m_nClient;
 		private AlsaSeqClientInfo	m_clientInfo;
@@ -1430,7 +1430,7 @@ public class AlsaSeq
 
 
 	private class PortInfoIterator
-	implements	Iterator
+	implements Iterator
 	{
 		private int		m_nClient;
 		private int		m_nPort;

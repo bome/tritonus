@@ -3,7 +3,7 @@
  */
 
 /*
- *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -24,15 +24,15 @@
  *
  */
 
-package	org.tritonus.midi.device.midishare;
+package org.tritonus.midi.device.midishare;
 
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.InvalidMidiDataException;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
-import	grame.midishare.Midi;
-import	grame.midishare.MidiException;
+import grame.midishare.Midi;
+import grame.midishare.MidiException;
 
 
 public class MshMidiOut

@@ -3,7 +3,7 @@
  */
 
 /*
- *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -25,29 +25,20 @@
  */
 
 
-package	org.tritonus.midi.device.midishare;
+package org.tritonus.midi.device.midishare;
 
-/*
-import	com.sun.java.util.collections.ArrayList;
-import	com.sun.java.util.collections.List;
-import	com.sun.java.util.collections.Iterator;
-*/
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.spi.MidiDeviceProvider;
 
-
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.spi.MidiDeviceProvider;
-
-// import	org.tritonus.lowlevel.alsa.ASequencer;
-
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 public class MshMidiDeviceProvider
-	extends		MidiDeviceProvider
+extends MidiDeviceProvider
 {
 	// perhaps move to superclass
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];

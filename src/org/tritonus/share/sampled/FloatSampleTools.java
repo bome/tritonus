@@ -20,11 +20,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.share.sampled;
+package org.tritonus.share.sampled;
 
-import	java.util.*;
-import	javax.sound.sampled.*;
-import	org.tritonus.share.TDebug;
+import java.util.*;
+import javax.sound.sampled.*;
+import org.tritonus.share.TDebug;
 
 /**
  * Utility functions for handling data in normalized float arrays.

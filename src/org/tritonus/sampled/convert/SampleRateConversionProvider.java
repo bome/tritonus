@@ -22,24 +22,24 @@
  *
  */
 
-package	org.tritonus.sampled.convert;
+package org.tritonus.sampled.convert;
 
-import	java.io.IOException;
-import	java.util.Arrays;
-import	java.util.Iterator;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.AudioFormats;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.FloatSampleBuffer;
-import	org.tritonus.share.sampled.AudioUtils;
-import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
-import	org.tritonus.share.ArraySet;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.FloatSampleBuffer;
+import org.tritonus.share.sampled.AudioUtils;
+import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.share.ArraySet;
 
 /**
  * This provider converts sample rate of 2 PCM streams. <br>
@@ -59,7 +59,7 @@ import	org.tritonus.share.ArraySet;
  */
 
 public class SampleRateConversionProvider
-	extends TSimpleFormatConversionProvider {
+extends TSimpleFormatConversionProvider {
 
 	// only used as abbreviation
 	public static AudioFormat.Encoding PCM_SIGNED=AudioFormat.Encoding.PCM_SIGNED;

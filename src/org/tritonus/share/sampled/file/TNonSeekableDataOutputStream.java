@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -24,12 +24,12 @@
  */
 
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
 
-import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.DataOutputStream;
 
 /**
  * A TDataOutputStream that does not allow seeking.
@@ -40,8 +40,8 @@ import	java.io.DataOutputStream;
 
 
 public class TNonSeekableDataOutputStream
-	extends DataOutputStream
-	implements TDataOutputStream
+extends DataOutputStream
+implements TDataOutputStream
 {
 	public TNonSeekableDataOutputStream(OutputStream outputStream)
 	{

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999,2000 by Matthias Pfisterer
  *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
  *
  *
@@ -24,10 +24,10 @@
  */
 
 
-package	org.tritonus.share.sampled;
+package org.tritonus.share.sampled;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 
 
 

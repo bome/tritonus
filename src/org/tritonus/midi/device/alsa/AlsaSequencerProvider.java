@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,26 +23,26 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.spi.MidiDeviceProvider;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.share.GlobalInfo;
-import	org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.share.GlobalInfo;
+import org.tritonus.share.midi.TMidiDevice;
 
 
 
 
 public class AlsaSequencerProvider
-	extends		MidiDeviceProvider
+extends MidiDeviceProvider
 {
 	private static MidiDevice.Info		sm_info;
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,12 +23,12 @@
  */
 
 
-package	javax.sound.midi;
+package javax.sound.midi;
 
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 
 

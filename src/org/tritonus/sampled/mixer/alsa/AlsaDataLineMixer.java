@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,45 +22,45 @@
  */
 
 
-package	org.tritonus.sampled.mixer.alsa;
+package org.tritonus.sampled.mixer.alsa;
 
 
-import	java.util.Arrays;
-import	java.util.ArrayList;
-import	java.util.Collection;
-import	java.util.HashMap;
-import	java.util.Map;
-import	java.util.HashSet;
-import	java.util.List;
-import	java.util.Set;
-import	java.util.Iterator;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Iterator;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.Clip;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.TargetDataLine;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.Line;
-import	javax.sound.sampled.Mixer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.Mixer;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.TSettings;
-import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TMixerInfo;
-import	org.tritonus.share.sampled.mixer.TSoftClip;
-import	org.tritonus.share.GlobalInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.TSettings;
+import org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.sampled.mixer.TMixerInfo;
+import org.tritonus.share.sampled.mixer.TSoftClip;
+import org.tritonus.share.GlobalInfo;
 
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.lowlevel.alsa.AlsaPcmHWParams;
-import	org.tritonus.lowlevel.alsa.AlsaPcmHWParamsFormatMask;
+import org.tritonus.lowlevel.alsa.Alsa;
+import org.tritonus.lowlevel.alsa.AlsaPcm;
+import org.tritonus.lowlevel.alsa.AlsaPcmHWParams;
+import org.tritonus.lowlevel.alsa.AlsaPcmHWParamsFormatMask;
 
 
 
 public class AlsaDataLineMixer
-	extends		TMixer
+extends TMixer
 {
 	private static final AudioFormat[]	EMPTY_AUDIOFORMAT_ARRAY = new AudioFormat[0];
 	private static final int	CHANNELS_LIMIT = 32;

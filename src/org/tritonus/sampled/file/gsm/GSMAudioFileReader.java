@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -21,26 +21,26 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.file.gsm;
+package org.tritonus.sampled.file.gsm;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.io.EOFException;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.EOFException;
 
-import	java.util.HashMap;
-import	java.util.Map;
+import java.util.HashMap;
+import java.util.Map;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.UnsupportedAudioFileException;
-import	javax.sound.sampled.spi.AudioFileReader;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.spi.AudioFileReader;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TAudioFileReader;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
+import org.tritonus.share.sampled.file.TAudioFileReader;
 
 
 
@@ -48,7 +48,7 @@ import	org.tritonus.share.sampled.file.TAudioFileReader;
 	@author Matthias Pfisterer
  */
 public class GSMAudioFileReader
-	extends	TAudioFileReader
+extends	TAudioFileReader
 {
 	private static final int	GSM_MAGIC = 0xD0;
 	private static final int	GSM_MAGIC_MASK = 0xF0;

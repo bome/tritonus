@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,7 +21,7 @@
  *
  */
 
-package	org.tritonus.lowlevel.alsa;
+package org.tritonus.lowlevel.alsa;
 
 import org.tritonus.share.TDebug;
 

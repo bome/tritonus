@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -28,7 +28,7 @@ import java.security.BasicPermission;
 /** TODO:
  */
 public class AudioPermission
-	extends	BasicPermission
+extends BasicPermission
 {
 	/** TODO:
 	 */

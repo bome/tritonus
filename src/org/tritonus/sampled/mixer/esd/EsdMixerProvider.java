@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,20 @@
  */
 
 
-package	org.tritonus.sampled.mixer.esd;
+package org.tritonus.sampled.mixer.esd;
 
 
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.lowlevel.esd.Esd;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.mixer.TMixerProvider;
+import org.tritonus.lowlevel.esd.Esd;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 
 public class EsdMixerProvider
-	extends	TMixerProvider
+extends	TMixerProvider
 {
 	private static boolean	sm_bInitialized = false;
 

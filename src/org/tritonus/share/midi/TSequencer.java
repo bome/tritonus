@@ -20,36 +20,36 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.share.midi;
+package org.tritonus.share.midi;
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	java.util.BitSet;
-import	java.util.Collection;
-import	java.util.Iterator;
-import	java.util.Set;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
-import	javax.sound.midi.MidiSystem;
-import	javax.sound.midi.Sequencer;
-import	javax.sound.midi.Sequence;
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.MetaEventListener;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.ShortMessage;
-import	javax.sound.midi.ControllerEventListener;
-import	javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.ControllerEventListener;
+import javax.sound.midi.MidiDevice;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.ArraySet;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.ArraySet;
 
 
 
 
 public abstract class TSequencer
-	extends		TMidiDevice
-	implements	Sequencer
+extends TMidiDevice
+implements Sequencer
 {
 	private static final float	MPQ_BPM_FACTOR = 6.0E7F;
 	// This is for use in Collection.toArray(Object[]).

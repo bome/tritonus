@@ -24,10 +24,10 @@
 //  Carsten Bormann (cabo@cs.tu-berlin.de), 
 //  Technische Universitaet Berlin
 
-package	org.tritonus.lowlevel.gsm;
+package org.tritonus.lowlevel.gsm;
 
 
-import	org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.TConversionTool;
 
 
 

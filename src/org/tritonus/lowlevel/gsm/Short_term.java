@@ -18,7 +18,7 @@
  *
  */
 
-package	org.tritonus.lowlevel.gsm;
+package org.tritonus.lowlevel.gsm;
 
 import java.io.*;
 

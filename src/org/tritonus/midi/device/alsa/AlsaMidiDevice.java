@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,35 +23,35 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	java.util.ArrayList;
-import	java.util.Iterator;
-import	java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.Transmitter;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
-import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
-import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
-import	org.tritonus.share.midi.TMidiDevice;
-import	org.tritonus.share.GlobalInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
+import org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
+import org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.share.GlobalInfo;
 
 
 
 /**	A representation of a physical MIDI port based on the ALSA sequencer.
  */
 public class AlsaMidiDevice
-	extends		TMidiDevice
-	implements	AlsaMidiIn.AlsaMidiInListener
+extends TMidiDevice
+implements AlsaMidiIn.AlsaMidiInListener
 {
 	/**	ALSA client id of the physical port.
 	 */
@@ -318,8 +318,8 @@ public class AlsaMidiDevice
 /////////////////// INNER CLASSES //////////////////////////////////////
 
 	private class AlsaMidiDeviceReceiver
-		extends		TReceiver
-		implements	AlsaReceiver
+	extends TReceiver
+	implements AlsaReceiver
 	{
 
 
@@ -364,7 +364,7 @@ public class AlsaMidiDevice
 
 
 	private class AlsaMidiDeviceTransmitter
-		extends		TTransmitter
+	extends TTransmitter
 	{
 		private boolean		m_bReceiverSubscribed;
 

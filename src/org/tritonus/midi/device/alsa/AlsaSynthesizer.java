@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,36 +23,36 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	java.util.ArrayList;
-import	java.util.Iterator;
-import	java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import	javax.sound.midi.MidiChannel;
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.Transmitter;
-import	javax.sound.midi.Synthesizer;
-import	javax.sound.midi.Instrument;
-import	javax.sound.midi.Soundbank;
-import	javax.sound.midi.VoiceStatus;
-import	javax.sound.midi.Patch;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
+import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.Soundbank;
+import javax.sound.midi.VoiceStatus;
+import javax.sound.midi.Patch;
 
-import	org.tritonus.share.GlobalInfo;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.share.GlobalInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.TMidiDevice;
 
 
 
 
 public class AlsaSynthesizer
-	extends		AlsaMidiDevice
-	implements	Synthesizer
+extends AlsaMidiDevice
+implements Synthesizer
 {
 	private static final MidiChannel[]	EMPTY_MIDICHANNEL_ARRAY = new MidiChannel[0];
 	private static final VoiceStatus[]	EMPTY_VOICESTATUS_ARRAY = new VoiceStatus[0];

@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  */
 
-package	org.tritonus.lowlevel.dsp;
+package org.tritonus.lowlevel.dsp;
 
 /**
  *	Collection of special functions.

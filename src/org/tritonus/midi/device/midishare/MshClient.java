@@ -3,7 +3,7 @@
  */
 
 /*
- *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -24,7 +24,7 @@
  *
  */
 
-package	org.tritonus.midi.device.midishare;
+package org.tritonus.midi.device.midishare;
 
 /**
  *	This interface is to mark Transmitters and Receivers that are

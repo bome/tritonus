@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,16 +23,16 @@
  */
 
 
-package	org.tritonus.share.sampled.convert;
+package org.tritonus.share.sampled.convert;
 
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.spi.FormatConversionProvider;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.spi.FormatConversionProvider;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.AudioFormats;
 
 
 
@@ -41,7 +41,7 @@ import	org.tritonus.share.sampled.AudioFormats;
  *	@author Matthias Pfisterer
  */
 public abstract class TFormatConversionProvider
-	extends		FormatConversionProvider
+extends FormatConversionProvider
 {
 	protected static final AudioFormat.Encoding[]	EMPTY_ENCODING_ARRAY = new AudioFormat.Encoding[0];
 	protected static final AudioFormat[]		EMPTY_FORMAT_ARRAY = new AudioFormat[0];

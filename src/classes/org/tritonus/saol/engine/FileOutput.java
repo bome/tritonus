@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,15 +20,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.saol.engine;
+package org.tritonus.saol.engine;
 
 
-import	java.io.IOException;
-import	java.io.File;
+import java.io.IOException;
+import java.io.File;
 
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 
 
 /*
@@ -36,7 +36,7 @@ import	javax.sound.sampled.AudioSystem;
  *      Using these makes the program not portable to other
  *      Java Sound implementations.
  */
-import	org.tritonus.share.sampled.AudioSystemShadow;
+import org.tritonus.share.sampled.AudioSystemShadow;
 import  org.tritonus.share.sampled.file.AudioOutputStream;
 
 

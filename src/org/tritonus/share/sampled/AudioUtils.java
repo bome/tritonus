@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,25 +22,25 @@
  */
 
 
-package	org.tritonus.share.sampled;
+package org.tritonus.share.sampled;
 
 
-import	java.io.File;
-import	java.io.FileOutputStream;
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.util.Collection;
-import	java.util.Iterator;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Iterator;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.spi.AudioFileWriter;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.spi.AudioFileWriter;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.TConversionTool;
 
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,22 +20,22 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.saol.compiler;
+package org.tritonus.saol.compiler;
 
 
-import	java.io.ByteArrayOutputStream;
-import	java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import	java.util.HashMap;
-import	java.util.Map;
+import java.util.HashMap;
+import java.util.Map;
 
-import	org.apache.bcel.Constants;
-import	org.apache.bcel.classfile.Field;
-import	org.apache.bcel.classfile.JavaClass;
-import	org.apache.bcel.generic.*;
+import org.apache.bcel.Constants;
+import org.apache.bcel.classfile.Field;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.generic.*;
 
-import	org.tritonus.saol.sablecc.analysis.*;
-import	org.tritonus.saol.sablecc.node.*;
+import org.tritonus.saol.sablecc.analysis.*;
+import org.tritonus.saol.sablecc.node.*;
 
 
 

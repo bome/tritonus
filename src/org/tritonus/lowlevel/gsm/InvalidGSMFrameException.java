@@ -24,12 +24,12 @@
 //  Carsten Bormann (cabo@cs.tu-berlin.de), 
 //  Technische Universitaet Berlin
 
-package	org.tritonus.lowlevel.gsm;
+package org.tritonus.lowlevel.gsm;
 
 
 
 public class InvalidGSMFrameException
-	extends	Exception
+extends	Exception
 {
 }
 

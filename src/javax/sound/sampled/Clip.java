@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,15 +23,15 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
 
 
 public interface Clip
-	extends		DataLine
+extends DataLine
 {
 	// TODO: check value against sun implementation
 	public static final int	LOOP_CONTINUOUSLY = -1;

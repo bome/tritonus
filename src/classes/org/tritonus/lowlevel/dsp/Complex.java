@@ -22,7 +22,7 @@
  */
 
 
-package	org.tritonus.lowlevel.dsp;
+package org.tritonus.lowlevel.dsp;
  
  /**
   * This class implements complex numbers. It provides the basic operations

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,17 +21,17 @@
  *
  */
 
-package	org.tritonus.share.sampled.convert;
+package org.tritonus.share.sampled.convert;
 
-import	java.util.Collection;
-import	java.util.Iterator;
+import java.util.Collection;
+import java.util.Iterator;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.share.sampled.AudioFormats;
-import	org.tritonus.share.ArraySet;
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.ArraySet;
+import org.tritonus.share.TDebug;
 
 
 /**
@@ -53,7 +53,7 @@ import	org.tritonus.share.TDebug;
 // - consistent implementation of replacing NOT_SPECIFIED when not given in conversion
 
 public abstract class TSimpleFormatConversionProvider
-	extends		TFormatConversionProvider
+extends TFormatConversionProvider
 {
 	private Collection<AudioFormat.Encoding>	m_sourceEncodings;
 	private Collection<AudioFormat.Encoding>	m_targetEncodings;

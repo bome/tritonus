@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,7 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.debug;
+package org.tritonus.debug;
 
 import org.aspectj.lang.JoinPoint;
 
@@ -34,7 +34,7 @@ import org.tritonus.sampled.convert.vorbis.VorbisFormatConversionProvider.Decode
 /** Debugging output aspect.
  */
 privileged aspect AJDebugVorbis
-	extends Utils
+extends Utils
 {
 	pointcut allExceptions(): handler(Throwable+);
 

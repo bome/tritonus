@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,12 +20,12 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.lowlevel.alsa;
+package org.tritonus.lowlevel.alsa;
 
-import	java.util.ArrayList;
-import	java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 

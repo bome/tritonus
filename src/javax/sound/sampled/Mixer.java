@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,13 +23,13 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
 
 
 public interface Mixer
-	extends		Line
+extends Line
 {
 	public Mixer.Info getMixerInfo();
 

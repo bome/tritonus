@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,10 @@
  */
 
 
-package	org.tritonus.lowlevel.esd;
+package org.tritonus.lowlevel.esd;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
 
 public class EsdSample

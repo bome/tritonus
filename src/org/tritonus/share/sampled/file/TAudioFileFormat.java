@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ import javax.sound.sampled.AudioFormat;
  * @author Matthias Pfisterer
  */
 public class TAudioFileFormat
-	extends	AudioFileFormat
+extends	AudioFileFormat
 {
 	private Map<String, Object>	m_properties;
 	private Map<String, Object>	m_unmodifiableProperties;

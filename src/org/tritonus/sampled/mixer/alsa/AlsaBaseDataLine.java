@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -25,27 +25,27 @@
  */
 
 
-package	org.tritonus.sampled.mixer.alsa;
+package org.tritonus.sampled.mixer.alsa;
 
 
-import	java.io.IOException;
-import	java.util.Collection;
+import java.io.IOException;
+import java.util.Collection;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.FloatControl;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.Mixer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.Mixer;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.lowlevel.alsa.AlsaPcmHWParams;
-import	org.tritonus.lowlevel.alsa.AlsaPcmSWParams;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TBaseDataLine;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.Alsa;
+import org.tritonus.lowlevel.alsa.AlsaPcm;
+import org.tritonus.lowlevel.alsa.AlsaPcmHWParams;
+import org.tritonus.lowlevel.alsa.AlsaPcmSWParams;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
@@ -372,7 +372,7 @@ extends TBaseDataLine
 
 	// IDEA: move inner classes to TBaseDataLine
 	public class AlsaBaseDataLineGainControl
-		extends		FloatControl
+	extends FloatControl
 	{
 		/*
 		 *	These variables should be static. However, Java 1.1

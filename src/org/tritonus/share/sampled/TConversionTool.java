@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 1999,2000 by Florian Bomers <http://www.bomers.de>
- *  Copyright (c) 2000 by Matthias Pfisterer <matthias.pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  *
  */
 
-package	org.tritonus.share.sampled;
+package org.tritonus.share.sampled;
 
 
 /**

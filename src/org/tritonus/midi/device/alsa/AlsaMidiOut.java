@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,19 +23,19 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
-import	javax.sound.midi.Sequence;
-import	javax.sound.midi.Sequencer;
-import	javax.sound.midi.Track;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.ShortMessage;
-import	javax.sound.midi.SysexMessage;
-import	javax.sound.midi.MetaMessage;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Track;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
+import javax.sound.midi.MetaMessage;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.lowlevel.alsa.AlsaSeqEvent;
 
 
 /**

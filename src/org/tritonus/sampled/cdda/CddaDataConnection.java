@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2001 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,26 +20,26 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.cdda;
+package org.tritonus.sampled.cdda;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	java.net.URL;
-import	java.net.URLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
-import	javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat;
 
-import	org.tritonus.lowlevel.cdda.CddaMidLevel;
-import	org.tritonus.lowlevel.cdda.CddaUtils;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.lowlevel.cdda.CddaMidLevel;
+import org.tritonus.lowlevel.cdda.CddaUtils;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
 
 
 public class CddaDataConnection
-	extends	URLConnection
+extends	URLConnection
 {
 	private static int		PCM_FRAMES_PER_CDDA_FRAME = 588;
 	private static AudioFormat	CDDA_FORMAT = new AudioFormat(

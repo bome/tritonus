@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,20 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
-import	java.util.List;
-import	java.util.Arrays;
-import	java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.AudioFormats;
 
 
 
 public interface DataLine
-	extends	Line
+extends Line
 {
 	public void drain();
 
@@ -77,7 +77,7 @@ public interface DataLine
 
 
 	public static class Info
-	extends Line.Info
+extends Line.Info
 	{
 		private AudioFormat[]	EMPTY_AUDIO_FORMAT_ARRAY = new AudioFormat[0];
 

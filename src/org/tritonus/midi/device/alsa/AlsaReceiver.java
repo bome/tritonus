@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,10 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	javax.sound.midi.Receiver;
+import javax.sound.midi.Receiver;
 
 
 
@@ -37,7 +37,7 @@ import	javax.sound.midi.Receiver;
 	passing them by Java.
  */
 public interface AlsaReceiver
-	extends Receiver
+extends Receiver
 {
 	/**	Establish the subscription.
 		Calling this method establishes a subscription between a

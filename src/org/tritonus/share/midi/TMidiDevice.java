@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,23 +23,23 @@
  */
 
 
-package	org.tritonus.share.midi;
+package org.tritonus.share.midi;
 
 
-import	java.util.ArrayList;
-import	java.util.Collections;
-import	java.util.Iterator;
-import	java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.Transmitter;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 /**	Base class for MidiDevice implementations.
@@ -47,7 +47,7 @@ import	org.tritonus.share.TDebug;
  *	classes that implement the interface MidiDevice.
  */
 public abstract class TMidiDevice
-	implements	MidiDevice
+implements MidiDevice
 {
 	/**	The Info object for a certain instance of MidiDevice.
 	 */
@@ -416,7 +416,7 @@ public abstract class TMidiDevice
 	 *	TMidiDevice.getReceiver(). 
 	 */
 	public class TReceiver
-		implements	Receiver
+	implements Receiver
 	{
 		private boolean		m_bOpen;
 
@@ -470,7 +470,7 @@ public abstract class TMidiDevice
 
 
 	public class TTransmitter
-		implements	Transmitter
+	implements Transmitter
 	{
 		private boolean		m_bOpen;
 		private Receiver	m_receiver;
@@ -537,7 +537,7 @@ public abstract class TMidiDevice
 	 *	constructor is protected (in the Sun jdk1.3).
 	 */
 	public static class Info
-		extends MidiDevice.Info
+	extends MidiDevice.Info
 	{
 		public Info(String a, String b, String c, String d)
 		{

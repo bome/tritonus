@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,15 +23,15 @@
  */
 
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 /**	
@@ -41,7 +41,7 @@ import	org.tritonus.share.TDebug;
  */
  
 public abstract class TAudioOutputStream
-	implements	AudioOutputStream
+implements AudioOutputStream
 {
 	private AudioFormat		m_audioFormat;
 	private long			m_lLength; // in bytes

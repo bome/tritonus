@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,18 +21,18 @@
  */
 
 
-package	org.tritonus.sampled.mixer.alsa;
+package org.tritonus.sampled.mixer.alsa;
 
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.lowlevel.alsa.AlsaCtl;
-import	org.tritonus.share.sampled.mixer.TMixerProvider;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.Alsa;
+import org.tritonus.lowlevel.alsa.AlsaCtl;
+import org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 
 public class AlsaPortMixerProvider
-	extends	TMixerProvider
+extends	TMixerProvider
 {
 	private static boolean		sm_bInitialized = false;
 

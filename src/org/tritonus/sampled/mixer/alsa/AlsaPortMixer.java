@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,43 +20,43 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.mixer.alsa;
+package org.tritonus.sampled.mixer.alsa;
 
-import	java.util.Arrays;
-import	java.util.ArrayList;
-import	java.util.HashMap;
-import	java.util.Map;
-import	java.util.HashSet;
-import	java.util.Set;
-import	java.util.Iterator;
-import	java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.List;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.BooleanControl;
-import	javax.sound.sampled.Clip;
-import	javax.sound.sampled.CompoundControl;
-import	javax.sound.sampled.Control;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.FloatControl;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.TargetDataLine;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.Line;
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.Port;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.BooleanControl;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.CompoundControl;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Port;
 
-import	org.tritonus.share.GlobalInfo;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.mixer.TBooleanControl;
-import	org.tritonus.share.sampled.mixer.TFloatControl;
-import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TMixerInfo;
-import	org.tritonus.share.sampled.mixer.TPort;
-import	org.tritonus.share.sampled.mixer.TCompoundControlType;
+import org.tritonus.share.GlobalInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.mixer.TBooleanControl;
+import org.tritonus.share.sampled.mixer.TFloatControl;
+import org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.sampled.mixer.TMixerInfo;
+import org.tritonus.share.sampled.mixer.TPort;
+import org.tritonus.share.sampled.mixer.TCompoundControlType;
 
-import	org.tritonus.lowlevel.alsa.AlsaMixer;
-import	org.tritonus.lowlevel.alsa.AlsaMixerElement;
+import org.tritonus.lowlevel.alsa.AlsaMixer;
+import org.tritonus.lowlevel.alsa.AlsaMixerElement;
 
 
 /**	TODO:
@@ -429,7 +429,7 @@ extends TMixer
 
 
 	private class AlsaVolumeControl
-	extends FloatControl
+extends FloatControl
 	{
 		private AlsaMixerElement	m_element;
 		private int			m_nChannel;

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2003 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2003 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -50,7 +50,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 |<---            this code is formatted to fit into 80 columns             --->|
 */
 
-package	org.tritonus.sampled.convert;
+package org.tritonus.sampled.convert;
 
 import java.util.Arrays;
 import java.util.Iterator;

@@ -3,7 +3,7 @@
  */
 
 /*
- *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -25,33 +25,33 @@
  */
 
 
-package	org.tritonus.midi.device.midishare;
+package org.tritonus.midi.device.midishare;
 
-import	javax.sound.midi.Sequence;
-import	javax.sound.midi.Sequencer;
-import	javax.sound.midi.Track;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.Transmitter;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.MidiSystem;
-
-
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.TMidiDevice;
-import	org.tritonus.midi.device.midishare.*;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Track;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.Transmitter;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
 
 
-import	grame.midishare.*;
-import	grame.midishare.player.*;
-import	grame.midishare.tools.*;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.midi.device.midishare.*;
+
+
+import grame.midishare.*;
+import grame.midishare.player.*;
+import grame.midishare.tools.*;
 
 final public class MshSequencer
-	extends		TMidiDevice
+extends TMidiDevice
 {
 
 	private float		m_fTempoInMPQ;
@@ -408,7 +408,7 @@ final public class MshSequencer
 /////////////////// INNER CLASSES //////////////////////////////////////
 
 	private class MidiShareTransmitter
-		extends		TTransmitter
+	extends TTransmitter
 	{
 		private boolean		m_bReceiverSubscribed;
 

@@ -6,7 +6,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -25,27 +25,12 @@
  *
  */
 
+package org.tritonus.share.sampled.mixer;
 
-package	org.tritonus.share.sampled.mixer;
+import javax.sound.sampled.CompoundControl;
+import javax.sound.sampled.Control;
 
-
-// import	java.util.Collection;
-// import	java.util.ArrayList;
-// import	java.util.HashSet;
-// import	java.util.Iterator;
-// import	java.util.List;
-// import	java.util.Set;
-
-// import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.CompoundControl;
-import	javax.sound.sampled.Control;
-// import	javax.sound.sampled.Line;
-// import	javax.sound.sampled.LineEvent;
-// import	javax.sound.sampled.LineListener;
-// import	javax.sound.sampled.LineUnavailableException;
-// import	javax.sound.sampled.Port;
-
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -53,8 +38,8 @@ import	org.tritonus.share.TDebug;
 /**	Base class for classes implementing Line.
  */
 public class TCompoundControl
-	extends CompoundControl
-	implements TControllable
+extends CompoundControl
+implements TControllable
 {
 	private TControlController	m_controller;
 

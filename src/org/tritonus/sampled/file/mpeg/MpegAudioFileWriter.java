@@ -23,16 +23,16 @@
  */
 
 
-package	org.tritonus.sampled.file.mpeg;
+package org.tritonus.sampled.file.mpeg;
 
 
-import	java.util.Arrays;
+import java.util.Arrays;
 
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 
 
 

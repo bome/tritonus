@@ -20,7 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.debug;
+package org.tritonus.debug;
 
 import org.aspectj.lang.JoinPoint;
 

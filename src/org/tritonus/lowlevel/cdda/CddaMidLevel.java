@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,13 +23,13 @@
  */
 
 
-package	org.tritonus.lowlevel.cdda;
+package org.tritonus.lowlevel.cdda;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.util.Iterator;
-import	javax.sound.sampled.AudioInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import javax.sound.sampled.AudioInputStream;
 
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,28 +21,28 @@
  *
  */
 
-package	org.tritonus.sampled.convert.javalayer;
+package org.tritonus.sampled.convert.javalayer;
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	java.util.Arrays;
+import java.util.Arrays;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
-import	javazoom.jl.decoder.Bitstream;
-import	javazoom.jl.decoder.BitstreamException;
-import	javazoom.jl.decoder.Decoder;
-import	javazoom.jl.decoder.DecoderException;
-import	javazoom.jl.decoder.Header;
-import	javazoom.jl.decoder.Obuffer;
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.BitstreamException;
+import javazoom.jl.decoder.Decoder;
+import javazoom.jl.decoder.DecoderException;
+import javazoom.jl.decoder.Header;
+import javazoom.jl.decoder.Obuffer;
 
 /**
  * ConversionProvider for decoding of mp3 files.
@@ -262,7 +262,7 @@ extends TEncodingFormatConversionProvider
 
 
 	public static class DecodedMpegAudioInputStream
-	extends		TAsynchronousFilteredAudioInputStream
+	extends TAsynchronousFilteredAudioInputStream
 	{
 		private InputStream		m_encodedStream;
 		private Bitstream		m_bitstream;
@@ -338,7 +338,7 @@ extends TEncodingFormatConversionProvider
 
 
 		private class DMAISObuffer
-		extends		Obuffer
+		extends Obuffer
 		{
 			private int			m_nChannels;
 			private byte[]			m_abBuffer;

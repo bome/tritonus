@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,25 +23,25 @@
  */
 
 
-package	org.tritonus.midi.device.java;
+package org.tritonus.midi.device.java;
 
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.spi.MidiDeviceProvider;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.GlobalInfo;
-import	org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.GlobalInfo;
+import org.tritonus.share.midi.TMidiDevice;
 
 
 
 
 public class JavaSequencerProvider
-	extends		MidiDeviceProvider
+extends MidiDeviceProvider
 {
 	private static MidiDevice.Info		sm_info;
 

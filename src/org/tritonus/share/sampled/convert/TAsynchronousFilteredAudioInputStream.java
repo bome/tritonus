@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,17 +23,17 @@
  */
 
 
-package	org.tritonus.share.sampled.convert;
+package org.tritonus.share.sampled.convert;
 
 
-import	java.io.ByteArrayInputStream;
-import	java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.TCircularBuffer;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.TCircularBuffer;
 
 
 /** Base class for asynchronus converters.
@@ -48,8 +48,8 @@ import	org.tritonus.share.TCircularBuffer;
     @author Matthias Pfisterer
 */
 public abstract class TAsynchronousFilteredAudioInputStream
-	extends TAudioInputStream
-	implements TCircularBuffer.Trigger
+extends TAudioInputStream
+implements TCircularBuffer.Trigger
 {
 	private static final int	DEFAULT_BUFFER_SIZE = 327670;
 	private static final int	DEFAULT_MIN_AVAILABLE = 4096;

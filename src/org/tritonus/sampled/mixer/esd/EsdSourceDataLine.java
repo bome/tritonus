@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,33 +23,33 @@
  */
 
 
-package	org.tritonus.sampled.mixer.esd;
+package org.tritonus.sampled.mixer.esd;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.BooleanControl;
-import	javax.sound.sampled.Control;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.FloatControl;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.Mixer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.BooleanControl;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.Mixer;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.esd.Esd;
-import	org.tritonus.lowlevel.esd.EsdStream;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.TVolumeUtils;
-import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TBaseDataLine;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.esd.Esd;
+import org.tritonus.lowlevel.esd.EsdStream;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.TVolumeUtils;
+import org.tritonus.share.sampled.mixer.TMixer;
+import org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
 public class EsdSourceDataLine
-	extends		TBaseDataLine
-	implements	SourceDataLine
+extends TBaseDataLine
+implements SourceDataLine
 {
 	private EsdStream		m_esdStream;
 	private boolean			m_bSwapBytes;
@@ -346,7 +346,7 @@ public class EsdSourceDataLine
 
 	// IDEA: move inner classes to TBaseDataLine
 	public class EsdSourceDataLineGainControl
-		extends		FloatControl
+	extends FloatControl
 	{
 		/*
 		 *	These variables should be static. However, Java 1.1
@@ -397,7 +397,7 @@ public class EsdSourceDataLine
 
 	// IDEA: move inner classes to TBaseDataLine
 	public class EsdSourceDataLinePanControl
-		extends		FloatControl
+	extends FloatControl
 	{
 		/*package*/ EsdSourceDataLinePanControl()
 		{
@@ -437,7 +437,7 @@ public class EsdSourceDataLine
 
 
 	public class EsdSourceDataLineMuteControl
-		extends		BooleanControl
+	extends BooleanControl
 	{
 		/*package*/ EsdSourceDataLineMuteControl()
 		{

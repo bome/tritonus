@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,17 +23,17 @@
  *
  */
 
-package	org.tritonus.sampled.file.gsm;
+package org.tritonus.sampled.file.gsm;
 
 
-import	java.util.Arrays;
+import java.util.Arrays;
 
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 
 
 
@@ -43,7 +43,7 @@ import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
  * @author Matthias Pfisterer
  */
 public class GSMAudioFileWriter
-	extends THeaderlessAudioFileWriter
+extends THeaderlessAudioFileWriter
 {
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{

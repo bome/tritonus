@@ -18,7 +18,7 @@
  *
  */
  
-package	org.tritonus.lowlevel.gsm;
+package org.tritonus.lowlevel.gsm;
 
 public abstract class Gsm_Def
 {

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999,2000 by Matthias Pfisterer
  *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
  *
  *
@@ -24,7 +24,7 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2001 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,24 +20,24 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.cdda;
+package org.tritonus.sampled.cdda;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	java.net.URL;
-import	java.net.URLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
-import	org.tritonus.lowlevel.cdda.CddaMidLevel;
-import	org.tritonus.lowlevel.cdda.CddaUtils;
+import org.tritonus.lowlevel.cdda.CddaMidLevel;
+import org.tritonus.lowlevel.cdda.CddaUtils;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public class CddaTocConnection
-	extends	URLConnection
+extends	URLConnection
 {
 	/**	The cdda device name to read from.
 	 */

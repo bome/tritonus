@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,12 +23,12 @@
  */
 
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat;
 
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,14 +23,14 @@
  */
 
 
-package	javax.sound.midi;
+package javax.sound.midi;
 
-import	java.util.EventListener;
+import java.util.EventListener;
 
 
 
 public interface MetaEventListener
-	extends	EventListener
+extends EventListener
 {
 	public void meta(MetaMessage message);
 }

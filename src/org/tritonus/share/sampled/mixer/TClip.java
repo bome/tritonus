@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,30 +21,30 @@
  *
  */
 
-package	org.tritonus.share.sampled.mixer;
+package org.tritonus.share.sampled.mixer;
 
-import	java.io.IOException;
-import	java.io.ByteArrayInputStream;
-import	java.util.Collection;
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.util.Collection;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.Clip;
-import	javax.sound.sampled.Control;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.SourceDataLine;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.LineUnavailableException;
-import	javax.sound.sampled.Mixer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.mixer.TDataLine;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.mixer.TDataLine;
 
 
 
 public class TClip
 extends	TDataLine
-implements	Clip
+implements Clip
 {
 	private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
 	private static final int	BUFFER_FRAMES = 16384;

@@ -3,7 +3,7 @@
  */
 
 /*
- *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -25,28 +25,23 @@
  */
 
 
-package	org.tritonus.midi.device.midishare;
-/*
-import	com.sun.java.util.collections.ArrayList;
-import	com.sun.java.util.collections.List;
-import	com.sun.java.util.collections.Iterator;
-*/
+package org.tritonus.midi.device.midishare;
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
 
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.spi.MidiDeviceProvider;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.share.GlobalInfo;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.share.GlobalInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.TMidiDevice;
 
 
 public class MshSequencerProvider
-	extends		MidiDeviceProvider
+extends MidiDeviceProvider
 {
 	/*
 	 *	The Sun jdk 1.3 creates new instances of service provider

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,24 +22,24 @@
  */
 
 
-package	org.tritonus.core;
+package org.tritonus.core;
 
 
-import	java.util.ArrayList;
-import	java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collection;
 import  java.util.Enumeration;
-import	java.util.Iterator;
+import java.util.Iterator;
 import  java.util.List;
-import	java.util.Set;
+import java.util.Set;
 
-import	java.io.BufferedReader;
-import	java.io.InputStream;
-import	java.io.InputStreamReader;
-import	java.io.IOException;
-import	java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URL;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.ArraySet;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.ArraySet;
 
 
 

@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,7 +22,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.sampled.mixer.alsa;
+package org.tritonus.sampled.mixer.alsa;
 
 import java.io.IOException;
 
@@ -215,7 +215,7 @@ implements TargetDataLine
 
 
 	public class AlsaTargetDataLineGainControl
-	extends		FloatControl
+	extends FloatControl
 	{
 		/*
 		 *	These variables should be static. However, Java 1.1

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,17 +20,17 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.saol.engine;
+package org.tritonus.saol.engine;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
-import	java.lang.reflect.Constructor;
+import java.lang.reflect.Constructor;
 
-import	java.util.LinkedList;
-import	java.util.Iterator;
-import	java.util.List;
-import	java.util.Map;
+import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import  org.tritonus.share.TDebug;
 

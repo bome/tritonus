@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,14 +23,14 @@
  */
 
 
-package	org.tritonus.share;
+package org.tritonus.share;
 
 
-import	java.util.EventObject;
-import	java.util.Collection;
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import java.util.EventObject;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineEvent;

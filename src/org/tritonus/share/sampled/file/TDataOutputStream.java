@@ -23,12 +23,12 @@
  */
 
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
 
-import	java.io.DataOutput;
-import	java.io.IOException;
-import	java.io.InputStream;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -39,7 +39,7 @@ import	java.io.InputStream;
  * @author Florian Bomers
  */
 public interface TDataOutputStream
-	extends DataOutput
+extends DataOutput
 {
 	public boolean supportsSeek();
 

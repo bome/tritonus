@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,20 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.AudioUtils;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.AudioUtils;
 
 
 
 
 public class AudioInputStream
-	extends		InputStream
+extends InputStream
 {
 	/**	Says whether we check lengths.
 	 *	If true, lengths in bytes are asserted to be multiples
@@ -370,7 +370,7 @@ public class AudioInputStream
 	/**	Helper class to enable AudioInputStream to read from a TargetDataLine.
 	 */
 	private static class TargetDataLineInputStream
-		extends	InputStream
+	extends InputStream
 	{
 		/**	The TargetDataLine from which to read.
 		 */

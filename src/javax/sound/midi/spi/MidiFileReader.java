@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,18 +23,18 @@
  */
 
 
-package	javax.sound.midi.spi;
+package javax.sound.midi.spi;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.File;
 
-import	java.net.URL;
+import java.net.URL;
 
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.MidiFileFormat;
-import	javax.sound.midi.Sequence;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiFileFormat;
+import javax.sound.midi.Sequence;
 
 
 

@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.lowlevel.lame;
+package org.tritonus.lowlevel.lame;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

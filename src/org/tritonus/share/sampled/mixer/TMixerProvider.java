@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,20 +20,20 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.share.sampled.mixer;
+package org.tritonus.share.sampled.mixer;
 
-import	java.util.ArrayList;
-import	java.util.HashMap;
-import	java.util.HashSet;
-import	java.util.Iterator;
-import	java.util.List;
-import	java.util.Map;
-import	java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 

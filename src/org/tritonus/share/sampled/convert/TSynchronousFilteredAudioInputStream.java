@@ -23,18 +23,18 @@
  */
 
 
-package	org.tritonus.share.sampled.convert;
+package org.tritonus.share.sampled.convert;
 
 
 import java.io.IOException;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.spi.FormatConversionProvider;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.spi.FormatConversionProvider;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.AudioUtils;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.AudioUtils;
 
 
 
@@ -46,7 +46,7 @@ import	org.tritonus.share.sampled.AudioUtils;
  * @author Florian Bomers
  */
 public abstract class TSynchronousFilteredAudioInputStream
-	extends TAudioInputStream {
+extends TAudioInputStream {
 
 	private AudioInputStream originalStream;
 	private AudioFormat originalFormat;

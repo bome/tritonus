@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,10 +20,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.saol.engine;
+package org.tritonus.saol.engine;
 
 
-import	java.io.IOException;
+import java.io.IOException;
 
 /*
  *      Tritonus classes.
@@ -31,7 +31,7 @@ import	java.io.IOException;
  *      Java Sound implementations.
  */
 import  org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.TConversionTool;
 import  org.tritonus.share.sampled.file.AudioOutputStream;
 
 

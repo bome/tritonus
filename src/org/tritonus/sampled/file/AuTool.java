@@ -23,11 +23,11 @@
  */
 
 
-package	org.tritonus.sampled.file;
+package org.tritonus.sampled.file;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
 
 
 /** Common constants and methods for handling au files.

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,10 +20,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	javax.sound.midi;
+package javax.sound.midi;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.MidiUtils;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.MidiUtils;
 
 
 

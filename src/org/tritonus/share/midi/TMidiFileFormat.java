@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@
  */
 
 
-package	org.tritonus.share.midi;
+package org.tritonus.share.midi;
 
-import	javax.sound.midi.MidiFileFormat;
+import javax.sound.midi.MidiFileFormat;
 
 
 
@@ -35,7 +35,7 @@ import	javax.sound.midi.MidiFileFormat;
  *	getMidiFileFormat() to getSequence().
  */
 public class TMidiFileFormat
-	extends		MidiFileFormat
+extends MidiFileFormat
 {
 	private int		m_nTrackCount;
 

@@ -23,7 +23,7 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 import java.util.Collections;
 import java.util.HashMap;

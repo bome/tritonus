@@ -18,14 +18,13 @@
  *
  */
 
-package	org.tritonus.lowlevel.gsm;
+package org.tritonus.lowlevel.gsm;
 
 import java.io.*;
 import java.lang.*;
 
-//$$fb 2001-04-22: should NOT subclass Thread !
+
 public class Encoder
-//	extends Thread
 {
 	/* Every Encoder has a state through completion */
 	private Gsm_State	g_s = new Gsm_State();

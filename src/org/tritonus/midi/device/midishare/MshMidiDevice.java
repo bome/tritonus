@@ -3,7 +3,7 @@
  */
 
 /*
- *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *   Copyright © Grame 2000 for the Tritonus project by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -24,31 +24,31 @@
  *
  */
 
-package	org.tritonus.midi.device.midishare;
+package org.tritonus.midi.device.midishare;
 
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
 
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.Transmitter;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.TMidiDevice;
-import	org.tritonus.share.GlobalInfo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.TMidiDevice;
+import org.tritonus.share.GlobalInfo;
 
-import	grame.midishare.Midi;
+import grame.midishare.Midi;
 
 
 public class MshMidiDevice
-	extends		TMidiDevice
-	implements	MshMidiIn.MshMidiInListener, MshClient
+extends TMidiDevice
+implements MshMidiIn.MshMidiInListener, MshClient
 {
 	private int			m_refNum = -1;	// the MidiShare application refnum
 	public int 			m_filter = 0;   // the application filter
@@ -246,8 +246,8 @@ public class MshMidiDevice
 /////////////////// INNER CLASSES //////////////////////////////////////
 
 	private class MshReceiver
-		extends		TReceiver
-		//implements	MshNativeReceiver
+	extends TReceiver
+		//implements MshNativeReceiver
 	{
 
 		public MshReceiver()
@@ -285,7 +285,7 @@ public class MshMidiDevice
 
 
 	private class MshTransmitter
-		extends		TTransmitter
+	extends TTransmitter
 	{
 		private boolean		m_bReceiverSubscribed;
 

@@ -21,35 +21,35 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	java.util.Arrays;
+import java.util.Arrays;
 
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.Receiver;
-import	javax.sound.midi.ShortMessage;
-import	javax.sound.midi.Sequence;
-import	javax.sound.midi.Sequencer;
-import	javax.sound.midi.Track;
-import	javax.sound.midi.Transmitter;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Track;
+import javax.sound.midi.Transmitter;
 
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
-import	org.tritonus.lowlevel.alsa.AlsaSeqQueueInfo;
-import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
-import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
-import	org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo;
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.MidiUtils;
-import	org.tritonus.share.midi.TMidiDevice.TReceiver;
-import	org.tritonus.share.midi.TMidiDevice.TTransmitter;
-import	org.tritonus.share.midi.TSequencer;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
+import org.tritonus.lowlevel.alsa.AlsaSeqQueueInfo;
+import org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
+import org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.midi.MidiUtils;
+import org.tritonus.share.midi.TMidiDevice.TReceiver;
+import org.tritonus.share.midi.TMidiDevice.TTransmitter;
+import org.tritonus.share.midi.TSequencer;
 
 
 
@@ -714,7 +714,7 @@ extends TSequencer
 
 
 	/*private*/ public class PlaybackAlsaMidiInListener
-		implements AlsaMidiIn.AlsaMidiInListener
+	implements AlsaMidiIn.AlsaMidiInListener
 	{
 		public void dequeueEvent(MidiMessage message, long lTimestamp)
 		{
@@ -1083,7 +1083,7 @@ extends TSequencer
 
 	// TODO: start/stop; on/off
 	/*private*/ public class MasterSynchronizer
-		extends	Thread
+	extends	Thread
 	{
 		public void run()
 		{

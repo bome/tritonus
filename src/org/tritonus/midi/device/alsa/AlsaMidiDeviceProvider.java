@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,27 +22,27 @@
  */
 
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	java.util.ArrayList;
-import	java.util.List;
-import	java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
-import	javax.sound.midi.MidiDevice;
-import	javax.sound.midi.spi.MidiDeviceProvider;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.spi.MidiDeviceProvider;
 
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.lowlevel.alsa.AlsaSeqClientInfo;
-import	org.tritonus.lowlevel.alsa.AlsaSeqPortInfo;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.lowlevel.alsa.AlsaSeqClientInfo;
+import org.tritonus.lowlevel.alsa.AlsaSeqPortInfo;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 
 public class AlsaMidiDeviceProvider
-	extends		MidiDeviceProvider
+extends MidiDeviceProvider
 {
 	// perhaps move to superclass
 	private static final MidiDevice.Info[]	EMPTY_INFO_ARRAY = new MidiDevice.Info[0];

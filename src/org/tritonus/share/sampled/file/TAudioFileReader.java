@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -21,28 +21,28 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package	org.tritonus.share.sampled.file;
+package org.tritonus.share.sampled.file;
 
 
-import	java.io.BufferedInputStream;
-import	java.io.File;
-import	java.io.FileInputStream;
-import	java.io.DataInputStream;
-import	java.io.InputStream;
-import	java.io.IOException;
-import	java.io.EOFException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.EOFException;
 
-import	java.net.URL;
-import	java.net.URLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.UnsupportedAudioFileException;
-import	javax.sound.sampled.spi.AudioFileReader;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.spi.AudioFileReader;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -56,7 +56,7 @@ import	org.tritonus.share.TDebug;
 	@author Florian Bomers
 */
 public abstract class TAudioFileReader
-	extends	AudioFileReader
+extends	AudioFileReader
 {
 	private int	m_nMarkLimit = -1;
 	private boolean	m_bRereading;

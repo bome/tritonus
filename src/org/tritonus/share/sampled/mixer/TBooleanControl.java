@@ -6,7 +6,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -26,13 +26,13 @@
  */
 
 
-package	org.tritonus.share.sampled.mixer;
+package org.tritonus.share.sampled.mixer;
 
 
 
-import	javax.sound.sampled.BooleanControl;
+import javax.sound.sampled.BooleanControl;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -40,8 +40,8 @@ import	org.tritonus.share.TDebug;
 /**	Base class for classes implementing Line.
  */
 public class TBooleanControl
-	extends BooleanControl
-	implements TControllable
+extends BooleanControl
+implements TControllable
 {
 	private TControlController	m_controller;
 

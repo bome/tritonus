@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 - 2004 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,17 +21,17 @@
  *
  */
 
-package	org.tritonus.sampled.convert;
+package org.tritonus.sampled.convert;
 
-import	java.util.HashSet;
-import	java.util.Set;
+import java.util.HashSet;
+import java.util.Set;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.spi.FormatConversionProvider;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.spi.FormatConversionProvider;
 
-import	org.tritonus.share.sampled.convert.TFormatConversionProvider;
+import org.tritonus.share.sampled.convert.TFormatConversionProvider;
 
 
 // Name suggested by Florian: MetaFormatConversionProvider
@@ -67,7 +67,7 @@ verstehen...
  */
 
 public class SmartFormatConversionProvider
-	extends		TFormatConversionProvider
+extends TFormatConversionProvider
 {
 	/**	Stores the threads currently blocked.
 	 *	To avoid recursion, this class stores which threads have already "passed"

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,12 +23,12 @@
  */
 
 
-package	org.tritonus.share.sampled.mixer;
+package org.tritonus.share.sampled.mixer;
 
 
-import	javax.sound.sampled.Mixer;
+import javax.sound.sampled.Mixer;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -38,7 +38,7 @@ import	org.tritonus.share.TDebug;
  *	is protected (in the Sun jdk1.3).
  */
 public class TMixerInfo
-	extends Mixer.Info
+extends Mixer.Info
 {
 	public TMixerInfo(String a, String b, String c, String d)
 	{

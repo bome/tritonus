@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -22,30 +22,30 @@
  *
  */
 
-package	org.tritonus.share.sampled.mixer;
+package org.tritonus.share.sampled.mixer;
 
-import	java.util.Collection;
-import	java.util.EventListener;
-import	java.util.EventObject;
-import	java.util.HashSet;
-import	java.util.Set;
+import java.util.Collection;
+import java.util.EventListener;
+import java.util.EventObject;
+import java.util.HashSet;
+import java.util.Set;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.Control;
-import	javax.sound.sampled.DataLine;
-import	javax.sound.sampled.LineEvent;
-import	javax.sound.sampled.Line;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.Line;
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 /**	Base class for classes implementing DataLine.
  */
 public abstract class TDataLine
-	extends	TLine
-	implements	DataLine
+extends	TLine
+implements DataLine
 {
 	private static final int	DEFAULT_BUFFER_SIZE = 128000;
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2003 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2003 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -24,7 +24,7 @@
 |<---            this code is formatted to fit into 80 columns             --->|
 */
 
-package	org.tritonus.sampled.convert.jorbis;
+package org.tritonus.sampled.convert.jorbis;
 
 import java.io.EOFException;
 import java.io.InputStream;

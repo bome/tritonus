@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -21,26 +21,26 @@
  */
 
 
-package	org.tritonus.sampled.file.jorbis;
+package org.tritonus.sampled.file.jorbis;
 
 
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TAudioFileReader;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
+import org.tritonus.share.sampled.file.TAudioFileReader;
 
-import	com.jcraft.jogg.Buffer;
-import	com.jcraft.jogg.SyncState;
-import	com.jcraft.jogg.StreamState;
-import	com.jcraft.jogg.Page;
-import	com.jcraft.jogg.Packet;
+import com.jcraft.jogg.Buffer;
+import com.jcraft.jogg.SyncState;
+import com.jcraft.jogg.StreamState;
+import com.jcraft.jogg.Page;
+import com.jcraft.jogg.Packet;
 
 
 

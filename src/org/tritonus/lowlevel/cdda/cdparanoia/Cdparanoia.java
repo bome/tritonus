@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,10 @@
  */
 
 
-package	org.tritonus.lowlevel.cdda.cdparanoia;
+package org.tritonus.lowlevel.cdda.cdparanoia;
 
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 

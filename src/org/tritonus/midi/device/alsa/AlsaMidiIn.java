@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -22,28 +22,28 @@
  *
  */
 
-package	org.tritonus.midi.device.alsa;
+package org.tritonus.midi.device.alsa;
 
 
-import	javax.sound.midi.InvalidMidiDataException;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.ShortMessage;
-import	javax.sound.midi.SysexMessage;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.AlsaSeq;
-import	org.tritonus.lowlevel.alsa.AlsaSeqEvent;
-import	org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
-import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
+import org.tritonus.share.TDebug;
+import org.tritonus.lowlevel.alsa.AlsaSeq;
+import org.tritonus.lowlevel.alsa.AlsaSeqEvent;
+import org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
+import org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
 
 
 
 /**	Handles input from an ALSA port.
  */
 public class AlsaMidiIn
-	extends		Thread
+extends Thread
 {
 	/**	ALSA client used to receive events.
 	 */

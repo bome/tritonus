@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,19 +23,19 @@
  */
 
 
-package	javax.sound.sampled;
+package javax.sound.sampled;
 
 
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public interface Port
-	extends		Line
+extends Line
 {
 
 	public static class Info
-		extends	Line.Info
+	extends	Line.Info
 	{
 		public static Class getPortClass()
 		{
