@@ -23,6 +23,7 @@
 package org.tritonus.share.sampled;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
@@ -32,9 +33,8 @@ import javax.sound.sampled.AudioFormat;
 public class TAudioFormat
 extends AudioFormat
 {
-	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-
 	private Map	m_properties;
+	private Map	m_unmodifiableProperties;
 
 
 	public TAudioFormat(AudioFormat.Encoding encoding,
@@ -53,7 +53,7 @@ extends AudioFormat
 			  frameSize,
 			  frameRate,
 			  bigEndian);
-		m_properties = Collections.unmodifiableMap(properties);
+		initMaps(properties);
 	}
 
 
@@ -69,21 +69,33 @@ extends AudioFormat
 			  channels,
 			  signed,
 			  bigEndian);
-		m_properties = Collections.unmodifiableMap(properties);
+		initMaps(properties);
+	}
+
+
+
+	private void initMaps(Map properties)
+	{
+		/* Here, we make a shallow copy of the map. It's unclear if this
+		   is sufficient (of if a deep copy should be made).
+		*/
+		m_properties = new HashMap();
+		m_properties.putAll(properties);
+		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
 	}
 
 
 
 	public Map properties()
 	{
-		return m_properties;
+		return m_unmodifiableProperties;
 	}
 
 
 
-	protected Object setProperty(String key, Object value)
+	protected void setProperty(String key, Object value)
 	{
-		throw new UnsupportedOperationException();
+		m_properties.put(key, value);
 	}
 }
 
