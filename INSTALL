@@ -65,6 +65,9 @@ For MIDI:
 
 - Or: MidiShare. Get it from http://www.grame.fr/MidiShare/.
 
+For cdda:
+- cdparanoia III version 9.8. Version 9.7 is not sufficient.
+
 For the build process:
 - make (Testing done with GNU make 3.79)
 - ant (Testing done with Apache Ant 1.5; 1.4 should work, too. 
@@ -79,9 +82,9 @@ For the build process:
 Building mp3 related components
 -------------------------------
 
-The ant based build requires that javalayer.jar is already compiled and that it is 
-available in the classpath during the build. Only then the mp3 SPI plug-in gets 
-compiled and packaged.
+The ant based build requires that javalayer.jar is already compiled
+and that it is available in the classpath during the build. Only then
+the mp3 SPI plug-in gets compiled and packaged.
 
 
 Installing steps

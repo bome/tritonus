@@ -33,10 +33,9 @@ Requirements
   You can download it from http://www.tritonus.org/plugins.html
   or compile tritonus.
 - On Linux/i386:
-  The plugin needs cdparanoia, which you can download from 
-	http://www.xiph.org/paranoia/
-  cdparanoia is included in most modern Linux distributions 
-  as a package.
+  The plugin needs the shared libraries of cdparanoia III version 9.8,
+  which you can download from http://www.xiph.org/paranoia/ cdparanoia
+  is included in most modern Linux distributions as a package.
 
 
 Installation of the cdda plugin on Linux/i386
