@@ -9,6 +9,48 @@
 
 
 
+static jfieldID
+getNativeHandleFieldID(JNIEnv *env)
+{
+	static jfieldID	nativeHandleFieldID = NULL;
+
+	if (nativeHandleFieldID == NULL)
+	{
+		// TODO: use a passed object rather than the name of the class
+		jclass	cls = (*env)->FindClass(env, "org/tritonus/lowlevel/alsa/AlsaCtl");
+		if (cls == NULL)
+		{
+			throwRuntimeException(env, "cannot get class object for org.tritonus.lowlevel.alsa.AlsaCtl");
+		}
+		nativeHandleFieldID = (*env)->GetFieldID(env, cls, "m_lNativeHandle", "J");
+		if (nativeHandleFieldID == NULL)
+		{
+			throwRuntimeException(env, "cannot get field ID for m_lNativeHandle");
+		}
+	}
+	return nativeHandleFieldID;
+}
+
+
+
+static snd_ctl_t*
+getNativeHandle(JNIEnv *env, jobject obj)
+{
+	jfieldID	fieldID = getNativeHandleFieldID(env);
+	return (snd_ctl_t*) (*env)->GetLongField(env, obj, fieldID);
+}
+
+
+
+static void
+setNativeHandle(JNIEnv *env, jobject obj, snd_ctl_t* handle)
+{
+	jfieldID	fieldID = getNativeHandleFieldID(env);
+	(*env)->SetLongField(env, obj, fieldID, (jlong) handle);
+}
+
+
+
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
  * Method:    close
@@ -18,8 +60,10 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaCtl_close
 (JNIEnv *env, jobject obj)
 {
-	// TODO: implement
-	return -1;
+	snd_ctl_t*	handle = getNativeHandle(env, obj);
+	int		nResult;
+	nResult = snd_ctl_close(handle);
+	return nResult;
 }
 
 
@@ -220,15 +264,54 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultRawmidiDevice
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getHWInfo
- * Signature: ([ILjava/lang/String;)I
+ * Method:    getCardInfo
+ * Signature: ([I[Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_getHWInfo
-(JNIEnv *env, jobject obj, jintArray anValues, jstring astrValues)
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardInfo
+(JNIEnv *env, jobject obj, jintArray anValues, jobjectArray astrValues)
 {
-	// TODO: implement
-	return -1;
+	snd_ctl_t*	handle;
+	int		nReturn;
+	jboolean	bIsCopy;
+	jint*		pnValues;
+	snd_ctl_card_info_t*	card_info;
+
+	handle = getNativeHandle(env, obj);
+	snd_ctl_card_info_alloca(&card_info);
+	nReturn = snd_ctl_card_info(handle, card_info);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_ctl_card_info failed");
+	}
+	// printf("4a\n");
+	checkArrayLength(env, anValues, 2);
+	// printf("4b\n");
+	pnValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopy);
+	if (pnValues == NULL)
+	{
+		throwRuntimeException(env, "GetIntArrayElements failed");
+	}
+	// printf("4c\n");
+	pnValues[0] = snd_ctl_card_info_get_card(card_info);
+	pnValues[1] = snd_ctl_card_info_get_type(card_info);
+	// printf("4d\n");
+	if (bIsCopy)
+	{
+		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
+	}
+
+	// printf("4e\n");
+	checkArrayLength(env, astrValues, 6);
+	// printf("4f\n");
+	setStringArrayElement(env, astrValues, 0, snd_ctl_card_info_get_id(card_info));
+	setStringArrayElement(env, astrValues, 1, snd_ctl_card_info_get_abbreviation(card_info));
+	setStringArrayElement(env, astrValues, 2, snd_ctl_card_info_get_name(card_info));
+	setStringArrayElement(env, astrValues, 3, snd_ctl_card_info_get_longname(card_info));
+	setStringArrayElement(env, astrValues, 4, snd_ctl_card_info_get_mixerid(card_info));
+	setStringArrayElement(env, astrValues, 5, snd_ctl_card_info_get_mixername(card_info));
+	// TODO: does this make sense?
+	return 0;
 }
 
 
@@ -250,16 +333,85 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_loadCard
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
  * Method:    open
- * Signature: (I)I
+ * Signature: (Ljava/lang/String;I)I
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaCtl_open
-(JNIEnv *env, jobject obj, jint nXXX)
+(JNIEnv *env, jobject obj, jstring strName, jint nMode)
 {
-	// TODO: implement
-	return -1;
+	snd_ctl_t*	handle;
+	int		nResult;
+	const char*	name;
+
+	// printf("1");
+	name = (*env)->GetStringUTFChars(env, strName, NULL);
+	// printf("2");
+	if (name == NULL)
+	{
+		// printf("3");
+		throwRuntimeException(env, "cannot get characters from string argument");
+	}
+	// printf("4");
+	nResult = snd_ctl_open(&handle, name, nMode);
+	// printf("5");
+	(*env)->ReleaseStringUTFChars(env, strName, name);
+	// printf("6");
+	if (nResult >= 0)
+	{
+		// printf("7");
+		setNativeHandle(env, obj, handle);
+	}
+	return nResult;
 }
 
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
+ * Method:    getPcmDevices
+ * Signature: ()[I
+ */
+JNIEXPORT jintArray JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getPcmDevices
+(JNIEnv *env, jobject obj)
+{
+	snd_ctl_t*	handle;
+	int		anDevices[128];
+	int		nDevice = -1;
+	int		nDeviceCount = 0;
+	int		nError;
+	jintArray	devicesArray;
+
+	handle = getNativeHandle(env, obj);
+	nError = snd_ctl_pcm_next_device(handle, &nDevice);
+	while (nDevice >= 0 && nError >= 0)
+	{
+		anDevices[nDeviceCount] = nDevice;
+		nDeviceCount++;
+		nError = snd_ctl_pcm_next_device(handle, &nDevice);
+	}
+	devicesArray = (*env)->NewIntArray(env, nDeviceCount);
+	if (devicesArray == NULL)
+	{
+		throwRuntimeException(env, "cannot allocate int array");
+	}
+	(*env)->SetIntArrayRegion(env, devicesArray, 0, nDeviceCount, (jint*) anDevices);
+	return devicesArray;
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
+ * Method:    getPcmInfo
+ * Signature: ([I[Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getPcmInfo
+(JNIEnv *env, jobject obj, jintArray anValues, jobjectArray astrValues)
+{
+	// TODO:
+	return -1;
+}
 
 
 /*** org_tritonus_lowlevel_alsa_AlsaCtl.c ***/

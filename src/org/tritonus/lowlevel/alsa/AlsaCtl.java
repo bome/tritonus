@@ -1,7 +1,13 @@
 /*
  *	AlsaCtl.java
+
+ for the following, see 'man ident'.
+
 $Id$
 $Log$
+Revision 1.6  2001/05/30 09:25:03  pfisterer
+intermediate development state, mainly related to ALSA
+
 Revision 1.5  2001/05/11 08:53:45  pfisterer
 rcs keywords test
 
@@ -37,7 +43,8 @@ import	org.tritonus.share.TDebug;
 
 public class AlsaCtl
 {
-	private long	m_nativeHandle;
+	// contains a pointer to snd_ctl_t
+	private long	m_lNativeHandle;
 
 
 
@@ -53,6 +60,7 @@ public class AlsaCtl
 
 
 	public static native int loadCard(int nCard);
+	// this encapsulates snd_card_next()
 	public static native int[] getCards();
 	public static native int getCardIndex(String strName);
 	public static native String getCardName(int nCard);
@@ -66,63 +74,59 @@ public class AlsaCtl
 	public static native int getDefaultRawmidiDevice();
 
 
-	public AlsaCtl(int nCard)
+	public AlsaCtl(String strName, int nMode)
 		throws	Exception
 	{
-		if (open(nCard) < 0)
+		if (open(strName, nMode) < 0)
 		{
 			throw new Exception();
 		}
 	}
 
 
-	private native int open(int nCard);
-	private native int close();
+
+	public AlsaCtl(int nCard)
+		throws	Exception
+	{
+		this("hw:" + nCard, 0);	// not yet clear what the zero means
+	}
+
+
+
+	private native int open(String strName, int nMode);
+	public native int close();
 
 	/**
-	 *	anValues[0]	card type
-	 *	anValues[1]	hwdep devices
-	 *	anValues[2]	pcm devices
-	 *	anValues[3]	mixer devices
-	 *	anValues[4]	raw midi devices
-	 *	anValues[5]	timer devices
+	 *	anValues[0]	card #
+	 *	anValues[1]	card type
 	 *
 	 *	astrValues[0]	id
 	 *	astrValues[1]	abbreviation
 	 *	astrValues[2]	name
 	 *	astrValues[3]	long name
+	 *	astrValues[4]	mixer id
+	 *	astrValues[5]	mixer name
 	 */
-	private native int getHWInfo(int[] anValues, String astrValues);
+	public native int getCardInfo(int[] anValues, String[] astrValues);
 
+
+	public native int[] getPcmDevices();
 
 	/**
-	 *	anValues[0]	type
-	 *	anValues[1]	flags
-	 *	anValues[2]	playback subdevices
-	 *	anValues[3]	capture subdevices
+	 *	anValues[0]	device (inout)
+	 *	anValues[1]	subdevice (inout)
+	 *	anValues[2]	stream (inout)
+	 *	anValues[3]	card (out)
+	 *	anValues[4]	class (out)
+	 *	anValues[5]	subclass (out)
+	 *	anValues[6]	subdevice count (out)
+	 *	anValues[7]	subdevice available (out)
 	 *
-	 *	astrValues[0]	id
-	 *	astrValues[1]	name
+	 *	astrValues[0]	id (out)
+	 *	astrValues[1]	name (out)
+	 *	astrValues[2]	subdevice name (out)
 	 */
-// 	private native int getPcmInfo(int nDevice,
-// 				      int[] anValues,
-// 				      String astrValues);
-
-
-	/**
-	 *	anValues[0]	type
-	 *	anValues[1]	flags
-	 *	anValues[2]	playback subdevices
-	 *	anValues[3]	capture subdevices
-	 *
-	 *	astrValues[0]	id
-	 *	astrValues[1]	name
-	 */
-// 	private native int getPcmChannelInfo(int nDevice,
-// 					     int nChannel,
-// 					     int nSubDevice,
-// 					     int[] anValues,
-// 					     String astrValues);
+	public native int getPcmInfo(int[] anValues, String[] astrValues);
 
 
 }

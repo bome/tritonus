@@ -17,7 +17,6 @@ JNIEXPORT jstring JNICALL
 Java_org_tritonus_lowlevel_alsa_Alsa_getStringError
 (JNIEnv *env, jclass cls, jint nErrnum)
 {
-	// int	nReturn;
 	jstring	strError;
 	const char*	err;
 	err = snd_strerror(nErrnum);

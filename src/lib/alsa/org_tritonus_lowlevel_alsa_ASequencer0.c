@@ -175,17 +175,12 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_createPort
 static void
 fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo, jintArray anValues, jobjectArray astrValues)
 {
-	int		nLength;
 	jstring		strName;
 	jstring		strGroupName;
 	jboolean	bIsCopy;
 	jint*		pnValues;
 
-	nLength = (*env)->GetArrayLength(env, anValues);
-	if (nLength < 4)
-	{
-		throwRuntimeException(env, "array does not have enough elements (4 required)");
-	}
+	checkArrayLength(env, anValues, 4);
 	pnValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopy);
 	if (pnValues == NULL)
 	{
@@ -199,11 +194,8 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 	{
 		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
 	}
-	nLength = (*env)->GetArrayLength(env, astrValues);
-	if (nLength < 2)
-	{
-		throwRuntimeException(env, "array does not have enough elements (2 required)");
-	}
+
+	checkArrayLength(env, astrValues, 2);
 	strName = (*env)->NewStringUTF(env, clientInfo->name);
 	(*env)->SetObjectArrayElement(env, astrValues, 0, strName);
 	strGroupName = (*env)->NewStringUTF(env, clientInfo->group);
@@ -222,11 +214,7 @@ fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jint
 	jint*		pnValues;
 
 	// printf("4a\n");
-	nLength = (*env)->GetArrayLength(env, anValues);
-	if (nLength < 10)
-	{
-		throwRuntimeException(env, "array does not have enough elements (10 required)");
-	}
+	checkArrayLength(env, anValues, 10);
 	// printf("4b\n");
 	pnValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopy);
 	if (pnValues == NULL)
@@ -250,11 +238,7 @@ fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jint
 		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
 	}
 	// printf("4e\n");
-	nLength = (*env)->GetArrayLength(env, astrValues);
-	if (nLength < 2)
-	{
-		throwRuntimeException(env, "array does not have enough elements (2 required)");
-	}
+	checkArrayLength(env, astrValues, 2);
 	// printf("4f\n");
 	// printf("name: %s\n", portInfo->name);
 	strName = (*env)->NewStringUTF(env, portInfo->name);
@@ -322,7 +306,6 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 	snd_seq_t*		seq;
 	snd_seq_event_t*	pEvent;
 	int			nReturn;
-	int			nLength;
 	jobject			objectRef;
 	jint*			panValues;
 	jlong*			palValues;
@@ -366,24 +349,15 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 	{
 		throwRuntimeException(env, "snd_seq_event_input failed");
 	}
-	nLength = (*env)->GetArrayLength(env, anValues);
-	// printf("3\n");
-	if (nLength < 13)
-	{
-		throwRuntimeException(env, "array does not have enough elements (13 required)");
-	}
+	checkArrayLength(env, anValues, 13);
 	panValues = (*env)->GetIntArrayElements(env, anValues, &bIsCopyI);
 	// printf("4\n");
 	if (panValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements failed");
 	}
-	nLength = (*env)->GetArrayLength(env, alValues);
-	// printf("5\n");
-	if (nLength < 1)
-	{
-		throwRuntimeException(env, "array does not have enough elements (1 required)");
-	}
+
+	checkArrayLength(env, alValues, 1);
 	palValues = (*env)->GetLongArrayElements(env, alValues, &bIsCopyL);
 	// printf("6\n");
 	if (palValues == NULL)
@@ -456,12 +430,8 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 		{
 			break;
 		}
-		nLength = (*env)->GetArrayLength(env, aObjValues);
-		if (nLength < 1)
-		{
-			break;
-			// throwRuntimeException(env, "array does not have enough elements (1 required)");
-		}
+		checkArrayLength(env, aObjValues, 1);
+
 		/*
 		 *	There is a potential pitfal here. If on a 64-bit
 		 *	machine jobject is a 64-bit pointer and the
@@ -489,11 +459,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getEvent
 			throwRuntimeException(env, "NewByteArray failed");
 		}
 		(*env)->SetByteArrayRegion(env, abData, 0, pEvent->data.ext.len, pEvent->data.ext.ptr);
-		nLength = (*env)->GetArrayLength(env, aObjValues);
-		if (nLength < 1)
-		{
-			throwRuntimeException(env, "array does not have enough elements (1 required)");
-		}
+		checkArrayLength(env, aObjValues, 1);
 		(*env)->SetObjectArrayElement(env, aObjValues, 0, abData);
 	}
 	break;
@@ -638,7 +604,6 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	int			nReturn;
 	jint*			values = NULL;
 	jlong*			lvalues = NULL;
-	int			nLength;
 
 	if (DEBUG)
 	{
@@ -650,11 +615,8 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_status failed");
 	}
-	nLength = (*env)->GetArrayLength(env, anValues);
-	if (nLength < 3)
-	{
-		throwRuntimeException(env, "array does not have enough elements (3 required)");
-	}
+
+	checkArrayLength(env, anValues, 3);
 	values = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (values == NULL)
 	{
@@ -665,11 +627,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
 	values[2] = queueStatus.flags;
 	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
 
-	nLength = (*env)->GetArrayLength(env, alValues);
-	if (nLength < 2)
-	{
-		throwRuntimeException(env, "array does not have enough elements (2 required)");
-	}
+	checkArrayLength(env, alValues, 2);
 	lvalues = (*env)->GetLongArrayElements(env, alValues, NULL);
 	if (lvalues == NULL)
 	{
@@ -698,7 +656,6 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
 	snd_seq_t*		seq;
 	snd_seq_queue_tempo_t	queueTempo;
 	jint*			values = NULL;
-	int			nLength;
 	int			nReturn;
 
 	if (DEBUG)
@@ -711,11 +668,8 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueTempo
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_tempo failed");
 	}
-	nLength = (*env)->GetArrayLength(env, anValues);
-	if (nLength < 2)
-	{
-		throwRuntimeException(env, "array does not have enough elements (2 required)");
-	}
+
+	checkArrayLength(env, anValues, 2);
 	values = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (values == NULL)
 	{
@@ -744,7 +698,6 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo
 	snd_seq_t*		seq;
 	snd_seq_system_info_t	systemInfo;
 	jint*			values = NULL;
-	int			nLength;
 	int			nReturn;
 
 	if (DEBUG)
@@ -757,11 +710,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getSystemInfo
 	{
 		throwRuntimeException(env, "snd_seq_system_info failed");
 	}
-	nLength = (*env)->GetArrayLength(env, anValues);
-	if (nLength < 4)
-	{
-		throwRuntimeException(env, "array does not have enough elements (4 required)");
-	}
+	checkArrayLength(env, anValues, 4);
 	values = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (values == NULL)
 	{

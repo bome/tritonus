@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,10 @@ public class AlsaMixerProvider
 	public AlsaMixerProvider()
 	{
 		super();
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("AlsaMixerProvider.<init>(): begin");
+		}
 		int[]	anCards = AlsaCtl.getCards();
 		if (TDebug.TraceMixerProvider)
 		{
@@ -49,10 +53,70 @@ public class AlsaMixerProvider
 		}
 		for (int i = 0; i < anCards.length; i++)
 		{
-			AlsaCtl.loadCard(anCards[i]);
-			// TODO: has to be "hw:<anCards[i]>"
-			AlsaMixer	mixer = new AlsaMixer(i);
+			if (TDebug.TraceMixerProvider)
+			{
+				System.out.println("AlsaMixerProvider.<init>(): card #" + i + ": " +  anCards[i]);
+			}
+/*
+  AlsaCtl.loadCard(anCards[i]);
+  if (TDebug.TraceMixerProvider)
+  {
+  System.out.println("AlsaMixerProvider.<init>(): card loaded");
+  }
+*/
+			if (TDebug.TraceMixerProvider)
+			{
+				System.out.println("AlsaMixerProvider.<init>(): creating Ctl object...");
+			}
+			AlsaCtl	ctl = null;
+			try
+			{
+				ctl = new AlsaCtl("hw:" + anCards[i], 0);
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceMixerProvider || TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
+				continue;
+			}
+			if (TDebug.TraceMixerProvider)
+			{
+				System.out.println("AlsaMixerProvider.<init>(): calling getCardInfo()...");
+			}
+			int[]	anValues = new int[2];
+			String[]	astrValues = new String[6];
+			ctl.getCardInfo(anValues, astrValues);
+			if (TDebug.TraceMixerProvider)
+			{
+				TDebug.out("AlsaMixerProvider.<init>(): ALSA sound card:");
+				TDebug.out("AlsaMixerProvider.<init>(): id: " + astrValues[0]);
+				TDebug.out("AlsaMixerProvider.<init>(): abbreviation: " + astrValues[1]);
+				TDebug.out("AlsaMixerProvider.<init>(): name: " + astrValues[2]);
+				TDebug.out("AlsaMixerProvider.<init>(): long name: " + astrValues[3]);
+				TDebug.out("AlsaMixerProvider.<init>(): mixer id: " + astrValues[4]);
+				TDebug.out("AlsaMixerProvider.<init>(): mixer name: " + astrValues[5]);
+			}
+			int[]	anDevices = ctl.getPcmDevices();
+			if (TDebug.TraceMixerProvider)
+			{
+				System.out.println("AlsaMixerProvider.<init>(): num devices: " + anDevices.length);
+			}
+			for (int nDevice = 0; nDevice < anDevices.length; nDevice++)
+			{
+				if (TDebug.TraceMixerProvider)
+				{
+					System.out.println("AlsaMixerProvider.<init>(): device #" + nDevice + ": " +  anDevices[nDevice]);
+				}
+			}
+
+			AlsaMixer	mixer = new AlsaMixer("hw:" + anCards[i]);
 			super.addMixer(mixer);
+		}
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("AlsaMixerProvider.<init>(): end");
 		}
 	}
 }

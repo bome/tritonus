@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -100,14 +100,30 @@ public class AlsaMixer
 	/*	The number of the sound card this mixer is representing.
 	 */
 	private int	m_nCard;
+	private String	m_strPcmName;
+
+
+
+	public AlsaMixer()
+	{
+		this("plug:0,0");
+	}
+
 
 
 	public AlsaMixer(int nCard)
 	{
+		this("hw:" + nCard);
+	}
+
+
+
+	public AlsaMixer(String strPcmName)
+	{
 		super(new TMixerInfo(
-			"Alsa Mixer (" + nCard + ")",
+			"Alsa Mixer (" + strPcmName + ")",
 			GlobalInfo.getVendor(),
-			"Mixer for the Advanced Linux Sound Architecture (card " + nCard + ")",
+			"Mixer for the Advanced Linux Sound Architecture (card " + strPcmName + ")",
 			GlobalInfo.getVersion()),
 		      new Line.Info(Mixer.class),
 		      Arrays.asList(FORMATS),
@@ -118,7 +134,7 @@ public class AlsaMixer
 		{
 			TDebug.out("AlsaMixer.<init>: beginning.");
 		}
-		m_nCard = nCard;
+		m_strPcmName = strPcmName;
 		if (TDebug.TraceMixer)
 		{
 			TDebug.out("AlsaMixer.<init>: end.");
@@ -127,9 +143,9 @@ public class AlsaMixer
 
 
 
-	public int getCard()
+	public String getPcmName()
 	{
-		return m_nCard;
+		return m_strPcmName;
 	}
 
 

@@ -63,7 +63,7 @@ public abstract class TMixerProvider
 		if (TDebug.TraceMixerProvider)
 		{
 			TDebug.out("TMixerProvider.getMixerProviderStruct(): called from " + cls);
-			Thread.dumpStack();
+			// Thread.dumpStack();
 		}
 		synchronized (TMixerProvider.class)
 		{

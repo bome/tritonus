@@ -122,7 +122,7 @@ public class AlsaTargetDataLine
 
 		try
 		{
-			m_alsaPcm = new AlsaPcm(0, 0, AlsaPcm.SND_PCM_OPEN_CAPTURE);
+			// m_alsaPcm = new AlsaPcm(0, 0, AlsaPcm.SND_PCM_OPEN_CAPTURE);
 		}
 		catch (Exception e)
 		{
@@ -134,6 +134,8 @@ public class AlsaTargetDataLine
 		}
 		int	nReturn;
 		// outputStatus();
+		nReturn = 0;
+/*
 		nReturn = m_alsaPcm.setChannelParams(
 			AlsaPcm.SND_PCM_CHANNEL_CAPTURE,
 			AlsaPcm.SND_PCM_MODE_BLOCK,
@@ -149,12 +151,13 @@ public class AlsaTargetDataLine
 			m_nFragmentSize,
 			2,
 			1000);
+*/
 		if (nReturn != 0)
 		{
 			TDebug.out("setChannelParams: " + Alsa.getStringError(nReturn));
 		}
 		outputStatus();
-		nReturn = m_alsaPcm.prepareChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
+		// nReturn = m_alsaPcm.prepareChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
 		if (nReturn != 0)
 		{
 			TDebug.out("prepareChannel: " + Alsa.getStringError(nReturn));
@@ -199,10 +202,13 @@ public class AlsaTargetDataLine
 		int[]	anValues = new int[9];
 		long[]	alValues = new long[2];
 
+		nReturn = 0;
+/*
 		nReturn = m_alsaPcm.getChannelStatus(
 			AlsaPcm.SND_PCM_CHANNEL_CAPTURE,
 			anValues,
 			alValues);
+*/
 		if (nReturn != 0)
 		{
 			TDebug.out("getChannelStatus: " + Alsa.getStringError(nReturn));
@@ -219,7 +225,7 @@ public class AlsaTargetDataLine
 		{
 			TDebug.out("AlsaTargetDataLine.stopImpl(): called.");
 		}
-		int	nReturn = m_alsaPcm.flushChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
+		int	nReturn = 0; //m_alsaPcm.flushChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
 		if (nReturn != 0)
 		{
 			TDebug.out("flushChannel: " + Alsa.getStringError(nReturn));

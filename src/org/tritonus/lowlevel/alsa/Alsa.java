@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,12 @@ package	org.tritonus.lowlevel.alsa;
 import	org.tritonus.share.TDebug;
 
 
+/**	Common ALSA functions.
+	Used only for the functions that do neither belong to the
+	ctl sections nor to any specific interface section
+	(like pcm, rawmidi, etc.).
+	Currently, there is only one function remaining.
+ */
 public class Alsa
 {
 	static

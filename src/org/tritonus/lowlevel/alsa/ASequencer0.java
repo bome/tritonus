@@ -386,6 +386,7 @@ public class ASequencer0
 		{
 			TDebug.out("ASequencer0.<clinit>(): loaded");
 		}
+		// TODO: ????
 		setTrace(TDebug.TraceASequencerNative);
 	}
 

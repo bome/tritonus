@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@ import	javax.sound.sampled.Mixer;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
+import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.mixer.TMixer;
 import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
@@ -52,6 +53,7 @@ public class AlsaSourceDataLine
 	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
 
 
+	private AlsaMixer		m_mixer;
 	private int			m_nCard;
 	private AlsaPcm			m_alsaPcm;
 	private boolean			m_bSwapBytes;
@@ -77,7 +79,7 @@ public class AlsaSourceDataLine
 		      new DataLine.Info(SourceDataLine.class,
 					format,
 					nBufferSize));
-		m_nCard = mixer.getCard();
+		m_mixer = mixer;
 /*
   if (TDebug.TraceSourceDataLine)
   {
@@ -129,10 +131,17 @@ public class AlsaSourceDataLine
 			m_nBytesPerSample = format.getFrameSize() / format.getChannels();
 		}
 		int	nOutFormat = AlsaUtils.getAlsaFormat(format);
+		if (nOutFormat == AlsaPcm.SND_PCM_FORMAT_UNKNOWN)
+		{
+			throw new IllegalArgumentException("unsupported format");
+		}
 
 		try
 		{
-			m_alsaPcm = new AlsaPcm(m_nCard, 0, AlsaPcm.SND_PCM_OPEN_PLAYBACK);
+			m_alsaPcm = new AlsaPcm(
+				m_mixer.getPcmName(),
+				AlsaPcm.SND_PCM_STREAM_PLAYBACK,
+				0 /* no special mode */);
 		}
 		catch (Exception e)
 		{
@@ -143,6 +152,54 @@ public class AlsaSourceDataLine
 			throw new LineUnavailableException();
 		}
 		int	nReturn;
+		HWParams	hwParams = new HWParams();
+		nReturn = m_alsaPcm.getAnyHWParams(hwParams);
+		if (nReturn != 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+		nReturn = m_alsaPcm.setHWParamsFormat(hwParams, nOutFormat);
+		if (nReturn != 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+		nReturn = m_alsaPcm.setHWParamsChannels(hwParams, format.getChannels());
+		if (nReturn != 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+		nReturn = m_alsaPcm.setHWParamsRateNear(hwParams, (int) format.getSampleRate());
+		// int nRate = nReturn;
+		if (nReturn < 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+		nReturn = m_alsaPcm.setHWParamsBufferTimeNear(hwParams, 500000);
+		int	nBufferTime = nReturn;
+		if (nReturn < 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+		nReturn = m_alsaPcm.setHWParamsPeriodTimeNear(hwParams, nBufferTime / 4);
+		// int nPeriodTime = nReturn;
+		if (nReturn < 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+		nReturn = m_alsaPcm.setHWParams(hwParams);
+		if (nReturn < 0)
+		{
+			TDebug.out("AlsaSourceDataLine.openImpl(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			throw new LineUnavailableException(Alsa.getStringError(nReturn));
+		}
+
+
 /*
   nReturn = m_alsaPcm.flushChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
   if (nReturn != 0)
@@ -150,26 +207,29 @@ public class AlsaSourceDataLine
   TDebug.out("flushChannel: " + Alsa.getStringError(nReturn));
   }
 */
-		nReturn = m_alsaPcm.setChannelParams(
-			AlsaPcm.SND_PCM_CHANNEL_PLAYBACK,
-			AlsaPcm.SND_PCM_MODE_BLOCK,
-			true,
-			nOutFormat,
-			(int) format.getSampleRate(),
-			format.getChannels(),
-			0,
-			AlsaPcm.SND_PCM_START_FULL,
-			AlsaPcm.SND_PCM_STOP_ROLLOVER,
-			false,
-			false,
-			m_nFragmentSize,
-			2,
-			-1);
+		nReturn = 0;
+/*
+  nReturn = m_alsaPcm.setChannelParams(
+  AlsaPcm.SND_PCM_CHANNEL_PLAYBACK,
+  AlsaPcm.SND_PCM_MODE_BLOCK,
+  true,
+  nOutFormat,
+  (int) format.getSampleRate(),
+  format.getChannels(),
+  0,
+  AlsaPcm.SND_PCM_START_FULL,
+  AlsaPcm.SND_PCM_STOP_ROLLOVER,
+  false,
+  false,
+  m_nFragmentSize,
+  2,
+  -1);
+*/
 		if (nReturn != 0)
 		{
 			TDebug.out("setChannelParams: " + Alsa.getStringError(nReturn));
 		}
-		nReturn = m_alsaPcm.prepareChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
+		// nReturn = m_alsaPcm.prepareChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
 		if (nReturn != 0)
 		{
 			TDebug.out("prepareChannel: " + Alsa.getStringError(nReturn));
@@ -213,7 +273,8 @@ public class AlsaSourceDataLine
 		{
 			TDebug.out("AlsaSourceDataLine.stopImpl(): called");
 		}
-		int	nReturn = m_alsaPcm.flushChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
+		int	nReturn = 0;
+		// int	nReturn = m_alsaPcm.flushChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
 		if (nReturn != 0)
 		{
 			TDebug.out("flushChannel: " + Alsa.getStringError(nReturn));
