@@ -27,20 +27,25 @@ LIBDEST=$(LIBBASENAME).so.1.0
 LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/esd/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
+LIBS=-lesd -L../common -ltritonuscommon
+
 JAVAH = @JAVAH@
 
-
-OBJ=\
+JNIOBJ=\
 	org_tritonus_lowlevel_esd_EsdRecordingStream.o \
 	org_tritonus_lowlevel_esd_EsdStream.o \
 	org_tritonus_lowlevel_esd_EsdSample.o
+
+OBJ=\
+	$(JNIOBJ) \
+	handlers.o
+
+JNIHEADERS:=$(JNIOBJ:.o=.h)
 
 JNICLASSFILES=\
 	EsdRecordingStream.class \
 	EsdStream.class \
 	EsdSample.class
-
-JNIHEADERS:=$(OBJ:.o=.h)
 
 JNICLASSES=\
 	org.tritonus.lowlevel.esd.EsdRecordingStream \
@@ -53,7 +58,7 @@ JNICLASSES=\
 all: $(LIBDEST)
 
 $(LIBDEST):	$(OBJ)
-	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -lesd
+	$(CXX) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
