@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -55,11 +55,13 @@ public class TInit
 
 
 
-	static
+	public static void registerMidiDeviceProviders()
 	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
 		ProviderRegistrationAction	action = null;
-
-		// MidiDeviceProviders
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -70,9 +72,21 @@ public class TInit
 					}
 			};
 		registerClasses(MidiDeviceProvider.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// MidiFileReaders
+	
+	public static void registerMidiFileReaders()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -83,9 +97,21 @@ public class TInit
 					}
 			};
 		registerClasses(MidiFileReader.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// MidiFileWriters
+
+	public static void registerMidiFileWriters()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -96,9 +122,21 @@ public class TInit
 					}
 			};
 		registerClasses(MidiFileWriter.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// SoundbankReaders
+
+	public static void registerSoundbankReaders()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -109,9 +147,21 @@ public class TInit
 					}
 			};
 		registerClasses(SoundbankReader.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// AudioFileReaders
+
+	public static void registerAudioFileReaders()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -122,9 +172,21 @@ public class TInit
 					}
 			};
 		registerClasses(AudioFileReader.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// AudioFileWriters
+
+	public static void registerAudioFileWriters()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -135,9 +197,21 @@ public class TInit
 					}
 			};
 		registerClasses(AudioFileWriter.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// FormatConversionProviders
+
+	public static void registerFormatConversionProviders()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -148,9 +222,21 @@ public class TInit
 					}
 			};
 		registerClasses(FormatConversionProvider.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
+	}
 
 
-		// MixerProviders
+
+	public static void registerMixerProviders()
+	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): begin");
+		}
+		ProviderRegistrationAction	action = null;
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
@@ -161,6 +247,10 @@ public class TInit
 					}
 			};
 		registerClasses(MixerProvider.class, action);
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerMidiDeviceProviders(): end");
+		}
 	}
 
 
@@ -168,6 +258,10 @@ public class TInit
 	private static void registerClasses(Class providerClass,
 					    ProviderRegistrationAction action)
 	{
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerClasses(): begin" );
+		}
 		if (TDebug.TraceInit)
 		{
 			TDebug.out("TInit.registerClasses(): registering for: " + providerClass);
@@ -190,6 +284,10 @@ public class TInit
 					}
 				}
 			}
+		}
+		if (TDebug.TraceInit)
+		{
+			TDebug.out("TInit.registerClasses(): end");
 		}
 	}
 

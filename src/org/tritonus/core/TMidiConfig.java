@@ -53,12 +53,10 @@ import	org.tritonus.share.ArraySet;
 
 public class TMidiConfig
 {
-	private static final String	INIT_CLASS_NAME = "org.tritonus.core.TInit";
-
-	private static final Set	sm_midiDeviceProviders = new ArraySet();
-	private static final Set	sm_midiFileReaders = new ArraySet();
-	private static final Set	sm_midiFileWriters = new ArraySet();
-	private static final Set	sm_soundbankReaders = new ArraySet();
+	private static Set		sm_midiDeviceProviders = null;
+	private static Set		sm_midiFileReaders = null;
+	private static Set		sm_midiFileWriters = null;
+	private static Set		sm_soundbankReaders = null;
 
 	private static MidiDevice.Info	sm_defaultMidiDeviceInfo = null;
 	private static MidiDevice.Info	sm_defaultSequencerInfo = null;
@@ -66,216 +64,192 @@ public class TMidiConfig
 
 
 
-	/**
-	 *	This triggers the whole inititalization of the
-	 *	(MIDI part of) Tritonus.
-	 */
-	static
+	public static synchronized void addMidiDeviceProvider(MidiDeviceProvider reader)
 	{
-		try
+		getMidiDeviceProvidersImpl().add(reader);
+		if (getDefaultMidiDeviceInfo() == null ||
+		    getDefaultSynthesizerInfo() == null ||
+		    getDefaultSequencerInfo() == null)
 		{
-			Class.forName(INIT_CLASS_NAME);
-		}
-		catch (ClassNotFoundException e)
-		{
-			if (TDebug.TraceAllExceptions)
+			MidiDevice.Info[]	infos = reader.getDeviceInfo();
+			for (int i = 0; i < infos.length; i++)
 			{
-				TDebug.out(e);
-			}
-		}
-/*
-  catch (ExceptionInInitializerError e)
-  {
-  if (TDebug.TraceAllExceptione)
-{
-  TDebug.out(e);
-  TDebug.out("---> embedded exception:");
-
-  Throwable	t = e.getException();
-  TDebug.out(t);
-  }
-  }
-*/
-	}
-
-
-
-
-
-	public static void addMidiDeviceProvider(MidiDeviceProvider reader)
-	{
-		synchronized (sm_midiDeviceProviders)
-		{
-			sm_midiDeviceProviders.add(reader);
-			if (getDefaultMidiDeviceInfo() == null ||
-			    getDefaultSynthesizerInfo() == null ||
-			    getDefaultSequencerInfo() == null)
-			{
-				MidiDevice.Info[]	infos = reader.getDeviceInfo();
-				for (int i = 0; i < infos.length; i++)
+				MidiDevice	device = null;
+				try
 				{
-					MidiDevice	device = null;
-					try
+					device = reader.getDevice(infos[i]);
+				}
+				catch (IllegalArgumentException e)
+				{
+					if (TDebug.TraceAllExceptions)
 					{
-						device = reader.getDevice(infos[i]);
+						TDebug.out(e);
 					}
-					catch (IllegalArgumentException e)
+				}
+				if (device instanceof Synthesizer)
+				{
+					if (getDefaultSynthesizerInfo() == null)
 					{
-						if (TDebug.TraceAllExceptions)
-						{
-							TDebug.out(e);
-						}
+						sm_defaultSynthesizerInfo = infos[i];
 					}
-					if (device instanceof Synthesizer)
+				}
+				else if (device instanceof Sequencer)
+				{
+					if (getDefaultSequencerInfo() == null)
 					{
-						if (getDefaultSynthesizerInfo() == null)
-						{
-							sm_defaultSynthesizerInfo = infos[i];
-						}
+						sm_defaultSequencerInfo = infos[i];
 					}
-					else if (device instanceof Sequencer)
+				}
+				else
+				{
+					if (getDefaultMidiDeviceInfo() == null)
 					{
-						if (getDefaultSequencerInfo() == null)
-						{
-							sm_defaultSequencerInfo = infos[i];
-						}
-					}
-					else
-					{
-						if (getDefaultMidiDeviceInfo() == null)
-						{
-							sm_defaultMidiDeviceInfo = infos[i];
-						}
+						sm_defaultMidiDeviceInfo = infos[i];
 					}
 				}
 			}
-			
 		}
 	}
 
 
 
-	public static void removeMidiDeviceProvider(MidiDeviceProvider reader)
+	public static synchronized void removeMidiDeviceProvider(MidiDeviceProvider reader)
 	{
-		synchronized (sm_midiDeviceProviders)
-		{
-			sm_midiDeviceProviders.remove(reader);
-			// TODO: change default infos
-		}
+		getMidiDeviceProvidersImpl().remove(reader);
+		// TODO: change default infos
 	}
 
 
 
-	public static Iterator getMidiDeviceProviders()
+	public static synchronized Iterator getMidiDeviceProviders()
 	{
-		synchronized (sm_midiDeviceProviders)
-		{
-			return sm_midiDeviceProviders.iterator();
-		}
+		return getMidiDeviceProvidersImpl().iterator();
 	}
 
 
 
 
-	public static void addMidiFileReader(MidiFileReader reader)
+	private static synchronized Set getMidiDeviceProvidersImpl()
 	{
-		synchronized (sm_midiFileReaders)
+		if (sm_midiDeviceProviders == null)
 		{
-			if (TDebug.TraceMidiConfig)
-			{
-				TDebug.out("TMidiConfig.addMidiFileReader(): adding " + reader);
-			}
-			sm_midiFileReaders.add(reader);
-			if (TDebug.TraceMidiConfig)
-			{
-				TDebug.out("TMidiConfig.addMidiFileReader(): size " + sm_midiFileReaders.size());
-			}
+			sm_midiDeviceProviders = new ArraySet();
+			TInit.registerMidiDeviceProviders();
 		}
+		return sm_midiDeviceProviders;
 	}
 
 
 
-	public static void removeMidiFileReader(MidiFileReader reader)
+
+	public static synchronized void addMidiFileReader(MidiFileReader reader)
 	{
-		synchronized (sm_midiFileReaders)
+		if (TDebug.TraceMidiConfig)
 		{
-			sm_midiFileReaders.remove(reader);
+			TDebug.out("TMidiConfig.addMidiFileReader(): adding " + reader);
+		}
+		getMidiFileReadersImpl().add(reader);
+		if (TDebug.TraceMidiConfig)
+		{
+			TDebug.out("TMidiConfig.addMidiFileReader(): size " + sm_midiFileReaders.size());
 		}
 	}
 
 
 
-	public static Iterator getMidiFileReaders()
+	public static synchronized void removeMidiFileReader(MidiFileReader reader)
 	{
-		synchronized (sm_midiFileReaders)
-		{
-			if (TDebug.TraceMidiConfig)
-			{
-				TDebug.out("TMidiConfig.getMidiFileReaders(): called");
-			}
-			return sm_midiFileReaders.iterator();
-		}
+		getMidiFileReadersImpl().remove(reader);
 	}
 
 
 
-	public static void addMidiFileWriter(MidiFileWriter reader)
+	public static synchronized Iterator getMidiFileReaders()
 	{
-		synchronized (sm_midiFileWriters)
+		if (TDebug.TraceMidiConfig)
 		{
-			sm_midiFileWriters.add(reader);
+			TDebug.out("TMidiConfig.getMidiFileReaders(): called");
 		}
+		return getMidiFileReadersImpl().iterator();
 	}
 
 
 
-	public static void removeMidiFileWriter(MidiFileWriter reader)
+	private static synchronized Set getMidiFileReadersImpl()
 	{
-		synchronized (sm_midiFileWriters)
+		if (sm_midiFileReaders == null)
 		{
-			sm_midiFileWriters.remove(reader);
+			sm_midiFileReaders = new ArraySet();
+			TInit.registerMidiFileReaders();
 		}
+		return sm_midiFileReaders;
 	}
 
 
 
-	public static Iterator getMidiFileWriters()
+	public static synchronized void addMidiFileWriter(MidiFileWriter reader)
 	{
-		synchronized (sm_midiFileWriters)
-		{
-			return sm_midiFileWriters.iterator();
-		}
+		getMidiFileWritersImpl().add(reader);
 	}
 
 
 
-	public static void addSoundbankReader(SoundbankReader reader)
+	public static synchronized void removeMidiFileWriter(MidiFileWriter reader)
 	{
-		synchronized (sm_soundbankReaders)
-		{
-			sm_soundbankReaders.add(reader);
-		}
+		getMidiFileWritersImpl().remove(reader);
 	}
 
 
 
-	public static void removeSoundbankReader(SoundbankReader reader)
+	public static synchronized Iterator getMidiFileWriters()
 	{
-		synchronized (sm_soundbankReaders)
-		{
-			sm_soundbankReaders.remove(reader);
-		}
+		return getMidiFileWritersImpl().iterator();
 	}
 
 
-
-	public static Iterator getSoundbankReaders()
+	private static synchronized Set getMidiFileWritersImpl()
 	{
-		synchronized (sm_soundbankReaders)
+		if (sm_midiFileWriters == null)
 		{
-			return sm_soundbankReaders.iterator();
+			sm_midiFileWriters = new ArraySet();
+			TInit.registerMidiFileWriters();
 		}
+		return sm_midiFileWriters;
 	}
+
+
+
+
+	public static synchronized void addSoundbankReader(SoundbankReader reader)
+	{
+		getSoundbankReadersImpl().add(reader);
+	}
+
+
+
+	public static synchronized void removeSoundbankReader(SoundbankReader reader)
+	{
+		getSoundbankReadersImpl().remove(reader);
+	}
+
+
+
+	public static synchronized Iterator getSoundbankReaders()
+	{
+		return getSoundbankReadersImpl().iterator();
+	}
+
+
+	private static synchronized Set getSoundbankReadersImpl()
+	{
+		if (sm_soundbankReaders == null)
+		{
+			sm_soundbankReaders = new ArraySet();
+			TInit.registerSoundbankReaders();
+		}
+		return sm_soundbankReaders;
+	}
+
 
 
 

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -43,154 +43,144 @@ import	org.tritonus.share.ArraySet;
 
 public class TAudioConfig
 {
-	private static Set		sm_audioFileProviders = new ArraySet();
-	private static Set		sm_audioInputStreamProviders = new ArraySet();
-	private static Set		sm_formatConversionProviders = new ArraySet();
-	private static Set		sm_mixerProviders = new ArraySet();
+	private static Set		sm_audioFileWriters = null;
+	private static Set		sm_audioFileReaders = null;
+	private static Set		sm_formatConversionProviders = null;
+	private static Set		sm_mixerProviders = null;
 
-	// private static InputDevice	sm_defaultInputDevice;
 	private static Mixer.Info	sm_defaultMixerInfo;
-	// private static OutputDevice	sm_defaultOutputDevice;
-
-	// TODO: merge herein
-	private static final String	INIT_CLASS_NAME = "org.tritonus.core.TInit";
 
 
-	/**
-	 *	This triggers the whole inititalization of the
-	 *	audio part of Tritonus.
-	 */
-	static
+
+	public static synchronized void addAudioFileReader(AudioFileReader provider)
 	{
-		try
-		{
-			Class.forName(INIT_CLASS_NAME);
-		}
-		catch (ClassNotFoundException e)
-		{
-			if (TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
-		}
+		getAudioFileReadersImpl().add(provider);
 	}
 
 
 
-	public static void addAudioFileWriter(AudioFileWriter provider)
+	public static synchronized void removeAudioFileReader(AudioFileReader provider)
 	{
-		synchronized (sm_audioFileProviders)
+		getAudioFileReadersImpl().remove(provider);
+	}
+
+
+
+	public static synchronized Iterator getAudioFileReaders()
+	{
+		return getAudioFileReadersImpl().iterator();
+	}
+
+
+
+	private static synchronized Set getAudioFileReadersImpl()
+	{
+		if (sm_audioFileReaders == null)
 		{
-			sm_audioFileProviders.add(provider);
+			sm_audioFileReaders = new ArraySet();
+			TInit.registerAudioFileReaders();
 		}
+		return sm_audioFileReaders;
 	}
 
 
 
-	public static void removeAudioFileWriter(AudioFileWriter provider)
+	public static synchronized void addAudioFileWriter(AudioFileWriter provider)
 	{
-		synchronized (sm_audioFileProviders)
+		getAudioFileWritersImpl().add(provider);
+	}
+
+
+
+	public static synchronized void removeAudioFileWriter(AudioFileWriter provider)
+	{
+		getAudioFileWritersImpl().remove(provider);
+	}
+
+
+
+	public static synchronized Iterator getAudioFileWriters()
+	{
+		return getAudioFileWritersImpl().iterator();
+	}
+
+
+
+	private static synchronized Set getAudioFileWritersImpl()
+	{
+		if (sm_audioFileWriters == null)
 		{
-			sm_audioFileProviders.remove(provider);
+			sm_audioFileWriters = new ArraySet();
+			TInit.registerAudioFileWriters();
 		}
+		return sm_audioFileWriters;
 	}
 
 
 
-	public static Iterator getAudioFileWriters()
+	public static synchronized void addFormatConversionProvider(FormatConversionProvider provider)
 	{
-		synchronized (sm_audioFileProviders)
+		getFormatConversionProvidersImpl().add(provider);
+	}
+
+
+
+	public static synchronized void removeFormatConversionProvider(FormatConversionProvider provider)
+	{
+		getFormatConversionProvidersImpl().remove(provider);
+	}
+
+
+
+	public static synchronized Iterator getFormatConversionProviders()
+	{
+		return getFormatConversionProvidersImpl().iterator();
+	}
+
+
+
+	private static synchronized Set getFormatConversionProvidersImpl()
+	{
+		if (sm_formatConversionProviders == null)
 		{
-			return sm_audioFileProviders.iterator();
+			sm_formatConversionProviders = new ArraySet();
+			TInit.registerFormatConversionProviders();
 		}
+		return sm_formatConversionProviders;
 	}
 
 
 
-	public static void addAudioFileReader(AudioFileReader provider)
+	public static synchronized void addMixerProvider(MixerProvider provider)
 	{
-		synchronized (sm_audioInputStreamProviders)
+		getMixerProvidersImpl().add(provider);
+	}
+
+
+
+	public static synchronized void removeMixerProvider(MixerProvider provider)
+	{
+		getMixerProvidersImpl().remove(provider);
+	}
+
+
+
+	public static synchronized Iterator getMixerProviders()
+	{
+		return getMixerProvidersImpl().iterator();
+	}
+
+
+	private static synchronized Set getMixerProvidersImpl()
+	{
+		if (sm_mixerProviders == null)
 		{
-			sm_audioInputStreamProviders.add(provider);
+			sm_mixerProviders = new ArraySet();
+			TInit.registerMixerProviders();
 		}
+		return sm_mixerProviders;
 	}
 
-
-
-	public static void removeAudioFileReader(AudioFileReader provider)
-	{
-		synchronized (sm_audioInputStreamProviders)
-		{
-			sm_audioInputStreamProviders.remove(provider);
-		}
-	}
-
-
-
-	public static Iterator getAudioFileReaders()
-	{
-		synchronized (sm_audioInputStreamProviders)
-		{
-			return sm_audioInputStreamProviders.iterator();
-		}
-	}
-
-
-
-	public static void addFormatConversionProvider(FormatConversionProvider provider)
-	{
-		synchronized (sm_formatConversionProviders)
-		{
-			sm_formatConversionProviders.add(provider);
-		}
-	}
-
-
-
-	public static void removeFormatConversionProvider(FormatConversionProvider provider)
-	{
-		synchronized (sm_formatConversionProviders)
-		{
-			sm_formatConversionProviders.remove(provider);
-		}
-	}
-
-
-
-	public static Iterator getFormatConversionProviders()
-	{
-		return sm_formatConversionProviders.iterator();
-	}
-
-
-
-	public static void addMixerProvider(MixerProvider provider)
-	{
-		synchronized (sm_mixerProviders)
-		{
-			sm_mixerProviders.add(provider);
-		}
-	}
-
-
-
-	public static void removeMixerProvider(MixerProvider provider)
-	{
-		synchronized (sm_mixerProviders)
-		{
-			sm_mixerProviders.remove(provider);
-		}
-	}
-
-
-
-	public static Iterator getMixerProviders()
-	{
-		synchronized (sm_mixerProviders)
-		{
-			return sm_mixerProviders.iterator();
-		}
-	}
 
 
 	// TODO: a way to set the default mixer
