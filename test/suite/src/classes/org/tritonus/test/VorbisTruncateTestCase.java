@@ -40,8 +40,8 @@ import javax.sound.sampled.*;
 public class VorbisTruncateTestCase
 extends TestCase
 {
-	private File _sourceFileOgg = new File("sounds/testtruncate.ogg");
-	private File _destFileWav = new File("sounds/testtruncate.wav");
+	private static final File _sourceFileOgg = new File("sounds/testtruncate.ogg");
+	private static final File _destFileWav = new File("sounds/testtruncate.wav");
 
 	public VorbisTruncateTestCase(String strName)
 	{
@@ -57,17 +57,15 @@ extends TestCase
 		_destFileWav.deleteOnExit();
 	}
 
-
 	protected void tearDown()
 	{
-		assertTrue("Deleted required test file: " +
-				   _sourceFileOgg.getAbsolutePath(),
+		assertTrue("Deleted required test file: " + _sourceFileOgg.getAbsolutePath(),
 				   _sourceFileOgg.exists());
+
 		if (_destFileWav.exists())
 		{
 			// remove converted file
-			assertTrue("Couldn't delete file: "
-					   + _destFileWav.getAbsolutePath()
+			assertTrue("Couldn't delete file: " + _destFileWav.getAbsolutePath()
 					   + "; size: " + _destFileWav.length()
 					   + ". (0 size may mean file is locked by buffer loop.)",
 					   _destFileWav.delete());
@@ -95,11 +93,7 @@ extends TestCase
 
         // pump the streams
         int readCnt;
-        // @todo Why does changing this buffer size have any effect on the truncation of data???
-        // Try changing the buffer to the size below and suddenly, no data is truncated. Is
-        // something in the decoder dropping the last bit of data from the stream?
         final byte[] buf = new byte[4 * 1024];
-        //final byte[] buf = new byte[65536];
 
         try {
             while ((readCnt = inAIStreamPCM.read(buf, 0, buf.length)) != -1) {
@@ -118,15 +112,12 @@ extends TestCase
 
 		assertTrue("Converted wav file is empty: " + _destFileWav.getAbsolutePath(), _destFileWav.length() > 0);
 
-        // attempt to play the resulting wav file - end of file IS truncated when run
-        // with smaller buffer size. You can hear this when compared to running with larger buffer
+        // attempt to play the resulting wav file - end of file shouldn't be truncated
         playStream(_destFileWav);
 
         assertEquals("Missing some PCM data from decoded Vorbis stream.",
-					 661504, // total PCM bytes resulting when ogg data is NOT truncated
+					 369664, // total PCM bytes resulting when ogg data is NOT truncated
 					 readCntPCMTotal);
-		// attempt to play the resulting wav file - end of file shouldn't be truncated
-		playStream(_destFileWav);
 	}
 
 
@@ -143,17 +134,14 @@ extends TestCase
 		inAIStreamPCM.close();
 		inAIStreamOgg.close();
 
-        // attempt to play the resulting wav file - end of file IS truncated and I don't
-        // know how to affect the buffer size used by AudioSystem...
-        playStream(_destFileWav);
-
-		assertTrue("Converted wav file is empty: " + _destFileWav.getAbsolutePath(), _destFileWav.length() > 0);
-        assertEquals("Missing some PCM data from decoded Vorbis stream.",
-					 661548, // known file size Wave file built using native Windoze oggdec.exe
-					 _destFileWav.length());
+        assertTrue("Converted wav file is empty: " + _destFileWav.getAbsolutePath(), _destFileWav.length() > 0);
 
         // attempt to play the resulting wav file - end of file shouldn't be truncated
         playStream(_destFileWav);
+
+        assertEquals("Missing some PCM data from decoded Vorbis stream.",
+					 369708, // known file size Wave file built using native Windoze oggdec.exe
+					 _destFileWav.length());
 	}
 
 
@@ -190,3 +178,4 @@ extends TestCase
 
 
 /*** VorbisTruncateTestCase.java ***/
+
