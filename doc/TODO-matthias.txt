@@ -6,17 +6,28 @@ IDEAS
 
 - use speex (open source speech compression, http://speex.sourceforge.net/)
 - check to shadow META-INF/services/javax.sound.* by means of prepending to boot class path.
-
+- remove midishare and mp3 stuff?
+- use libiiwusynth?
 
 TODO
 ----
 
+- some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
+- section in plugin page "It doesn't work! What should I do?" ... jsinfo to check correct installation.
+- binary distribution of ALSA stuff. Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
+- make a note in INSTALL that for hand-installation only desired components should be installed. For automatic install, anyway. (see midishare exception)
+- check freetts/Tritonus interaction
+- integrate ogg/vorbis
+- remove jesd
 - test suite for classes (not necessarily interfaces) in javax.sound
 - FloatControl.shift() [check behaviour of Sun impl]
 - fix bug in AlsaMixer.readControlList()
 - review cdda distribution README
 - change library building to using libtool
 - re-check ALSA seq constants (constants_check.h)
+- change provider search order to be exactely compatible with Sun
+- implement available() for lines
+- fix start()/stop()/active behaviour for lines
 
 
 TEST
