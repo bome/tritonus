@@ -9,7 +9,7 @@
     Remove the next line if you don't have jikes.
     In this case, javac will be used for compiling.
     -->
-    <!--property name="build.compiler" value="jikes" /-->
+    <property name="build.compiler" value="jikes" />
     <!--property name="build.compiler.fulldepend" value="true" /-->
     <filter token="version" value="0.3.1" />
     <filter token="year" value="2000" />
