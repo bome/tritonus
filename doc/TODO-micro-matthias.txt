@@ -1,0 +1,6 @@
+- making spec clear on Controllable.getControl(): parameter should be of type Class.
+- which Controls make sense for a DataSource?
+- idempotence of DataSource's connect(), disconnect(), start() and stop()
+- DataSource supposed to parse file headers? Or Players? Should DataSource deliver "raw data"?
+- DataSource: what happens if start() is called on a disconnected DataSource? Suggestion: automatically calls connect().
+- why ContentDescriptor as an object for SourceStream? Everywhere else, a String is returned.
