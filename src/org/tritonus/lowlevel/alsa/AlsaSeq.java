@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -410,27 +410,27 @@ public class AlsaSeq
 	private SystemInfo	m_systemInfo;
 
 
+// 	private long getNativeHandle()
+// 	{
+// 		return m_lNativeHandle;
+// 	}
 
 	public AlsaSeq()
 	{
 		super();
-		if (TDebug.TraceAlsaSeq)
-		{
-			TDebug.out("AlsaSeq.<init>(): begin");
-		}
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(): begin"); }
 		m_nClientId = open();
-		if (TDebug.TraceAlsaSeq)
-		{
-			TDebug.out("AlsaSeq.<init>(): end");
-		}
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(): end"); }
 	}
 
 
 
 	public AlsaSeq(String strName)
 	{
-		super();
+		this();
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(String): begin"); }
 		setClientName(strName);
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(String): end"); }
 	}
 
 
@@ -438,6 +438,7 @@ public class AlsaSeq
 	{
 		return m_nClientId;
 	}
+
 
 
 	/**	Opens the sequencer.
@@ -451,7 +452,9 @@ public class AlsaSeq
 	 */
 	public native void close();
 
+	public native int getPortInfo(int nPort, PortInfo portInfo);
 
+	public native int getPortInfo(int nClient, int nPort, PortInfo portInfo);
 
 	public native int createPort(String strName, int nCapabilities, int nGroupPermissions, int nType, int nMidiChannels, int nMidiVoices, int nSynthVoices);
 
@@ -459,7 +462,7 @@ public class AlsaSeq
 		Calls snd_seq_alloc_queue().
 		@return the queue number (>= 0), if successful. A negative
 		value otherwise.
-	 */
+	*/
 	public native int allocQueue();
 
 
@@ -471,7 +474,7 @@ public class AlsaSeq
 
 		@return 0 if successful. A negative
 		value otherwise.
-	 */
+	*/
 	public native int freeQueue(int nQueue);
 
 
@@ -490,7 +493,7 @@ public class AlsaSeq
 	 *	anValues[1]	resolution (ticks/quarter)
 	 */
 	public native void getQueueTempo(int nQueue,
-					  int[] anValues);
+					 int[] anValues);
 
 
 	/**	Get information about a queue.
@@ -1402,10 +1405,7 @@ public class AlsaSeq
 		int[]	anValues = new int[13];
 		long[]	alValues = new long[1];
 		Object[]	aValues = new Object[1];
-		if (TDebug.TraceAlsaSeq)
-		{
-			TDebug.out("AlsaSeq.getEvent(): before getEvent(int[], long[])");
-		}
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): before getEvent(int[], long[])"); }
 		while (true)
 		{
 			boolean	bEventPresent = getEvent(anValues, alValues, aValues);
@@ -1422,10 +1422,7 @@ public class AlsaSeq
 			}
 			catch (InterruptedException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
 		// TDebug.out("after getEvent()");
@@ -1592,25 +1589,19 @@ public class AlsaSeq
 
 		case SND_SEQ_EVENT_USR_VAR4:
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): meta event");
-			}
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): meta event"); }
 			MetaMessage	metaMessage = new MetaMessage();
-			byte[]	abCompleteData = (byte[]) aValues[0];
-			int	nMetaType = abCompleteData[0];
-			byte[]	abData = new byte[abCompleteData.length - 1];
-			System.arraycopy(abCompleteData, 1, abData, 0, abCompleteData.length - 1);
+			byte[]	abTransferData = (byte[]) aValues[0];
+			int	nMetaType = abTransferData[0];
+			byte[]	abData = new byte[abTransferData.length - 1];
+			System.arraycopy(abTransferData, 1, abData, 0, abTransferData.length - 1);
 			try
 			{
 				metaMessage.setMessage(nMetaType, abData, abData.length);
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			message = metaMessage;
 			break;
@@ -1844,131 +1835,85 @@ public class AlsaSeq
 
 	public static class PortInfo
 	{
-		private int	m_nClient;
-		private int	m_nPort;
-		private String	m_strName;
-		private String	m_strGroupName;
-		private int	m_nCapability;
-		private int	m_nGroupCapability;
-		private int	m_nType;
-		private int	m_nMidiChannels;
-		private int	m_nMidiVoices;
-		private int	m_nSynthVoices;
-		private int	m_nNumReadSubscribers;
-		private int	m_nNumWriteSubscribers;
+		/**
+		 *	Holds the pointer to snd_seq_port_info_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
 
 
 
-
-		public PortInfo(int nClient,
-				int nPort,
-				String strName,
-				String strGroupName,
-				int nCapability,
-				int nGroupCapability,
-				int nType,
-				int nMidiChannels,
-				int nMidiVoices,
-				int nSynthVoices,
-				int nNumReadSubscribers,
-				int nNumWriteSubscribers)
+		public PortInfo()
 		{
-			m_nClient = nClient;
-			m_nPort = nPort;
-			m_strName = strName;
-			m_strGroupName = strGroupName;
-			m_nCapability = nCapability;
-			m_nGroupCapability = nGroupCapability;
-			m_nType = nType;
-			m_nMidiChannels = nMidiChannels;
-			m_nMidiVoices = nMidiVoices;
-			m_nSynthVoices = nSynthVoices;
-			m_nNumReadSubscribers = nNumReadSubscribers;
-			m_nNumWriteSubscribers = nNumWriteSubscribers;
-		}
-
-
-		public int getClient()
-		{
-			return m_nClient;
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortInfo.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortInfo.<init>(): end"); }
 		}
 
 
 
-		public int getPort()
+		public void finalize()
 		{
-			return m_nPort;
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
 		}
 
 
 
-		public String getName()
-		{
-			return m_strName;
-		}
+		private native int malloc();
+		public native void free();
 
 
 
-		public String getGroupName()
-		{
-			return m_strGroupName;
-		}
+		public native int getClient();
 
 
 
-		public int getCapability()
-		{
-			return m_nCapability;
-		}
+		public native int getPort();
+
+
+		/**	Returns the name of the port.
+			Calls snd_seq_port_info_get_name().
+		*/
+		public native String getName();
 
 
 
-		public int getGroupCapability()
-		{
-			return m_nGroupCapability;
-		}
+		public native int getCapability();
 
 
 
-		public int getType()
-		{
-			return m_nType;
-		}
+		public native int getType();
 
 
 
-		public int getMidiChannels()
-		{
-			return m_nMidiChannels;
-		}
+		public native int getMidiChannels();
 
 
 
-		public int getMidiVoices()
-		{
-			return m_nMidiVoices;
-		}
+		public native int getMidiVoices();
 
 
 
-		public int getSynthVoices()
-		{
-			return m_nSynthVoices;
-		}
+		public native int getSynthVoices();
 
 
 
-		public int getNumReadSubscribers()
-		{
-			return m_nNumReadSubscribers;
-		}
+		public native int getReadUse();
 
 
 
-		public int getNumWriteSubscribers()
-		{
-			return m_nNumWriteSubscribers;
-		}
+		public native int getWriteUse();
+
+
+
+		public native int getPortSpecified();
 
 
 
@@ -2097,12 +2042,9 @@ public class AlsaSeq
 			if (nSuccess == 0)
 			{
 				m_nPort = anValues[1];
-				return new PortInfo(
-					anValues[0], anValues[1],
-					astrValues[0], astrValues[1],
-					anValues[2], anValues[3], anValues[4],
-					anValues[5], anValues[6], anValues[7],
-					anValues[8], anValues[9]);
+				PortInfo	portInfo = new PortInfo();
+				getPortInfo(anValues[0], anValues[1], portInfo);
+				return portInfo;
 			}
 			else
 			{
