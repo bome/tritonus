@@ -12,32 +12,39 @@ IDEAS
 - use libiiwusynth?
 - use ADPCM?
 
-TODO
+TODO (1 - important, 3 - nice to have)
 ----
 
-- debug why the jdk1.4.1 does not use external default providers
-- cleanup web pages: contemporary doctype, weblint, ...
-- binary dists: esd, alsa, SRC, AOS
-- binary distribution of ALSA stuff. Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
-- use aspectj!!!
-- add "formatted for 80 cols" header to all files
-- in src/lib/alsa, change constants_check.h to constants_check.c and include it into the object list of in Makefile.in. This is to isolate its effects.
-- rename DEBUG to debug_flag for all native libs
-- separate static inner classes in all native/lowlevel classes
-- some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
-- section in plugin page "It doesn't work! What should I do?" ... jsinfo to check correct installation.
-- make a note in INSTALL that for hand-installation only desired components should be installed. For automatic install, anyway. (see midishare exception)
-- check freetts/Tritonus interaction
-- integrate ogg/vorbis
-- test suite for classes (not necessarily interfaces) in javax.sound
-- FloatControl.shift() [check behaviour of Sun impl]
-- fix bug in AlsaMixer.readControlList()
-- review cdda distribution README
-- change library building to using libtool
-- re-check ALSA seq constants (constants_check.h)
-- change provider search order to be exactely compatible with Sun
-- implement available() for lines
-- fix start()/stop()/active behaviour for lines
+general
+1 - debug why the jdk1.4.1 does not use external default providers
+2 - use aspectj!!!
+3 - add "formatted for 80 cols" header to all files
+3 - check freetts/Tritonus interaction
+
+lowlevel, native
+3 - use libtritonuscommon in all native libs
+3 - rename DEBUG to debug_flag for all native libs
+3 - separate static inner classes in all native/lowlevel classes
+3 - in src/lib/alsa, change constants_check.h to constants_check.c and include it into the object list of in Makefile.in. This is to isolate its effects.
+3 - change library building to using libtool
+3 - re-check ALSA seq constants (constants_check.h)
+
+documentation, distibution
+3 - cleanup web pages: contemporary doctype, weblint, ...
+1 - binary dists: esd, alsa, SRC, AOS
+1 - binary distribution of ALSA stuff. Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
+1 - some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
+1 - make a note in INSTALL that for hand-installation only desired components should be installed. For automatic install, anyway. (see midishare exception)
+3 - review cdda distribution README
+
+misc
+1 - integrate ogg/vorbis
+1 - test suite for classes (not necessarily interfaces) in javax.sound
+2 - FloatControl.shift() [check behaviour of Sun impl]
+2 - fix bug in AlsaMixer.readControlList()
+3 - change provider search order to be exactely compatible with Sun
+1 - implement available() for lines
+1 - fix start()/stop()/active behaviour for lines
 
 
 TEST
