@@ -440,14 +440,14 @@ public class AlsaSeq
 
 
 
-	public int getClientInfo(ClientInfo clientInfo)
+	public int getClientInfo(AlsaSeqClientInfo clientInfo)
 	{
 		return getClientInfo(-1, clientInfo);
 	}
 
-	public native int getClientInfo(int nClient, ClientInfo clientInfo);
+	public native int getClientInfo(int nClient, AlsaSeqClientInfo clientInfo);
 
-	public native int setClientInfo(ClientInfo clientInfo);
+	public native int setClientInfo(AlsaSeqClientInfo clientInfo);
 
 
 
@@ -470,7 +470,7 @@ public class AlsaSeq
 	public void setClientName(String strName)
 	{
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.setClientName(): begin"); }
-		ClientInfo	clientInfo = new ClientInfo();
+		AlsaSeqClientInfo	clientInfo = new AlsaSeqClientInfo();
 		// TODO: error check
 		getClientInfo(clientInfo);
 		clientInfo.setName(strName);
@@ -479,12 +479,12 @@ public class AlsaSeq
 	}
 
 
-	public int getPortInfo(int nPort, PortInfo portInfo)
+	public int getPortInfo(int nPort, AlsaSeqPortInfo portInfo)
 	{
 		return getPortInfo(-1, nPort, portInfo);
 	}
 
-	public native int getPortInfo(int nClient, int nPort, PortInfo portInfo);
+	public native int getPortInfo(int nClient, int nPort, AlsaSeqPortInfo portInfo);
 
 
 
@@ -566,7 +566,7 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int getQueueInfo(int nQueue, QueueInfo queueInfo);
+	public native int getQueueInfo(int nQueue, AlsaSeqQueueInfo queueInfo);
 
 
 
@@ -577,7 +577,7 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int setQueueInfo(int nQueue, QueueInfo queueInfo);
+	public native int setQueueInfo(int nQueue, AlsaSeqQueueInfo queueInfo);
 
 
 	/**	Get the queue status.
@@ -587,7 +587,7 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int getQueueStatus(int nQueue, QueueStatus queueStatus);
+	public native int getQueueStatus(int nQueue, AlsaSeqQueueStatus queueStatus);
 
 
 	/**	Get the queue tempo.
@@ -597,7 +597,7 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int getQueueTempo(int nQueue, QueueTempo queueTempo);
+	public native int getQueueTempo(int nQueue, AlsaSeqQueueTempo queueTempo);
 
 
 	/**	Set the queue tempo.
@@ -607,7 +607,7 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int setQueueTempo(int nQueue, QueueTempo queueTempo);
+	public native int setQueueTempo(int nQueue, AlsaSeqQueueTempo queueTempo);
 
 
 	/**	Get the queue timer.
@@ -617,7 +617,7 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int getQueueTimer(int nQueue, QueueTimer queueTimer);
+	public native int getQueueTimer(int nQueue, AlsaSeqQueueTimer queueTimer);
 
 
 	/**	Set the queue timer.
@@ -627,12 +627,12 @@ public class AlsaSeq
 
 		@return returns 0 on success, otherwise a negative value.
 	*/
-	public native int setQueueTimer(int nQueue, QueueTimer queueTimer);
+	public native int setQueueTimer(int nQueue, AlsaSeqQueueTimer queueTimer);
 
 
-	public native int getPortSubscription(PortSubscribe portSubscribe);
-	public native int subscribePort(PortSubscribe portSubscribe);
-	public native int unsubscribePort(PortSubscribe portSubscribe);
+	public native int getPortSubscription(AlsaSeqPortSubscribe portSubscribe);
+	public native int subscribePort(AlsaSeqPortSubscribe portSubscribe);
+	public native int unsubscribePort(AlsaSeqPortSubscribe portSubscribe);
 
 
 
@@ -717,8 +717,20 @@ public class AlsaSeq
 
 
 
+		/** Allocates memory for a snd_seq_event_t.
+
+		The native part of this method uses calloc() to
+		allocate the memory (so the allocated memory is
+		zero'ed).  The memory reference is stored in {@link
+		#m_lNativeHandle m_lNativeHandle}.  Memory allocated
+		with this call should be freed by calling {@link
+		#free() free()}.
+
+		 */
 		private native int malloc();
-		// TODO: this relies on snd_seq_event_free(), which is currently a no-op
+
+		/** Frees memory for a snd_seq_event_t.
+		 */
 		public native void free();
 
 		// TODO: implement natively
@@ -893,474 +905,474 @@ public class AlsaSeq
 
 
 
-	public static class ClientInfo
-	{
-		/**
-		 *	Holds the pointer to snd_seq_port_info_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+//	public static class ClientInfo
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_port_info_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public ClientInfo()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): malloc() returns: " + nReturn); }
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of client_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): end"); }
-		}
+// 		public ClientInfo()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): malloc() returns: " + nReturn); }
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of client_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
 
 
-		public native int getClient();
+// 		public native int getClient();
 
-		public native int getType();
+// 		public native int getType();
 
-		public native String getName();
+// 		public native String getName();
 
-		public native int getBroadcastFilter();
+// 		public native int getBroadcastFilter();
 
-		public native int getErrorBounce();
+// 		public native int getErrorBounce();
 
-		// TODO: event filter
+// 		// TODO: event filter
 
-		public native int getNumPorts();
+// 		public native int getNumPorts();
 
-		public native int getEventLost();
+// 		public native int getEventLost();
 
 
-		public native void setClient(int nClient);
+// 		public native void setClient(int nClient);
 
-		public native void setName(String strName);
+// 		public native void setName(String strName);
 
-		public native void setBroadcastFilter(int nBroadcastFilter);
+// 		public native void setBroadcastFilter(int nBroadcastFilter);
 
 
-		public native void setErrorBounce(int nErrorBounce);
+// 		public native void setErrorBounce(int nErrorBounce);
 
-		// TODO: event filter
-	}
+// 		// TODO: event filter
+// 	}
 
 
 
-	public static class PortInfo
-	{
-		/**
-		 *	Holds the pointer to snd_seq_port_info_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class PortInfo
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_port_info_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public PortInfo()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortInfo.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortInfo.<init>(): end"); }
-		}
+// 		public PortInfo()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortInfo.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortInfo.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
 
 
-		public native int getClient();
+// 		public native int getClient();
 
 
 
-		public native int getPort();
+// 		public native int getPort();
 
 
-		/**	Returns the name of the port.
-			Calls snd_seq_port_info_get_name().
-		*/
-		public native String getName();
+// 		/**	Returns the name of the port.
+// 			Calls snd_seq_port_info_get_name().
+// 		*/
+// 		public native String getName();
 
 
 
-		public native int getCapability();
+// 		public native int getCapability();
 
 
 
-		public native int getType();
+// 		public native int getType();
 
 
 
-		public native int getMidiChannels();
+// 		public native int getMidiChannels();
 
 
 
-		public native int getMidiVoices();
+// 		public native int getMidiVoices();
 
 
 
-		public native int getSynthVoices();
+// 		public native int getSynthVoices();
 
 
 
-		public native int getReadUse();
+// 		public native int getReadUse();
 
 
 
-		public native int getWriteUse();
+// 		public native int getWriteUse();
 
 
 
-		public native int getPortSpecified();
-	}
+// 		public native int getPortSpecified();
+// 	}
 
 
 
-	public static class PortSubscribe
-	{
-		/**
-		 *	Holds the pointer to snd_seq_port_info_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class PortSubscribe
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_port_info_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public PortSubscribe()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortSubscribe.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortSubscribe.<init>(): end"); }
-		}
+// 		public PortSubscribe()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortSubscribe.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.PortSubscribe.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
 
 
-		public native int getSenderClient();
-		public native int getSenderPort();
-		public native int getDestClient();
-		public native int getDestPort();
+// 		public native int getSenderClient();
+// 		public native int getSenderPort();
+// 		public native int getDestClient();
+// 		public native int getDestPort();
 
-		public native int getQueue();
+// 		public native int getQueue();
 
-		public native boolean getExclusive();
-		public native boolean getTimeUpdate();
-		public native boolean getTimeReal();
+// 		public native boolean getExclusive();
+// 		public native boolean getTimeUpdate();
+// 		public native boolean getTimeReal();
 
-		public native void setSender(int nClient, int nPort);
-		public native void setDest(int nClient, int nPort);
+// 		public native void setSender(int nClient, int nPort);
+// 		public native void setDest(int nClient, int nPort);
 
-		public native void setQueue(int nQueue);
+// 		public native void setQueue(int nQueue);
 
-		public native void setExclusive(boolean bExclusive);
-		public native void setTimeUpdate(boolean bUpdate);
-		public native void setTimeReal(boolean bReal);
-	}
+// 		public native void setExclusive(boolean bExclusive);
+// 		public native void setTimeUpdate(boolean bUpdate);
+// 		public native void setTimeReal(boolean bReal);
+// 	}
 
 
 
-	public static class QueueInfo
-	{
-		/**
-		 *	Holds the pointer to snd_seq_queue_info_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class QueueInfo
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_queue_info_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public QueueInfo()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueInfo.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueInfo.<init>(): end"); }
-		}
+// 		public QueueInfo()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueInfo.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueInfo.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
-		public native int getQueue();
-		public native String getName();
-		public native int getOwner();
-		public native boolean getLocked();
-		public native int getFlags();
+// 		public native int getQueue();
+// 		public native String getName();
+// 		public native int getOwner();
+// 		public native boolean getLocked();
+// 		public native int getFlags();
 
-		public native void setName(String strName);
-		public native void setOwner(int nOwner);
-		public native void setLocked(boolean bLocked);
-		public native void setFlags(int nFlags);
+// 		public native void setName(String strName);
+// 		public native void setOwner(int nOwner);
+// 		public native void setLocked(boolean bLocked);
+// 		public native void setFlags(int nFlags);
 
-	}
+// 	}
 
 
 
-	public static class QueueStatus
-	{
-		/**
-		 *	Holds the pointer to snd_seq_queue_status_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class QueueStatus
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_queue_status_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public QueueStatus()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueStatus.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueStatus.<init>(): end"); }
-		}
+// 		public QueueStatus()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueStatus.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueStatus.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
-		public native int getQueue();
-		public native int getEvents();
-		public native long getTickTime();
-		public native long getRealTime();
-		public native int getStatus();
-	}
+// 		public native int getQueue();
+// 		public native int getEvents();
+// 		public native long getTickTime();
+// 		public native long getRealTime();
+// 		public native int getStatus();
+// 	}
 
 
 
-	public static class QueueTempo
-	{
-		/**
-		 *	Holds the pointer to snd_seq_queue_tempo_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class QueueTempo
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_queue_tempo_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public QueueTempo()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTempo.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTempo.<init>(): end"); }
-		}
+// 		public QueueTempo()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTempo.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTempo.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
-		public native int getQueue();
-		public native int getTempo();
-		public native int getPpq();
-		public native void setTempo(int nTempo);
-		public native void setPpq(int nPpq);
-	}
+// 		public native int getQueue();
+// 		public native int getTempo();
+// 		public native int getPpq();
+// 		public native void setTempo(int nTempo);
+// 		public native void setPpq(int nPpq);
+// 	}
 
 
 
-	public static class QueueTimer
-	{
-		/**
-		 *	Holds the pointer to snd_seq_queue_timer_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class QueueTimer
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_queue_timer_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public QueueTimer()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTimer.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTimer.<init>(): end"); }
-		}
+// 		public QueueTimer()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTimer.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTimer.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
-		public native int getQueue();
-		public native int getType();
-		// TODO:
-		// public native ?? getTimerId();
-		public native int getResolution();
+// 		public native int getQueue();
+// 		public native int getType();
+// 		// TODO:
+// 		// public native ?? getTimerId();
+// 		public native int getResolution();
 
-		public native void setType(int nType);
-		// TODO:
-							 // public native void setId(???);
-		public native void setResolution(int nResolution);
-	}
+// 		public native void setType(int nType);
+// 		// TODO:
+// 							 // public native void setId(???);
+// 		public native void setResolution(int nResolution);
+// 	}
 
 
 
-	public static class RemoveEvents
-	{
-		/**
-		 *	Holds the pointer to snd_seq_queue_timer_t
-		 *	for the native code.
-		 *	This must be long to be 64bit-clean.
-		 */
-		/*private*/ long	m_lNativeHandle;
+// 	public static class RemoveEvents
+// 	{
+// 		/**
+// 		 *	Holds the pointer to snd_seq_queue_timer_t
+// 		 *	for the native code.
+// 		 *	This must be long to be 64bit-clean.
+// 		 */
+// 		/*private*/ long	m_lNativeHandle;
 
 
 
-		public RemoveEvents()
-		{
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.RemoveEvents.<init>(): begin"); }
-			int	nReturn = malloc();
-			if (nReturn < 0)
-			{
-				throw new RuntimeException("malloc of port_info failed");
-			}
-			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.RemoveEvents.<init>(): end"); }
-		}
+// 		public RemoveEvents()
+// 		{
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.RemoveEvents.<init>(): begin"); }
+// 			int	nReturn = malloc();
+// 			if (nReturn < 0)
+// 			{
+// 				throw new RuntimeException("malloc of port_info failed");
+// 			}
+// 			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.RemoveEvents.<init>(): end"); }
+// 		}
 
 
 
-		public void finalize()
-		{
-			// TODO: call free()
-			// call super.finalize() first or last?
-			// and introduce a flag if free() has already been called?
-		}
+// 		public void finalize()
+// 		{
+// 			// TODO: call free()
+// 			// call super.finalize() first or last?
+// 			// and introduce a flag if free() has already been called?
+// 		}
 
 
 
-		private native int malloc();
-		public native void free();
+// 		private native int malloc();
+// 		public native void free();
 
-		public native int getCondition();
-		public native int getQueue();
-		public native long getTime();
-		public native int getDestClient();
-		public native int getDestPort();
-		public native int getChannel();
-		public native int getEventType();
-		public native int getTag();
+// 		public native int getCondition();
+// 		public native int getQueue();
+// 		public native long getTime();
+// 		public native int getDestClient();
+// 		public native int getDestPort();
+// 		public native int getChannel();
+// 		public native int getEventType();
+// 		public native int getTag();
 
-		public native void setCondition(int nCondition);
-		public native void setQueue(int nQueue);
-		public native void setTime(long lTime);
-		public native void setDest(int nClient, int nPort);
-		public native void setChannel(int nChannel);
-		public native void setEventType(int nEventType);
-		public native void setTag(int nTag);
-	}
+// 		public native void setCondition(int nCondition);
+// 		public native void setQueue(int nQueue);
+// 		public native void setTime(long lTime);
+// 		public native void setDest(int nClient, int nPort);
+// 		public native void setChannel(int nChannel);
+// 		public native void setEventType(int nEventType);
+// 		public native void setTag(int nTag);
+// 	}
 
 
 
 	private class ClientInfoIterator
 	implements	Iterator
 	{
-		private int		m_nClient;
-		private ClientInfo	m_clientInfo;
+		private int			m_nClient;
+		private AlsaSeqClientInfo	m_clientInfo;
 
 
 
@@ -1395,10 +1407,10 @@ public class AlsaSeq
 		}
 
 
-		private ClientInfo createNextClientInfo()
+		private AlsaSeqClientInfo createNextClientInfo()
 		{
 			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.createNextClientInfo(): begin"); }
-			ClientInfo	clientInfo = null;
+			AlsaSeqClientInfo	clientInfo = null;
 			int[]		anValues = new int[1];
 			int	nSuccess = getNextClient(m_nClient, anValues);
 			if (TDebug.TraceAlsaSeq) { TDebug.out("succ: " + nSuccess); }
@@ -1406,7 +1418,7 @@ public class AlsaSeq
 			{
 				// TDebug.out("AlsaSeq.createNextClientInfo(): getNextClientInfo successful");
 				m_nClient = anValues[0];
-				clientInfo = new ClientInfo();
+				clientInfo = new AlsaSeqClientInfo();
 				// TODO: error check
 				getClientInfo(m_nClient, clientInfo);
 			}
@@ -1422,7 +1434,7 @@ public class AlsaSeq
 	{
 		private int		m_nClient;
 		private int		m_nPort;
-		private PortInfo	m_portInfo;
+		private AlsaSeqPortInfo	m_portInfo;
 
 
 
@@ -1459,17 +1471,17 @@ public class AlsaSeq
 		}
 
 
-		private PortInfo createNextPortInfo()
+		private AlsaSeqPortInfo createNextPortInfo()
 		{
 			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.createNextPortInfo(): begin"); }
-			PortInfo	portInfo = null;
+			AlsaSeqPortInfo	portInfo = null;
 			int[]		anValues = new int[2];
 			int	nSuccess = getNextPort(m_nClient, m_nPort, anValues);
 			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.createNextPortInfo(): getNextPort() returns: " + nSuccess); }
 			if (nSuccess == 0)
 			{
 				m_nPort = anValues[1];
-				portInfo = new PortInfo();
+				portInfo = new AlsaSeqPortInfo();
 				// TODO: error check
 				getPortInfo(m_nClient, m_nPort, portInfo);
 			}

@@ -12,6 +12,8 @@ IDEAS
 TODO
 ----
 
+- rename DEBUG to debug_flag for all native libs
+- separate static inner classes in all native/lowlevel classes
 - some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
 - section in plugin page "It doesn't work! What should I do?" ... jsinfo to check correct installation.
 - binary distribution of ALSA stuff. Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
