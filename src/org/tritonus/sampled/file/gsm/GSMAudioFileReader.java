@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2004 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,9 @@ package	org.tritonus.sampled.file.gsm;
 import	java.io.InputStream;
 import	java.io.IOException;
 import	java.io.EOFException;
+
+import	java.util.HashMap;
+import	java.util.Map;
 
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
@@ -92,27 +95,39 @@ public class GSMAudioFileReader
 		// [fb] not specifying it causes Sun's Wave file writer to write rubbish
 		int	nByteSize = AudioSystem.NOT_SPECIFIED;
 		int	nFrameSize = AudioSystem.NOT_SPECIFIED;
-		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED
-		    && lFileSizeInBytes <= Integer.MAX_VALUE)
+		Map<String, Object> properties = new HashMap<String, Object>();
+		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED)
 		{
-			nByteSize = (int) lFileSizeInBytes;
-			nFrameSize = (int) (lFileSizeInBytes / 33);
+			// the number of GSM frames
+			long lFrameSize = lFileSizeInBytes / 33;
+			// duration in microseconds
+			long lDuration = lFrameSize * 20000;
+			properties.put("duration", lDuration);
+			if (lFileSizeInBytes <= Integer.MAX_VALUE)
+			{
+				nByteSize = (int) lFileSizeInBytes;
+				nFrameSize = (int) (lFileSizeInBytes / 33);
+			}
 		}
 
+		Map<String, Object> afProperties = new HashMap<String, Object>();
+		afProperties.put("bitrate", 13200L);
 		AudioFormat	format = new AudioFormat(
 			Encodings.getEncoding("GSM0610"),
 			8000.0F,
-			AudioSystem.NOT_SPECIFIED /*???*/,
+			AudioSystem.NOT_SPECIFIED /* ??? [sample size in bits] */,
 			1,
 			33,
 			50.0F,
-			true);	// this value is chosen arbitrarily
+			true,	// this value is chosen arbitrarily
+			afProperties);
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
 				AudioFileTypes.getType("GSM","gsm"),
 				format,
 				nFrameSize,
-				nByteSize);
+				nByteSize,
+				properties);
 		if (TDebug.TraceAudioFileReader) { TDebug.out("GSMAudioFileReader.getAudioFileFormat(): end"); }
 		return audioFileFormat;
 	}
