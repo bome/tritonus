@@ -4,6 +4,7 @@
 		<property name="src" value="src" />
 		<property name="build" value="build" />
 		<property name="dist"  value="dist" />
+		<property name="build.compiler"  value="jikes" />
 		<filter token="version" value="0.3.1" />
 		<filter token="year" value="2000" />
 <!--
@@ -28,8 +29,7 @@
 		<javac srcdir="src"
 			destdir="${build}"
 			includes="javax/sound/**,org/tritonus/**"
-			excludes="org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**"
-			filtering="on"/>
+			excludes="org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**" />
 	</target>
 
 	<target name="compile-midishare"
@@ -45,20 +45,28 @@
 		depends="prepare" >
 		<exec
 			dir="."
-			command="make -C src/lib/alsa"
-			output="native0.log" />
+			executable="make"
+			output="native0.log" >
+			<arg line="-C src/lib/alsa" />
+		</exec>
 		<exec
 			dir="."
-			command="make -C src/lib/esd"
-			output="native1.log" />
+			executable="make"
+			output="native1.log" >
+			<arg line="-C src/lib/esd" />
+		</exec>
 		<exec
 			dir="."
-			command="make -C src/lib/lame"
-			output="native2.log" />
+			executable="make"
+			output="native2.log" >
+			<arg line="-C src/lib/lame" />
+		</exec>
 		<exec
 			dir="."
-			command="make -C src/lib/saint"
-			output="native3.log" />
+			executable="make"
+			output="native3.log" >
+			<arg line="-C src/lib/saint" />
+		</exec>
 	</target>
 
 	<target name="dist"
@@ -66,13 +74,16 @@
 		<mkdir dir="${dist}" />
 		<jar jarfile="${dist}/tritonus_core.jar"
 			basedir="${build}"
-			includes="javax/sound/,org/tritonus/core/" />
+			includes="javax/sound/**" />
 		<jar jarfile="${dist}/tritonus_share.jar"
 			basedir="${build}"
-			includes="org/tritonus/share/"/>
+			includes="org/tritonus/share/" />
 		<mkdir dir="${dist}/tritonus_remaining" />
 		<copydir src="${build}" dest="${dist}/tritonus_remaining"
 			includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/" />
+<!--
+			includes="javax/sound/**,org/tritonus/core/**" />
+-->
 		<copydir
 			src="${src}/packaging/tritonus_core"
 			dest="${dist}/tritonus_remaining"
@@ -127,7 +138,7 @@
 	</target>
 
 	<target name="clean" depends="init">
-		<deltree dir="${build}" />
-		<deltree dir="${dist}" />
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
 	</target>
 </project>
