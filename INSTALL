@@ -66,11 +66,18 @@ For MIDI:
 
 For the build process:
 - make (Testing done with GNU make 3.79)
-- ant (Testing done with Apache Ant 1.5; get it from http://jakarta.apache.org/ant/ if not present in your distribution)
+- ant (Testing done with Apache Ant 1.5; 1.4 should work, too. Get it from http://jakarta.apache.org/ant/ if not present in your distribution)
 - g++
 - libtool (currently not needed)
 - m4
 - cpp
+
+
+Building mp3 related components
+-------------------------------
+
+The ant based build requires that javalayer.jar is already compiled and that it is available in the class path during the build. Only then the mp3 SPI plug-in gets compiled and packaged.
+
 
 Installing steps
 ================
