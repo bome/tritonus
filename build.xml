@@ -21,7 +21,9 @@
 	  <compilerarg compiler="kjc" value="-generic"/>
 	  <compilerarg  value="-Xlint:unchecked"/>
       <include name="org/tritonus/" />
+      <exclude name="org/tritonus/sampled/cdda/" />
       <exclude name="org/tritonus/sampled/convert/javalayer/" />
+      <exclude name="org/tritonus/sampled/file/mpeg/" />
       <exclude name="org/tritonus/midi/device/midishare/" />
 	  <!-- necessary for kaffe -->
       <!--exclude name="org/tritonus/midi/device/java/SunMiscPerfClock.java" /-->
