@@ -50,21 +50,18 @@ import	org.tritonus.sampled.file.WaveAudioOutputStream;
  */
 public class AudioSystemShadow
 {
-	public static TDataOutputStream getDataOutputStream(Object target)
+	public static TDataOutputStream getDataOutputStream(File file)
 		throws IOException
 	{
-		if (target instanceof File)
-		{
-			return new TSeekableDataOutputStream((File) target);
-		}
-		else if (target instanceof OutputStream)
-		{
-			return new TNonSeekableDataOutputStream((OutputStream) target);
-		}
-		else
-		{
-			return null;
-		}
+			return new TSeekableDataOutputStream(file);
+	}
+
+
+
+	public static TDataOutputStream getDataOutputStream(OutputStream stream)
+		throws IOException
+	{
+			return new TNonSeekableDataOutputStream(stream);
 	}
 
 
@@ -87,6 +84,26 @@ public class AudioSystemShadow
 		{
 			audioOutputStream = new WaveAudioOutputStream(audioFormat, lLengthInBytes, dataOutputStream);
 		}
+		return audioOutputStream;
+	}
+
+
+
+	public static AudioOutputStream getAudioOutputStream(AudioFileFormat.Type type, AudioFormat audioFormat, long lLengthInBytes, File file)
+		throws IOException
+	{
+		TDataOutputStream	dataOutputStream = getDataOutputStream(file);
+		AudioOutputStream	audioOutputStream = getAudioOutputStream(type, audioFormat, lLengthInBytes, dataOutputStream);
+		return audioOutputStream;
+	}
+
+
+
+	public static AudioOutputStream getAudioOutputStream(AudioFileFormat.Type type, AudioFormat audioFormat, long lLengthInBytes, OutputStream outputStream)
+		throws IOException
+	{
+		TDataOutputStream	dataOutputStream = getDataOutputStream(outputStream);
+		AudioOutputStream	audioOutputStream = getAudioOutputStream(type, audioFormat, lLengthInBytes, dataOutputStream);
 		return audioOutputStream;
 	}
 }
