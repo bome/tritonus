@@ -26,29 +26,29 @@
 
 
 package	org.tritonus.midi.device.midishare;
-
+/*
 import	com.sun.java.util.collections.ArrayList;
 import	com.sun.java.util.collections.List;
 import	com.sun.java.util.collections.Iterator;
+*/
 
-/*
 import	java.util.ArrayList;
 import	java.util.List;
 import	java.util.Iterator;
-*/
+
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
 
 
-public class MidiShareSequencerProvider
+public class MshSequencerProvider
 	extends		MidiDeviceProvider
 {
 	private MidiDevice.Info		m_info;
 
 
-	public MidiShareSequencerProvider()
+	public MshSequencerProvider()
 	{
 		m_info = new MidiDevice.Info("Tritonus MidiShare sequencer", "Tritonus is free software. See http://www.tritonus.org/", "this sequencer uses MidiShare", "0.0");
 	}
@@ -66,7 +66,7 @@ public class MidiShareSequencerProvider
 	{
 		if (info.equals(m_info))
 		{
-			return new MidiShareSequencer(m_info);
+			return new MshSequencer(m_info);
 		}
 		else
 		{

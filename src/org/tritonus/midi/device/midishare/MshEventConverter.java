@@ -41,7 +41,7 @@ import	org.tritonus.midi.*;
 import	grame.midishare.*;
 
 
-final public class MidiShareEventConverter {
+final public class MshEventConverter {
 
 	//---------------------------------------------
 	// Java MidiEvent to MidiShare event conversion
