@@ -1,5 +1,5 @@
 /*
- *	AlsaSystemMixerProvider.java
+ *	AlsaPortMixerProvider.java
  */
 
 /*
@@ -32,41 +32,41 @@ import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 
-public class AlsaSystemMixerProvider
+public class AlsaPortMixerProvider
 	extends	TMixerProvider
 {
 	private static boolean		sm_bInitialized = false;
 
 
 
-	public AlsaSystemMixerProvider()
+	public AlsaPortMixerProvider()
 	{
 		super();
-		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.<init>(): begin"); }
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaPortMixerProvider.<init>(): begin"); }
 		if (!sm_bInitialized)
 		{
 			staticInit();
 			sm_bInitialized = true;
 		}
-		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.<init>(): end"); }
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaPortMixerProvider.<init>(): end"); }
 	}
 
 
 
 	protected void staticInit()
 	{
-		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.staticInit(): begin"); }
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaPortMixerProvider.staticInit(): begin"); }
 		int[]	anCards = AlsaCtl.getCards();
-		if (TDebug.TraceMixerProvider) { System.out.println("AlsaSystemMixerProvider.staticInit(): num cards: " + anCards.length); }
+		if (TDebug.TraceMixerProvider) { System.out.println("AlsaPortMixerProvider.staticInit(): num cards: " + anCards.length); }
 		for (int i = 0; i < anCards.length; i++)
 		{
-			AlsaSystemMixer	mixer = new AlsaSystemMixer(anCards[i]);
+			AlsaPortMixer	mixer = new AlsaPortMixer(anCards[i]);
 			addMixer(mixer);
 		}
-		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.staticInit(): end"); }
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaPortMixerProvider.staticInit(): end"); }
 	}
 }
 
 
 
-/*** AlsaSystemMixerProvider.java ***/
+/*** AlsaPortMixerProvider.java ***/

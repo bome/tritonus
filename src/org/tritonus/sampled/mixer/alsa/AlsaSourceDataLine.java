@@ -61,7 +61,7 @@ public class AlsaSourceDataLine
 
 	// TODO: has info object to change if format or buffer size are changed later?
 	// no, but it has to represent the mixer's capabilities. So a fixed info per mixer.
-	public AlsaSourceDataLine(AlsaMixer mixer, AudioFormat format, int nBufferSize)
+	public AlsaSourceDataLine(AlsaDataLineMixer mixer, AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		super(mixer,

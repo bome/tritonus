@@ -1,5 +1,5 @@
 /*
- *	AlsaMixerProvider.java
+ *	AlsaDataLineMixerProvider.java
  */
 
 /*
@@ -36,27 +36,27 @@ import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 
-public class AlsaMixerProvider
+public class AlsaDataLineMixerProvider
 	extends	TMixerProvider
 {
 	private static boolean	sm_bInitialized = false;
 
 
 
-	public AlsaMixerProvider()
+	public AlsaDataLineMixerProvider()
 	{
 		super();
-		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): begin"); }
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): begin"); }
 		if (! sm_bInitialized)
 		{
 			int[]	anCards = AlsaCtl.getCards();
-			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): num cards: " + anCards.length); }
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): num cards: " + anCards.length); }
 			for (int i = 0; i < anCards.length; i++)
 			{
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>():card #" + i + ": " + anCards[i]); }
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): creating Ctl object..."); }
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>():card #" + i + ": " + anCards[i]); }
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): creating Ctl object..."); }
 				String	strPcmName = "hw:" + anCards[i];
-				// String	strPcmName = AlsaMixer.getPcmName(anCards[i]);
+				// String	strPcmName = AlsaDataLineMixer.getPcmName(anCards[i]);
 				AlsaCtl	ctl = null;
 				try
 				{
@@ -68,44 +68,44 @@ public class AlsaMixerProvider
 					if (TDebug.TraceMixerProvider || TDebug.TraceAllExceptions) { TDebug.out(e); }
 					continue;
 				}
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): calling getCardInfo()..."); }
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): calling getCardInfo()..."); }
 				int[]	anValues = new int[2];
 				String[]	astrValues = new String[6];
 				ctl.getCardInfo(anValues, astrValues);
 				if (TDebug.TraceMixerProvider)
 				{
-					TDebug.out("AlsaMixerProvider.<init>(): ALSA sound card:");
-					TDebug.out("AlsaMixerProvider.<init>(): id: " + astrValues[0]);
-					TDebug.out("AlsaMixerProvider.<init>(): abbreviation: " + astrValues[1]);
-					TDebug.out("AlsaMixerProvider.<init>(): name: " + astrValues[2]);
-					TDebug.out("AlsaMixerProvider.<init>(): long name: " + astrValues[3]);
-					TDebug.out("AlsaMixerProvider.<init>(): mixer id: " + astrValues[4]);
-					TDebug.out("AlsaMixerProvider.<init>(): mixer name: " + astrValues[5]);
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): ALSA sound card:");
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): id: " + astrValues[0]);
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): abbreviation: " + astrValues[1]);
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): name: " + astrValues[2]);
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): long name: " + astrValues[3]);
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): mixer id: " + astrValues[4]);
+					TDebug.out("AlsaDataLineMixerProvider.<init>(): mixer name: " + astrValues[5]);
 				}
 				int[]	anDevices = ctl.getPcmDevices();
-				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): num devices: " + anDevices.length); }
-				// TODO: compine devices into one AlsaMixer?
-				// pass device number to AlsaMixer constructor?
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): num devices: " + anDevices.length); }
+				// TODO: combine devices into one AlsaDataLineMixer?
+				// pass device number to AlsaDataLineMixer constructor?
 				for (int nDevice = 0; nDevice < anDevices.length; nDevice++)
 				{
-					if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): device #" + nDevice + ": " +  anDevices[nDevice]); }
+					if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): device #" + nDevice + ": " +  anDevices[nDevice]); }
 				}
 				// ctl.close();
 
 				/*
 				  We do not use strPcmName because the mixer may choose to open as 'plughw', while for ctl, the device name always has to be 'hw'.
 				 */
-				AlsaMixer	mixer = new AlsaMixer(anCards[i]);
+				AlsaDataLineMixer	mixer = new AlsaDataLineMixer(anCards[i]);
 				super.addMixer(mixer);
 			}
 			sm_bInitialized = true;
 		}
 
 
-		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): end"); }
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): end"); }
 	}
 }
 
 
 
-/*** AlsaMixerProvider.java ***/
+/*** AlsaDataLineMixerProvider.java ***/

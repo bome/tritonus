@@ -55,7 +55,7 @@ public class AlsaTargetDataLine
 
 
 
-	public AlsaTargetDataLine(AlsaMixer mixer, AudioFormat format, int nBufferSize)
+	public AlsaTargetDataLine(AlsaDataLineMixer mixer, AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		// TODO: use an info object that represents the mixer's capabilities (all possible formats for the line)

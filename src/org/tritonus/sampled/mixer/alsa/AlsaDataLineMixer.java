@@ -1,5 +1,5 @@
 /*
- *	AlsaMixer.java
+ *	AlsaDataLineMixer.java
  */
 
 /*
@@ -59,7 +59,7 @@ import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
 
 
 
-public class AlsaMixer
+public class AlsaDataLineMixer
 	extends		TMixer
 {
 	private static final AudioFormat[]	EMPTY_AUDIOFORMAT_ARRAY = new AudioFormat[0];
@@ -100,21 +100,21 @@ public class AlsaMixer
 
 
 
-	public AlsaMixer()
+	public AlsaDataLineMixer()
 	{
 		this(0);
 	}
 
 
 
-	public AlsaMixer(int nCard)
+	public AlsaDataLineMixer(int nCard)
 	{
 		this(getPcmName(nCard));
 	}
 
 
 
-	public AlsaMixer(String strPcmName)
+	public AlsaDataLineMixer(String strPcmName)
 	{
 		super(new TMixerInfo(
 			"Alsa Mixer (" + strPcmName + ")",
@@ -122,7 +122,7 @@ public class AlsaMixer
 			"Mixer for the Advanced Linux Sound Architecture (card " + strPcmName + ")",
 			GlobalInfo.getVersion()),
 		      new Line.Info(Mixer.class));
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.<init>(String): begin."); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.<init>(String): begin."); }
 		m_strPcmName = strPcmName;
 		List	sourceFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_PLAYBACK);
 		List	targetFormats = getSupportedFormats(AlsaPcm.SND_PCM_STREAM_CAPTURE);
@@ -144,7 +144,7 @@ public class AlsaMixer
 				      targetFormats,
 				      sourceLineInfos,
 				      targetLineInfos);
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.<init>(String): end."); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.<init>(String): end."); }
 	}
 
 
@@ -162,22 +162,22 @@ public class AlsaMixer
 	// TODO: allow real close and reopen of mixer
 	public void open()
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.open(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.open(): begin"); }
 
 		// currently does nothing
 
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.open(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.open(): end"); }
 	}
 
 
 
 	public void close()
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.close(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.close(): begin"); }
 
 		// currently does nothing
 
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.close(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.close(): end"); }
 	}
 
 
@@ -189,9 +189,9 @@ public class AlsaMixer
 
 	public int getMaxLines(Line.Info info)
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getMaxLines(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getMaxLines(): begin"); }
 		// TODO:
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getMaxLines(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getMaxLines(): end"); }
 		return 0;
 	}
 
@@ -205,11 +205,11 @@ public class AlsaMixer
 	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSourceDataLine(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSourceDataLine(): begin"); }
 		if (TDebug.TraceMixer)
 		{
-			TDebug.out("AlsaMixer.getSourceDataLine(): format: " + format);
-			TDebug.out("AlsaMixer.getSourceDataLine(): buffer size: " + nBufferSize);
+			TDebug.out("AlsaDataLineMixer.getSourceDataLine(): format: " + format);
+			TDebug.out("AlsaDataLineMixer.getSourceDataLine(): buffer size: " + nBufferSize);
 		}
 		if (nBufferSize < 1)
 		{
@@ -217,8 +217,8 @@ public class AlsaMixer
 		}
 		AlsaSourceDataLine	sourceDataLine = new AlsaSourceDataLine(this, format, nBufferSize);
 		// sourceDataLine.start();
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSourceDataLine(): returning: " + sourceDataLine); }
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSourceDataLine(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSourceDataLine(): returning: " + sourceDataLine); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSourceDataLine(): end"); }
 		return sourceDataLine;
 	}
 
@@ -227,12 +227,12 @@ public class AlsaMixer
 	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getTargetDataLine(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getTargetDataLine(): begin"); }
 		int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
 		AlsaTargetDataLine	targetDataLine = new AlsaTargetDataLine(this, format, nBufferSizeInBytes);
 		// targetDataLine.start();
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getTargetDataLine(): returning: " + targetDataLine); }
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getTargetDataLine(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getTargetDataLine(): returning: " + targetDataLine); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getTargetDataLine(): end"); }
 		return targetDataLine;
 	}
 
@@ -241,9 +241,9 @@ public class AlsaMixer
 	protected Clip getClip(AudioFormat format)
 		throws	LineUnavailableException
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getClip(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getClip(): begin"); }
 		Clip	clip = new TSoftClip(this, format);
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getClip(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getClip(): end"); }
 		return clip;
 	}
 
@@ -255,8 +255,8 @@ public class AlsaMixer
 	 */
 	private List getSupportedFormats(int nDirection)
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): begin"); }
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): direction: " + nDirection); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): direction: " + nDirection); }
 		List	supportedFormats = new ArrayList();
 		AlsaPcm	alsaPcm = null;
 		try
@@ -276,35 +276,35 @@ public class AlsaMixer
 		nReturn = alsaPcm.getAnyHWParams(hwParams);
 		if (nReturn != 0)
 		{
-			TDebug.out("AlsaMixer.getSupportedFormats(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
+			TDebug.out("AlsaDataLineMixer.getSupportedFormats(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
 			throw new RuntimeException(Alsa.getStringError(nReturn));
 		}
 		HWParams.FormatMask	formatMask = new HWParams.FormatMask();
 		int	nMinChannels = hwParams.getChannelsMin();
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): min channels: " + nMinChannels); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): min channels: " + nMinChannels); }
 		int	nMaxChannels = hwParams.getChannelsMax();
 		nMaxChannels = Math.min(nMaxChannels, CHANNELS_LIMIT);
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): max channels: " + nMaxChannels); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): max channels: " + nMaxChannels); }
 		hwParams.getFormatMask(formatMask);
 		for (int i = 0; i < 32; i++)
 		{
-			if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): checking ALSA format index: " + i); }
+			if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): checking ALSA format index: " + i); }
 			if (formatMask.test(i))
 			{
-				if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): ...supported"); }
+				if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): ...supported"); }
 				AudioFormat	audioFormat = AlsaUtils.getAlsaFormat(i);
-				if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): adding AudioFormat: " + audioFormat); }
+				if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): adding AudioFormat: " + audioFormat); }
 				addChanneledAudioFormats(supportedFormats, audioFormat, nMinChannels, nMaxChannels);
 				// supportedFormats.add(audioFormat);
 			}
 			else
 			{
-			if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): ...not supported"); }
+			if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): ...not supported"); }
 			}
 		}
 		// TODO: close/free mask & hwParams?
 		alsaPcm.close();
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): end"); }
 		return supportedFormats;
 	}
 
@@ -316,14 +316,14 @@ public class AlsaMixer
 		int nMinChannels,
 		int nMaxChannels)
 	{
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): begin"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.addChanneledAudioFormats(): begin"); }
 		for (int nChannels = nMinChannels; nChannels <= nMaxChannels; nChannels++)
 		{
 			AudioFormat	channeledAudioFormat = getChanneledAudioFormat(protoAudioFormat, nChannels);
-			if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): adding AudioFormat: " + channeledAudioFormat); }
+			if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.addChanneledAudioFormats(): adding AudioFormat: " + channeledAudioFormat); }
 			collection.add(channeledAudioFormat);
 		}
-		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): end"); }
+		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.addChanneledAudioFormats(): end"); }
 	}
 
 
@@ -346,4 +346,4 @@ public class AlsaMixer
 
 
 
-/*** AlsaMixer.java ***/
+/*** AlsaDataLineMixer.java ***/

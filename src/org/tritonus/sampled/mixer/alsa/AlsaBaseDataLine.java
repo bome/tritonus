@@ -66,7 +66,7 @@ public abstract class AlsaBaseDataLine
 
 
 
-	public AlsaBaseDataLine(AlsaMixer mixer, DataLine.Info info)
+	public AlsaBaseDataLine(AlsaDataLineMixer mixer, DataLine.Info info)
 		throws	LineUnavailableException
 	{
 		super(mixer,
@@ -77,7 +77,7 @@ public abstract class AlsaBaseDataLine
 
 
 
-	public AlsaBaseDataLine(AlsaMixer mixer, DataLine.Info info,
+	public AlsaBaseDataLine(AlsaDataLineMixer mixer, DataLine.Info info,
 				Collection controls)
 		throws	LineUnavailableException
 	{
@@ -89,9 +89,9 @@ public abstract class AlsaBaseDataLine
 
 
 
-	protected AlsaMixer getAlsaMixer()
+	protected AlsaDataLineMixer getAlsaDataLineMixer()
 	{
-		return (AlsaMixer) getMixer();
+		return (AlsaDataLineMixer) getMixer();
 	}
 
 
@@ -182,7 +182,7 @@ public abstract class AlsaBaseDataLine
 		try
 		{
 			m_alsaPcm = new AlsaPcm(
-				getAlsaMixer().getPcmName(),
+				getAlsaDataLineMixer().getPcmName(),
 				getAlsaStreamType(),
 				0);	// no special mode
 		}
