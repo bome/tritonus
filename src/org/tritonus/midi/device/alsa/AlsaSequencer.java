@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -19,7 +18,6 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
 
@@ -51,21 +49,18 @@ import	org.tritonus.share.midi.TSequencer;
 public class AlsaSequencer
 	extends		TSequencer
 {
+	/**	The syncronization modes the sequencer can sync to.
+	 */
 	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
-	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
 
-	private static final ShortMessage	CLOCK_MESSAGE = new ShortMessage();
-	static
-	{
-		try
-		{
-			CLOCK_MESSAGE.setMessage(ShortMessage.TIMING_CLOCK);
-		}
-		catch (InvalidMidiDataException e)
-		{
-			if (TDebug.TraceSequencer || TDebug.TraceAllExceptions) { TDebug.out(e); }
-		}
-	}
+	/**	The syncronization modes the sequencer can send.
+	 */
+	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC, SyncMode.MIDI_SYNC};
+
+	/**	The ALSA event tag used for MIDI clock events
+	 */
+	private static final int	CLOCK_EVENT_TAG = 255;
+
 
 	private AlsaSeq			m_playbackAlsaSeq;
 	private AlsaSeq			m_recordingAlsaSeq;
@@ -81,6 +76,7 @@ public class AlsaSequencer
 	private Thread			m_loaderThread;
 	private Thread			m_syncThread;
 	private AlsaSeq.Event		m_queueControlEvent;
+	private AlsaSeq.Event		m_clockEvent;
 	private boolean			m_bRecording;
 	private Track			m_track;
 
@@ -191,6 +187,7 @@ public class AlsaSequencer
 		getPlaybackAlsaSeq().setQueueInfo(getQueue(), m_queueInfo);
 		m_playbackAlsaMidiOut = new AlsaMidiOut(getPlaybackAlsaSeq(), getPlaybackPort(), getQueue());
 		m_playbackAlsaMidiOut.setHandleMetaMessages(true);
+		getRecordingAlsaSeq().setQueueUsage(getQueue(), true);
 
 		// this establishes the subscription, too
 		AlsaMidiIn.AlsaMidiInListener	playbackListener = new PlaybackAlsaMidiInListener();
@@ -199,6 +196,17 @@ public class AlsaSequencer
 		m_playbackAlsaMidiIn.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): end"); }
 		m_queueControlEvent = new AlsaSeq.Event();
+		m_clockEvent = new AlsaSeq.Event();
+		m_clockEvent.setCommon(
+			AlsaSeq.SND_SEQ_EVENT_CLOCK,	// type
+			AlsaSeq.SND_SEQ_TIME_STAMP_TICK | AlsaSeq.SND_SEQ_TIME_MODE_ABS,
+			CLOCK_EVENT_TAG,	// tag
+			getQueue(),
+			0L,	// timestamp; not yet known
+			0,				// source client
+			getRecordingPort(),		// source port
+			AlsaSeq.SND_SEQ_ADDRESS_SUBSCRIBERS,	// dest client
+			AlsaSeq.SND_SEQ_ADDRESS_UNKNOWN);	// dest port
 	}
 
 
@@ -221,6 +229,8 @@ public class AlsaSequencer
 		m_playbackAlsaSeq = null;
 		m_queueControlEvent.free();
 		m_queueControlEvent = null;
+		m_clockEvent.free();
+		m_clockEvent = null;
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): end"); }
 	}
 
@@ -232,10 +242,13 @@ public class AlsaSequencer
 		// TODO: start may also be a re-start after pausing. In this case, the tempo shouldn't be altered
 		setTempoInMPQ(500000);
 		startQueue();
-//  		m_syncThread = new MasterSynchronizer();
-//  		m_syncThread.start();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
+		if (getSlaveSyncMode().equals(SyncMode.MIDI_SYNC))
+		{
+			m_syncThread = new MasterSynchronizer();
+			m_syncThread.start();
+		}
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): end"); }
 	}
 
@@ -245,12 +258,10 @@ public class AlsaSequencer
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): begin"); }
 		stopQueue();
+		// should be in base class?
 		stopRecording();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): end"); }
 	}
-
-
-
 
 
 
@@ -770,6 +781,9 @@ public class AlsaSequencer
 			{
 				// TDebug.out("AlsaSequencer.AlsaSequencerTransmitter.setReceiver(): trying to establish subscription");
 				m_bReceiverSubscribed = ((AlsaReceiver) receiver).subscribeTo(getPlaybackClient(), getPlaybackPort());
+				// TODO: similar subscription for the sequencer's own midi in listener!!
+				// this is necessary because sync messages are sent via the recording port
+				m_bReceiverSubscribed = ((AlsaReceiver) receiver).subscribeTo(getRecordingClient(), getRecordingPort());
 				// TDebug.out("AlsaSequencer.AlsaSequencerTransmitter.setReceiver(): subscription established: " + m_bReceiverSubscribed);
 			}
 		}
@@ -819,24 +833,21 @@ public class AlsaSequencer
 
 
 	// TODO: start/stop; on/off
-	// TODO: change to use AlsaSeq.Event directely
 	private class MasterSynchronizer
 		extends	Thread
 	{
-		public MasterSynchronizer()
-		{
-			// setPriority(10);
-		}
-
-
 		public void run()
 		{
+			long	lTickMin = getTickPosition();
 			long	lTickMax = getSequence().getTickLength();
+			// TODO: more precise calculation; use double, also for loop variable
 			long	lTickStep = getSequence().getResolution() / 24;
-			for (long lTick = 0; lTick < lTickMax; lTick += lTickStep)
+			for (long lTick = lTickMin; lTick < lTickMax; lTick += lTickStep)
 			{
-				// TDebug.out("MasterSynchronizer.run(): enqueueing clock message with tick " + lTick);
-				enqueueMessage(CLOCK_MESSAGE, lTick);
+				if (TDebug.TraceSequencer) { TDebug.out("MasterSynchronizer.run(): sending clock event with tick " + lTick); }
+				m_clockEvent.setTimestamp(lTick);
+				getRecordingAlsaSeq().eventOutput(m_clockEvent);
+				getRecordingAlsaSeq().drainOutput();
 			}
 		}
 	}
