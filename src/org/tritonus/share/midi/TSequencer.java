@@ -28,6 +28,7 @@ package	org.tritonus.share.midi;
 import	java.io.InputStream;
 import	java.io.IOException;
 
+import	java.util.BitSet;
 import	java.util.Collection;
 import	java.util.Iterator;
 import	java.util.Set;
@@ -82,6 +83,14 @@ public abstract class TSequencer
 	private Collection	m_slaveSyncModes;
 	private SyncMode	m_masterSyncMode;
 	private SyncMode	m_slaveSyncMode;
+	private BitSet		m_muteBitSet;
+	private BitSet		m_soloBitSet;
+
+	/**	Contains the enabled state of the tracks.
+		This BitSet holds the pre-calculated effect of mute and
+		solo status.
+	*/
+	private BitSet		m_enabledBitSet;
 
 
 	protected TSequencer(MidiDevice.Info info,
@@ -106,6 +115,10 @@ public abstract class TSequencer
 		{
 			m_slaveSyncMode = getSlaveSyncModes()[0];
 		}
+		m_muteBitSet = new BitSet();
+		m_soloBitSet = new BitSet();
+		m_enabledBitSet = new BitSet();
+		updateEnabled();
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): end"); }
 	}
 
@@ -305,19 +318,6 @@ public abstract class TSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoFactor(): end"); }
 		return m_fTempoFactor;
 	}
-
-
-
-	/**	Get the tempo of the native sequencer part.
-	 *	This method has to be defined by subclasses according
-	 *	to the native facilities they use for sequenceing.
-	 *	The implementation should not take into account the
-	 *	tempo factor. This is handled elsewhere.
-	 *
-	 *	@return the real tempo of the native sequencer in MPQ
-	 */
-	// TODO: no longer needed
-	protected abstract float getTempoImpl();
 
 
 
@@ -597,6 +597,131 @@ public abstract class TSequencer
 	{
 		SyncMode[]	syncModes = (SyncMode[]) m_slaveSyncModes.toArray();
 		return syncModes;
+	}
+
+
+
+	public boolean getTrackSolo(int nTrack)
+	{
+		boolean	bSoloed = false;
+		if (getSequence() != null)
+		{
+			if (nTrack < getSequence().getTracks().length)
+			{
+				bSoloed = m_soloBitSet.get(nTrack);
+			}
+		}
+		return bSoloed;
+	}
+
+
+
+	public void setTrackSolo(int nTrack, boolean bSolo)
+	{
+		if (getSequence() != null)
+		{
+			if (nTrack < getSequence().getTracks().length)
+			{
+				boolean	bOldState = m_soloBitSet.get(nTrack);
+				if (bSolo != bOldState)
+				{
+					if (bSolo)
+					{
+						m_soloBitSet.set(nTrack);
+					}
+					else
+					{
+						m_soloBitSet.clear(nTrack);
+					}
+					updateEnabled();
+					setTrackSoloImpl(nTrack, bSolo);
+				}
+			}
+		}
+	}
+
+
+
+	protected void setTrackSoloImpl(int nTrack, boolean bSolo)
+	{
+	}
+
+
+
+	public boolean getTrackMute(int nTrack)
+	{
+		boolean	bMuted = false;
+		if (getSequence() != null)
+		{
+			if (nTrack < getSequence().getTracks().length)
+			{
+				bMuted = m_muteBitSet.get(nTrack);
+			}
+		}
+		return bMuted;
+	}
+
+
+
+	public void setTrackMute(int nTrack, boolean bMute)
+	{
+		if (getSequence() != null)
+		{
+			if (nTrack < getSequence().getTracks().length)
+			{
+				boolean	bOldState = m_muteBitSet.get(nTrack);
+				if (bMute != bOldState)
+				{
+					if (bMute)
+					{
+						m_muteBitSet.set(nTrack);
+					}
+					else
+					{
+						m_muteBitSet.clear(nTrack);
+					}
+					updateEnabled();
+					setTrackMuteImpl(nTrack, bMute);
+				}
+			}
+		}
+	}
+
+
+	protected void setTrackMuteImpl(int nTrack, boolean bMute)
+	{
+	}
+
+
+
+	private void updateEnabled()
+	{
+		boolean	bSoloExists = m_soloBitSet.length() > 0;
+		if (bSoloExists)
+		{
+			m_enabledBitSet = (BitSet) m_soloBitSet.clone();
+		}
+		else
+		{
+			for (int i = 0; i < m_muteBitSet.size(); i++)
+			{
+				if (m_muteBitSet.get(i))
+				{
+					m_enabledBitSet.clear(i);
+				}
+				else
+				{
+					m_enabledBitSet.set(i);
+				}
+			}
+		}
+	}
+
+
+
+	protected boolean isTrackEnabled(int nTrack)
+	{
+		return m_enabledBitSet.get(nTrack);
 	}
 }
 
