@@ -2,6 +2,8 @@
  *	AlsaSeqTestCase.java
  */
 
+package org.tritonus.test.alsa;
+
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
 
 

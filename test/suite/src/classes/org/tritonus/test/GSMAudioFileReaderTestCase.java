@@ -1,5 +1,5 @@
 /*
- *	AlsaTestSuite.java
+ *	GSMAudioFileReaderTestCase.java
  */
 
 /*
@@ -20,30 +20,40 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-import	junit.framework.Test;
-import	junit.framework.TestSuite;
+package org.tritonus.test;
+
+import	java.io.File;
+import	java.io.FileInputStream;
+import	java.io.InputStream;
+
+import	java.net.URL;
+
+import	java.util.MissingResourceException;
+import	java.util.ResourceBundle;
+
+import	javax.sound.sampled.AudioSystem;
+import	javax.sound.sampled.AudioFileFormat;
+import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.spi.AudioFileReader;
+
+import	junit.framework.TestCase;
+
+import	org.tritonus.share.sampled.AudioFileTypes;
+import	org.tritonus.share.sampled.Encodings;
 
 
 
-public class AlsaTestSuite
+public class GSMAudioFileReaderTestCase
+extends BaseAudioFileReaderTestCase
 {
-	public static Test suite()
+	public GSMAudioFileReaderTestCase(String strName)
 	{
-		TestSuite	suite = new TestSuite();
-		suite.addTest(new TestSuite(AlsaCtlTestCase.class));
-		suite.addTest(new TestSuite(AlsaMixerTestCase.class));
-		return suite;
-	}
-
-
-
-	public static void main(String[] args)
-	{
-		Test	suite = suite();
-		junit.textui.TestRunner.run(suite);
+		super(strName);
+		setResourcePrefix("gsm");
+		setCheckRealLengths(false);
 	}
 }
 
 
 
-/*** AlsaTestSuite.java ***/
+/*** GSMAudioFileReaderTestCase.java ***/

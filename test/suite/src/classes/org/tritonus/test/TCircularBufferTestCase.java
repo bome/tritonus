@@ -1,5 +1,5 @@
 /*
- *	WaveAudioFileReaderTestCase.java
+ *	TCircularBufferTestCase.java
  */
 
 /*
@@ -20,38 +20,37 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
 
-import	java.io.File;
-import	java.io.FileInputStream;
-import	java.io.InputStream;
+import junit.framework.TestCase;
 
-import	java.net.URL;
-
-import	java.util.MissingResourceException;
-import	java.util.ResourceBundle;
-
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.spi.AudioFileReader;
-
-import	junit.framework.TestCase;
-
-import	org.tritonus.share.sampled.AudioFileTypes;
-import	org.tritonus.share.sampled.Encodings;
+import org.tritonus.share.TCircularBuffer;
 
 
 
-public class WaveAudioFileReaderTestCase
-extends BaseAudioFileReaderTestCase
+public class TCircularBufferTestCase
+extends TestCase
 {
-	public WaveAudioFileReaderTestCase(String strName)
+	private static final boolean	DEBUG = false;
+
+
+
+	public TCircularBufferTestCase(String strName)
 	{
 		super(strName);
-		setResourcePrefix("wave");
+	}
+
+
+
+	public void testBufferSize()
+	{
+		int	nSize = 45678;
+		TCircularBuffer	buffer = new TCircularBuffer(
+			nSize, false, false, null);
+		assertEquals("buffer size", nSize, buffer.availableWrite());
 	}
 }
 
 
 
-/*** WaveAudioFileReaderTestCase.java ***/
+/*** TCircularBufferTestCase.java ***/

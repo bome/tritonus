@@ -1,5 +1,5 @@
 /*
- *	AuAudioFileReaderTestCase.java
+ *	AuZeroDataLengthAudioFileReaderTestCase.java
  */
 
 /*
@@ -20,6 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
 
 import	java.io.File;
 import	java.io.FileInputStream;
@@ -42,16 +43,16 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-public class AuAudioFileReaderTestCase
+public class AuZeroDataLengthAudioFileReaderTestCase
 extends BaseAudioFileReaderTestCase
 {
-	public AuAudioFileReaderTestCase(String strName)
+	public AuZeroDataLengthAudioFileReaderTestCase(String strName)
 	{
 		super(strName);
-		setResourcePrefix("au");
+		setResourcePrefix("au_zero_data_length");
 	}
 }
 
 
 
-/*** AuAudioFileReaderTestCase.java ***/
+/*** AuZeroDataLengthAudioFileReaderTestCase.java ***/

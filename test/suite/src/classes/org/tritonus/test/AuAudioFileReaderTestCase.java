@@ -1,5 +1,5 @@
 /*
- *	GSMAudioFileReaderTestCase.java
+ *	AuAudioFileReaderTestCase.java
  */
 
 /*
@@ -20,6 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
 
 import	java.io.File;
 import	java.io.FileInputStream;
@@ -42,17 +43,16 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-public class GSMAudioFileReaderTestCase
+public class AuAudioFileReaderTestCase
 extends BaseAudioFileReaderTestCase
 {
-	public GSMAudioFileReaderTestCase(String strName)
+	public AuAudioFileReaderTestCase(String strName)
 	{
 		super(strName);
-		setResourcePrefix("gsm");
-		setCheckRealLengths(false);
+		setResourcePrefix("au");
 	}
 }
 
 
 
-/*** GSMAudioFileReaderTestCase.java ***/
+/*** AuAudioFileReaderTestCase.java ***/

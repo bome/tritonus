@@ -1,5 +1,5 @@
 /*
- *	AuZeroDataLengthAudioFileReaderTestCase.java
+ *	VorbisAudioFileReaderTestCase.java
  */
 
 /*
@@ -20,6 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
 
 import	java.io.File;
 import	java.io.FileInputStream;
@@ -42,16 +43,17 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-public class AuZeroDataLengthAudioFileReaderTestCase
+public class VorbisAudioFileReaderTestCase
 extends BaseAudioFileReaderTestCase
 {
-	public AuZeroDataLengthAudioFileReaderTestCase(String strName)
+	public VorbisAudioFileReaderTestCase(String strName)
 	{
 		super(strName);
-		setResourcePrefix("au_zero_data_length");
+		setResourcePrefix("vorbis");
+		setCheckRealLengths(false);
 	}
 }
 
 
 
-/*** AuZeroDataLengthAudioFileReaderTestCase.java ***/
+/*** VorbisAudioFileReaderTestCase.java ***/

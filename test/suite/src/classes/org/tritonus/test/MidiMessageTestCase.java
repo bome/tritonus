@@ -20,6 +20,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
+
 import junit.framework.TestCase;
 
 import javax.sound.midi.MidiMessage;

@@ -1,5 +1,5 @@
 /*
- *	VorbisAudioFileReaderTestCase.java
+ *	Mp3AudioFileReaderTestCase.java
  */
 
 /*
@@ -20,6 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
 
 import	java.io.File;
 import	java.io.FileInputStream;
@@ -42,17 +43,17 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-public class VorbisAudioFileReaderTestCase
+public class Mp3AudioFileReaderTestCase
 extends BaseAudioFileReaderTestCase
 {
-	public VorbisAudioFileReaderTestCase(String strName)
+	public Mp3AudioFileReaderTestCase(String strName)
 	{
 		super(strName);
-		setResourcePrefix("vorbis");
+		setResourcePrefix("mp3");
 		setCheckRealLengths(false);
 	}
 }
 
 
 
-/*** VorbisAudioFileReaderTestCase.java ***/
+/*** Mp3AudioFileReaderTestCase.java ***/

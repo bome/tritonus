@@ -1,5 +1,5 @@
 /*
- *	Mp3AudioFileReaderTestCase.java
+ *	WaveAudioFileReaderTestCase.java
  */
 
 /*
@@ -20,6 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test;
 
 import	java.io.File;
 import	java.io.FileInputStream;
@@ -42,17 +43,16 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-public class Mp3AudioFileReaderTestCase
+public class WaveAudioFileReaderTestCase
 extends BaseAudioFileReaderTestCase
 {
-	public Mp3AudioFileReaderTestCase(String strName)
+	public WaveAudioFileReaderTestCase(String strName)
 	{
 		super(strName);
-		setResourcePrefix("mp3");
-		setCheckRealLengths(false);
+		setResourcePrefix("wave");
 	}
 }
 
 
 
-/*** Mp3AudioFileReaderTestCase.java ***/
+/*** WaveAudioFileReaderTestCase.java ***/

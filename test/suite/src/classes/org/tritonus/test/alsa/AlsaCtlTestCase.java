@@ -20,6 +20,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+package org.tritonus.test.alsa;
+
 import	junit.framework.TestCase;
 
 import	org.tritonus.lowlevel.alsa.AlsaCtl;
