@@ -6,6 +6,7 @@ com
 config.status
 config.log
 config.cache
+configure
 *.jar
 dist
 build
