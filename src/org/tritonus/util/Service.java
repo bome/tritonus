@@ -89,6 +89,10 @@ public class Service
 				{
 					TDebug.out(e);
 				}
+				catch (Throwable e)
+				{
+					TDebug.out(e);
+				}
 			}
 		}
 		return providers;
