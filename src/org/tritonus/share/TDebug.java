@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,12 +18,9 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
-
 package	org.tritonus.share;
-
 
 import	java.io.PrintStream;
 import  java.util.StringTokenizer;
@@ -93,6 +89,11 @@ public class TDebug
 	// misc
 	public static boolean	TraceCdda = getBooleanProperty("TraceCdda");
 	public static boolean	TraceCddaNative = getBooleanProperty("TraceCddaNative");
+
+	// mmapi
+	public static boolean	TraceManager = getBooleanProperty("TraceManager");
+	public static boolean	TraceToneGenerator = getBooleanProperty("TraceToneGenerator");
+	public static boolean	TraceDataSource = getBooleanProperty("TraceDataSource");
 
 
 
