@@ -49,24 +49,6 @@ static void _v_writestring(oggpack_buffer *o,char *s, int bytes){
   }
 }
 
-static void _v_readstring(oggpack_buffer *o,char *buf,int bytes){
-  while(bytes--){
-    *buf++=oggpack_read(o,8);
-  }
-}
-
-
-/* This is more or less the same as strncasecmp - but that doesn't exist
- * everywhere, and this is a fairly trivial function, so we include it */
-static int tagcompare(const char *s1, const char *s2, int n){
-  int c=0;
-  while(c < n){
-    if(toupper(s1[c]) != toupper(s2[c]))
-      return !0;
-    c++;
-  }
-  return 0;
-}
 
 
 /* blocksize 0 is guaranteed to be short, 1 is guarantted to be long.
