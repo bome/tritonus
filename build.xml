@@ -1,9 +1,10 @@
+<?xml version="1.0"?>
 <project name="tritonus" default="dist" basedir=".">
   <target name="init">
     <tstamp/>
-    <property name="src" value="src" />
-    <property name="build" value="build" />
-    <property name="dist"  value="dist" />
+    <property name="src" value="${basedir}/src" />
+    <property name="build" value="${basedir}/build" />
+    <property name="dist"  value="${basedir}/dist" />
     <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar ../../javalayer/dist/javalayer.jar" />
     <!--
     Remove the next line if you don't have jikes.
@@ -20,16 +21,19 @@
     <available
 	       classname="javazoom.jl.decoder.Decoder"
 	       property="javalayer-present" />
+    <available
+	       classname="com.jcraft.jorbis.JorbisException"
+	       property="jorbis-present" />
 
     <!--
     This assumes that the javalayer code is in a directory
     'javalayer' that is parallel to 'tritonus'. If not, change
     the value of the property.
     -->
-    <property name="javalayer-path" value="../javalayer" />
+    <!--property name="javalayer-path" value="../javalayer" />
     <available
 	       file="${javalayer-path}/build.xml"
-	       property="javalayer-source-present" />
+	       property="javalayer-source-present" /-->
 
     <property
 	      name="java_ext_path"
@@ -40,27 +44,36 @@
     <mkdir dir="${build}" />
   </target>
 
-  <target name="build-javalayer"
+  <!--target name="build-javalayer"
 	  depends="init"
 	  if="javalayer-source-present">
     <ant dir="${javalayer-path}" />
-  </target>
+  </target-->
 
   <target name="compile" depends="prepare">
     <javac srcdir="${src}"
 	   depend="yes"
 	   destdir="${build}"
-	   includes="javax/sound/**,org/tritonus/**"
-	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/lame/,org/tritonus/midi/device/midishare/**" />
+	   includes="javax/sound/,org/tritonus/"
+	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/lame/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" />
   </target>
 
   <target name="compile-javalayer-dependent"
 	  depends="prepare"
-	  if="javalayer-source-present">
+	  if="javalayer-present">
     <javac srcdir="${src}"
 	   destdir="${build}"
 	   depend="yes"
-	   includes="org/tritonus/sampled/convert/javalayer/**" />
+	   includes="org/tritonus/sampled/convert/javalayer/" />
+  </target>
+
+  <target name="compile-jorbis-dependent"
+	  depends="prepare"
+	  if="jorbis-present">
+    <javac srcdir="${src}"
+	   destdir="${build}"
+	   depend="yes"
+	   includes="org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/" />
   </target>
 
   <target name="compile-midishare-dependent"
@@ -68,7 +81,7 @@
 	  if="midishare-present">
     <javac srcdir="${src}"
 	   destdir="${build}"
-	   includes="org/tritonus/midi/device/midishare/**" />
+	   includes="org/tritonus/midi/device/midishare/" />
   </target>
 
   <target name="compile-libs"
@@ -100,12 +113,12 @@
   </target>
 
   <target name="dist"
-	  depends="build-javalayer,compile,compile-javalayer-dependent,compile-midishare-dependent,compile-libs" >
+	  depends="compile,compile-javalayer-dependent,compile-jorbis-dependent,compile-midishare-dependent,compile-libs" >
     <mkdir dir="${dist}" />
 
     <jar jarfile="${dist}/tritonus_core.jar"
 	 basedir="${build}"
-	 includes="javax/sound/**,org/tritonus/core/**" />
+	 includes="javax/sound/,org/tritonus/core/" />
 
     <jar jarfile="${dist}/tritonus_share.jar"
 	 basedir="${build}"
