@@ -37,6 +37,7 @@ PACKSRCDIR_MAIN = javax/sound org/tritonus com/jcraft/jesd
 PACKSRCDIR_JL = javazoom
 LIBDEST=tritonus.jar
 LIBDEST_JL=javalayer.jar
+LIBDEST_MP3SP=mp3sp.jar
 CONFIGFILENAME=Configuration.properties
 CONFIGFILE=$(SRCDIR_PRIV)/$(CONFIGFILENAME)
 CONFIGFILE2=$(OBJDIR_PRIV)/$(CONFIGFILENAME)
@@ -129,9 +130,13 @@ $(OBJDIR_PRIV)/sampled/convert/TMatrixFormatConversionProvider.class \
 $(OBJDIR_PRIV)/sampled/convert/TSimpleFormatConversionProvider.class \
 $(OBJDIR_PRIV)/sampled/convert/TFormatConversionProvider.class \
 $(OBJDIR_PRIV)/sampled/convert/TAsynchronousFilteredAudioInputStream.class \
+$(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider\$$DecodedMpegAudioInputStream.class \
+$(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider\$$DecodedMpegAudioInputStream\$$DMAISObuffer.class \
 $(OBJDIR_PRIV)/TDebug.class \
+$(OBJDIR_PRIV)/TDebug\$$AssertException.class \
 $(OBJDIR_PRIV)/util/ArraySet.class \
-$(OBJDIR_PRIV)/util/TCircularBuffer.class
+$(OBJDIR_PRIV)/util/TCircularBuffer.class \
+$(OBJDIR_PRIV)/util/TCircularBuffer\$$Trigger.class
 
 
 #----------------- rules -------------------
@@ -159,6 +164,13 @@ $(CONFIGFILE2): $(CONFIGFILE)
 	mkdir -p $(OBJDIR_PRIV)
 	cp $(CONFIGFILE) $(CONFIGFILE2)
 
+
+.PHONY: mp3jars
+mp3jars:	$(LIBDEST_JL) $(LIBDEST_MP3SP)
+#	mkdir -p META-INF/services
+#	cp src/META-INF/Services/javax.* META-INF/services/
+#	jar cf mp3.jar org/tritonus javazoom META-INF/
+
 $(LIBDEST_JL):	$(OBJ)
 	cp src/javazoom/jl/decoder/*.ser javazoom/jl/decoder/
 	jar cf $(LIBDEST_JL) $(PACKSRCDIR_JL)
@@ -166,15 +178,15 @@ $(LIBDEST_JL):	$(OBJ)
 #$(LIBDEST_JL):	../javalayer/$(LIBDEST_JL)
 #	cp ../javalayer/$(LIBDEST_JL) .
 
-.PHONY: mp3jars
-mp3jars:	all
-	mkdir -p META-INF/services
-	cp src/META-INF/Services/javax.* META-INF/services/
-	jar cf mp3.jar org/tritonus javazoom META-INF/
+#.PHONY: mp3jars
+#mp3jars:	all
+#	mkdir -p META-INF/services
+#	cp src/META-INF/Services/javax.* META-INF/services/
+#	jar cf mp3.jar org/tritonus javazoom META-INF/
 
-.PHONY: mp3sp
-mp3sp:	all
-	jar cf mp3sp.jar $(MP3SP_OBJ)
+
+$(LIBDEST_MP3SP):	$(OBJ)
+	jar cf $(LIBDEST_MP3SP) $(MP3SP_OBJ) -C src META-INF/services/
 
 .PHONY: doc
 doc:	all 
