@@ -30,8 +30,12 @@ import	java.net.URL;
 import	java.net.URLConnection;
 import	java.net.MalformedURLException;
 
+import	java.util.Enumeration;
+import	java.util.Hashtable;
+
 import	javax.microedition.media.Control;
 import	javax.microedition.media.MediaException;
+import	javax.microedition.media.control.MetaDataControl;
 import	javax.microedition.media.protocol.ContentDescriptor;
 import	javax.microedition.media.protocol.DataSource;
 import	javax.microedition.media.protocol.SourceStream;
@@ -54,7 +58,8 @@ extends DataSource
 		throws MediaException
 	{
 		super(strLocator);
-		m_controllable = new TDataSourceControllable(EMPTY_CONTROL_ARRAY);
+		Control[]	aControls = new Control[]{new TMetaDataControl()};
+		m_controllable = new TDataSourceControllable(aControls);
 	}
 
 
@@ -246,6 +251,66 @@ extends DataSource
 		protected boolean isStateLegalForControls()
 		{
 			return TDataSource.this.isConnected();
+		}
+	}
+
+
+	protected class TMetaDataControl
+	implements MetaDataControl
+	{
+		private Hashtable	m_data;
+
+
+		public TMetaDataControl()
+		{
+			m_data = new Hashtable();
+		}
+
+
+
+		public TMetaDataControl(String strAuthor,
+					String strCopyright,
+					String strDate,
+					String strTitle)
+		{
+			this();
+			addField(AUTHOR_KEY, strAuthor);
+			addField(COPYRIGHT_KEY, strCopyright);
+			addField(DATE_KEY, strDate);
+			addField(TITLE_KEY, strTitle);
+		}
+
+
+
+		protected void addField(String strKey, String strValue)
+		{
+			m_data.put(strKey, strValue);
+		}
+
+
+
+		public String[] getKeys()
+		{
+			String[]	astrKeys = new String[m_data.size()];
+			Enumeration	enum = m_data.keys();
+			int		nIndex = 0;
+			while (enum.hasMoreElements())
+			{
+				astrKeys[nIndex] = (String) enum.nextElement();
+				nIndex++;
+			}
+			return astrKeys;
+		}
+
+
+		public String getKeyValue(String strKey)
+		{
+			String	strValue = (String) m_data.get(strKey);
+			if (strValue == null)
+			{
+				throw new IllegalArgumentException("key is null or invalid");
+			}
+			return strValue;
 		}
 	}
 }
