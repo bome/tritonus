@@ -798,7 +798,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
-	pQueueTimer = getQueueTimerNativeHandle(env, queueTimerObj);
+	// TODO: implement timer API, then re-enable
+	pQueueTimer = NULL;	// getQueueTimerNativeHandle(env, queueTimerObj);
 	nReturn = snd_seq_get_queue_timer(seq, nQueue, pQueueTimer);
 	if (nReturn < 0)
 	{
@@ -825,7 +826,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
-	pQueueTimer = getQueueTimerNativeHandle(env, queueTimerObj);
+	// TODO:
+	pQueueTimer = NULL;	// getQueueTimerNativeHandle(env, queueTimerObj);
 	nReturn = snd_seq_set_queue_timer(seq, nQueue, pQueueTimer);
 	if (nReturn < 0)
 	{
