@@ -50,7 +50,27 @@ public class Alsa
 
 	public static void loadNativeLibrary()
 	{
-		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibrary(): loading native library tritonusalsa"); }
+		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibrary(): begin"); }
+
+		if (! isLibraryAvailable())
+		{
+			loadNativeLibraryImpl();
+		}
+		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibrary(): end"); }
+	}
+
+
+
+	/** Load the native library for alsa.
+
+	This method actually does the loading of the library.  Unlike
+	{@link loadNativeLibrary() loadNativeLibrary()}, it does not
+	check if the library is already loaded.
+
+	 */
+	private static void loadNativeLibraryImpl()
+	{
+		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibraryImpl(): loading native library tritonusalsa"); }
 		try
 		{
 			System.loadLibrary("tritonusalsa");
@@ -61,8 +81,9 @@ public class Alsa
 			if (TDebug.TraceAlsaNative) { TDebug.out(e); }
 			throw e;
 		}
-		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibrary(): loaded"); }
+		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibraryImpl(): loaded"); }
 	}
+
 
 
 	/**	Returns whether the libraries are installed correctly.
