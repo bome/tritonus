@@ -58,7 +58,10 @@ extends DataSource
 		throws MediaException
 	{
 		super(strLocator);
-		Control[]	aControls = new Control[]{new TMetaDataControl()};
+		Control[]	aControls = new Control[]
+			{
+				new TMetaDataControl("unknown", "unknown", "unknown", "unknown")
+			};
 		m_controllable = new TDataSourceControllable(aControls);
 	}
 
@@ -303,12 +306,17 @@ extends DataSource
 		}
 
 
+
 		public String getKeyValue(String strKey)
 		{
+			if (strKey == null)
+			{
+				throw new IllegalArgumentException("key is null");
+			}
 			String	strValue = (String) m_data.get(strKey);
 			if (strValue == null)
 			{
-				throw new IllegalArgumentException("key is null or invalid");
+				throw new IllegalArgumentException("key is invalid");
 			}
 			return strValue;
 		}
