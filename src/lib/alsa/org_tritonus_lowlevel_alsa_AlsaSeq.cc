@@ -567,6 +567,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue
 	{
 		throwRuntimeException(env, "snd_seq_alloc_queue() failed");
 	}
+// 	snd_seq_queue_timer_t*	timer;
+// 	const snd_timer_id_t*	id;
+// 	snd_seq_queue_timer_alloca(&timer);
+// 	snd_seq_get_queue_timer(seq, nQueue, timer);
+// 	id = snd_seq_queue_timer_get_id(timer);
+// 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): timer resolution: %d\n", snd_seq_queue_timer_get_resolution(timer)); }
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): end\n"); }
 	return (jint) nQueue;
 }
