@@ -223,15 +223,22 @@
     <!-- TODO: SRC -->
 
     <!-- CDDA: -->
-    <jar	jarfile="${dist}/tritonus_cdda.jar" >
+    <jar jarfile="${dist}/tritonus_cdda.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/lowlevel/cdda/" />
 	<include name="org/tritonus/sampled/cdda/" />
       </fileset>
     </jar>
 
+    <!-- DSP: -->
+    <jar jarfile="${dist}/tritonus_dsp.jar">
+      <fileset dir="${build}">
+	<include name="org/tritonus/lowlevel/dsp/" />
+      </fileset>
+    </jar>
+
     <!-- REMAINING:: -->
-    <jar	jarfile="${dist}/tritonus_remaining.jar" >
+    <jar jarfile="${dist}/tritonus_remaining.jar" >
       <fileset dir="${build}" >
 	<include name="org/tritonus/midi/file/" />
 	<include name="org/tritonus/sampled/file/*.class" />
@@ -367,24 +374,6 @@
       <fileset dir="${src.classes}">
 	<include name="org/tritonus/saol/sablecc/lexer/lexer.dat" />
 	<include name="org/tritonus/saol/sablecc/parser/parser.dat" />
-      </fileset>
-    </jar>
-  </target>
-
-    <!-- for dsp -->
-  <target name="compile-dsp" depends="prepare">
-    <javac srcdir="${src}/classes"
-	   depend="yes"
-	   destdir="${build}"
-	   includes="org/tritonus/lowlevel/dsp/" />
-  </target>
-
-  <target name="dist-dsp"
-	  depends="compile-dsp" >
-
-    <jar jarfile="${dist}/tritonus_dsp.jar">
-      <fileset dir="${build}">
-	<include name="org/tritonus/lowlevel/dsp/" />
       </fileset>
     </jar>
   </target>
