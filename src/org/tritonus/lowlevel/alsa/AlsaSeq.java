@@ -117,9 +117,7 @@ public class AlsaSeq
 	public static final int	SND_SEQ_EVENT_PORT_EXIT =	64;	/* port was deleted from system */
 	public static final int	SND_SEQ_EVENT_PORT_CHANGE =	65;	/* port status/info has changed */
 	public static final int	SND_SEQ_EVENT_PORT_SUBSCRIBED =	66;	/* read port is subscribed */
-	public static final int	SND_SEQ_EVENT_PORT_USED =	67;	/* write port is subscribed */
-	public static final int	SND_SEQ_EVENT_PORT_UNSUBSCRIBED =	68;	/* read port is released */
-	public static final int	SND_SEQ_EVENT_PORT_UNUSED =	69;	/* write port is released */
+	public static final int	SND_SEQ_EVENT_PORT_UNSUBSCRIBED =	67;	/* read port is released */
 
 /* 70-79: synthesizer events
  * event data type = snd_seq_eve_sample_control_t
@@ -187,21 +185,6 @@ public class AlsaSeq
 	public static final int	SND_SEQ_EVENT_USR_VAR3 =	138;
 	public static final int	SND_SEQ_EVENT_USR_VAR4 =	139;
 
-/* 140-149: IPC shared memory events (*NOT SUPPORTED YET*)
- * event data type = snd_seq_ev_ipcshm
- * (SND_SEQ_EVENT_LENGTH_VARIPC must be set)
- */
-	public static final int	SND_SEQ_EVENT_IPCSHM =		140;
-/* 141-144: reserved */
-	public static final int	SND_SEQ_EVENT_USR_VARIPC0 =	145;
-	public static final int	SND_SEQ_EVENT_USR_VARIPC1 =	146;
-	public static final int	SND_SEQ_EVENT_USR_VARIPC2 =	147;
-	public static final int	SND_SEQ_EVENT_USR_VARIPC3 =	148;
-	public static final int	SND_SEQ_EVENT_USR_VARIPC4 =	149;
-
-/* 150-191: reserved */
-
-/* 192-254: hardware specific events */
 
 /* 255: special event */
 	public static final int	SND_SEQ_EVENT_NONE =		255;
@@ -248,13 +231,16 @@ public class AlsaSeq
 
 
 /* Flush mode flags */
-	public static final int	SND_SEQ_REMOVE_DEST =		(1<<0);	/* Restrict by destination q:client:port */
-	public static final int	SND_SEQ_REMOVE_DEST_CHANNEL =	(1<<1);	/* Restrict by channel */
-	public static final int	SND_SEQ_REMOVE_TIME_BEFORE =	(1<<2);	/* Restrict to before time */
-	public static final int	SND_SEQ_REMOVE_TIME_AFTER =	(1<<3);	/* Restrict to time or after */
-	public static final int	SND_SEQ_REMOVE_EVENT_TYPE =	(1<<4);	/* Restrict to event type */
-	public static final int	SND_SEQ_REMOVE_IGNORE_OFF = 	(1<<5);	/* Do not flush off events */
-	public static final int	SND_SEQ_REMOVE_TAG_MATCH = 	(1<<6);	/* Restrict to events with given tag */
+	public static final int	SND_SEQ_REMOVE_INPUT =		(1<<0);	/* Restrict by destination q:client:port */
+	public static final int	SND_SEQ_REMOVE_OUTPUT =		(1<<1);	/* Restrict by channel */
+	public static final int	SND_SEQ_REMOVE_DEST =		(1<<2);	/* Restrict by destination q:client:port */
+	public static final int	SND_SEQ_REMOVE_DEST_CHANNEL =	(1<<3);	/* Restrict by channel */
+	public static final int	SND_SEQ_REMOVE_TIME_BEFORE =	(1<<4);	/* Restrict to before time */
+	public static final int	SND_SEQ_REMOVE_TIME_AFTER =	(1<<5);	/* Restrict to time or after */
+	public static final int	SND_SEQ_REMOVE_TIME_TICK =	(1<<6);	/* Restrict to time or after */
+	public static final int	SND_SEQ_REMOVE_EVENT_TYPE =	(1<<7);	/* Restrict to event type */
+	public static final int	SND_SEQ_REMOVE_IGNORE_OFF = 	(1<<8);	/* Do not flush off events */
+	public static final int	SND_SEQ_REMOVE_TAG_MATCH = 	(1<<9);	/* Restrict to events with given tag */
 
 	/* known port numbers */
 	public static final int SND_SEQ_PORT_SYSTEM_TIMER =	0;
@@ -544,6 +530,35 @@ public class AlsaSeq
 
 
 
+	/**	Get the queue usage flag.
+		Calls snd_seq_get_queue_usage().
+
+		@param nQueue a queue number that has previously been
+		allocated with allocQueue().
+
+		@return true if the client is allowed to access the queue.
+		false otherwise.
+	*/
+	public native boolean getQueueUsage(int nQueue);
+
+
+
+	/**	Set the queue usage flag.
+		Calls snd_seq_set_queue_usage().
+
+		@param nQueue a queue number that has previously been
+		allocated with allocQueue().
+
+		@param bUsageAllowed true to allow the client access to this
+		queue. false to deny it.
+
+		@return 0 if successful. A negative
+		value otherwise.
+	*/
+	public native int setQueueUsage(int nQueue, boolean bUsageAllowed);
+
+
+
 	/**	Get the queue information.
 		This method fills a QueueInfo instance with information
 		from the given queue. Internally, snd_seq_get_queue_info()
@@ -800,6 +815,8 @@ public class AlsaSeq
 
 
 		public native void setCommon(int nType, int nFlags, int nTag, int nQueue, long lTimestamp, int nSourceClient, int nSourcePort, int nDestClient, int nDestPort);
+
+		public native void setTimestamp(long lTimestamp);
 
 		public native void setNote(int nChannel, int nKey, int nVelocity, int nOffVelocity, int nDuration);
 		public native void setControl(int nChannel, int nParam, int nValue);
