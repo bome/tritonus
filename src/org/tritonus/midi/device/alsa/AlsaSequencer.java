@@ -255,50 +255,72 @@ public class AlsaSequencer
 
 	public long getTickPosition()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTickPosition(): begin"); }
+		long lPosition;
 		if (isOpen())
 		{
-			return m_controlAlsaSeq.getQueuePositionTick(getQueue());
+			lPosition = m_controlAlsaSeq.getQueuePositionTick(getQueue());
 		}
 		else
 		{
-			return 0;
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTickPosition(): sequencer not open, returning 0"); }
+			lPosition = 0;
 		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTickPosition(): end"); }
+		return lPosition;
 	}
 
 
 
 	public void setTickPosition(long lTick)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): begin"); }
 		if (isOpen())
 		{
 			m_controlAlsaSeq.setQueuePositionTick(getControlPort(), getQueue(), lTick);
 		}
+		else
+		{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): ignored because sequencer is not open"); }
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): end"); }
 	}
 
 
 
 	public long getMicrosecondPosition()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getMicrosecondPosition(): begin"); }
+		long	lPosition;
 		if (isOpen())
 		{
 			long	lNanoSeconds = m_controlAlsaSeq.getQueuePositionTime(getQueue()) / 1000;
-			return lNanoSeconds / 1000;
+			lPosition = lNanoSeconds / 1000;
 		}
 		else
 		{
-			return 0;
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getMicrosecondPosition(): sequencer not open, returning 0"); }
+			lPosition = 0;
 		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getMicrosecondPosition(): end"); }
+		return lPosition;
 	}
 
 
 
 	public void setMicrosecondPosition(long lMicroseconds)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setMicrosecondPosition(): begin"); }
 		if (isOpen())
 		{
 			long	lNanoSeconds = lMicroseconds * 1000;
 			m_controlAlsaSeq.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
 		}
+		else
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setMicrosecondPosition(): ignoring because sequencer is not open"); }
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setMicrosecondPosition(): end"); }
 	}
 
 
