@@ -38,7 +38,7 @@ public class TSettings
 	public static boolean		SHOW_ACCESS_CONTROL_EXCEPTIONS = false;
 	private static final String	PROPERTY_PREFIX = "tritonus.";
 
-	// meta-general
+
 	public static boolean	AlsaUsePlughw = getBooleanProperty("AlsaUsePlughw");
 
 
