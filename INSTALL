@@ -1,16 +1,25 @@
 Installing instructions for Tritonus, version 0.3.1
 
 First: do you really need to build Tritonus yourself?
-TODO: continue
+For several common cases, this is not necessary. These cases are:
+- you want to do mp3 decoding (all platforms)
+- you want to do mp3 encoding (Linux i386, Windows)
+- you want to do GSM 06.10 decoding or encoding (all platforms)
+- you want to do CD digital audio extraction (Linux i386)
+For these cases, precompiled components are available. Go to:
+http://www.tritonus.org/plugins.html
 
 
 What you need
 =============
 
-- jdk 1.4.x, 1.3.x or jdk1.2.x for Linux. Testing was done with the
-Sun jdk1.4.0. Other versions may work.
-If you only want to build pure-java (not Linux specific)components, you
-can use a jdk with the above versions on any platform.
+- jdk 1.4.x, 1.3.x or jdk1.2.x. Testing was done with the
+Sun jdk1.4.0-b92. Other versions may work.
+If you want to compile Linux specific components, it is recommanded to do
+it on a Linux system, so you need a jdk for Linux. Cross-compiling has not
+been tested.
+If you only want to build pure-java (not Linux specific) components, you
+can use a jdk on any platform.
 Tritonus does not work with jdk1.1.X.
 There are no experiences with gcj and kaffe. Reports are welcome.
 
@@ -31,6 +40,7 @@ files for libesd.
 from http://www.alsa-project.org/. It is recommended to use ALSA if
 you want to get high-performance, low-latency operation, or reliable
 full-duplex. It is a necessity if you want professional-grade MIDI support.
+Testing was done with ALSA 0.9.0rc2. 0.9.0rc3 has been reported to work.
 
   STILL ANOTHER NOTE: currently, Tritonus' ALSA handling does not do
   software mixing. This means that for normal JS operation (multiple
@@ -134,8 +144,8 @@ working correctely in the native Java Sound implementation.
 
 2. Completely replace the Java Sound implementation by Tritonus.
 
-Since 1.3 and 1.4 behave sligtly different w.r.t. this issue, there
-are even more pitfalls.
+Since 1.3 and 1.4 behave sligtly different with respect to this issue,
+there are even more pitfalls.
 
 If you just want to use one of Tritonus' FormatconversionProviders,
 MixerProviders or MidiDeviceProviders (these are the most common
@@ -143,11 +153,12 @@ cases), put the respective tritonus_xxx.jar into either the user class
 path or the extension class path. Using the user class path can be
 convenient for quick tests. However, for permanent installation it is
 not recommanded. The reason is that executing a VM with 'java -jar
-...' overrides the user class path with the location of the jar. So
-.jar put into the user class path become unavailable. Manipulating the
-boot class path is generally highly discouraged (see below for a
-useful, but still critical use of the boot class path). The remaining
-(and recommanded) way is to use the extension class path.
+...' overrides the user class path with the location of the .jar given
+on the command line. So Tritonus .jars put into the user class path
+become unavailable. Manipulating the boot class path is generally
+highly discouraged (see below for a useful, but still critical use of
+the boot class path). The remaining (and recommanded) way is to use
+the extension class path.
 
 Additionally, put native libs of .jar that need one into a generally
 system-accessible location (for instance /usr/lib/, /usr/local/lib,
