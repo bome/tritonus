@@ -53,7 +53,7 @@ import	org.tritonus.share.ArraySet;
 
 public class TMidiConfig
 {
-	private static final String	INIT_CLASS_NAME = "org.tritonus.TInit";
+	private static final String	INIT_CLASS_NAME = "org.tritonus.core.TInit";
 
 	private static final Set	sm_midiDeviceProviders = new ArraySet();
 	private static final Set	sm_midiFileReaders = new ArraySet();

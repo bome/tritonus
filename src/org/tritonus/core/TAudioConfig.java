@@ -53,7 +53,7 @@ public class TAudioConfig
 	// private static OutputDevice	sm_defaultOutputDevice;
 
 	// TODO: merge herein
-	private static final String	INIT_CLASS_NAME = "org.tritonus.TInit";
+	private static final String	INIT_CLASS_NAME = "org.tritonus.core.TInit";
 
 
 	/**
