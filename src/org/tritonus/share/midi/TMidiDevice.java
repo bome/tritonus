@@ -204,7 +204,6 @@ public abstract class TMidiDevice
 	public Receiver getReceiver()
 		throws	MidiUnavailableException
 	{
-		// TODO: check number
 		return new TReceiver();
 	}
 
@@ -217,7 +216,6 @@ public abstract class TMidiDevice
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
-		// TODO: check number
 		return new TTransmitter();
 	}
 
