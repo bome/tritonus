@@ -3,7 +3,7 @@ dnl
 dnl This script does not work with autoconf 2.52 (bug in autoconf).
 dnl
 
-AC_INIT(src/javax/sound/sampled/AudioSystem.java)
+AC_INIT(src/classes/javax/sound/sampled/AudioSystem.java)
 AC_CONFIG_AUX_DIR(util)
 
 JAR_INDEX=
