@@ -29,6 +29,8 @@ package	javax.sound.sampled.spi;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 
+import	org.tritonus.TDebug;
+
 
 
 public abstract class FormatConversionProvider
@@ -68,6 +70,13 @@ public abstract class FormatConversionProvider
 		AudioFormat.Encoding targetEncoding,
 		AudioFormat sourceFormat)
 	{
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("FormatConversionProvider.isConversionSupported(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out("checking if conversion possible");
+			TDebug.out("from: " + sourceFormat);
+			TDebug.out("to: " + targetEncoding);
+		}
 		AudioFormat.Encoding[]	aTargetEncodings = getTargetEncodings(sourceFormat);
 		return arrayContains(aTargetEncodings,
 				     targetEncoding);
@@ -85,9 +94,21 @@ public abstract class FormatConversionProvider
 		AudioFormat targetFormat,
 		AudioFormat sourceFormat)
 	{
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("FormatConversionProvider.isConversionSupported(AudioFormat, AudioFormat):");
+			TDebug.out("checking if conversion possible");
+			TDebug.out("from: " + sourceFormat);
+			TDebug.out("to: " + targetFormat);
+		}
 		AudioFormat[]	aTargetFormats = getTargetFormats(targetFormat.getEncoding(), sourceFormat);
 		for (int i = 0; i <  aTargetFormats.length; i++)
 		{
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("FormatConversionProvider.isConversionSupported():");
+				TDebug.out("checking against possible target format: " + aTargetFormats[i]);
+			}
 			if (aTargetFormats[i] != null && aTargetFormats[i].matches(targetFormat))
 			{
 				return true;

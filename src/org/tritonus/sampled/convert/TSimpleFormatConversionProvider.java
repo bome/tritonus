@@ -37,7 +37,9 @@ import	org.tritonus.util.ArraySet;
 /**
  *	This is a base class for FormatConversionProviders that can convert
  *	from each source encoding/format to each target encoding/format.
- *	If this is not the case, use TMatrixFormatConversionProvider.
+ *	If this is not the case, use TEncodingFormatConversionProvider or
+ *	TMatrixFormatConversionProvider.
+ *
  *	<p>Overriding classes must implement at least
  *	<code>AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream)</code>
  *	and provide a constructor that calls the protected constructor of this class.

@@ -37,9 +37,11 @@ import	javax.sound.sampled.AudioInputStream;
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.gsm.InvalidGSMFrameException;
 import	org.tritonus.lowlevel.gsm.GSMDecoder;
+import	org.tritonus.lowlevel.gsm.Encoder;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import	org.tritonus.sampled.convert.TEncodingFormatConversionProvider;
+import	org.tritonus.sampled.convert.TSimpleFormatConversionProvider;
 import	org.tritonus.sampled.file.gsm.GSMEncoding;
 import	org.tritonus.util.TCircularBuffer;
 
@@ -51,20 +53,28 @@ import	org.tritonus.util.TCircularBuffer;
  * @author Matthias Pfisterer
  */
 public class GSMFormatConversionProvider
-	extends		TEncodingFormatConversionProvider
+	extends		TSimpleFormatConversionProvider
+// extends		TEncodingFormatConversionProvider
 {
-	private static final AudioFormat[]	INPUT_FORMATS =
+	private static final AudioFormat[]	FORMATS1 =
 	{
 		new AudioFormat(GSMEncoding.GSM0610, 8000.0F, -1, 1, 33, 50.0F, false),
 		new AudioFormat(GSMEncoding.GSM0610, 8000.0F, -1, 1, 33, 50.0F, true),
+		// temporary only
+		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2, 8000.0F, false),
+		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2, 8000.0F, true),
 	};
 
+/*
+  private static final AudioFormat[]	FORMATS2 =
+  {
+  new AudioFormat(8000.0F, 16, 1, true, false),
+  new AudioFormat(8000.0F, 16, 1, true, true),
+  };
+*/
+	private static final AudioFormat[]	FORMATS2 = FORMATS1;
 
-	private static final AudioFormat[]	OUTPUT_FORMATS =
-	{
-		new AudioFormat(8000.0F, 16, 1, true, false),
-		new AudioFormat(8000.0F, 16, 1, true, true),
-	};
+
 
 	/**	This is the size of the circular buffer.
 	 *	This value is in bytes. It is
@@ -81,8 +91,8 @@ public class GSMFormatConversionProvider
 	 */
 	public GSMFormatConversionProvider()
 	{
-		super(Arrays.asList(INPUT_FORMATS),
-		      Arrays.asList(OUTPUT_FORMATS));
+		super(Arrays.asList(FORMATS1),
+		      Arrays.asList(FORMATS2));
 		if (TDebug.TraceAudioConverter)
 		{
 			TDebug.out("GSMFormatConversionProvider.<init>(): called");
@@ -95,24 +105,43 @@ public class GSMFormatConversionProvider
 	{
 		if (TDebug.TraceAudioConverter)
 		{
-			TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): called");
+			TDebug.out("GSMFormatConversionProvider.getAudioInputStream():");
+			TDebug.out("checking if conversion supported");
+			TDebug.out("from: " + audioInputStream.getFormat());
+			TDebug.out("to: " + targetFormat);
 		}
 		if (isConversionSupported(targetFormat,
 					  audioInputStream.getFormat()))
 		{
-			if (TDebug.TraceAudioConverter)
+			if (targetFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED))
 			{
-				TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): conversion supported; trying to create DecodedGSMAudioInputStream");
+				if (TDebug.TraceAudioConverter)
+				{
+					TDebug.out("GSMFormatConversionProvider.getAudioInputStream():");
+					TDebug.out("conversion supported; trying to create DecodedGSMAudioInputStream");
+				}
+				return new DecodedGSMAudioInputStream(
+					targetFormat,
+					audioInputStream);
 			}
-			return new DecodedGSMAudioInputStream(
-				targetFormat,
-				audioInputStream);
+			else
+			{
+				if (TDebug.TraceAudioConverter)
+				{
+					TDebug.out("GSMFormatConversionProvider.getAudioInputStream():");
+					TDebug.out("conversion supported; trying to create EncodedGSMAudioInputStream");
+				}
+				return new EncodedGSMAudioInputStream(
+					targetFormat,
+					audioInputStream);
+			}
 		}
 		else
 		{
 			if (TDebug.TraceAudioConverter)
 			{
-				TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): conversion not supported; throwing IllegalArgumentException");
+				TDebug.out("GSMFormatConversionProvider.getAudioInputStream():");
+				TDebug.out("conversion not supported; throwing IllegalArgumentException");
 			}
 			throw new IllegalArgumentException("conversion not supported");
 		}
@@ -223,6 +252,113 @@ public class GSMFormatConversionProvider
 		{
 			super.close();
 			m_encodedStream.close();
+		}
+	}
+
+
+
+	public static class EncodedGSMAudioInputStream
+		extends		TAsynchronousFilteredAudioInputStream
+	{
+		private AudioInputStream	m_decodedStream;
+		private Encoder			m_encoder;
+
+		/*
+		 *	Holds one block of decoded data.
+		 */
+		private byte[]			m_abBuffer;
+
+		/*
+		 *	Holds one block of decoded data.
+		 */
+		private short[]			m_asBuffer;
+
+		/*
+		 *	Holds one encoded GSM frame.
+		 */
+		private byte[]			m_abFrameBuffer;
+
+
+
+		public EncodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
+		{
+			// TODO: try to find out length (possible?)
+			super(outputFormat, -1);
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("EncodedGSMAudioInputStream.<init>(): called");
+			}
+			m_decodedStream = inputStream;
+			m_encoder = new Encoder();
+			m_abBuffer = new byte[BUFFER_SIZE];
+			m_asBuffer = new short[160];
+			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
+		}
+
+
+
+		public void execute()
+		{
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("EncodedGSMAudioInputStream.execute(): called");
+			}
+			try
+			{
+				int	nRead = m_decodedStream.read(m_abBuffer);
+				/*
+				 *	Currently, we take all kinds of errors
+				 *	as end of stream.
+				 */
+				if (nRead != m_abBuffer.length)
+				{
+					if (TDebug.TraceAudioConverter)
+					{
+						TDebug.out("EncodedGSMAudioInputStream.execute(): not read whole 160 sample block (" + nRead + ")");
+					}
+					m_circularBuffer.close();
+					return;
+				}
+			}
+			catch (IOException e)
+			{
+				TDebug.out(e);
+				m_circularBuffer.close();
+				return;
+			}
+			for (int i = 0; i < 160; i++)
+			{
+				if (isBigEndian())
+				{
+					m_asBuffer[i] = TConversionTool.convertBytesToShort(m_abBuffer[i * 2], m_abBuffer[i * 2 + 1]);
+				}
+				else
+				{
+					m_asBuffer[i] = TConversionTool.convertBytesToShort(m_abBuffer[i * 2 + 1], m_abBuffer[i * 2]);
+				}
+			}
+			m_encoder.encode(m_asBuffer, m_abFrameBuffer);
+			m_circularBuffer.write(m_abFrameBuffer);
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("EncodedGSMAudioInputStream.execute(): encoded GSM frame written");
+			}
+		}
+
+
+
+		private boolean isBigEndian()
+		{
+			return m_decodedStream.getFormat().isBigEndian();
+		}
+
+
+
+		public void close()
+			throws	IOException
+		{
+			super.close();
+			m_decodedStream.close();
 		}
 	}
 }

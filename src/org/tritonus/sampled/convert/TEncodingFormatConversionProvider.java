@@ -31,7 +31,10 @@ import	java.util.Iterator;
 
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
+
+import	org.tritonus.TDebug;
 import	org.tritonus.util.ArraySet;
+
 
 // this class depends on handling of AudioSystem.NOT_SPECIFIED in AudioFormat.matches()
 
@@ -92,6 +95,13 @@ public abstract class TEncodingFormatConversionProvider
 	 */
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat)
 	{
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("TEncodingFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out("checking if conversion possible");
+			TDebug.out("from: " + sourceFormat);
+			TDebug.out("to: " + targetEncoding);
+		}
 		if (isConversionSupported(targetEncoding, sourceFormat))
 		{
 			// TODO: check that no duplicates may occur...
