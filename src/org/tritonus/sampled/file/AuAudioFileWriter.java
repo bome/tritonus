@@ -83,7 +83,8 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 	}
 
 
-	protected boolean isAudioFormatSupported(AudioFormat format) {
+	protected boolean isAudioFormatSupportedImpl(AudioFormat format,
+	        AudioFileFormat.Type fileType) {
 		return AuTool.getFormatCode(format)!=AuTool.SND_FORMAT_UNSPECIFIED;
 	}
 

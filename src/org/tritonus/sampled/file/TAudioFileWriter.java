@@ -43,6 +43,7 @@ import	org.tritonus.TDebug;
 import	org.tritonus.sampled.AudioUtils;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.Encodings;
+import	org.tritonus.util.ArraySet;
 
 /**
  * Common base class for implementing classes of AudioFileWriter.
@@ -109,10 +110,6 @@ public abstract class TAudioFileWriter
 	public boolean isFileTypeSupported(AudioFileFormat.Type fileType)
 	{
 		return m_audioFileTypes.contains(fileType);
-/*
-  AudioFileFormat.Type[] aFileTypes = getAudioFileTypes();
-  return isFileTypeSupported(aFileTypes, fileType);
-*/
 	}
 
 
@@ -121,15 +118,18 @@ public abstract class TAudioFileWriter
 	public AudioFileFormat.Type[] getAudioFileTypes(
 		AudioInputStream audioInputStream)
 	{
+		//$$fb 2000-08-16: rewrote this method. We need to check for *each*
+                //                 file type, whether the format is supported !
 		AudioFormat	format = audioInputStream.getFormat();
-		if (isAudioFormatSupported(format, null))
-		{
-			return getAudioFileTypes();
+		ArraySet res=new ArraySet();
+		Iterator it=m_audioFileTypes.iterator();
+		while (it.hasNext()) {
+			AudioFileFormat.Type thisType=(AudioFileFormat.Type) it.next();
+			if (isAudioFormatSupportedImpl(format, thisType)) {
+				res.add(thisType);
+			}
 		}
-		else
-		{
-			return NULL_TYPE_ARRAY;
-		}
+		return (AudioFileFormat.Type[]) res.toArray(NULL_TYPE_ARRAY);
 	}
 
 
@@ -137,8 +137,14 @@ public abstract class TAudioFileWriter
 	// implementing the interface
 	public boolean isFileTypeSupported(AudioFileFormat.Type fileType, AudioInputStream audioInputStream)
 	{
-		// TODO: use format of the stream
-		return isFileTypeSupported(fileType);
+		// $$fb 2000-08-16: finally this method works reliably !
+		return isFileTypeSupported(fileType) 
+			&& (isAudioFormatSupportedImpl(audioInputStream.getFormat(), fileType)
+			    || findConvertableFormat(audioInputStream.getFormat(), fileType)!=null);
+		// we may soft it up by including the possibility of endian/sign 
+		// changing for PCM formats.
+		// I prefer to return false if the format is not exactly supported
+		// but still exectute the write, if only sign/endian changing is necessary.
 	}
 
 
@@ -149,6 +155,11 @@ public abstract class TAudioFileWriter
 			 File file)
 		throws	IOException
 	{
+		//$$fb added this check
+		if (!isFileTypeSupported(fileType)) {
+			throw new IllegalArgumentException("file type is not supported.");
+		}
+
 		if (TDebug.TraceAudioFileWriter)
 		{
 			TDebug.out("TAudioFileWriter.write(.., File): called");
@@ -160,7 +171,7 @@ public abstract class TAudioFileWriter
 		}
 		AudioFormat	outputFormat = null;
 		boolean		bNeedsConversion = false;
-		if (isAudioFormatSupported(inputFormat, fileType))
+		if (isAudioFormatSupportedImpl(inputFormat, fileType))
 		{
 			if (TDebug.TraceAudioFileWriter)
 			{
@@ -179,6 +190,12 @@ public abstract class TAudioFileWriter
 			if (outputFormat != null)
 			{
 				bNeedsConversion = true;
+				// $$fb 2000-08-16 made consistent with new conversion trials
+				// if 8 bit and only endianness changed, don't convert !
+				if (outputFormat.getSampleSizeInBits()==8 
+				    && outputFormat.getEncoding().equals(inputFormat.getEncoding())) {
+					bNeedsConversion = false;
+				}
 			}
 			else
 			{
@@ -205,6 +222,10 @@ public abstract class TAudioFileWriter
 			 OutputStream outputStream)
 		throws	IOException
 	{
+		//$$fb added this check
+		if (!isFileTypeSupported(fileType)) {
+			throw new IllegalArgumentException("file type is not supported.");
+		}
 		if (TDebug.TraceAudioFileWriter)
 		{
 			TDebug.out("TAudioFileWriter.write(.., OutputStream): called");
@@ -216,7 +237,7 @@ public abstract class TAudioFileWriter
 		}
 		AudioFormat	outputFormat = null;
 		boolean		bNeedsConversion = false;
-		if (isAudioFormatSupported(inputFormat, fileType))
+		if (isAudioFormatSupportedImpl(inputFormat, fileType))
 		{
 			if (TDebug.TraceAudioFileWriter)
 			{
@@ -235,6 +256,12 @@ public abstract class TAudioFileWriter
 			if (outputFormat != null)
 			{
 				bNeedsConversion = true;
+				// $$fb 2000-08-16 made consistent with new conversion trials
+				// if 8 bit and only endianness changed, don't convert !
+				if (outputFormat.getSampleSizeInBits()==8 
+				    && outputFormat.getEncoding().equals(inputFormat.getEncoding())) {
+					bNeedsConversion = false;
+				}
 			}
 			else
 			{
@@ -269,7 +296,6 @@ public abstract class TAudioFileWriter
 		AudioFormat	inputFormat = audioInputStream.getFormat();
 		AudioFormat	outputFormat = audioOutputStream.getFormat();
 
-		// boolean	bConvert = ! inputFormat.matches(outputFormat);
 		// TODO: handle case when frame size is unknown ?
 		int	nBytesPerSample = outputFormat.getFrameSize() / outputFormat.getChannels();
 		
@@ -322,22 +348,30 @@ public abstract class TAudioFileWriter
 	}
 
 
-
-	/**	Checks whether the passed AudioFormat can be handled.
+	/**	Checks whether the passed <b>AudioFormat</b> can be handled.
 	 *	In this simple implementation, it is only checked if the
 	 *	passed AudioFormat matches one of the generally handled
 	 *	formats (i.e. the fileType argument is ignored). If the
 	 *	handled AudioFormats depend on the file type, this method
 	 *	or getSupportedAudioFormats() (on which this method relies)
 	 *	has to be  overwritten by subclasses.
+	 *      <p>
+	 *      This is the central method for checking if a FORMAT is supported.
+	 *      Inheriting classes can overwrite this for performance
+	 *      or to exclude/include special type/format combinations.
+	 *      <p>
+	 *      This method is only called when the <code>fileType</code>
+	 *      is in the list of supported file types ! Overriding
+	 *      classes <b>need not</b> check this.
 	 */
-	protected boolean isAudioFormatSupported(
+	//$$fb 2000-08-16 changed name, changed documentation. Semantics !
+	protected boolean isAudioFormatSupportedImpl(
 		AudioFormat audioFormat,
 		AudioFileFormat.Type fileType)
 	{
 		if (TDebug.TraceAudioFileWriter)
 		{
-			TDebug.out("TAudioFileWriter.isAudioFormatSupported(): format to test: " + audioFormat);
+			TDebug.out("TAudioFileWriter.isAudioFormatSupportedImpl(): format to test: " + audioFormat);
 		}
 		Iterator	audioFormats = getSupportedAudioFormats(fileType);
 		while (audioFormats.hasNext())
@@ -345,7 +379,7 @@ public abstract class TAudioFileWriter
 			AudioFormat	handledFormat = (AudioFormat) audioFormats.next();
 			if (TDebug.TraceAudioFileWriter)
 			{
-				TDebug.out("TAudioFileWriter.isAudioFormatSupported(): matching against format : " + handledFormat);
+				TDebug.out("TAudioFileWriter.isAudioFormatSupportedImpl(): matching against format : " + handledFormat);
 			}
 			if (handledFormat.matches(audioFormat))
 			{
@@ -385,63 +419,50 @@ public abstract class TAudioFileWriter
 		throws	IOException;
 
 
-
 	private AudioFormat findConvertableFormat(
 		AudioFormat inputFormat,
 		AudioFileFormat.Type fileType)
 	{
+		if (!isFileTypeSupported(fileType)) {
+			return null;
+		}
 		if (TDebug.TraceAudioFileWriter)
 		{
 			TDebug.out("TAudioFileWriter.findConvertableFormat(): input format: " + inputFormat);
 		}
 		AudioFormat.Encoding	inputEncoding = inputFormat.getEncoding();
-		if (inputEncoding.equals(PCM_UNSIGNED) &&
-		    inputFormat.getSampleSizeInBits() == 8)
+		if ((inputEncoding.equals(PCM_SIGNED) || inputEncoding.equals(PCM_UNSIGNED)) 
+		    && inputFormat.getSampleSizeInBits() == 8)
 		{
-			AudioFormat	outputFormat = new AudioFormat(
-				PCM_SIGNED,
-				inputFormat.getSampleRate(),
-				inputFormat.getSampleSizeInBits(),
-				inputFormat.getChannels(),
-				inputFormat.getFrameSize(),
-				inputFormat.getFrameRate(),
-				inputFormat.isBigEndian());
+			AudioFormat outputFormat = convertFormat(inputFormat, true, false);
 			if (TDebug.TraceAudioFileWriter)
 			{
 				TDebug.out("TAudioFileWriter.findConvertableFormat(): trying output format: " + outputFormat);
 			}
-			if (isAudioFormatSupported(outputFormat, fileType))
+			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
 				return outputFormat;
 			}
-			else
-			{
-				return null;
-			}
-		}
-		else if (inputEncoding.equals(PCM_SIGNED) &&
-			 inputFormat.getSampleSizeInBits() == 8)
-		{
-			AudioFormat	outputFormat = new AudioFormat(
-				PCM_UNSIGNED,
-				inputFormat.getSampleRate(),
-				inputFormat.getSampleSizeInBits(),
-				inputFormat.getChannels(),
-				inputFormat.getFrameSize(),
-				inputFormat.getFrameRate(),
-				inputFormat.isBigEndian());
+			//$$fb 2000-08-16: added trial of other endianness for 8bit. We try harder !
+			outputFormat = convertFormat(inputFormat, false, true);
 			if (TDebug.TraceAudioFileWriter)
 			{
 				TDebug.out("TAudioFileWriter.findConvertableFormat(): trying output format: " + outputFormat);
 			}
-			if (isAudioFormatSupported(outputFormat, fileType))
+			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
 				return outputFormat;
 			}
-			else
+			outputFormat = convertFormat(inputFormat, true, true);
+			if (TDebug.TraceAudioFileWriter)
 			{
-				return null;
+				TDebug.out("TAudioFileWriter.findConvertableFormat(): trying output format: " + outputFormat);
 			}
+			if (isAudioFormatSupportedImpl(outputFormat, fileType))
+			{
+				return outputFormat;
+			}
+			return null;
 		}
 		else if (inputEncoding.equals(PCM_SIGNED) &&
 			 (inputFormat.getSampleSizeInBits() == 16 ||
@@ -449,19 +470,13 @@ public abstract class TAudioFileWriter
 			  inputFormat.getSampleSizeInBits() == 32) )
 		{
 			// TODO: possible to allow all sample sized > 8 bit?
-			AudioFormat	outputFormat = new AudioFormat(
-				PCM_SIGNED,
-				inputFormat.getSampleRate(),
-				inputFormat.getSampleSizeInBits(),
-				inputFormat.getChannels(),
-				inputFormat.getFrameSize(),
-				inputFormat.getFrameRate(),
-				! inputFormat.isBigEndian());
+			// $$ fb: don't think that this is necessary. Well, let's talk about that in 5 years :)
+			AudioFormat	outputFormat = convertFormat(inputFormat, false, true);
 			if (TDebug.TraceAudioFileWriter)
 			{
 				TDebug.out("TAudioFileWriter.findConvertableFormat(): trying output format: " + outputFormat);
 			}
-			if (isAudioFormatSupported(outputFormat, fileType))
+			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
 				return outputFormat;
 			}
@@ -476,30 +491,21 @@ public abstract class TAudioFileWriter
 		}
 	}
 
-
-	// TODO: should use TConversionTool.changeOrderOrSign()
-	// $$fb why not ?
-	/*private void changeOrderOrSign(byte[] buffer, int nOffset, int nByteLength, int nBytesPerSample)
-	{
-		switch (nBytesPerSample)
-		{
-		case 1:
-			TConversionTool.convertSign8(buffer, nOffset, nByteLength);
-			break;
-
-		case 2:
-			TConversionTool.swapOrder16(buffer, nOffset, nByteLength / 2);
-			break;
-
-		case 3:
-			TConversionTool.swapOrder24(buffer, nOffset, nByteLength / 3);
-			break;
-
-		case 4:
-			TConversionTool.swapOrder32(buffer, nOffset, nByteLength / 4);
-			break;
+	// $$fb 2000-08-16: added convenience method
+	private AudioFormat convertFormat(AudioFormat format, boolean changeSign, boolean changeEndian) {
+		AudioFormat.Encoding enc=PCM_SIGNED;
+		if (format.getEncoding().equals(PCM_UNSIGNED)!=changeSign) {
+			enc=PCM_UNSIGNED;
 		}
-	}*/
+		return new AudioFormat(
+				       enc,
+				       format.getSampleRate(),
+				       format.getSampleSizeInBits(),
+				       format.getChannels(),
+				       format.getFrameSize(),
+				       format.getFrameRate(),
+				       format.isBigEndian() ^ changeEndian);
+	}
 
 }
 

@@ -75,7 +75,8 @@ public class AiffAudioFileWriter extends TAudioFileWriter {
 	}
 
 
-	protected boolean isAudioFormatSupported(AudioFormat format) {
+	protected boolean isAudioFormatSupportedImpl(AudioFormat format,
+	        AudioFileFormat.Type fileType) {
 		return AiffTool.getFormatCode(format)!=AiffTool.AIFF_COMM_UNSPECIFIED;
 	}
 

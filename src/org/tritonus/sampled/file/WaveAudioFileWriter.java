@@ -78,8 +78,9 @@ public class WaveAudioFileWriter
 		      Arrays.asList(AUDIO_FORMATS));
 	}
 
-
-	protected boolean isAudioFormatSupported(AudioFormat format) {
+	// overwritten for quicker and more accurate check
+	protected boolean isAudioFormatSupportedImpl(AudioFormat format,
+	        AudioFileFormat.Type fileType) {
 		return WaveTool.getFormatCode(format)!=WaveTool.WAVE_FORMAT_UNSPECIFIED;
 	}
 

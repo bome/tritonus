@@ -25,6 +25,7 @@
 package	org.tritonus.sampled.convert;
 
 import	java.util.Arrays;
+import	java.util.Iterator;
 
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
@@ -34,6 +35,7 @@ import	org.tritonus.TDebug;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.FloatSampleBuffer;
 import	org.tritonus.sampled.Encodings;
+import	org.tritonus.util.ArraySet;
 
 /**
  * This provider supports these PCM conversions (<--> meaning both directions):
@@ -69,7 +71,7 @@ import	org.tritonus.sampled.Encodings;
  *         1 channel -> x channels. This is done by
  *         copying the channel to the other channels <b>after</b>
  *         conversion of the format (if necessary).
-
+ 
  * </ol>
  * <p>SampleRate CANNOT be converted.
  *
@@ -77,7 +79,7 @@ import	org.tritonus.sampled.Encodings;
  */
 
 public class PCM2PCMConversionProvider
-	extends TEncodingFormatConversionProvider {
+	extends TSimpleFormatConversionProvider {
 
 	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
 	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
@@ -137,16 +139,13 @@ public class PCM2PCMConversionProvider
 		AudioFormat sourceFormat=sourceStream.getFormat();
 
 		// the non-conversion case
-		// TODO: does this work OK when some fields are AudioSystem.NOT_SPECIFIED ?
 		if (sourceFormat.matches(targetFormat)) {
 			return sourceStream;
 		}
-		// TODO: handle NOT_SPECIFIED in targetFormat...
-		// this can be done by providing a function removeNOT_SPECIFIED(targetFormat, sourceFormat)
-		// in a super class which replaces all NOT_SPECIFIED's in targetFormat with the values
-		// in sourceFormat
 		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
 		        && doMatch(targetFormat.getSampleRate(), sourceFormat.getSampleRate())) {
+
+			targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
 
 			int sourceType=getFormatType(sourceFormat);
 			int targetType=getFormatType(targetFormat);
@@ -171,6 +170,59 @@ public class PCM2PCMConversionProvider
 		}
 
 		throw new IllegalArgumentException("format conversion not supported");
+	}
+
+	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
+	                                      AudioFormat sourceFormat) {
+		if (TDebug.TraceAudioConverter) {
+			TDebug.out("PCM2PCMFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out("  checking out possible target formats");
+			TDebug.out("  from: " + sourceFormat);
+			TDebug.out("  to  : " + targetEncoding);
+		}
+		if (isConversionSupported(targetEncoding, sourceFormat)) {
+			// TODO: check that no duplicates may occur...
+			ArraySet result=new ArraySet();
+			Iterator iterator=getCollectionTargetFormats().iterator();
+			while (iterator.hasNext()) {
+				AudioFormat targetFormat = (AudioFormat) iterator.next();
+				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
+				if (isConversionSupported(sourceFormat, targetFormat)) {
+					result.add(targetFormat);
+				}
+			}
+			return (AudioFormat[]) result.toArray(EMPTY_FORMAT_ARRAY);
+		} else {
+			return EMPTY_FORMAT_ARRAY;
+		}
+	}
+
+
+	/** method overidden due to the difficult situation with the channel count
+	 * and the possible conversions possible.
+	 */
+	public boolean isConversionSupported(AudioFormat targetFormat,
+	                                     AudioFormat sourceFormat) {
+		targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
+
+		boolean res=sourceFormat.matches(targetFormat)
+		            || (
+		                doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
+		                && doMatch(targetFormat.getSampleRate(), sourceFormat.getSampleRate())
+		                && getConversionType(getFormatType(sourceFormat),
+		                                     sourceFormat.getChannels(),
+		                                     getFormatType(targetFormat),
+		                                     targetFormat.getChannels())!=CONVERT_NOT_POSSIBLE);
+
+		if (TDebug.TraceAudioConverter) {
+			TDebug.out("PCM2PCM: isConversionSupported(AudioFormat, AudioFormat):");
+			TDebug.out("  checking if conversion possible");
+			TDebug.out("  from: " + sourceFormat);
+			TDebug.out("  to  : " + targetFormat);
+			TDebug.out("  result : " + res);
+		}
+
+		return res;
 	}
 
 	private int getFormatType(AudioFormat af) {
@@ -594,6 +646,7 @@ public class PCM2PCMConversionProvider
 				break;
 			case CONVERT_ONLY_EXPAND_CHANNELS:
 				// implicit: channelCount in inBuffer=1
+
 
 				System.arraycopy(inBuffer, 0, outBuffer, outByteOffset,
 				                 inFrameCount*getOriginalStream().getFormat().getFrameSize());
