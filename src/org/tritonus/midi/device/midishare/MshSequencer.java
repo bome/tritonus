@@ -116,6 +116,10 @@ final public class MshSequencer
 						// Set the tracknumber
 						Midi.SetRefnum(mshEv,IsTempoMap(Midi.GetType(mshEv)) ? 0 : Math.min(256,nTrack+1));
 						Midi.AddSeq(mshSeq1,mshEv);
+					}else{
+						Midi.FreeSeq(mshSeq);
+						Midi.FreeSeq(mshSeq1);
+						throw new InvalidMidiDataException("No more MidiShare events");			
 					}
 				}
 				// Mix the temporary sequence in the result sequence
@@ -123,14 +127,18 @@ final public class MshSequencer
 				Midi.SetFirstEv(mshSeq1, 0);
 				Midi.SetLastEv(mshSeq1, 0);
 			}
-			MidiPlayer.SetAllTrack(m_refNum,mshSeq,sequence.getResolution());
+			int res = MidiPlayer.SetAllTrack(m_refNum,mshSeq,sequence.getResolution());
+			if (res != MidiPlayer.PLAYERnoErr) throw new InvalidMidiDataException("Can not setSequence to native sequencer");
 		}else {
-			throw new InvalidMidiDataException(" No more MidiShare events");
+			throw new InvalidMidiDataException("No more MidiShare events");
 		}
 	}
 	
 	
-	public void start() {MidiPlayer.Cont(m_refNum);}
+	public void start() {
+		//MidiPlayer.Start(m_refNum);
+		MidiPlayer.Cont(m_refNum);
+	}
 
 	public void stop()
 	{
