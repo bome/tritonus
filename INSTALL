@@ -180,7 +180,7 @@ additional providers can act as default devices.
 So with jdk1.4, yor job is easy, while with jdk1.3 you have to
 explicitely name alternative Mixers and MidiDevices. Note that it is
 not a good idea to hard-code Tritonus' Mixer/MidiDevice names. The
-recommanded practice is to give the user a list of available
+recommanded practice (anyway) is to give the user a list of available
 Mixers/MidiDevices and let her/him select an appropriate one. These
 choices may be stored as preferences. If the user doesn't explicitely
 select devices, default devices (as provided by the Java Sound
