@@ -88,31 +88,37 @@ public class AlsaMidiOut
 	private AlsaMidiOut(AlsaSeq aSequencer, int nSourcePort,
 			    int nQueue, boolean bImmediately)
 	{
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.<init>(AlsaSeq, int, int, boolean): begin"); }
 		m_aSequencer = aSequencer;
 		m_nSourcePort = nSourcePort;
 		m_nQueue = nQueue;
 		m_bImmediately = bImmediately;
 		m_bHandleMetaMessages = false;
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.<init>(AlsaSeq, int, int, boolean): end"); }
 	}
 
 
 
 	public void subscribe(int nDestClient, int nDestPort)
 	{
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.subscribe(): begin"); }
 		m_aSequencer.subscribePort(
 			m_aSequencer.getClientId(), getSourcePort(),
 			nDestClient, nDestPort);
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.subscribe(): end"); }
 	}
 
 
 
 	public void unsubscribe(int nDestClient, int nDestPort)
 	{
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.unsubscribe(): begin"); }
 /*	TODO:
 		m_aSequencer.subscribePort(
 			m_aSequencer.getClientId(), getSourcePort(),
 			nDestClient, nDestPort);
 */
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.unsubscribe(): end"); }
 	}
 
 
@@ -153,6 +159,7 @@ public class AlsaMidiOut
 
 	protected void enqueueMessage(MidiMessage event, long lTick)
 	{
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.enqueueMessage(): begin"); }
 		if (event instanceof ShortMessage)
 		{
 			enqueueShortMessage((ShortMessage) event, lTick);
@@ -169,6 +176,7 @@ public class AlsaMidiOut
 		{
 			// Ignore it.
 		}
+		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.enqueueMessage(): end"); }
 	}
 
 
@@ -229,10 +237,7 @@ public class AlsaMidiOut
 		// TDebug.out("hallo1");
 		if (getImmediately())
 		{
-			if (TDebug.TraceAlsaMidiOut)
-			{
-				TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending noteoff message (subscribers, immediately)");
-			}
+			if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.enqueueShortMessage(): sending noteoff message (subscribers, immediately)"); }
 			m_aSequencer.sendNoteOffEventSubscribersImmediately(
 				getSourcePort(),
 				nChannel, nNote, nVelocity);
@@ -419,17 +424,21 @@ public class AlsaMidiOut
 
 	private void enqueueSysexMessage(SysexMessage message, long lTick)
 	{
-		// TODO: recheck!!
-		int	n = 0;
-		byte[]	abMessageData = new byte[message.getLength()];
+		// data returned by getData() never contain a status byte
+		byte[]	abData = message.getData();
+		// TDebug.out("data length: " + abData.length);
+		byte[]	abTransferData = null;
 		if (message.getStatus() == 0xF0)
 		{
-			n = 1;
-			abMessageData[0] = (byte) message.getStatus();
+			abTransferData = new byte[abData.length + 1];
+			abTransferData[0] = (byte) 0xF0;
+			System.arraycopy(abData, 0, abTransferData, 1, abData.length);
 		}
-		byte[]	abData = message.getData();
-		System.arraycopy(abData, n, abMessageData, 1, abData.length);
-		sendSysexEvent(lTick, abMessageData, abMessageData.length);
+		else
+		{
+			abTransferData = abData;
+		}
+		sendSysexEvent(lTick, abTransferData, abTransferData.length);
 	}
 
 
@@ -439,13 +448,14 @@ public class AlsaMidiOut
 		/*
 		 *	We pack the type byte in front of the data bytes.
 		 */
-		byte[]	abMessageData = new byte[message.getLength() + 1];
-		abMessageData[0] = (byte) message.getType();
-		System.arraycopy(message.getMessage(), 0, abMessageData, 1, message.getLength());
-		// TDebug.out("message data length: " + abMessageData.length);
+		byte[]	abData = message.getData();
+		byte[]	abTransferData = new byte[abData.length + 1];
+		abTransferData[0] = (byte) message.getType();
+		System.arraycopy(abData, 0, abTransferData, 1, abData.length);
+		// TDebug.out("message data length: " + abTransferData.length);
 		// TDebug.out("message length: " + message.getLength());
 		
-		sendMetaEvent(lTick, abMessageData, abMessageData.length);
+		sendMetaEvent(lTick, abTransferData, abTransferData.length);
 	}
 
 
