@@ -22,10 +22,9 @@
 
 import	junit.framework.TestCase;
 
+import	javax.microedition.media.Controllable;
 import	javax.microedition.media.Manager;
 import	javax.microedition.media.Player;
-//import	javax.microedition.media.TimeBase;
-//import	javax.microedition.media.protocol.DataSource;
 
 
 
@@ -52,33 +51,291 @@ extends TestCase
 
 
 
-	public void testControllable()
+	public void testStates()
+		throws Exception
+	{
+		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
+		Player	player = null;
+
+		// UNREALIZED -> CLOSED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.close();
+		assertEquals("CLOSED state", Player.CLOSED, player.getState());
+
+		// UNREALIZED -> REALIZED -> CLOSED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.realize();
+		assertEquals("REALIZED state", Player.REALIZED, player.getState());
+		player.close();
+		assertEquals("CLOSED state", Player.CLOSED, player.getState());
+
+		// UNREALIZED -> REALIZED -> PREFETCHED -> CLOSED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.realize();
+		assertEquals("REALIZED state", Player.REALIZED, player.getState());
+		player.prefetch();
+		assertEquals("PREFETCHED state", Player.PREFETCHED, player.getState());
+		player.close();
+		assertEquals("CLOSED state", Player.CLOSED, player.getState());
+
+		// UNREALIZED -> PREFETCHED -> REALIZED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.prefetch();
+		assertEquals("PREFETCHED state", Player.PREFETCHED, player.getState());
+		player.deallocate();
+		assertEquals("REALIZED state", Player.REALIZED, player.getState());
+
+		// UNREALIZED -> PREFETCHED -> STARTED -> CLOSED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.prefetch();
+		assertEquals("PREFETCHED state", Player.PREFETCHED, player.getState());
+		player.start();
+		assertEquals("STARTED state", Player.STARTED, player.getState());
+		player.close();
+		assertEquals("CLOSED state", Player.CLOSED, player.getState());
+
+		// UNREALIZED -> REALIZED -> STARTED -> PREFETCHED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.realize();
+		assertEquals("REALIZED state", Player.REALIZED, player.getState());
+		player.start();
+		assertEquals("STARTED state", Player.STARTED, player.getState());
+		player.stop();
+		assertEquals("PREFETCHED state", Player.PREFETCHED, player.getState());
+
+		// UNREALIZED -> STARTED
+		player = Manager.createPlayer(strLocator);
+
+		assertEquals("UNREALIZED state", Player.UNREALIZED, player.getState());
+		player.start();
+		assertEquals("STARTED state", Player.STARTED, player.getState());
+	}
+
+
+
+	public void testIllegalStatesControllable()
+		throws Exception
+	{
+		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
+		Player	player = Manager.createPlayer(strLocator);
+
+		// UNREALIZED
+		callControllableMethods(player, "UNREALIZED");
+
+		// CLOSED
+		player.close();
+		callControllableMethods(player, "CLOSED");
+	}
+
+
+	/**	Calls both Controllable methods to see if an exception occurs.
+	 */
+	private void callControllableMethods(Controllable controllable,
+					     String strState)
+		throws Exception
+	{
+		boolean	bExceptionThrown;
+		String	strControlType = "GUIControl";
+
+		bExceptionThrown = false;
+		try
+		{
+			controllable.getControls();
+		}
+		catch (IllegalStateException e)
+		{
+			bExceptionThrown = true;
+		}
+		if (! bExceptionThrown)
+		{
+			fail("IllegalStateException on getControls() in " + strState + " state");
+		}
+
+		bExceptionThrown = false;
+		try
+		{
+			controllable.getControl(strControlType);
+		}
+		catch (IllegalStateException e)
+		{
+			bExceptionThrown = true;
+		}
+		if (! bExceptionThrown)
+		{
+			fail("IllegalStateException on getControl(String) in " + strState + " state");
+		}
+	}
+
+
+
+	public void testIllegalStatesPlayer()
 		throws Exception
 	{
 		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
 		Player	player = Manager.createPlayer(strLocator);
 		boolean	bExceptionThrown;
-		String	strControlType = "GUIControl";
+
+		TestMethod	realizeMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.realize();
+				}
+			};
+		TestMethod	prefetchMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.prefetch();
+				}
+			};
+		TestMethod	startMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.start();
+				}
+			};
+		TestMethod	stopMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.stop();
+				}
+			};
+		TestMethod	deallocateMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.deallocate();
+				}
+			};
+		TestMethod	setTimeBaseMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.setTimeBase(Manager.getSystemTimeBase());
+				}
+			};
+		TestMethod	getTimeBaseMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.getTimeBase();
+				}
+			};
+		TestMethod	setMediaTimeMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.setMediaTime(0L);
+				}
+			};
+		TestMethod	getMediaTimeMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.getMediaTime();
+				}
+			};
+		TestMethod	getDurationMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.getDuration();
+				}
+			};
+		TestMethod	getContentTypeMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.getContentType();
+				}
+			};
+		TestMethod	setLoopCountMethod = new TestMethod()
+			{
+				public void callMethod(Player player)
+					throws Exception
+				{
+					player.setLoopCount(1);
+				}
+			};
 
 		// UNREALIZED state
-		bExceptionThrown = false;
-		try
-		{
-			player.getControls();
-		}
-		catch (IllegalStateException e)
-		{
-			bExceptionThrown = true;
-		}
-		if (! bExceptionThrown)
-		{
-			fail("IllegalStateException on getControls() in UNREALIZED state");
-		}
+		callPlayerMethod(player, setTimeBaseMethod, "setTimeBase()", "UNREALIZED");
+		callPlayerMethod(player, getTimeBaseMethod, "getTimeBase()", "UNREALIZED");
+		callPlayerMethod(player, setMediaTimeMethod, "setMediaTime()", "UNREALIZED");
+		callPlayerMethod(player, getContentTypeMethod, "getContentType()", "UNREALIZED");
 
-		bExceptionThrown = false;
+		// STARTED
+		player.start();
+		callPlayerMethod(player, setTimeBaseMethod, "setTimeBase()", "STARTED");
+		callPlayerMethod(player, setLoopCountMethod, "setLoopCount()", "STARTED");
+
+		// CLOSED
+		player.close();
+		callPlayerMethod(player, realizeMethod, "realize()", "CLOSED");
+		// prefetch()
+		callPlayerMethod(player, prefetchMethod, "prefetch()", "CLOSED");
+		// start()
+		callPlayerMethod(player, startMethod, "start()", "CLOSED");
+		// stop()
+		callPlayerMethod(player, stopMethod, "stop()", "CLOSED");
+		// deallocate()
+		callPlayerMethod(player, deallocateMethod, "deallocate()", "CLOSED");
+		// setTimeBase()
+		callPlayerMethod(player, setTimeBaseMethod, "setTimeBase()", "CLOSED");
+		// getTimeBase()
+		callPlayerMethod(player, getTimeBaseMethod, "getTimeBase()", "CLOSED");
+		// setMediaTime()
+		callPlayerMethod(player, setMediaTimeMethod, "setMediaTime()", "CLOSED");
+		// getMediaTime()
+		callPlayerMethod(player, getMediaTimeMethod, "getMediaTime()", "CLOSED");
+		// getDuration()
+		callPlayerMethod(player, getDurationMethod, "getDuration()", "CLOSED");
+		// getContentType()
+		callPlayerMethod(player, getContentTypeMethod, "getContentType()", "CLOSED");
+		// setLoopCount()
+		callPlayerMethod(player, setLoopCountMethod, "setLoopCount()", "CLOSED");
+	}
+
+
+
+	/**	Calls both Controllable methods to see if an exception occurs.
+	 */
+	private void callPlayerMethod(Player player,
+				      TestMethod method,
+				      String strMethodName,
+				      String strState)
+		throws Exception
+	{
+		boolean	bExceptionThrown = false;
 		try
 		{
-			player.getControl(strControlType);
+			method.callMethod(player);
 		}
 		catch (IllegalStateException e)
 		{
@@ -86,9 +343,10 @@ extends TestCase
 		}
 		if (! bExceptionThrown)
 		{
-			fail("IllegalStateException on getControl(String) in UNREALIZED state");
+			fail("IllegalStateException on " + strMethodName + " in " + strState + " state");
 		}
 	}
+
 
 
 // 	public void testGetSupportedContentTypes()
@@ -148,6 +406,13 @@ extends TestCase
 // 			dataSource = Manager.createDataSource(strLocator);
 // 		}
 // 	}
+
+
+	private static interface TestMethod
+	{
+		public void callMethod(Player player)
+			throws Exception;
+	}
 }
 
 
