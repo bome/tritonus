@@ -6,8 +6,6 @@ It is intended to support different plattforms in the future.
 
 Tritonus is distributed under the terms of the GNU Library General
 Public License. See the file LGPL for details.
-The javalayer mp3 decoder is distributed under the terms of the GNU General
-Public License.
 
 For installing instructions, see the file INSTALL.
 
