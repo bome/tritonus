@@ -1394,7 +1394,7 @@ public class AlsaSeq
 			{
 				TDebug.out("AlsaSeq.createNextClientInfo(): begin");
 			}
-			int[]		anValues = new int[4];
+			int[]		anValues = new int[6];
 			String[]	astrValues = new String[2];
 			int	nSuccess = getNextClientInfo(m_nClient, anValues, astrValues);
 			if (TDebug.TraceAlsaSeq)
