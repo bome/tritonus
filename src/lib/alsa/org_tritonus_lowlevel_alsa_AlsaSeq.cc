@@ -22,7 +22,7 @@
 
 
 #include	<errno.h>
-#include	<sys/asoundlib.h>
+#include	<alsa/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaSeq.h"
 // currently doesn't work for doubious reasons

@@ -21,7 +21,7 @@
  */
 
 
-#include	<sys/asoundlib.h>
+#include	<alsa/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaSeq_Event.h"
 #include	"HandleFieldHandler.hh"
@@ -63,7 +63,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_malloc
 	debug_file = stderr;
 
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_malloc(): begin\n"); }
-	handle = snd_seq_create_event();
+	handle = (snd_seq_event_t*) malloc(sizeof(snd_seq_event_t));
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_malloc(): handle: %p\n", handle); }
 	handler.setHandle(env, obj, handle);
 	if (handle != NULL)
@@ -93,7 +93,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_free
 
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_free(): begin\n"); }
 	handle = handler.getHandle(env, obj);
-	snd_seq_free_event(handle);
+	free(handle);
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_free(): end\n"); }
 }
 

@@ -23,7 +23,7 @@
  */
 
 
-#include	<sys/asoundlib.h>
+#include	<alsa/asoundlib.h>
 #include	<errno.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaPcm.h"

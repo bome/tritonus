@@ -21,7 +21,7 @@
  */
 
 
-#include	<sys/asoundlib.h>
+#include	<alsa/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaSeq_PortInfo.h"
 #include	"HandleFieldHandler.hh"

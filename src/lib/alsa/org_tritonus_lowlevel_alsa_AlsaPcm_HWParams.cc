@@ -21,7 +21,7 @@
  */
 
 
-#include	<sys/asoundlib.h>
+#include	<alsa/asoundlib.h>
 #include	<errno.h>
 #include	"org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.h"
 #include	"common.h"

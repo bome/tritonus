@@ -23,7 +23,7 @@
 
 #include	"HandleFieldHandler.hh"
 #include	"common.h"
-#include	<sys/asoundlib.h>
+#include	<alsa/asoundlib.h>
 
 
 
