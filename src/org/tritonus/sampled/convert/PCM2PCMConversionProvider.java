@@ -39,9 +39,8 @@ import	org.tritonus.sampled.FloatSampleBuffer;
  * This provider supports these PCM conversions (<--> meaning both directions):
  * <ul><li>8 Signed <-> 8 unsigned
  * <li>16/24/32 Signed little endian <-> 16/24/32 Signed big endian
- * <li>arbitrary (simple) conversion between 8/16/24/32 bit sample width<BR>
- *     (up-conversion by adding low-byte zero(s), down-conversion by discarding low-byte(s)).
- *     For down-conversion, dithering is used to reduce quantization errors.
+ * <li>arbitrary conversion between 8/16/24/32 bit sample width<BR>
+ *     (up-conversion is done by adding low-byte zero(s)).
  * <li>1 channel <-> x channels
  * </ul>
  * The class uses 2 different approaches for conversion:
@@ -55,19 +54,22 @@ import	org.tritonus.sampled.FloatSampleBuffer;
  *             <li>16 signed big endian    <--> 8 signed
  *             <li>16 signed little endian <--> 8 unsigned
  *             <li>16 signed big endian    <--> 8 unsigned
- *         </ul>
- *         All these conversions support upmixing of channels: 
- *         1 channel -> x channels. This is done by
- *         copying the channel to the other channels after 
- *         conversion of the format (if necessary).
- *     <li>All other conversions with a generic function that uses 
- *         intermediate floating point samples.<br>
+ *         </ul><br>
+ *         Downsampling from 16bit to 8bit is currently done
+ *         using the float conversion (see next point), in order
+ *         to profit of dithering.
+ *     <li>All other conversions are done using the FloatSampleBuffer.<br>
  *         Mixdown of channels (x channels -> 1 channel) is done by 
  *         plain adding all channels together.
- *         Thus, upmixing and downmixing will not result in the same audio, 
+ *         Thus, up mixing and down mixing will not result in the same audio, 
  *         as downmixing does NOT lower the volume and clippings are very 
  *         probable. To avoid that, the volume of the channels
- *         should be lowered before using this converter.
+ *         should be lowered before using this converter for down mixing.
+ *     <li>All conversions support upmixing of channels: 
+ *         1 channel -> x channels. This is done by
+ *         copying the channel to the other channels <b>after</b>
+ *         conversion of the format (if necessary).
+
  * </ol>
  * <p>SampleRate CANNOT be converted.
  *
@@ -220,7 +222,7 @@ public class PCM2PCMConversionProvider
 		if (sourceChannels==1 && targetChannels>=1 || sourceChannels==targetChannels) {
 			// when channels only have to be duplicated, direct conversions can be done
 			if ((sourceType==UNSIGNED8 && targetType==SIGNED8) ||
-			    (sourceType==SIGNED8 && targetType==UNSIGNED8)) {
+			        (sourceType==SIGNED8 && targetType==UNSIGNED8)) {
 				return CONVERT_SIGN;
 			} else if ((sourceType==BIG_ENDIAN16 && targetType==LITTLE_ENDIAN16) ||
 			           (sourceType==LITTLE_ENDIAN16 && targetType==BIG_ENDIAN16)) {
@@ -253,58 +255,6 @@ public class PCM2PCMConversionProvider
 			}
 		}
 		return CONVERT_FLOAT;
-	}
-
-	// copies the channels: in the buffer there is only one channel
-	private void expandChannels(byte[] buffer, int offset, int frameCount, int bytesPerFrame, int channels) {
-		int inOffset=offset+bytesPerFrame*frameCount;
-		int outOffset=offset+bytesPerFrame*channels*frameCount;
-		switch (bytesPerFrame) {
-		case 1:
-			if (channels==2) {
-				for (;frameCount>0; frameCount--) {
-					buffer[--outOffset]=buffer[--inOffset];
-					buffer[--outOffset]=buffer[inOffset];
-				}
-			} else {
-				for (;frameCount>0; frameCount--) {
-					inOffset--;
-					for (int channel=0; channel<channels; channel++) {
-						buffer[--outOffset]=buffer[inOffset];
-					}
-				}
-			}
-			break;
-		case 2:
-			if (channels==2) {
-				for (;frameCount>0; frameCount--) {
-					buffer[--outOffset]=buffer[--inOffset];
-					buffer[--outOffset]=buffer[inOffset-1];
-					buffer[--outOffset]=buffer[inOffset];
-					buffer[--outOffset]=buffer[--inOffset];
-				}
-			} else {
-				for (;frameCount>0; frameCount--) {
-					inOffset--;
-					for (int channel=0; channel<channels; channel++) {
-						buffer[--outOffset]=buffer[inOffset];
-						buffer[--outOffset]=buffer[inOffset-1];
-					}
-					inOffset--;
-				}
-			}
-			break;
-		default:
-			for (;frameCount>0; frameCount--) {
-				for (int channel=0; channel<channels; channel++) {
-					for (int by=1; by<=bytesPerFrame; by++) {
-						buffer[--outOffset]=buffer[inOffset-by];
-					}
-				}
-				inOffset-=bytesPerFrame;
-			}
-			break;
-		}
 	}
 
 	/**
@@ -385,8 +335,8 @@ public class PCM2PCMConversionProvider
 		private boolean needExpandChannels;
 		private boolean needMixDown;
 
-		private AudioFormat floatBufferFormat;
-		private FloatSampleBuffer floatBuffer;
+		private AudioFormat intermediateFloatBufferFormat;
+		private FloatSampleBuffer floatBuffer=null;
 
 		public PCM2PCMStream(AudioInputStream sourceStream, AudioFormat targetFormat,
 		                     int sourceType, int targetType, int conversionType) {
@@ -412,29 +362,29 @@ public class PCM2PCMConversionProvider
 
 			// some sanity tests. These can be dropped when this converter has been tested enough...
 			if (needMixDown && conversionType!=CONVERT_FLOAT) {
-				throw new IllegalArgumentException
-				("PCM2PCMStream: MixDown only possible with CONVERT_FLOAT");
+				throw new IllegalArgumentException(
+				    "PCM2PCMStream: MixDown only possible with CONVERT_FLOAT");
 			}
 			if (needMixDown && targetFormat.getChannels()!=1) {
-				throw new IllegalArgumentException
-				("PCM2PCMStream: MixDown only possible with target channel count=1");
+				throw new IllegalArgumentException(
+				    "PCM2PCMStream: MixDown only possible with target channel count=1");
 			}
 			if (needExpandChannels && sourceStream.getFormat().getChannels()!=1) {
-				throw new IllegalArgumentException
-				("PCM2PCMStream: Expanding channels only possible with source channel count=1");
+				throw new IllegalArgumentException(
+				    "PCM2PCMStream: Expanding channels only possible with source channel count=1");
 			}
 			// end sanity
 
 			if (conversionType==CONVERT_FLOAT) {
 				int floatChannels=needExpandChannels?1:targetFormat.getChannels();
-				floatBufferFormat= new AudioFormat(targetFormat.getEncoding(),
-				                                   sourceStream.getFormat().getSampleRate(),
-				                                   targetFormat.getSampleSizeInBits(),
-				                                   floatChannels,
-				                                   floatChannels*targetFormat.getSampleSizeInBits()/8,
-				                                   sourceStream.getFormat().getFrameRate(),
-				                                   targetFormat.isBigEndian());
-				floatBuffer=new FloatSampleBuffer();
+				intermediateFloatBufferFormat=new AudioFormat(
+				                                  targetFormat.getEncoding(),
+				                                  sourceStream.getFormat().getSampleRate(),
+				                                  targetFormat.getSampleSizeInBits(),
+				                                  floatChannels,
+				                                  floatChannels*targetFormat.getSampleSizeInBits()/8,
+				                                  sourceStream.getFormat().getFrameRate(),
+				                                  targetFormat.isBigEndian());
 				// with floatBuffer we need to copy anyway, so enable in-place conversion
 				enableConvertInPlace();
 			}
@@ -449,159 +399,243 @@ public class PCM2PCMConversionProvider
 		}
 
 		// these functions only treat the highbyte of 16bit samples
-		private void do16BTO8S(byte[] inBuffer, int inCounter, byte[] outBuffer, int outByteOffset, int sampleCount) {
+		// obsolete: is handled with FloatBuffer because of dithering
+		private void do16BTO8S(byte[] inBuffer, int inCounter,
+		                       byte[] outBuffer, int outByteOffset, int sampleCount) {
 			for (; sampleCount>0; sampleCount--, inCounter++) {
 				outBuffer[outByteOffset++]=inBuffer[inCounter++];
 			}
 		}
 
-		private void do16BTO8U(byte[] inBuffer, int inCounter, byte[] outBuffer, int outByteOffset, int sampleCount) {
+		// obsolete: is handled with FloatBuffer because of dithering
+		private void do16BTO8U(byte[] inBuffer, int inCounter,
+		                       byte[] outBuffer, int outByteOffset, int sampleCount) {
 			for (; sampleCount>0; sampleCount--, inCounter++) {
 				outBuffer[outByteOffset++]=(byte)(inBuffer[inCounter++]+128);
 			}
 		}
 
-		private void do8STO16L(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int sampleCount) {
+		private void do8STO16L(byte[] inBuffer, byte[] outBuffer,
+		                       int outByteOffset, int sampleCount) {
 			for (int inCounter=0; sampleCount>0; sampleCount--) {
 				outBuffer[outByteOffset++]=0;
 				outBuffer[outByteOffset++]=inBuffer[inCounter++];
 			}
 		}
 
-		private void do8UTO16L(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int sampleCount) {
+		private void do8UTO16L(byte[] inBuffer, byte[] outBuffer,
+		                       int outByteOffset, int sampleCount) {
 			for (int inCounter=0; sampleCount>0; sampleCount--) {
 				outBuffer[outByteOffset++]=0;
 				outBuffer[outByteOffset++]=(byte)(inBuffer[inCounter++]+128);
 			}
 		}
 
-		private void do8STO16B(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int sampleCount) {
+		private void do8STO16B(byte[] inBuffer, byte[] outBuffer,
+		                       int outByteOffset, int sampleCount) {
 			for (int inCounter=0; sampleCount>0; sampleCount--) {
 				outBuffer[outByteOffset++]=inBuffer[inCounter++];
 				outBuffer[outByteOffset++]=0;
 			}
 		}
 
-		private void do8UTO16B(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int sampleCount) {
+		private void do8UTO16B(byte[] inBuffer, byte[] outBuffer,
+		                       int outByteOffset, int sampleCount) {
 			for (int inCounter=0; sampleCount>0; sampleCount--) {
 				outBuffer[outByteOffset++]=(byte)(inBuffer[inCounter++]+128);
 				outBuffer[outByteOffset++]=0;
+			}
+		}
+
+		// copies the channels: in the buffer there is only one channel
+		private void expandChannels(byte[] buffer, int offset, int frameCount, int bytesPerFrame, int channels) {
+			int inOffset=offset+bytesPerFrame*frameCount;
+			int outOffset=offset+bytesPerFrame*channels*frameCount;
+			switch (bytesPerFrame) {
+			case 1:
+				if (channels==2) {
+					for (;frameCount>0; frameCount--) {
+						buffer[--outOffset]=buffer[--inOffset];
+						buffer[--outOffset]=buffer[inOffset];
+					}
+				} else {
+					for (;frameCount>0; frameCount--) {
+						inOffset--;
+						for (int channel=0; channel<channels; channel++) {
+							buffer[--outOffset]=buffer[inOffset];
+						}
+					}
+				}
+				break;
+			case 2:
+				if (channels==2) {
+					for (;frameCount>0; frameCount--) {
+						buffer[--outOffset]=buffer[--inOffset];
+						buffer[--outOffset]=buffer[inOffset-1];
+						buffer[--outOffset]=buffer[inOffset];
+						buffer[--outOffset]=buffer[--inOffset];
+					}
+				} else {
+					for (;frameCount>0; frameCount--) {
+						inOffset--;
+						for (int channel=0; channel<channels; channel++) {
+							buffer[--outOffset]=buffer[inOffset];
+							buffer[--outOffset]=buffer[inOffset-1];
+						}
+						inOffset--;
+					}
+				}
+				break;
+			default:
+				for (;frameCount>0; frameCount--) {
+					for (int channel=0; channel<channels; channel++) {
+						for (int by=1; by<=bytesPerFrame; by++) {
+							buffer[--outOffset]=buffer[inOffset-by];
+						}
+					}
+					inOffset-=bytesPerFrame;
+				}
+				break;
+			}
+		}
+
+		private void expandChannels(FloatSampleBuffer buffer) {
+			// even more sanity...
+			if (buffer.getChannelCount()!=1) {
+				throw new IllegalArgumentException(
+				    "PCM2PCMConverter: can only expand channels for mono signals.");
+			}
+			int channels=getFormat().getChannels();
+			for (int ch=1; ch<channels; ch++) {
+				buffer.addChannel(false);
+				buffer.copyChannel(0, ch);
 			}
 		}
 
 		/** simple mixdown: all other channels are added to first channel */
-		private void mixDownChannels() {
-			float[] firstChannel=floatBuffer.getChannel(0);
-			int sampleCount=floatBuffer.getSampleCount();
-			int channelCount=floatBuffer.getChannelCount();
+		private void mixDownChannels(FloatSampleBuffer buffer) {
+			float[] firstChannel=buffer.getChannel(0);
+			int sampleCount=buffer.getSampleCount();
+			int channelCount=buffer.getChannelCount();
 			for (int ch=channelCount-1; ch>0; ch--) {
-				float[] thisChannel=floatBuffer.getChannel(ch);
+				float[] thisChannel=buffer.getChannel(ch);
 				for (int i=0; i<sampleCount; i++) {
 					firstChannel[i]+=thisChannel[i];
 				}
-				floatBuffer.removeChannel(ch);
+				buffer.removeChannel(ch);
+			}
+		}
+
+		private void doFloatConversion(FloatSampleBuffer buffer, boolean expandChannels) {
+			if (needMixDown) {
+				mixDownChannels(buffer);
+			}
+			if (expandChannels) {
+				expandChannels(buffer);
 			}
 		}
 
 		private void doFloatConversion(byte[] inBuffer, int inByteOffset,
 		                               byte[] outBuffer, int outByteOffset, int sampleCount) {
 			int byteCount=sampleCount*(getOriginalStream().getFormat().getSampleSizeInBits()/8);
-			floatBuffer.initFromByteArray(inBuffer, inByteOffset, byteCount, getOriginalStream().getFormat());
-			if (needMixDown) {
-				mixDownChannels();
+			if (floatBuffer==null) {
+				floatBuffer=new FloatSampleBuffer();
 			}
-			floatBuffer.convertToByteArray(outBuffer, outByteOffset, floatBufferFormat);
+			floatBuffer.initFromByteArray(inBuffer, inByteOffset, byteCount, getOriginalStream().getFormat());
+			doFloatConversion(floatBuffer, false); // expansion is done on byte array
+			floatBuffer.convertToByteArray(outBuffer, outByteOffset, intermediateFloatBufferFormat);
 		}
 
 		protected int convert(byte[] inBuffer, byte[] outBuffer, int outByteOffset, int inFrameCount) {
 			int sampleCount=inFrameCount*getOriginalStream().getFormat().getChannels();
-			try {
-				switch (conversionType) {
-				case CONVERT_SIGN:
-					TConversionTool.convertSign8(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_BYTE_ORDER16:
-					TConversionTool.swapOrder16(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_BYTE_ORDER24:
-					TConversionTool.swapOrder24(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_BYTE_ORDER32:
-					TConversionTool.swapOrder32(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_16LTO8S:
-					do16BTO8S(inBuffer, 1, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_16LTO8U:
-					do16BTO8U(inBuffer, 1, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_16BTO8S:
-					do16BTO8S(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_16BTO8U:
-					do16BTO8U(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_8STO16L:
-					do8STO16L(inBuffer, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_8STO16B:
-					do8STO16B(inBuffer, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_8UTO16L:
-					do8UTO16L(inBuffer, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_8UTO16B:
-					do8UTO16B(inBuffer, outBuffer, outByteOffset, sampleCount);
-					break;
-				case CONVERT_ONLY_EXPAND_CHANNELS:
-					// implicit: channelCount in inBuffer=1
-					System.arraycopy(inBuffer, 0, outBuffer, outByteOffset,
-					                 inFrameCount*getOriginalStream().getFormat().getFrameSize());
-					break;
-				case CONVERT_FLOAT:
-					doFloatConversion(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
-					break;
-				}
-				if (needExpandChannels) {
-					expandChannels(outBuffer, outByteOffset, inFrameCount,
-					               getFormat().getSampleSizeInBits()/8, getFormat().getChannels());
-				}
-			} catch (Throwable t) {
-				System.err.println("in convert:");
-				t.printStackTrace();
+			switch (conversionType) {
+			case CONVERT_SIGN:
+				TConversionTool.convertSign8(
+				    inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_BYTE_ORDER16:
+				TConversionTool.swapOrder16(
+				    inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_BYTE_ORDER24:
+				TConversionTool.swapOrder24(
+				    inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_BYTE_ORDER32:
+				TConversionTool.swapOrder32(
+				    inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_16LTO8S:
+				do16BTO8S(inBuffer, 1, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_16LTO8U:
+				do16BTO8U(inBuffer, 1, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_16BTO8S:
+				do16BTO8S(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_16BTO8U:
+				do16BTO8U(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_8STO16L:
+				do8STO16L(inBuffer, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_8STO16B:
+				do8STO16B(inBuffer, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_8UTO16L:
+				do8UTO16L(inBuffer, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_8UTO16B:
+				do8UTO16B(inBuffer, outBuffer, outByteOffset, sampleCount);
+				break;
+			case CONVERT_ONLY_EXPAND_CHANNELS:
+				// implicit: channelCount in inBuffer=1
+
+				System.arraycopy(inBuffer, 0, outBuffer, outByteOffset,
+				                 inFrameCount*getOriginalStream().getFormat().getFrameSize());
+				break;
+			case CONVERT_FLOAT:
+				doFloatConversion(inBuffer, 0, outBuffer, outByteOffset, sampleCount);
+				break;
+			default:
+				throw new RuntimeException(
+				    "PCM2PCMStream: Call to convert with unknown conversionType.");
+			}
+			if (needExpandChannels) {
+				expandChannels(outBuffer, outByteOffset, inFrameCount,
+				               getFormat().getSampleSizeInBits()/8,
+				               getFormat().getChannels());
 			}
 			return inFrameCount;
 		}
 
 		protected void convertInPlace(byte[] buffer, int byteOffset, int frameCount) {
 			int sampleCount=frameCount*getOriginalStream().getFormat().getChannels();
-			try {
-				switch (conversionType) {
-				case CONVERT_SIGN:
-					TConversionTool.convertSign8(buffer, byteOffset, sampleCount);
-					break;
-				case CONVERT_BYTE_ORDER16:
-					TConversionTool.swapOrder16(buffer, byteOffset, sampleCount);
-					break;
-				case CONVERT_BYTE_ORDER24:
-					TConversionTool.swapOrder24(buffer, byteOffset, sampleCount);
-					break;
-				case CONVERT_BYTE_ORDER32:
-					TConversionTool.swapOrder32(buffer, byteOffset, sampleCount);
-					break;
-				case CONVERT_FLOAT:
-					doFloatConversion(buffer, byteOffset, buffer, byteOffset, sampleCount);
-					if (needExpandChannels) {
-						expandChannels(buffer, byteOffset, frameCount,
-						               getFormat().getSampleSizeInBits()/8, getFormat().getChannels());
-					}
-					break;
-				default:
-					throw new RuntimeException("PCM2PCMStream: Call to convertInPlace, but it cannot convert in place.");
+			switch (conversionType) {
+			case CONVERT_SIGN:
+				TConversionTool.convertSign8(buffer, byteOffset, sampleCount);
+				break;
+			case CONVERT_BYTE_ORDER16:
+				TConversionTool.swapOrder16(buffer, byteOffset, sampleCount);
+				break;
+			case CONVERT_BYTE_ORDER24:
+				TConversionTool.swapOrder24(buffer, byteOffset, sampleCount);
+				break;
+			case CONVERT_BYTE_ORDER32:
+				TConversionTool.swapOrder32(buffer, byteOffset, sampleCount);
+				break;
+			case CONVERT_FLOAT:
+				doFloatConversion(buffer, byteOffset, buffer, byteOffset, sampleCount);
+				if (needExpandChannels) {
+					expandChannels(buffer, byteOffset, frameCount,
+					               getFormat().getSampleSizeInBits()/8,
+					               getFormat().getChannels());
 				}
-			} catch (Throwable t) {
-				System.err.println("in convertInPlace:");
-				t.printStackTrace();
+				break;
+			default:
+				throw new RuntimeException(
+				    "PCM2PCMStream: Call to convertInPlace, but it cannot convert in place.");
 			}
 		}
 	}
