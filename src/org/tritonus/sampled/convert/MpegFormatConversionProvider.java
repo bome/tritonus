@@ -40,7 +40,7 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
 import	org.tritonus.TDebug;
-import	org.tritonus.sampled.file.MpegEncoding;
+import	org.tritonus.sampled.Encodings;
 import	org.tritonus.util.TCircularBuffer;
 
 import	javazoom.jl.decoder.Bitstream;
@@ -60,12 +60,23 @@ import	javazoom.jl.decoder.Obuffer;
 public class MpegFormatConversionProvider
 	extends		TMatrixFormatConversionProvider
 {
+
+	public static final AudioFormat.Encoding	MPEG1L1 = Encodings.getEncoding("MPEG1L1");
+	public static final AudioFormat.Encoding	MPEG1L2 = Encodings.getEncoding("MPEG1L2");
+	public static final AudioFormat.Encoding	MPEG1L3 = Encodings.getEncoding("MPEG1L3");
+	public static final AudioFormat.Encoding	MPEG2L1 = Encodings.getEncoding("MPEG2L1");
+	public static final AudioFormat.Encoding	MPEG2L2 = Encodings.getEncoding("MPEG2L2");
+	public static final AudioFormat.Encoding	MPEG2L3 = Encodings.getEncoding("MPEG2L3");
+	public static final AudioFormat.Encoding	MPEG2DOT5L1 = Encodings.getEncoding("MPEG2DOT5L1");
+	public static final AudioFormat.Encoding	MPEG2DOT5L2 = Encodings.getEncoding("MPEG2DOT5L2");
+	public static final AudioFormat.Encoding	MPEG2DOT5L3 = Encodings.getEncoding("MPEG2DOT5L3");
+
 /*
 	private static final AudioFormat.Encoding[]	INPUT_ENCODINGS =
 	{
-		MpegEncoding.MPEG1L1, MpegEncoding.MPEG1L2, MpegEncoding.MPEG1L3,
-		MpegEncoding.MPEG2L1, MpegEncoding.MPEG2L2, MpegEncoding.MPEG2L3,
-		MpegEncoding.MPEG2DOT5L1, MpegEncoding.MPEG2DOT5L2, MpegEncoding.MPEG2DOT5L3
+		MPEG1L1, MPEG1L2, MPEG1L3,
+		MPEG2L1, MPEG2L2, MPEG2L3,
+		MPEG2DOT5L1, MPEG2DOT5L2, MPEG2DOT5L3
 	};
 	private static final AudioFormat.Encoding[]	OUTPUT_ENCODINGS =
 	{
@@ -76,68 +87,68 @@ public class MpegFormatConversionProvider
 	// TODO: frame size, frame rate, sample size, endianess?
 	private static final AudioFormat[]	INPUT_FORMATS =
 	{
-		new AudioFormat(MpegEncoding.MPEG1L1, 32000.0F, -1, 1, -1, -1, false),	// 0
-		new AudioFormat(MpegEncoding.MPEG1L1, 32000.0F, -1, 2, -1, -1, false),	// 1
-		new AudioFormat(MpegEncoding.MPEG1L1, 44100.0F, -1, 1, -1, -1, false),	// 2
-		new AudioFormat(MpegEncoding.MPEG1L1, 44100.0F, -1, 2, -1, -1, false),	// 3
-		new AudioFormat(MpegEncoding.MPEG1L1, 48000.0F, -1, 1, -1, -1, false),	// 4
-		new AudioFormat(MpegEncoding.MPEG1L1, 48000.0F, -1, 2, -1, -1, false),	// 5
+		new AudioFormat(MPEG1L1, 32000.0F, -1, 1, -1, -1, false),	// 0
+		new AudioFormat(MPEG1L1, 32000.0F, -1, 2, -1, -1, false),	// 1
+		new AudioFormat(MPEG1L1, 44100.0F, -1, 1, -1, -1, false),	// 2
+		new AudioFormat(MPEG1L1, 44100.0F, -1, 2, -1, -1, false),	// 3
+		new AudioFormat(MPEG1L1, 48000.0F, -1, 1, -1, -1, false),	// 4
+		new AudioFormat(MPEG1L1, 48000.0F, -1, 2, -1, -1, false),	// 5
 
-		new AudioFormat(MpegEncoding.MPEG1L2, 32000.0F, -1, 1, -1, -1, false),	// 6
-		new AudioFormat(MpegEncoding.MPEG1L2, 32000.0F, -1, 2, -1, -1, false),	// 7
-		new AudioFormat(MpegEncoding.MPEG1L2, 44100.0F, -1, 1, -1, -1, false),	// 8
-		new AudioFormat(MpegEncoding.MPEG1L2, 44100.0F, -1, 2, -1, -1, false),	// 9
-		new AudioFormat(MpegEncoding.MPEG1L2, 48000.0F, -1, 1, -1, -1, false),	// 10
-		new AudioFormat(MpegEncoding.MPEG1L2, 48000.0F, -1, 2, -1, -1, false),	// 11
+		new AudioFormat(MPEG1L2, 32000.0F, -1, 1, -1, -1, false),	// 6
+		new AudioFormat(MPEG1L2, 32000.0F, -1, 2, -1, -1, false),	// 7
+		new AudioFormat(MPEG1L2, 44100.0F, -1, 1, -1, -1, false),	// 8
+		new AudioFormat(MPEG1L2, 44100.0F, -1, 2, -1, -1, false),	// 9
+		new AudioFormat(MPEG1L2, 48000.0F, -1, 1, -1, -1, false),	// 10
+		new AudioFormat(MPEG1L2, 48000.0F, -1, 2, -1, -1, false),	// 11
 
-		new AudioFormat(MpegEncoding.MPEG1L3, 32000.0F, -1, 1, -1, -1, false),	// 12
-		new AudioFormat(MpegEncoding.MPEG1L3, 32000.0F, -1, 2, -1, -1, false),	// 13
-		new AudioFormat(MpegEncoding.MPEG1L3, 44100.0F, -1, 1, -1, -1, false),	// 14
-		new AudioFormat(MpegEncoding.MPEG1L3, 44100.0F, -1, 2, -1, -1, false),	// 15
-		new AudioFormat(MpegEncoding.MPEG1L3, 48000.0F, -1, 1, -1, -1, false),	// 16
-		new AudioFormat(MpegEncoding.MPEG1L3, 48000.0F, -1, 2, -1, -1, false),	// 17
+		new AudioFormat(MPEG1L3, 32000.0F, -1, 1, -1, -1, false),	// 12
+		new AudioFormat(MPEG1L3, 32000.0F, -1, 2, -1, -1, false),	// 13
+		new AudioFormat(MPEG1L3, 44100.0F, -1, 1, -1, -1, false),	// 14
+		new AudioFormat(MPEG1L3, 44100.0F, -1, 2, -1, -1, false),	// 15
+		new AudioFormat(MPEG1L3, 48000.0F, -1, 1, -1, -1, false),	// 16
+		new AudioFormat(MPEG1L3, 48000.0F, -1, 2, -1, -1, false),	// 17
 
-		new AudioFormat(MpegEncoding.MPEG2L1, 16000.0F, -1, 1, -1, -1, false),	// 18
-		new AudioFormat(MpegEncoding.MPEG2L1, 16000.0F, -1, 2, -1, -1, false),	// 19
-		new AudioFormat(MpegEncoding.MPEG2L1, 22050.0F, -1, 1, -1, -1, false),	// 20
-		new AudioFormat(MpegEncoding.MPEG2L1, 22050.0F, -1, 2, -1, -1, false),	// 21
-		new AudioFormat(MpegEncoding.MPEG2L1, 24000.0F, -1, 1, -1, -1, false),	// 22
-		new AudioFormat(MpegEncoding.MPEG2L1, 24000.0F, -1, 2, -1, -1, false),	// 23
+		new AudioFormat(MPEG2L1, 16000.0F, -1, 1, -1, -1, false),	// 18
+		new AudioFormat(MPEG2L1, 16000.0F, -1, 2, -1, -1, false),	// 19
+		new AudioFormat(MPEG2L1, 22050.0F, -1, 1, -1, -1, false),	// 20
+		new AudioFormat(MPEG2L1, 22050.0F, -1, 2, -1, -1, false),	// 21
+		new AudioFormat(MPEG2L1, 24000.0F, -1, 1, -1, -1, false),	// 22
+		new AudioFormat(MPEG2L1, 24000.0F, -1, 2, -1, -1, false),	// 23
 
-		new AudioFormat(MpegEncoding.MPEG2L2, 16000.0F, -1, 1, -1, -1, false),	// 24
-		new AudioFormat(MpegEncoding.MPEG2L2, 16000.0F, -1, 2, -1, -1, false),	// 25
-		new AudioFormat(MpegEncoding.MPEG2L2, 22050.0F, -1, 1, -1, -1, false),	// 26
-		new AudioFormat(MpegEncoding.MPEG2L2, 22050.0F, -1, 2, -1, -1, false),	// 27
-		new AudioFormat(MpegEncoding.MPEG2L2, 24000.0F, -1, 1, -1, -1, false),	// 28
-		new AudioFormat(MpegEncoding.MPEG2L2, 24000.0F, -1, 2, -1, -1, false),	// 29
+		new AudioFormat(MPEG2L2, 16000.0F, -1, 1, -1, -1, false),	// 24
+		new AudioFormat(MPEG2L2, 16000.0F, -1, 2, -1, -1, false),	// 25
+		new AudioFormat(MPEG2L2, 22050.0F, -1, 1, -1, -1, false),	// 26
+		new AudioFormat(MPEG2L2, 22050.0F, -1, 2, -1, -1, false),	// 27
+		new AudioFormat(MPEG2L2, 24000.0F, -1, 1, -1, -1, false),	// 28
+		new AudioFormat(MPEG2L2, 24000.0F, -1, 2, -1, -1, false),	// 29
 
-		new AudioFormat(MpegEncoding.MPEG2L3, 16000.0F, -1, 1, -1, -1, false),	// 30
-		new AudioFormat(MpegEncoding.MPEG2L3, 16000.0F, -1, 2, -1, -1, false),	// 31
-		new AudioFormat(MpegEncoding.MPEG2L3, 22050.0F, -1, 1, -1, -1, false),	// 32
-		new AudioFormat(MpegEncoding.MPEG2L3, 22050.0F, -1, 2, -1, -1, false),	// 33
-		new AudioFormat(MpegEncoding.MPEG2L3, 24000.0F, -1, 1, -1, -1, false),	// 34
-		new AudioFormat(MpegEncoding.MPEG2L3, 24000.0F, -1, 2, -1, -1, false),	// 35
+		new AudioFormat(MPEG2L3, 16000.0F, -1, 1, -1, -1, false),	// 30
+		new AudioFormat(MPEG2L3, 16000.0F, -1, 2, -1, -1, false),	// 31
+		new AudioFormat(MPEG2L3, 22050.0F, -1, 1, -1, -1, false),	// 32
+		new AudioFormat(MPEG2L3, 22050.0F, -1, 2, -1, -1, false),	// 33
+		new AudioFormat(MPEG2L3, 24000.0F, -1, 1, -1, -1, false),	// 34
+		new AudioFormat(MPEG2L3, 24000.0F, -1, 2, -1, -1, false),	// 35
 
-		new AudioFormat(MpegEncoding.MPEG2DOT5L1, 8000.0F, -1, 1, -1, -1, false),	// 36
-		new AudioFormat(MpegEncoding.MPEG2DOT5L1, 8000.0F, -1, 2, -1, -1, false),	// 37
-		new AudioFormat(MpegEncoding.MPEG2DOT5L1, 11025.0F, -1, 1, -1, -1, false),	// 38
-		new AudioFormat(MpegEncoding.MPEG2DOT5L1, 11025.0F, -1, 2, -1, -1, false),	// 39
-		new AudioFormat(MpegEncoding.MPEG2DOT5L1, 12000.0F, -1, 1, -1, -1, false),	// 40
-		new AudioFormat(MpegEncoding.MPEG2DOT5L1, 12000.0F, -1, 2, -1, -1, false),	// 41
+		new AudioFormat(MPEG2DOT5L1, 8000.0F, -1, 1, -1, -1, false),	// 36
+		new AudioFormat(MPEG2DOT5L1, 8000.0F, -1, 2, -1, -1, false),	// 37
+		new AudioFormat(MPEG2DOT5L1, 11025.0F, -1, 1, -1, -1, false),	// 38
+		new AudioFormat(MPEG2DOT5L1, 11025.0F, -1, 2, -1, -1, false),	// 39
+		new AudioFormat(MPEG2DOT5L1, 12000.0F, -1, 1, -1, -1, false),	// 40
+		new AudioFormat(MPEG2DOT5L1, 12000.0F, -1, 2, -1, -1, false),	// 41
 
-		new AudioFormat(MpegEncoding.MPEG2DOT5L2, 8000.0F, -1, 1, -1, -1, false),	// 42
-		new AudioFormat(MpegEncoding.MPEG2DOT5L2, 8000.0F, -1, 2, -1, -1, false),	// 43
-		new AudioFormat(MpegEncoding.MPEG2DOT5L2, 11025.0F, -1, 1, -1, -1, false),	// 44
-		new AudioFormat(MpegEncoding.MPEG2DOT5L2, 11025.0F, -1, 2, -1, -1, false),	// 45
-		new AudioFormat(MpegEncoding.MPEG2DOT5L2, 12000.0F, -1, 1, -1, -1, false),	// 46
-		new AudioFormat(MpegEncoding.MPEG2DOT5L2, 12000.0F, -1, 2, -1, -1, false),	// 47
+		new AudioFormat(MPEG2DOT5L2, 8000.0F, -1, 1, -1, -1, false),	// 42
+		new AudioFormat(MPEG2DOT5L2, 8000.0F, -1, 2, -1, -1, false),	// 43
+		new AudioFormat(MPEG2DOT5L2, 11025.0F, -1, 1, -1, -1, false),	// 44
+		new AudioFormat(MPEG2DOT5L2, 11025.0F, -1, 2, -1, -1, false),	// 45
+		new AudioFormat(MPEG2DOT5L2, 12000.0F, -1, 1, -1, -1, false),	// 46
+		new AudioFormat(MPEG2DOT5L2, 12000.0F, -1, 2, -1, -1, false),	// 47
 
-		new AudioFormat(MpegEncoding.MPEG2DOT5L3, 8000.0F, -1, 1, -1, -1, false),	// 48
-		new AudioFormat(MpegEncoding.MPEG2DOT5L3, 8000.0F, -1, 2, -1, -1, false),	// 49
-		new AudioFormat(MpegEncoding.MPEG2DOT5L3, 11025.0F, -1, 1, -1, -1, false),	// 50
-		new AudioFormat(MpegEncoding.MPEG2DOT5L3, 11025.0F, -1, 2, -1, -1, false),	// 51
-		new AudioFormat(MpegEncoding.MPEG2DOT5L3, 12000.0F, -1, 1, -1, -1, false),	// 52
-		new AudioFormat(MpegEncoding.MPEG2DOT5L3, 12000.0F, -1, 2, -1, -1, false),	// 53
+		new AudioFormat(MPEG2DOT5L3, 8000.0F, -1, 1, -1, -1, false),	// 48
+		new AudioFormat(MPEG2DOT5L3, 8000.0F, -1, 2, -1, -1, false),	// 49
+		new AudioFormat(MPEG2DOT5L3, 11025.0F, -1, 1, -1, -1, false),	// 50
+		new AudioFormat(MPEG2DOT5L3, 11025.0F, -1, 2, -1, -1, false),	// 51
+		new AudioFormat(MPEG2DOT5L3, 12000.0F, -1, 1, -1, -1, false),	// 52
+		new AudioFormat(MPEG2DOT5L3, 12000.0F, -1, 2, -1, -1, false),	// 53
 	};
 
 

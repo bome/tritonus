@@ -48,84 +48,66 @@ import	org.tritonus.TDebug;
 
 public class AiffAudioFileWriter extends TAudioFileWriter {
 
-	private static final AudioFileFormat.Type[]	FILE_TYPES =
-	{
-		AudioFileFormat.Type.AIFF,
-		AudioFileFormat.Type.AIFC
-	};
-	
+	private static final AudioFileFormat.Type[] FILE_TYPES =
+	    {
+	        AiffTool.AIFF,
+	        AiffTool.AIFC
+	    };
+
+	private static final int ALL=AudioSystem.NOT_SPECIFIED;
+
 	// IMPORTANT: this array depends on the AudioFormat.match() algorithm which takes
 	//            AudioSystem.NOT_SPECIFIED into account !
 	private static final AudioFormat[]	AUDIO_FORMATS =
-	{
-		// IDEA: allow other number of channels that 1 and 2 ?
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
-		/*	Because there is only ony byte per sample,
-		 *	byte order doesn't matter. So we allow little-endian,
-		 *	too.
-		 */
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
+	    {
+	        new AudioFormat(AiffTool.PCM, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AiffTool.PCM, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AiffTool.ULAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AiffTool.ULAW, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AiffTool.PCM, ALL, 16, ALL, ALL, ALL, true),
+	        new AudioFormat(AiffTool.PCM, ALL, 24, ALL, ALL, ALL, true),
+	        new AudioFormat(AiffTool.PCM, ALL, 32, ALL, ALL, ALL, true),
+	    };
 
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 1, 2, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 2, 4, AudioSystem.NOT_SPECIFIED, true),
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 24, 1, 3, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 24, 2, 6, AudioSystem.NOT_SPECIFIED, true),
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 32, 1, 4, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 32, 2, 8, AudioSystem.NOT_SPECIFIED, true)
-	};
-	
-	public AiffAudioFileWriter()
-	{
+	public AiffAudioFileWriter() {
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
 	}
 
 
-	protected boolean isAudioFormatSupported(AudioFormat format)
-	{
+	protected boolean isAudioFormatSupported(AudioFormat format) {
 		return AiffTool.getFormatCode(format)!=AiffTool.AIFF_COMM_UNSPECIFIED;
 	}
 
 
 	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		File file)
-		throws	IOException
-	{
-		// TODO: (generalized) check if either seek is possible 
+	    AudioFormat audioFormat,
+	    long lLengthInBytes,
+	    AudioFileFormat.Type fileType,
+	    File file)
+	throws	IOException {
+		// TODO: (generalized) check if either seek is possible
 		//       or length is not required in header
 		TDataOutputStream	dataOutputStream = new SeekableTDOS(file);
-		return new AiffAudioOutputStream(audioFormat, fileType, 
-					       lLengthInBytes,
-					       dataOutputStream);
+		return new AiffAudioOutputStream(audioFormat, fileType,
+		                                 lLengthInBytes,
+		                                 dataOutputStream);
 	}
 
 	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		OutputStream outputStream)
-		throws	IOException
-	{
+	    AudioFormat audioFormat,
+	    long lLengthInBytes,
+	    AudioFileFormat.Type fileType,
+	    OutputStream outputStream)
+	throws	IOException {
 		// it should be thrown an exception if it is tried to write
 		// to a stream but lLengthInFrames is AudioSystem.NOT_SPECIFIED
 		TDataOutputStream	dataOutputStream = new NonSeekableTDOS(outputStream);
-		return new AiffAudioOutputStream(audioFormat, fileType, 
-					       lLengthInBytes,
-					       dataOutputStream);
+		return new AiffAudioOutputStream(audioFormat, fileType,
+		                                 lLengthInBytes,
+		                                 dataOutputStream);
 	}
-	
+
 }
 
 /*** WaveAudioFileWriter.java ***/

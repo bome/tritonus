@@ -26,10 +26,13 @@
 package	org.tritonus.sampled.file;
 
 
+import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
-import	org.tritonus.sampled.file.gsm.GSMEncoding;
+import	javax.sound.sampled.AudioFileFormat;
+import	org.tritonus.sampled.Encodings;
+import	org.tritonus.sampled.AudioFileTypes;
 
-/**	
+/**
  * Common constants and methods for handling wave files.
  *
  * @author Florian Bomers
@@ -59,28 +62,39 @@ public class WaveTool {
 	public static final int MIN_DATA_OFFSET=12+8+MIN_FMT_CHUNK_LENGTH+8;
 
 	// we always write the sample size in bits.
-	// There are programs (CoolEdit) that rely on the 
+	// There are programs (CoolEdit) that rely on the
 	// additional entry for sample size in bits.
 	public static final int FMT_CHUNK_SIZE=16;
 	public static final int RIFF_CONTAINER_CHUNK_SIZE=12;
 	public static final int CHUNK_HEADER_SIZE=8;
 	public static final int DATA_OFFSET=RIFF_CONTAINER_CHUNK_SIZE
-		+CHUNK_HEADER_SIZE+FMT_CHUNK_SIZE+CHUNK_HEADER_SIZE;
+	                                    +CHUNK_HEADER_SIZE+FMT_CHUNK_SIZE+CHUNK_HEADER_SIZE;
 
-	public static short getFormatCode(AudioFormat format)
-	{
+	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
+	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
+	public static AudioFormat.Encoding ULAW=Encodings.getEncoding("ULAW");
+	public static AudioFormat.Encoding ALAW=Encodings.getEncoding("ALAW");
+	public static AudioFormat.Encoding GSM0610=Encodings.getEncoding("GSM0610");
+
+	public static AudioFileFormat.Type WAVE=AudioFileTypes.getType("WAVE", "wav");
+
+	public static short getFormatCode(AudioFormat format) {
 		AudioFormat.Encoding encoding = format.getEncoding();
 		int nSampleSize = format.getSampleSizeInBits();
 		boolean smallEndian = !format.isBigEndian();
-		
-		if ((encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && smallEndian && nSampleSize>8)
-		    || (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED) && nSampleSize==8)) {
+		boolean frameSizeOK=format.getFrameSize()==AudioSystem.NOT_SPECIFIED
+		                    || format.getChannels()!=AudioSystem.NOT_SPECIFIED
+		                    || format.getFrameSize()==nSampleSize/8*format.getChannels();
+
+		if (((encoding.equals(PCM_SIGNED) && smallEndian && nSampleSize>8)
+		        || (encoding.equals(PCM_UNSIGNED) && nSampleSize==8))
+		        && frameSizeOK) {
 			return WAVE_FORMAT_PCM;
-		} else if (encoding.equals(AudioFormat.Encoding.ULAW) && nSampleSize == 8) {
+		} else if (encoding.equals(ULAW) && nSampleSize == 8 && frameSizeOK) {
 			return WAVE_FORMAT_ULAW;
-		} else if (encoding.equals(AudioFormat.Encoding.ALAW) && nSampleSize == 8) {
+		} else if (encoding.equals(ALAW) && nSampleSize == 8 && frameSizeOK) {
 			return WAVE_FORMAT_ALAW;
-		} else if (encoding.equals(GSMEncoding.GSM0610)) {
+		} else if (encoding.equals(GSM0610)) {
 			return WAVE_FORMAT_GSM610;
 		} else {
 			return WAVE_FORMAT_UNSPECIFIED;

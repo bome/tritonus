@@ -30,11 +30,11 @@ import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFormat.Encoding;
 import	javax.sound.sampled.AudioInputStream;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.TConversionTool;
+import	org.tritonus.sampled.Encodings;
 
 /**
  * This provider (currently) supports these conversions:
@@ -52,7 +52,13 @@ import	org.tritonus.sampled.TConversionTool;
 
 public class UlawFormatConversionProvider
 	extends TEncodingFormatConversionProvider {
+
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
+
+	public static AudioFormat.Encoding ENC_PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
+	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
+	public static AudioFormat.Encoding ENC_ULAW=Encodings.getEncoding("ULAW");
+	public static AudioFormat.Encoding ENC_ALAW=Encodings.getEncoding("ALAW");
 
 	// TODO:
 	// make a superclass that takes 2 arrays in the constructor
@@ -63,39 +69,29 @@ public class UlawFormatConversionProvider
 	// when the converted stream is actually requested, an exception occurs for these cases
 	// this new superclass wouldn't distinguish between source and target formats.
 
-	/*private static final AudioFormat[]	INPUT_FORMATS =
-{
-		// encoding, sampleRate, sampleSize, channels, frameSize, frameRate, bigEndian
-		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
-		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true)
-};*/
+	private static final AudioFormat[]	OUTPUT_FORMATS = {
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_ALAW, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_ALAW, ALL, 8, ALL, ALL, ALL, true),
 
-	private static final AudioFormat[]	OUTPUT_FORMATS =
-	    {
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
-	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
-	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(ENC_ULAW, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(ENC_ULAW, ALL, 8, ALL, ALL, ALL, true)
+	};
 
-	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true)
-	    };
-
-	/**	Constructor.
+	/** Constructor.
 	 */
 	public UlawFormatConversionProvider() {
-		//super(Arrays.asList(INPUT_FORMATS),
-		//      Arrays.asList(OUTPUT_FORMATS));
 		super(Arrays.asList(OUTPUT_FORMATS),
 		      Arrays.asList(OUTPUT_FORMATS));
 	}
@@ -110,13 +106,13 @@ public class UlawFormatConversionProvider
 		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
 		        && doMatch(targetFormat.getChannels(), sourceFormat.getChannels())) {
 			if (doMatch(targetFormat.getSampleSizeInBits(),8)
-			        && targetFormat.getEncoding()==AudioFormat.Encoding.ULAW) {
+			        && targetFormat.getEncoding().equals(ENC_ULAW)) {
 				// OK, the targetFormat seems fine, so we convert it to ULAW
 				// let the remaining checks be done by ToUlawStream
 				return new ToUlawStream(sourceStream);
 			} else
 				if (doMatch(sourceFormat.getSampleSizeInBits(),8)
-				        && sourceFormat.getEncoding()==AudioFormat.Encoding.ULAW) {
+				        && sourceFormat.getEncoding().equals(ENC_ULAW)) {
 					// convert ULAW to the target format
 					return new FromUlawStream(sourceStream, targetFormat);
 				}
@@ -140,7 +136,7 @@ public class UlawFormatConversionProvider
 		boolean bigEndian=af.isBigEndian();
 		int ssib=af.getSampleSizeInBits();
 		// now set up the convert type
-		if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
+		if (encoding.equals(ENC_PCM_SIGNED)) {
 			if (ssib==16) {
 				if (bigEndian) {
 					result=BIG_ENDIAN16;
@@ -152,12 +148,12 @@ public class UlawFormatConversionProvider
 					result=SIGNED8;
 				}
 		} else
-			if (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
+			if (encoding.equals(ENC_PCM_UNSIGNED)) {
 				if (ssib==8) {
 					result=UNSIGNED8;
 				}
 			} else
-				if (encoding.equals(AudioFormat.Encoding.ALAW)) {
+				if (encoding.equals(ENC_ALAW)) {
 					result=ALAW;
 				}
 		return result;
@@ -171,7 +167,7 @@ public class UlawFormatConversionProvider
 			// FrameRate, SampleRate, and Channels match the sourceFormat
 			// we only retain encoding, samplesize and endian of targetFormat.
 			super (sourceStream, new AudioFormat(
-			           AudioFormat.Encoding.ULAW,
+			           ENC_ULAW,
 			           sourceStream.getFormat().getSampleRate(),
 			           8,
 			           sourceStream.getFormat().getChannels(),

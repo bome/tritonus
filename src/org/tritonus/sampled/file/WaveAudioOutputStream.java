@@ -31,7 +31,7 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioSystem;
 import	org.tritonus.TDebug;
 
-/**	
+/**
  * AudioOutputStream for Wave files.
  *
  * @author Florian Bomers
@@ -41,41 +41,42 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 	// this constant is used for chunk lengths when the length is not known yet
 	private static final int LENGTH_NOT_KNOWN=-1;
+	private int formatCode;
 
 	public WaveAudioOutputStream(AudioFormat audioFormat,
-				   long lLength,
-				   TDataOutputStream dataOutputStream)
-	{
+	                             long lLength,
+	                             TDataOutputStream dataOutputStream) {
 		super(audioFormat,
-			lLength, 
-			dataOutputStream,
-			lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
+		      lLength,
+		      dataOutputStream,
+		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
 		// wave cannot store more than 4GB
 		if (lLength != AudioSystem.NOT_SPECIFIED && (lLength+WaveTool.DATA_OFFSET)>0xFFFFFFFFl) {
-			if (TDebug.TraceAudioOutputStream)
-			{
+			if (TDebug.TraceAudioOutputStream) {
 				TDebug.out("WaveAudioOutputStream: Length exceeds 4GB: "
-					   +lLength+"=0x"+Long.toHexString(lLength)
-					   +" with header="+(lLength+WaveTool.DATA_OFFSET)
-					   +"=0x"+Long.toHexString(lLength+WaveTool.DATA_OFFSET));
+				           +lLength+"=0x"+Long.toHexString(lLength)
+				           +" with header="+(lLength+WaveTool.DATA_OFFSET)
+				           +"=0x"+Long.toHexString(lLength+WaveTool.DATA_OFFSET));
 			}
 			throw new IllegalArgumentException("Wave files cannot be larger than 4GB.");
 		}
+		formatCode=WaveTool.getFormatCode(getFormat());
+		if (formatCode==WaveTool.WAVE_FORMAT_UNSPECIFIED) {
+			throw new IllegalArgumentException("Unknown encoding/format for this wave file.");
+		}
+
 	}
 
 	protected void writeHeader()
-		throws	IOException
-	{
-		if (TDebug.TraceAudioOutputStream)
-		{
+	throws	IOException {
+		if (TDebug.TraceAudioOutputStream) {
 			TDebug.out("WaveAudioOutputStream.writeHeader(): called.");
 		}
 		AudioFormat		format = getFormat();
 		long			lLength = getLength();
 		int formatChunkAdd=0;
-		int formatCode=WaveTool.getFormatCode(format);
 		if (formatCode==WaveTool.WAVE_FORMAT_GSM610) {
-			// space for extra fields 
+			// space for extra fields
 			formatChunkAdd+=4;
 		}
 		int dataOffset=WaveTool.DATA_OFFSET+formatChunkAdd;
@@ -89,17 +90,17 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		if (lLength != AudioSystem.NOT_SPECIFIED && lLength+dataOffset>0xFFFFFFFFl) {
 			lLength=0xFFFFFFFFl-dataOffset;
 		}
-		
+
 		// chunks must be on word-boundaries
 		long 			lDataChunkSize=lLength+(lLength%2);
 		TDataOutputStream	dos = getDataOutputStream();
-		
+
 		// write RIFF container chunk
 		dos.writeInt(WaveTool.WAVE_RIFF_MAGIC);
-		dos.writeLittleEndian32((int) ((lDataChunkSize+dataOffset-WaveTool.CHUNK_HEADER_SIZE) 
-					       & 0xFFFFFFFF));
+		dos.writeLittleEndian32((int) ((lDataChunkSize+dataOffset-WaveTool.CHUNK_HEADER_SIZE)
+		                               & 0xFFFFFFFF));
 		dos.writeInt(WaveTool.WAVE_WAVE_MAGIC);
-		
+
 		// write fmt_ chunk
 		int formatChunkSize=WaveTool.FMT_CHUNK_SIZE+formatChunkAdd;
 		short sampleSizeInBits=(short) format.getSampleSizeInBits();
@@ -116,13 +117,14 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 			}
 			sampleSizeInBits=0; // MS standard
 		}
+
 		int avgBytesPerSec=((int) format.getSampleRate())/decodedSamplesPerBlock*format.getFrameSize();
 		dos.writeInt(WaveTool.WAVE_FMT_MAGIC);
 		dos.writeLittleEndian32(formatChunkSize);
 		dos.writeLittleEndian16((short) formatCode);             // wFormatTag
-		dos.writeLittleEndian16((short) format.getChannels());   // nChannels 
+		dos.writeLittleEndian16((short) format.getChannels());   // nChannels
 		dos.writeLittleEndian32((int) format.getSampleRate());   // nSamplesPerSec
-		dos.writeLittleEndian32(avgBytesPerSec);                 // nAvgBytesPerSec 
+		dos.writeLittleEndian32(avgBytesPerSec);                 // nAvgBytesPerSec
 		dos.writeLittleEndian16((short) format.getFrameSize());  // nBlockalign
 		dos.writeLittleEndian16(sampleSizeInBits);               // wBitsPerSample
 
@@ -132,9 +134,10 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		}
 
 		// write fact chunk
+
 		if (formatCode!=WaveTool.WAVE_FORMAT_PCM) {
 			// write "fact" chunk: number of samples
-			// todo: add this as an attribute or property 
+			// todo: add this as an attribute or property
 			// in AudioOutputStream or AudioInputStream
 			long samples=0;
 			if (lLength!=AudioSystem.NOT_SPECIFIED) {
@@ -155,8 +158,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 	}
 
 	protected void patchHeader()
-		throws	IOException
-	{
+	throws	IOException {
 		TDataOutputStream	tdos = getDataOutputStream();
 		tdos.seek(0);
 		setLengthFromCalculatedLength();
@@ -165,7 +167,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 	public void close() throws IOException {
 		long nBytesWritten=getCalculatedLength();
-		
+
 		if ((nBytesWritten % 2)==1) {
 			if (TDebug.TraceAudioOutputStream) {
 				TDebug.out("WaveOutputStream.close(): adding padding byte");
@@ -175,6 +177,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 			tdos.writeByte(0);
 			// DON'T adjust calculated length !
 		}
+
 		super.close();
 	}
 

@@ -43,6 +43,8 @@ import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.sampled.Encodings;
+import	org.tritonus.sampled.AudioFileTypes;
 import	org.tritonus.sampled.file.TAudioFileFormat;
 
 
@@ -55,11 +57,19 @@ public class MpegAudioFileReader
 {
 	private static final int	SYNC = 0xFFE00000;
 	private static final AudioFormat.Encoding[][]	sm_aEncodings =
-	{
-		{MpegEncoding.MPEG2DOT5L3, MpegEncoding.MPEG2DOT5L2, MpegEncoding.MPEG2DOT5L1},
-		{MpegEncoding.MPEG2DOT5L3, MpegEncoding.MPEG2DOT5L2, MpegEncoding.MPEG2DOT5L1},	/* reserved */
-		{MpegEncoding.MPEG2L3, MpegEncoding.MPEG2L2, MpegEncoding.MPEG2L1},
-		{MpegEncoding.MPEG1L3, MpegEncoding.MPEG1L2, MpegEncoding.MPEG1L1},
+	{ 
+		{Encodings.getEncoding("MPEG2DOT5L3"), 
+		 Encodings.getEncoding("MPEG2DOT5L2"), 
+		 Encodings.getEncoding("MPEG2DOT5L1")},
+		{Encodings.getEncoding("MPEG2DOT5L3"), 
+		 Encodings.getEncoding("MPEG2DOT5L2"), 
+		 Encodings.getEncoding("MPEG2DOT5L1")},	/* reserved */
+		{Encodings.getEncoding("MPEG2L3"), 
+		 Encodings.getEncoding("MPEG2L2"), 
+		 Encodings.getEncoding("MPEG2L1")},
+		{Encodings.getEncoding("MPEG1L3"), 
+		 Encodings.getEncoding("MPEG1L2"), 
+		 Encodings.getEncoding("MPEG1L1")},
 	};
 	private static final float[][]	sm_afSamplingRates =
 	{
@@ -137,11 +147,14 @@ public class MpegAudioFileReader
 			true);
 		//$$fb 2000-08-15: workaround for the fixed extension problem in AudioFileFormat.Type
 		// see org.tritonus.sampled.AudioFileTypes.java
-		AudioFileFormat.Type type=MpegFileFormatType.MPEG;
-		if (encoding.equals(MpegEncoding.MPEG1L3)) {
-			type=MpegFileFormatType.MP3;
+		AudioFileFormat.Type type=AudioFileTypes.getType("MPEG", "mpeg");
+		if (encoding.equals(Encodings.getEncoding("MPEG1L3"))) {
+			type=AudioFileTypes.getType("MP3", "mp3");
 		}
-		return new TAudioFileFormat(type, format, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED);
+		return new TAudioFileFormat(type, 
+					    format, 
+					    AudioSystem.NOT_SPECIFIED, 
+					    AudioSystem.NOT_SPECIFIED);
 	}
 
 

@@ -45,6 +45,8 @@ import	org.tritonus.sampled.file.TDataOutputStream;
 import	org.tritonus.sampled.file.HeaderLessAudioOutputStream;
 import	org.tritonus.sampled.file.SeekableTDOS;
 import	org.tritonus.sampled.file.NonSeekableTDOS;
+import	org.tritonus.sampled.Encodings;
+import	org.tritonus.sampled.AudioFileTypes;
 
 
 
@@ -58,13 +60,13 @@ public class GSMAudioFileWriter
 {
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{
-		GSMFileFormatType.GSM
+		AudioFileTypes.getType("GSM", "gsm")
 	};
 
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	{
-		new AudioFormat(GSMEncoding.GSM0610, 8000.0F, AudioSystem.NOT_SPECIFIED, 1, 33, 50.0F, false),
-		new AudioFormat(GSMEncoding.GSM0610, 8000.0F, AudioSystem.NOT_SPECIFIED, 1, 33, 50.0F, true),
+		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, AudioSystem.NOT_SPECIFIED, 1, 33, 50.0F, false),
+		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, AudioSystem.NOT_SPECIFIED, 1, 33, 50.0F, true),
 	};
 
 

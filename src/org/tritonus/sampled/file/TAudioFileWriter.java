@@ -42,6 +42,7 @@ import	javax.sound.sampled.spi.AudioFileWriter;
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.AudioUtils;
 import	org.tritonus.sampled.TConversionTool;
+import	org.tritonus.sampled.Encodings;
 
 /**
  * Common base class for implementing classes of AudioFileWriter.
@@ -58,6 +59,10 @@ import	org.tritonus.sampled.TConversionTool;
 public abstract class TAudioFileWriter
 	extends		AudioFileWriter
 {
+
+	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
+	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
+
 	/**	Buffer length for the loop in the write() method.
 	 *	This is in bytes. Perhaps it should be in frames to give an
 	 *	equal amount of latency.
@@ -390,11 +395,11 @@ public abstract class TAudioFileWriter
 			TDebug.out("TAudioFileWriter.findConvertableFormat(): input format: " + inputFormat);
 		}
 		AudioFormat.Encoding	inputEncoding = inputFormat.getEncoding();
-		if (inputEncoding.equals(AudioFormat.Encoding.PCM_UNSIGNED) &&
+		if (inputEncoding.equals(PCM_UNSIGNED) &&
 		    inputFormat.getSampleSizeInBits() == 8)
 		{
 			AudioFormat	outputFormat = new AudioFormat(
-				AudioFormat.Encoding.PCM_SIGNED,
+				PCM_SIGNED,
 				inputFormat.getSampleRate(),
 				inputFormat.getSampleSizeInBits(),
 				inputFormat.getChannels(),
@@ -414,11 +419,11 @@ public abstract class TAudioFileWriter
 				return null;
 			}
 		}
-		else if (inputEncoding.equals(AudioFormat.Encoding.PCM_SIGNED) &&
+		else if (inputEncoding.equals(PCM_SIGNED) &&
 			 inputFormat.getSampleSizeInBits() == 8)
 		{
 			AudioFormat	outputFormat = new AudioFormat(
-				AudioFormat.Encoding.PCM_UNSIGNED,
+				PCM_UNSIGNED,
 				inputFormat.getSampleRate(),
 				inputFormat.getSampleSizeInBits(),
 				inputFormat.getChannels(),
@@ -438,14 +443,14 @@ public abstract class TAudioFileWriter
 				return null;
 			}
 		}
-		else if (inputEncoding.equals(AudioFormat.Encoding.PCM_SIGNED) &&
+		else if (inputEncoding.equals(PCM_SIGNED) &&
 			 (inputFormat.getSampleSizeInBits() == 16 ||
 			  inputFormat.getSampleSizeInBits() == 24 ||
 			  inputFormat.getSampleSizeInBits() == 32) )
 		{
 			// TODO: possible to allow all sample sized > 8 bit?
 			AudioFormat	outputFormat = new AudioFormat(
-				AudioFormat.Encoding.PCM_SIGNED,
+				PCM_SIGNED,
 				inputFormat.getSampleRate(),
 				inputFormat.getSampleSizeInBits(),
 				inputFormat.getChannels(),

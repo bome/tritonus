@@ -49,94 +49,86 @@ import	org.tritonus.TDebug;
 public class AuAudioFileReader extends TAudioFileReader {
 
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException
-	{
+	throws	UnsupportedAudioFileException, IOException {
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
 		int	nMagic = dataInputStream.readInt();
-		if (nMagic != AuTool.AU_HEADER_MAGIC)
-		{
+		if (nMagic != AuTool.AU_HEADER_MAGIC) {
 			throw new UnsupportedAudioFileException("not an AU file: wrong header magic");
 		}
 		int nDataOffset = dataInputStream.readInt();
-		if (TDebug.TraceAudioFileReader)
-		{
+		if (TDebug.TraceAudioFileReader) {
 			TDebug.out("AuAudioFileReader.getAudioFileFormat(): data offset: " + nDataOffset);
 		}
-		if (nDataOffset < AuTool.DATA_OFFSET)
-		{
+		if (nDataOffset < AuTool.DATA_OFFSET) {
 			throw new UnsupportedAudioFileException("not an AU file: data offset must be 24 or greater");
 		}
 		int nDataLength = dataInputStream.readInt();
-		if (TDebug.TraceAudioFileReader)
-		{
+		if (TDebug.TraceAudioFileReader) {
 			TDebug.out("AuAudioFileReader.getAudioFileFormat(): data length: " + nDataLength);
 		}
-		if (nDataLength < -1)
-		{
+		if (nDataLength < -1) {
 			throw new UnsupportedAudioFileException("not an AU file: data length must be positive, 0 or -1 for unknown");
 		}
-		AudioFormat.Encoding	encoding = null;
-		int			nSampleSize = 0;
-		int			nEncoding = dataInputStream.readInt();
-		switch (nEncoding)
-		{
+		AudioFormat.Encoding encoding = null;
+		int nSampleSize = 0;
+		int nEncoding = dataInputStream.readInt();
+		switch (nEncoding) {
 		case AuTool.SND_FORMAT_MULAW_8:		// 8-bit uLaw G.711
-			encoding = AudioFormat.Encoding.ULAW;
+
+			encoding = AuTool.ULAW;
 			nSampleSize = 8;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_8:
-			encoding = AudioFormat.Encoding.PCM_SIGNED;
+			encoding = AuTool.PCM;
 			nSampleSize = 8;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_16:
-			encoding = AudioFormat.Encoding.PCM_SIGNED;
+			encoding = AuTool.PCM;
 			nSampleSize = 16;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_24:
-			encoding = AudioFormat.Encoding.PCM_SIGNED;
+			encoding = AuTool.PCM;
 			nSampleSize = 24;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_32:
-			encoding = AudioFormat.Encoding.PCM_SIGNED;
+			encoding = AuTool.PCM;
 			nSampleSize = 32;
 			break;
 
 		case AuTool.SND_FORMAT_ALAW_8:	// 8-bit aLaw G.711
-			encoding = AudioFormat.Encoding.ALAW;
+
+			encoding = AuTool.ALAW;
 			nSampleSize = 8;
 			break;
 		}
-		if (nSampleSize == 0)
-		{
+		if (nSampleSize == 0) {
 			throw new UnsupportedAudioFileException("unsupported AU file: unknown encoding " + nEncoding);
 		}
 		int nSampleRate = dataInputStream.readInt();
-		if (nSampleRate <= 0)
-		{
+		if (nSampleRate <= 0) {
 			throw new UnsupportedAudioFileException("corrupt AU file: sample rate must be positive");
 		}
 		int nNumChannels = dataInputStream.readInt();
-		if (nNumChannels <= 0)
-		{
+		if (nNumChannels <= 0) {
 			throw new UnsupportedAudioFileException("corrupt AU file: number of channels must be positive");
 		}
 		// skip  header information field
 		inputStream.skip(nDataOffset - AuTool.DATA_OFFSET);
-		AudioFormat	format = new AudioFormat(encoding,
-							 (float) nSampleRate,
-							 nSampleSize,
-							 nNumChannels,
-							 (nSampleSize * nNumChannels) / 8,
-							 (float) nSampleRate,
-							 true);
-		return new TAudioFileFormat(AudioFileFormat.Type.AU,
-					    format,
-					    nDataLength / format.getFrameSize(),
-					    nDataLength + nDataOffset);
+		AudioFormat format = new AudioFormat(encoding,
+		                                     (float) nSampleRate,
+		                                     nSampleSize,
+		                                     nNumChannels,
+		                                     (nSampleSize * nNumChannels) / 8,
+		                                     (float) nSampleRate,
+		                                     true);
+		return new TAudioFileFormat(AuTool.AU,
+		                            format,
+		                            nDataLength / format.getFrameSize(),
+		                            nDataLength + nDataOffset);
 	}
 }
 

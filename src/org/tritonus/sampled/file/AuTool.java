@@ -25,10 +25,14 @@
 
 package	org.tritonus.sampled.file;
 
-
 import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.AudioFileFormat;
+import	javax.sound.sampled.AudioSystem;
+import	org.tritonus.sampled.Encodings;
+import	org.tritonus.sampled.AudioFileTypes;
 
-/**	
+
+/**
  * Common constants and methods for handling au files.
  *
  * @author Florian Bomers
@@ -55,35 +59,36 @@ public class AuTool {
 	public static final int	SND_FORMAT_ADPCM_G723_5 = 26;
 	public static final int	SND_FORMAT_ALAW_8 = 27;
 
-	public static int getFormatCode(AudioFormat format)
-	{
-		AudioFormat.Encoding	encoding = format.getEncoding();
-		int			nSampleSize = format.getSampleSizeInBits();
+	public static AudioFormat.Encoding PCM=Encodings.getEncoding("PCM_SIGNED");
+	public static AudioFormat.Encoding ULAW=Encodings.getEncoding("ULAW");
+	public static AudioFormat.Encoding ALAW=Encodings.getEncoding("ALAW");
+
+	public static AudioFileFormat.Type AU=AudioFileTypes.getType("AU", "au");
+
+	public static int getFormatCode(AudioFormat format) {
+		AudioFormat.Encoding encoding = format.getEncoding();
+		int nSampleSize = format.getSampleSizeInBits();
 		// must be big endian for >8 bit formats
-		boolean		bigEndian	= format.isBigEndian();
-		if (encoding.equals(AudioFormat.Encoding.ULAW) && nSampleSize == 8)
-		{
+		boolean bigEndian = format.isBigEndian();
+		// $$fb 2000-08-16: check the frame size, too.
+		boolean frameSizeOK=(
+		                        format.getFrameSize()==AudioSystem.NOT_SPECIFIED
+		                        || format.getChannels()!=AudioSystem.NOT_SPECIFIED
+		                        || format.getFrameSize()==nSampleSize/8*format.getChannels());
+
+		if (encoding.equals(ULAW) && nSampleSize == 8 && frameSizeOK) {
 			return SND_FORMAT_MULAW_8;
-		}
-		// TODO: check if signed is correct
-		else if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && nSampleSize == 8)
-		{
-			return SND_FORMAT_LINEAR_8;
-		}
-		else if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && nSampleSize == 16 && bigEndian)
-		{
-			return SND_FORMAT_LINEAR_16;
-		}
-		else if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && nSampleSize == 24 && bigEndian)
-		{
-			return SND_FORMAT_LINEAR_24;
-		}
-		else if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && nSampleSize == 32 && bigEndian)
-		{
-			return SND_FORMAT_LINEAR_32;
-		}
-		else if (encoding.equals(AudioFormat.Encoding.ALAW) && nSampleSize == 8)
-		{
+		} else if (encoding.equals(PCM) && frameSizeOK) {
+			if (nSampleSize == 8) {
+				return SND_FORMAT_LINEAR_8;
+			} else if (nSampleSize == 16 && bigEndian) {
+				return SND_FORMAT_LINEAR_16;
+			} else if (nSampleSize == 24 && bigEndian) {
+				return SND_FORMAT_LINEAR_24;
+			} else if (nSampleSize == 32 && bigEndian) {
+				return SND_FORMAT_LINEAR_32;
+			}
+		} else if (encoding.equals(ALAW) && nSampleSize == 8 && frameSizeOK) {
 			return SND_FORMAT_ALAW_8;
 		}
 		return SND_FORMAT_UNSPECIFIED;

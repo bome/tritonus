@@ -45,6 +45,8 @@ import	javax.sound.sampled.spi.AudioFileReader;
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.file.TAudioFileFormat;
 import	org.tritonus.sampled.file.TAudioFileReader;
+import	org.tritonus.sampled.Encodings;
+import	org.tritonus.sampled.AudioFileTypes;
 
 
 
@@ -90,14 +92,17 @@ public class GSMAudioFileReader
 */
 
 		AudioFormat	format = new AudioFormat(
-			GSMEncoding.GSM0610,
+			Encodings.getEncoding("GSM0610"),
 			8000.0F,
 			AudioSystem.NOT_SPECIFIED /*???*/,
 			1,
 			33,
 			50.0F,
 			true);
-		return new TAudioFileFormat(GSMFileFormatType.GSM, format, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED);
+		return new TAudioFileFormat(AudioFileTypes.getType("GSM","gsm"), 
+					    format, 
+					    AudioSystem.NOT_SPECIFIED, 
+					    AudioSystem.NOT_SPECIFIED);
 	}
 
 

@@ -28,12 +28,12 @@ import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioFormat.Encoding;
 import	javax.sound.sampled.AudioInputStream;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.FloatSampleBuffer;
+import	org.tritonus.sampled.Encodings;
 
 /**
  * This provider supports these PCM conversions (<--> meaning both directions):
@@ -79,20 +79,23 @@ import	org.tritonus.sampled.FloatSampleBuffer;
 public class PCM2PCMConversionProvider
 	extends TEncodingFormatConversionProvider {
 
+	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
+	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
+
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	private static final AudioFormat[]	OUTPUT_FORMATS = {
 
 	    // Encoding, SampleRate, sampleSizeInBits, channels, frameSize, frameRate, bigEndian
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, true),
+	    new AudioFormat(PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+	    new AudioFormat(PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+	    new AudioFormat(PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+	    new AudioFormat(PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+	    new AudioFormat(PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
+	    new AudioFormat(PCM_SIGNED, ALL, 24, ALL, ALL, ALL, true),
+	    new AudioFormat(PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
+	    new AudioFormat(PCM_SIGNED, ALL, 32, ALL, ALL, ALL, true),
 	};
 
 	/**	Constructor.
@@ -176,7 +179,7 @@ public class PCM2PCMConversionProvider
 		boolean bigEndian=af.isBigEndian();
 		int ssib=af.getSampleSizeInBits();
 		// now set up the convert type
-		if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
+		if (encoding.equals(PCM_SIGNED)) {
 			if (ssib==32) {
 				if (bigEndian) {
 					result=BIG_ENDIAN32;
@@ -198,7 +201,7 @@ public class PCM2PCMConversionProvider
 			} else if (ssib==8) {
 				result=SIGNED8;
 			}
-		} else if (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
+		} else if (encoding.equals(PCM_UNSIGNED)) {
 			if (ssib==8) {
 				result=UNSIGNED8;
 			}

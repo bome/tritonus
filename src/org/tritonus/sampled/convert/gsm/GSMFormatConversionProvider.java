@@ -43,7 +43,7 @@ import	org.tritonus.sampled.TConversionTool;
 import	org.tritonus.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import	org.tritonus.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.sampled.convert.TSimpleFormatConversionProvider;
-import	org.tritonus.sampled.file.gsm.GSMEncoding;
+import	org.tritonus.sampled.Encodings;
 import	org.tritonus.util.TCircularBuffer;
 
 
@@ -59,11 +59,11 @@ public class GSMFormatConversionProvider
 {
 	private static final AudioFormat[]	FORMATS1 =
 	{
-		new AudioFormat(GSMEncoding.GSM0610, 8000.0F, -1, 1, 33, 50.0F, false),
-		new AudioFormat(GSMEncoding.GSM0610, 8000.0F, -1, 1, 33, 50.0F, true),
+		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, -1, 1, 33, 50.0F, false),
+		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, -1, 1, 33, 50.0F, true),
 		// temporary only
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2, 8000.0F, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2, 8000.0F, true),
+		new AudioFormat(Encodings.getEncoding("PCM_SIGNED"), 8000.0F, 16, 1, 2, 8000.0F, false),
+		new AudioFormat(Encodings.getEncoding("PCM_SIGNED"), 8000.0F, 16, 1, 2, 8000.0F, true),
 	};
 
 /*
@@ -114,7 +114,7 @@ public class GSMFormatConversionProvider
 		if (isConversionSupported(targetFormat,
 					  audioInputStream.getFormat()))
 		{
-			if (targetFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED))
+			if (targetFormat.getEncoding().equals(Encodings.getEncoding("PCM_SIGNED")))
 			{
 				if (TDebug.TraceAudioConverter)
 				{

@@ -38,6 +38,8 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
+import	org.tritonus.sampled.Encodings;
+import	org.tritonus.sampled.AudioFileTypes;
 import	org.tritonus.TDebug;
 
 /**
@@ -48,58 +50,54 @@ import	org.tritonus.TDebug;
 public class MpegAudioFileWriter extends TAudioFileWriter {
 
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
-	{
-		MpegFileFormatType.MPEG,
-		// workaround for the fixed extension problem in AudioFileFormat.Type
-		// see org.tritonus.sampled.AudioFileTypes.java
-		MpegFileFormatType.MP3
-	};
-	
+	    {
+		    AudioFileTypes.getType("MPEG", "mpeg"),
+	        // workaround for the fixed extension problem in AudioFileFormat.Type
+	        // see org.tritonus.sampled.AudioFileTypes.java
+		    AudioFileTypes.getType("MP3", "mp3")
+	    };
+
+	private static final int ALL=AudioSystem.NOT_SPECIFIED;
+	public static AudioFormat.Encoding MPEG1L3=Encodings.getEncoding("MPEG1L3");
+
 	private static final AudioFormat[]	AUDIO_FORMATS =
-	{
-		new AudioFormat(MpegEncoding.MPEG1L3, 44100, 16, 1, 
-				AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(MpegEncoding.MPEG1L3, 44100, 16, 1, 
-				AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(MpegEncoding.MPEG1L3, 44100, 16, 2, 
-				AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(MpegEncoding.MPEG1L3, 44100, 16, 2, 
-				AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, true),
-	};
-	
-	public MpegAudioFileWriter()
-	{
+	    {
+	        new AudioFormat(MPEG1L3, 44100, 16, 1, ALL, ALL, false),
+	        new AudioFormat(MPEG1L3, 44100, 16, 1, ALL, ALL, true),
+	        new AudioFormat(MPEG1L3, 44100, 16, 2, ALL, ALL, false),
+	        new AudioFormat(MPEG1L3, 44100, 16, 2, ALL, ALL, true),
+	    };
+
+	public MpegAudioFileWriter() {
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
 	}
 
 
 	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		File file)
-		throws	IOException
-	{
+	    AudioFormat audioFormat,
+	    long lLengthInBytes,
+	    AudioFileFormat.Type fileType,
+	    File file)
+	throws	IOException {
 		TDataOutputStream	dataOutputStream = new SeekableTDOS(file);
 		return new HeaderLessAudioOutputStream(audioFormat,
-					       lLengthInBytes,
-					       dataOutputStream);
+		                                       lLengthInBytes,
+		                                       dataOutputStream);
 	}
 
 	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		OutputStream outputStream)
-		throws	IOException
-	{
+	    AudioFormat audioFormat,
+	    long lLengthInBytes,
+	    AudioFileFormat.Type fileType,
+	    OutputStream outputStream)
+	throws	IOException {
 		TDataOutputStream	dataOutputStream = new NonSeekableTDOS(outputStream);
 		return new HeaderLessAudioOutputStream(audioFormat,
-					       lLengthInBytes,
-					       dataOutputStream);
+		                                       lLengthInBytes,
+		                                       dataOutputStream);
 	}
-	
+
 }
 
 /*** MpegAudioFileWriter.java ***/
