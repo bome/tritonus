@@ -1026,8 +1026,22 @@ public class ASequencer
 		}
 		if (message != null)
 		{
-			// TODO: dirty: assuming time in ticks
-			long	lTick = alValues[0];
+			/*
+			  If the timestamp is in ticks, ticks in the MidiEvent
+			  gets this value.
+			  Otherwise, if the timestamp is in realtime (ns),
+			  we put us in the tick value.
+			*/
+			long	lTick = 0L;
+			if ((anValues[1] & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
+			{
+				lTick = alValues[0];
+			}
+			else
+			{
+				// ns -> us
+				lTick = alValues[0] / 1000;
+			}
 			MidiEvent	event = new MidiEvent(message, lTick);
 			return event;
 		}
@@ -1037,14 +1051,16 @@ public class ASequencer
 		}
 	}
 
-	///////////////////////////////////////////////////////////
+
+
+		///////////////////////////////////////////////////////////
 
 
 
-	public void sendNoteEvent(
-		int nType, int nFlags, int nTag, int nQueue, long lTime,
-		int nSourcePort, int nDestClient, int nDestPort,
-		int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
+		public void sendNoteEvent(
+			int nType, int nFlags, int nTag, int nQueue, long lTime,
+			int nSourcePort, int nDestClient, int nDestPort,
+			int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
 	{
 		if (TDebug.TraceASequencerDetails)
 		{
@@ -1325,7 +1341,7 @@ public class ASequencer
 
 
 	private class ClientInfoIterator
-		implements	Iterator
+	implements	Iterator
 	{
 		private int		m_nClient;
 		private ClientInfo	m_clientInfo;
@@ -1399,7 +1415,7 @@ public class ASequencer
 
 
 	private class PortInfoIterator
-		implements	Iterator
+	implements	Iterator
 	{
 		private int		m_nClient;
 		private int		m_nPort;
