@@ -27,8 +27,6 @@ LIBDEST=$(LIBBASENAME).so.1.0
 LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/cdda/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
-#LIBS=-lasound
-
 JAVAH = @JAVAH@
 
 
@@ -36,7 +34,7 @@ JNIOBJ=\
 	org_tritonus_lowlevel_cdda_cooked_ioctl_CookedIoctl.o
 
 OBJ=$(JNIOBJ) \
-	common.o
+	handlers.o
 
 JNIHEADERS:=\
 	org_tritonus_lowlevel_cdda_cooked_0005fioctl_CookedIoctl.h
