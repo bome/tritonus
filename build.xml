@@ -1,0 +1,28 @@
+<project name="tritonus" default="dist" basedir=".">
+	<target name="init">
+		<tstamp/>
+		<property name="build" value="build" />
+		<property name="dist"  value="dist" />
+		<filter token="version" value="1.0.3" />
+		<filter token="year" value="2000" />
+	</target>
+
+	<target name="prepare" depends="init">
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="prepare">
+		<javac srcdir="src/javax/sound" destdir="${build}" filtering="on"/>
+		<javac srcdir="src/org/tritonus" destdir="${build}" filtering="on"/>
+	</target>
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}/lib" />
+		<jar jarfile="${dist}/lib/tritonus_core.jar" basedir="${build}" includes="javax"/>
+	</target>
+
+	<target name="clean" depends="init">
+		<deltree dir="${build}" />
+		<deltree dir="${dist}" />
+	</target>
+</project>
