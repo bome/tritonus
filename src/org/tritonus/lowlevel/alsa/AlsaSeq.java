@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -398,12 +397,6 @@ public class AlsaSeq
 	 *	This holds a pointer for the native code - do not touch!
 	 */
 	private long		m_lNativeHandle;
-	
-	/*
-	 *	The client Id assigned by the sequencer to this objects
-	 *	connection.
-	 */
-	private int		m_nClientId;
 
 
 
@@ -411,26 +404,28 @@ public class AlsaSeq
 	{
 		super();
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(): begin"); }
-		// TODO: open() should return success value. depending on it, a runtime exception should be thrown
-		m_nClientId = open();
+		int	nSuccess = open();
+		if (nSuccess < 0)
+		{
+			throw new RuntimeException("open failed");
+		}
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(): end"); }
 	}
 
 
 
-	public AlsaSeq(String strName)
+	public AlsaSeq(String strClientName)
 	{
 		this();
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(String): begin"); }
-		setClientName(strName);
+		setClientName(strClientName);
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(String): end"); }
 	}
 
 
 
 	/**	Opens the sequencer.
-	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
-	 *	client id.
+	 *	Calls snd_seq_open().
 	 */
 	public native int open();
 
@@ -457,12 +452,78 @@ public class AlsaSeq
 
 
 
+
 	public native int getSystemInfo(SystemInfo systemInfo);
 
-	public native int getPortInfo(int nPort, PortInfo portInfo);
+
+
+	public int getClientInfo(ClientInfo clientInfo)
+	{
+		return getClientInfo(-1, clientInfo);
+	}
+
+	public native int getClientInfo(int nClient, ClientInfo clientInfo);
+
+	public native int setClientInfo(ClientInfo clientInfo);
+
+
+
+	/**	Gets information about the next client.
+	 *	Calls snd_seq_query_next_client().
+	 *	and puts the returned values
+	 *	into the passed arrays.
+	 *
+	 *	nClient has to be -1 to start, or a client id returned by
+	 *	a previous call to this method.
+	 *
+	 *	anValues[0]	client id
+	 *
+	 *	Returns 0 if successful.
+	 */
+	public native int getNextClient(int nClient, int[] anValues);
+
+
+
+	public void setClientName(String strName)
+	{
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.setClientName(): begin"); }
+		ClientInfo	clientInfo = new ClientInfo();
+		// TODO: error check
+		getClientInfo(clientInfo);
+		clientInfo.setName(strName);
+		setClientInfo(clientInfo);
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.setClientName(): end"); }
+	}
+
+
+	public int getPortInfo(int nPort, PortInfo portInfo)
+	{
+		return getPortInfo(-1, nPort, portInfo);
+	}
 
 	public native int getPortInfo(int nClient, int nPort, PortInfo portInfo);
 
+
+
+	/**	Gets the next port.
+	 *	Calls snd_seq_query_next_port().
+	 *	and put the returned values
+	 *	into the passed arrays.
+	 *
+	 *	nClient has to be a valid client.
+	 *	nPort has to be -1 to start, or a port returned by
+	 *	a previous call to this method.
+	 *
+	 *	anValues[0]	client
+	 *	anValues[1]	port
+	 *
+	 *	Returns 0 if successful.
+	 */
+	public native int getNextPort(int nClient, int nPort, int[] anValues);
+
+
+
+	// TODO: use structure
 	public native int createPort(String strName, int nCapabilities, int nGroupPermissions, int nType, int nMidiChannels, int nMidiVoices, int nSynthVoices);
 
 	/**	Allocates (reserves) a sequencing queue.
@@ -557,41 +618,6 @@ public class AlsaSeq
 	public native int setQueueTimer(int nQueue, QueueTimer queueTimer);
 
 
-	/*
-	 *	nResolution: ticks/beat
-	 *	nTempo: microseconds/beat
-	 */
-	// TODO: remove
-	// public native void setQueueTempo(int nQueue, int nResolution, int nTempo);
-
-
-	/**	Get the current tempo of a queue.
-	 *	Calls snd_seq_get_queue_tempo()
-	 *	and put the data elements of the returned struct
-	 *	into the passed arrays.
-	 *	anValues[0]	tempo (us/tick)
-	 *	anValues[1]	resolution (ticks/quarter)
-	 */
-	// TODO: remove
-// 	public native void getQueueTempo(int nQueue,
-// 					 int[] anValues);
-
-
-	/**	Get information about a queue.
-	 *	Calls snd_seq_get_queue_status()
-	 *	and put the data elements of the returned struct
-	 *	into the passed arrays.
-	 *	anValues[0]	number of events (= queue size)
-	 *	anValues[1]	status
-	 *
-	 *	alValues[0]	tick time
-	 *	alValues[1]	real time (ns)
-	 */
-	// TODO: remove
-// 	public native void getQueueStatus(int nQueue,
-// 					  int[] anValues,
-// 					  long[] alValues);
-
 
 	public native void subscribePort(
 		int nSenderClient, int nSenderPort,
@@ -616,18 +642,6 @@ public class AlsaSeq
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
 		int nControlQueue, int nControlValue, long lControlTime);
-
-
-	/**
-	 *	Encapsulates a Java object reference in an ALSA event.
-	 *	As type, use SND_SEQ_EVENT_USR9. This one is detected by
-	 *	getEvent() and the object reference is returned in the
-	 *	passed object array.
-	 */
-	public native void sendObjectEvent(
-		int nType, int nFlags, int nTag, int nQueue, long lTime,
-		int nSourcePort, int nDestClient, int nDestPort,
-		Object objectReference);
 
 
 	/**
@@ -680,11 +694,6 @@ public class AlsaSeq
 	 *	anValues[09]	param
 	 *	anValues[10]	values
 	 *
-	 *	SND_SEQ_EVENT_USR9:
-	 *	aValues[0]	object reference
-	 *
-	 *	alValues[0]	(schedule) time (in ticks or nanoseconds)
-	 *
 	 *
 	 *	returns true if an event was received. Above values are
 	 *	only valid if this is true!
@@ -693,115 +702,10 @@ public class AlsaSeq
 	 */
 	public native boolean getEvent(int[] anValues, long[] alValues, Object[] aValues);
 
-	/**	Gets "system" information.
-	 *	Calls snd_seq_system_info() and puts the relevant values into
-	 *	the passed array.
-	 */
-	// public native void getSystemInfo(int[] anValues);
-
-	/**	Gets information about this client.
-	 *	Calls snd_seq_get_client_info() [nClient <= -1]
-	 *	or snd_seq_get_any_client_info() [nClient >= 0]
-	 *	and put the returned values
-	 *	into the passed arrays.
-	 *
-	 *	OLD; see getNextClientInfo()
-	 *
-	 *	anValues[0]	client id
-	 *	anValues[1]	client type
-	 *	anValues[2]	broadcast filter flags
-	 *	anValues[3]	error bounce
-	 *	anValues[4]	num ports
-	 *	anValues[5]	event lost
-	 *	astrValues[0]	name
-	 *	astrValues[1]	event filter
-	 *
-	 *	Returns 0 if successful.
-	 */
-	public native int getClientInfo(int nClient, int[] anValues, String[] astrValues);
-
-
-
-	/**	Gets information about the next client.
-	 *	Calls snd_seq_query_next_client().
-	 *	and puts the returned values
-	 *	into the passed arrays.
-	 *
-	 *	nClient has to be -1 to start, or a client id returned by
-	 *	a previous call to this method.
-	 *
-	 *	anValues[0]	client id
-	 *	anValues[1]	client type
-	 *	anValues[2]	broadcast filter flags
-	 *	anValues[3]	error bounce
-	 *	anValues[4]	num ports
-	 *	anValues[5]	event lost
-	 *	astrValues[0]	name
-	 *	astrValues[1]	event filter
-	 *
-	 *	Returns 0 if successful.
-	 */
-	public native int getNextClientInfo(int nClient, int[] anValues, String[] astrValues);
-
-
-
-	/**	Gets information about the next port.
-	 *	Calls snd_seq_query_next_port().
-	 *	and put the returned values
-	 *	into the passed arrays.
-	 *
-	 *	nClient has to be a valid client.
-	 *	nPort has to be -1 to start, or a port returned by
-	 *	a previous call to this method.
-	 *
-	 *	anValues[0]	client
-	 *	anValues[1]	port
-	 *	anValues[2]	capabilities
-	 *	anValues[3]	type
-	 *	anValues[4]	midi channels
-	 *	anValues[5]	midi voices
-	 *	anValues[6]	synth voices
-	 *	anValues[7]	read use
-	 *	anValues[8]	write use
-	 *	anValues[9]	port specified
-	 *	astrValues[0]	name
-	 *
-	 *	Returns 0 if successful.
-	 */
-	public native int getNextPortInfo(int nClient, int nPort, int[] anValues, String[] astrValues);
-
-	// currently a no-op
-	public native void setQueueLocked(int nQueue, boolean bLocked);
-
-
-	public native void setClientName(String strName);
 
 
 	private static native void setTrace(boolean bTrace);
 
-
-
-	public ClientInfo getClientInfo()
-	{
-		return getClientInfo(getClientId());
-	}
-
-
-
-	public ClientInfo getClientInfo(int nClient)
-	{
-		int[]		anValues = new int[4];
-		String[]	astrValues = new String[2];
-		int	nSuccess = getClientInfo(nClient, anValues, astrValues);
-		if (nSuccess == 0)
-		{
-			return new ClientInfo(anValues[0], anValues[1], astrValues[0], anValues[2], astrValues[1], anValues[3]);
-		}
-		else
-		{
-			return null;
-		}
-	}
 
 
 
@@ -812,6 +716,7 @@ public class AlsaSeq
 
 
 
+	// TODO: perhaps remove
 	public Iterator getPortInfos(int nClient)
 	{
 		return new PortInfoIterator(nClient);
@@ -842,38 +747,6 @@ public class AlsaSeq
 			nQueue, bExclusive, bRealtime, bConvertTime,
 			0, 0, 0);
 	}
-
-
-
-	/**	Get the playback position of a sequencer queue.
-	 *
-	 *	@return the current playback position in ticks
-	 */
-// 	public long getQueuePositionTick(int nQueue)
-// 	{
-// 		int[]	anValues = new int[3];
-// 		long[]	alValues = new long[2];
-// 		getQueueStatus(nQueue,
-// 			       anValues,
-// 			       alValues);
-// 		return alValues[0];
-// 	}
-
-
-
-// 	/**	Get the playback position of a sequencer queue.
-// 	 *
-// 	 *	@return the current playback position in nanoseconds
-// 	 */
-// 	public long getQueuePositionTime(int nQueue)
-// 	{
-// 		int[]	anValues = new int[3];
-// 		long[]	alValues = new long[2];
-// 		getQueueStatus(nQueue,
-// 			       anValues,
-// 			       alValues);
-// 		return alValues[1];
-// 	}
 
 
 
@@ -934,18 +807,6 @@ public class AlsaSeq
 			nSourcePort, SND_SEQ_CLIENT_SYSTEM, SND_SEQ_PORT_SYSTEM_TIMER,
 			nQueue, 0, lTime);
 	}
-
-
-
-	/**	Returns tempo in MPQ.
-	 */
-// 	public int getQueueTempo(int nQueue)
-// 	{
-// 		int[]	anValues = new int[2];
-// 		getQueueTempo(nQueue,
-// 			      anValues);
-// 		return anValues[0] * anValues[1];
-// 	}
 
 
 
@@ -1752,26 +1613,6 @@ public class AlsaSeq
 
 
 
-// 	public void sendNoteEvent(
-// 		int nType, int nFlags, int nTag, int nQueue, long lTime,
-// 		int nSourcePort, int nDestClient, int nDestPort,
-// 		int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
-// 	{
-// 		if (TDebug.TraceAlsaSeqDetails)
-// 		{
-// 			outputCommonFields(
-// 				nType, nFlags, nTag, nQueue, lTime,
-// 				nSourcePort, nDestClient, nDestPort);
-// 			outputNoteFields(
-// 				nChannel, nNote, nVelocity, nOffVelocity, nDuration);
-// 		}
-// 		super.sendNoteEvent(
-// 			nType, nFlags, nTag, nQueue, lTime,
-// 			nSourcePort, nDestClient, nDestPort,
-// 			nChannel, nNote, nVelocity, nOffVelocity, nDuration);
-// 	}
-
-
 
 	private void outputCommonFields(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
@@ -1871,50 +1712,72 @@ public class AlsaSeq
 
 
 
-	// TODO: change to native style
 	public static class ClientInfo
 	{
-		private int	m_nClientId;
-		private int	m_nClientType;
-		private String	m_strName;
-		private int	m_nFilter;
-		// TODO: multicast filter
+		/**
+		 *	Holds the pointer to snd_seq_port_info_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public ClientInfo()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): malloc() returns: " + nReturn); }
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of client_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.ClientInfo.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+
+
+		public native int getClient();
+
+		public native int getType();
+
+		public native String getName();
+
+		public native int getBroadcastFilter();
+
+		public native int getErrorBounce();
+
 		// TODO: event filter
-		private String	m_strGroupName;
-		private int	m_nNumPorts;
+
+		public native int getNumPorts();
+
+		public native int getEventLost();
 
 
+		public native void setClient(int nClient);
 
-		public ClientInfo(int nClientId, int nClientType, String strName, int nFilter, String strGroupName, int nNumPorts)
-		{
-			m_nClientId = nClientId;
-			m_nClientType = nClientType;
-			m_strName = strName;
-			m_nFilter = nFilter;
-			// TODO: multicast filter
-			// TODO: event filter
-			m_strGroupName = strGroupName;
-			m_nNumPorts = nNumPorts;
-		}
+		public native void setName(String strName);
+
+		public native void setBroadcastFilter(int nBroadcastFilter);
 
 
-		public int getClientId()
-		{
-			return m_nClientId;
-		}
+		public native void setErrorBounce(int nErrorBounce);
 
-
-
-		public int getClientType()
-		{
-			return m_nClientType;
-		}
-
-
-		public String getName()
-		{
-			return m_strName;
-		}
+		// TODO: event filter
 	}
 
 
@@ -2046,10 +1909,10 @@ public class AlsaSeq
 		public native boolean getLocked();
 		public native int getFlags();
 
-							 public native void setName(String strName);
-							 public native void setOwner(int nOwner);
-							 public native void setLocked(boolean bLocked);
-							 public native void setFlags(int nFlags);
+		public native void setName(String strName);
+		public native void setOwner(int nOwner);
+		public native void setLocked(boolean bLocked);
+		public native void setFlags(int nFlags);
 
 	}
 
@@ -2091,12 +1954,11 @@ public class AlsaSeq
 		private native int malloc();
 		public native void free();
 
-							 public native int getQueue();
-							 public native int getEvents();
-							 public native long getTickTime();
-							 public native long getRealTime();
-							 public native int getStatus();
-
+		public native int getQueue();
+		public native int getEvents();
+		public native long getTickTime();
+		public native long getRealTime();
+		public native int getStatus();
 	}
 
 
@@ -2137,12 +1999,11 @@ public class AlsaSeq
 		private native int malloc();
 		public native void free();
 
-							 public native int getQueue();
-							 public native int getTempo();
-							 public native int getPpq();
-							 public native void setTempo(int nTempo);
-							 public native void setPpq(int nPpq);
-
+		public native int getQueue();
+		public native int getTempo();
+		public native int getPpq();
+		public native void setTempo(int nTempo);
+		public native void setPpq(int nPpq);
 	}
 
 
@@ -2183,21 +2044,17 @@ public class AlsaSeq
 		private native int malloc();
 		public native void free();
 
-							 public native int getQueue();
-							 public native int getType();
-							 // TODO:
-							 // public native ?? getTimerId();
-							 public native int getResolution();
+		public native int getQueue();
+		public native int getType();
+		// TODO:
+		// public native ?? getTimerId();
+		public native int getResolution();
 
-							 public native void setType(int nType);
-							 // TODO:
+		public native void setType(int nType);
+		// TODO:
 							 // public native void setId(???);
-							 public native void setResolution(int nResolution);
-
-
+		public native void setResolution(int nResolution);
 	}
-
-
 
 
 
@@ -2242,33 +2099,20 @@ public class AlsaSeq
 
 		private ClientInfo createNextClientInfo()
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.createNextClientInfo(): begin");
-			}
-			int[]		anValues = new int[6];
-			String[]	astrValues = new String[2];
-			int	nSuccess = getNextClientInfo(m_nClient, anValues, astrValues);
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("succ: " + nSuccess);
-			}
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.createNextClientInfo(): begin"); }
 			ClientInfo	clientInfo = null;
+			int[]		anValues = new int[1];
+			int	nSuccess = getNextClient(m_nClient, anValues);
+			if (TDebug.TraceAlsaSeq) { TDebug.out("succ: " + nSuccess); }
 			if (nSuccess == 0)
 			{
 				// TDebug.out("AlsaSeq.createNextClientInfo(): getNextClientInfo successful");
 				m_nClient = anValues[0];
-				clientInfo = new ClientInfo(anValues[0], anValues[1], astrValues[0], anValues[2], astrValues[1], anValues[3]);
+				clientInfo = new ClientInfo();
+				// TODO: error check
+				getClientInfo(m_nClient, clientInfo);
 			}
-			else
-			{
-				// TDebug.out("AlsaSeq.createNextClientInfo(): getNextClientInfo failed");
-				clientInfo = null;
-			}
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.createNextClientInfo(): end");
-			}
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.createNextClientInfo(): end"); }
 			return clientInfo;
 		}
 	}
@@ -2286,9 +2130,11 @@ public class AlsaSeq
 
 		public PortInfoIterator(int nClient)
 		{
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.<init>(): begin"); }
 			m_nClient = nClient;
 			m_nPort = -1;
 			m_portInfo = createNextPortInfo();
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.<init>(): end"); }
 		}
 
 
@@ -2317,20 +2163,20 @@ public class AlsaSeq
 
 		private PortInfo createNextPortInfo()
 		{
-			int[]		anValues = new int[10];
-			String[]	astrValues = new String[2];
-			int	nSuccess = getNextPortInfo(m_nClient, m_nPort, anValues, astrValues);
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.createNextPortInfo(): begin"); }
+			PortInfo	portInfo = null;
+			int[]		anValues = new int[2];
+			int	nSuccess = getNextPort(m_nClient, m_nPort, anValues);
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.createNextPortInfo(): getNextPort() returns: " + nSuccess); }
 			if (nSuccess == 0)
 			{
 				m_nPort = anValues[1];
-				PortInfo	portInfo = new PortInfo();
-				getPortInfo(anValues[0], anValues[1], portInfo);
-				return portInfo;
+				portInfo = new PortInfo();
+				// TODO: error check
+				getPortInfo(m_nClient, m_nPort, portInfo);
 			}
-			else
-			{
-				return null;
-			}
+			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.PortInfoIterator.createNextPortInfo(): end"); }
+			return portInfo;
 		}
 	}
 
