@@ -63,7 +63,6 @@ JNIOBJ=\
 	org_tritonus_lowlevel_pogg_StreamState.o \
 	org_tritonus_lowlevel_pogg_SyncState.o \
 	org_tritonus_lowlevel_pvorbis_Block.o \
-	org_tritonus_lowlevel_pvorbis_Comment.o \
 	org_tritonus_lowlevel_pvorbis_DspState.o \
 	org_tritonus_lowlevel_pvorbis_Info.o
 
@@ -82,7 +81,6 @@ JNICLASSFILES=\
 	StreamState.class \
 	SyncState.class \
 	Block.class \
-	Comment.class \
 	DspState.class \
 	Info.class
 
@@ -93,7 +91,6 @@ JNICLASSES=\
 	org.tritonus.lowlevel.pogg.StreamState \
 	org.tritonus.lowlevel.pogg.SyncState \
 	org.tritonus.lowlevel.pvorbis.Block \
-	org.tritonus.lowlevel.pvorbis.Comment \
 	org.tritonus.lowlevel.pvorbis.DspState \
 	org.tritonus.lowlevel.pvorbis.Info
 

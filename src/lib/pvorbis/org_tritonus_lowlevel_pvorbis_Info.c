@@ -38,8 +38,6 @@ getInfoNativeHandle(JNIEnv *env, jobject obj)
 
 oggpack_buffer*
 getBufferNativeHandle(JNIEnv *env, jobject obj);
-vorbis_comment*
-getCommentNativeHandle(JNIEnv *env, jobject obj);
 ogg_packet*
 getPacketNativeHandle(JNIEnv *env, jobject obj);
 

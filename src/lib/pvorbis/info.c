@@ -55,29 +55,6 @@ static void _v_readstring(oggpack_buffer *o,char *buf,int bytes){
   }
 }
 
-void vorbis_comment_init(vorbis_comment *vc){
-  memset(vc,0,sizeof(*vc));
-}
-
-void vorbis_comment_add(vorbis_comment *vc,char *comment){
-  vc->user_comments=_ogg_realloc(vc->user_comments,
-			    (vc->comments+2)*sizeof(*vc->user_comments));
-  vc->comment_lengths=_ogg_realloc(vc->comment_lengths,
-      			    (vc->comments+2)*sizeof(*vc->comment_lengths));
-  vc->comment_lengths[vc->comments]=strlen(comment);
-  vc->user_comments[vc->comments]=_ogg_malloc(vc->comment_lengths[vc->comments]+1);
-  strcpy(vc->user_comments[vc->comments], comment);
-  vc->comments++;
-  vc->user_comments[vc->comments]=NULL;
-}
-
-void vorbis_comment_add_tag(vorbis_comment *vc, char *tag, char *contents){
-  char *comment=alloca(strlen(tag)+strlen(contents)+2); /* +2 for = and \0 */
-  strcpy(comment, tag);
-  strcat(comment, "=");
-  strcat(comment, contents);
-  vorbis_comment_add(vc, comment);
-}
 
 /* This is more or less the same as strncasecmp - but that doesn't exist
  * everywhere, and this is a fairly trivial function, so we include it */
@@ -91,53 +68,6 @@ static int tagcompare(const char *s1, const char *s2, int n){
   return 0;
 }
 
-char *vorbis_comment_query(vorbis_comment *vc, char *tag, int count){
-  long i;
-  int found = 0;
-  int taglen = strlen(tag)+1; /* +1 for the = we append */
-  char *fulltag = alloca(taglen+ 1);
-
-  strcpy(fulltag, tag);
-  strcat(fulltag, "=");
-  
-  for(i=0;i<vc->comments;i++){
-    if(!tagcompare(vc->user_comments[i], fulltag, taglen)){
-      if(count == found)
-	/* We return a pointer to the data, not a copy */
-      	return vc->user_comments[i] + taglen;
-      else
-	found++;
-    }
-  }
-  return NULL; /* didn't find anything */
-}
-
-int vorbis_comment_query_count(vorbis_comment *vc, char *tag){
-  int i,count=0;
-  int taglen = strlen(tag)+1; /* +1 for the = we append */
-  char *fulltag = alloca(taglen+1);
-  strcpy(fulltag,tag);
-  strcat(fulltag, "=");
-
-  for(i=0;i<vc->comments;i++){
-    if(!tagcompare(vc->user_comments[i], fulltag, taglen))
-      count++;
-  }
-
-  return count;
-}
-
-void vorbis_comment_clear(vorbis_comment *vc){
-  if(vc){
-    long i;
-    for(i=0;i<vc->comments;i++)
-      if(vc->user_comments[i])_ogg_free(vc->user_comments[i]);
-    if(vc->user_comments)_ogg_free(vc->user_comments);
-	if(vc->comment_lengths)_ogg_free(vc->comment_lengths);
-    if(vc->vendor)_ogg_free(vc->vendor);
-  }
-  memset(vc,0,sizeof(*vc));
-}
 
 /* blocksize 0 is guaranteed to be short, 1 is guarantted to be long.
    They may be equal, but short will never ge greater than long */
@@ -222,31 +152,6 @@ static int _vorbis_unpack_info(vorbis_info *vi,oggpack_buffer *opb){
   return(OV_EBADHEADER);
 }
 
-static int _vorbis_unpack_comment(vorbis_comment *vc,oggpack_buffer *opb){
-  int i;
-  int vendorlen=oggpack_read(opb,32);
-  if(vendorlen<0)goto err_out;
-  vc->vendor=_ogg_calloc(vendorlen+1,1);
-  _v_readstring(opb,vc->vendor,vendorlen);
-  vc->comments=oggpack_read(opb,32);
-  if(vc->comments<0)goto err_out;
-  vc->user_comments=_ogg_calloc(vc->comments+1,sizeof(*vc->user_comments));
-  vc->comment_lengths=_ogg_calloc(vc->comments+1, sizeof(*vc->comment_lengths));
-	    
-  for(i=0;i<vc->comments;i++){
-    int len=oggpack_read(opb,32);
-    if(len<0)goto err_out;
-	vc->comment_lengths[i]=len;
-    vc->user_comments[i]=_ogg_calloc(len+1,1);
-    _v_readstring(opb,vc->user_comments[i],len);
-  }	  
-  if(oggpack_read(opb,1)!=1)goto err_out; /* EOP check */
-
-  return(0);
- err_out:
-  vorbis_comment_clear(vc);
-  return(OV_EBADHEADER);
-}
 
 /* all of the real encoding details are here.  The modes, books,
    everything */
@@ -335,24 +240,10 @@ static int _vorbis_unpack_books(vorbis_info *vi,oggpack_buffer *opb){
 
 int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype, ogg_packet *op)
 {
-	//oggpack_buffer opb;
-  
   if(op){
-	  //oggpack_readinit(&opb,op->packet,op->bytes);
-
     /* Which of the three types of header is this? */
     /* Also verify header-ness, vorbis */
     {
-#if 0
-      char buffer[6];
-      int packtype=oggpack_read(&opb,8);
-      memset(buffer,0,6);
-      _v_readstring(&opb,buffer,6);
-      if(memcmp(buffer,"vorbis",6)){
-	/* not a vorbis header */
-	return(OV_ENOTVORBIS);
-      }
-#endif
       switch(packtype){
       case 0x01: /* least significant *bit* is read first */
 	if(!op->b_o_s){
@@ -365,16 +256,6 @@ int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype,
 	}
 
 	return(_vorbis_unpack_info(vi,opb));
-
-#if 0
-      case 0x03: /* least significant *bit* is read first */
-	if(vi->rate==0){
-	  /* um... we didn't get the initial header */
-	  return(OV_EBADHEADER);
-	}
-
-	return(_vorbis_unpack_comment(vc,opb));
-#endif
 
       case 0x05: /* least significant *bit* is read first */
 		  if(vi->rate==0 /*|| vc->vendor==NULL*/){

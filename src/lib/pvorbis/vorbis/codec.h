@@ -135,18 +135,6 @@ struct alloc_chain{
    etc). vorbis_info and substructures are in backends.h.
 *********************************************************************/
 
-/* the comments are not part of vorbis_info so that vorbis_info can be
-   static storage */
-typedef struct vorbis_comment{
-  /* unlimited user comment fields.  libvorbis writes 'libvorbis'
-     whatever vendor is set to in encode */
-  char **user_comments;
-  int   *comment_lengths;
-  int    comments;
-  char  *vendor;
-
-} vorbis_comment;
-
 
 /* libvorbis encodes in two abstraction layers; first we perform DSP
    and produce a packet (see docs/analysis.txt).  The packet is then
@@ -165,13 +153,6 @@ typedef struct vorbis_comment{
 extern void     vorbis_info_init(vorbis_info *vi);
 extern void     vorbis_info_clear(vorbis_info *vi);
 extern int      vorbis_info_blocksize(vorbis_info *vi,int zo);
-extern void     vorbis_comment_init(vorbis_comment *vc);
-extern void     vorbis_comment_add(vorbis_comment *vc, char *comment); 
-extern void     vorbis_comment_add_tag(vorbis_comment *vc, 
-				       char *tag, char *contents);
-extern char    *vorbis_comment_query(vorbis_comment *vc, char *tag, int count);
-extern int      vorbis_comment_query_count(vorbis_comment *vc, char *tag);
-extern void     vorbis_comment_clear(vorbis_comment *vc);
 
 extern int      vorbis_block_init(vorbis_dsp_state *v, vorbis_block *vb);
 extern int      vorbis_block_clear(vorbis_block *vb);
@@ -195,8 +176,6 @@ extern int      vorbis_bitrate_flushpacket(vorbis_dsp_state *vd,
 					   ogg_packet *op);
 
 /* Vorbis PRIMITIVES: synthesis layer *******************************/
-//extern int      vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,
-//					  ogg_packet *op);
 extern int vorbis_synthesis_headerin(vorbis_info *vi,oggpack_buffer *opb, int packtype, ogg_packet *op);
 
 extern int      vorbis_synthesis_init(vorbis_dsp_state *v,vorbis_info *vi);
