@@ -289,6 +289,7 @@ extends TEncodingFormatConversionProvider
 					return;
 				}
 				m_bHeadersExpected = false;
+				setupVorbisStructures();
 			}
 			if (TDebug.TraceAudioConverter) TDebug.out("decoding...");
 			// Decoding !
@@ -348,81 +349,56 @@ extends TEncodingFormatConversionProvider
 
 
 		/** Read and process all three vorbis headers.
-		    @return true if successful, false otherwise.
 		*/
-		private boolean readHeaders()
+		private void readHeaders()
 			throws IOException
 		{
-			boolean	bSuccess;
-			bSuccess = readIdentificationHeader();
-			if (! bSuccess)
-			{
-				return false;
-			}
-			bSuccess = readCommentAndCodebookHeaders();
-			if (! bSuccess)
-			{
-				return false;
-			}
+			readIdentificationHeader();
+			readCommentAndCodebookHeaders();
 			processComments();
-			setupVorbisStructures();
-			return true;
 		}
 
 
 
-		/**
-		   @return true if successful, false otherwise.
+		/** Read the vorbis identification header.
+		    @throw IOException
 		*/
-		private boolean readIdentificationHeader()
+		private void readIdentificationHeader()
 			throws IOException
 		{
-			int nIndex = m_oggSyncState.buffer(BUFFER_SIZE);
-			int nBytes = readFromStream(m_oggSyncState.data, nIndex, BUFFER_SIZE);
-			if (nBytes == -1)
-			{
-				return false;
-			}
-			m_oggSyncState.wrote(nBytes);
-			if (m_oggSyncState.pageout(m_oggPage) != 1)
-			{
-				return false;
-			}
+			readOggPage();
 			m_oggStreamState.init(m_oggPage.serialno());
 			m_vorbisInfo.init();
 			m_vorbisComment.init();
 			if (m_oggStreamState.pagein(m_oggPage) < 0)
 			{
-				// error; stream version mismatch perhaps
-				return false;
+				throw new IOException("can't read first page of Ogg bitstream data, perhaps stream version mismatch");
 			}
 			if (m_oggStreamState.packetout(m_oggPacket) != 1)
 			{
-				// no page? must not be vorbis
-				return false;
+				throw new IOException("can't read initial header packet");
 			}
 			if (m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket) < 0)
 			{
-				// error case; not a vorbis header
-				return false;
+				throw new IOException("packet is not a vorbis header");
 			}
-			return true;
 		}
 
 
 
-		/**
-		   @return true if successful, false otherwise.
+		/** Read the comment header and the codebook header pages.
 		*/
-		private boolean readCommentAndCodebookHeaders()
+		private void readCommentAndCodebookHeaders()
 			throws IOException
 		{
 			for (int i = 0; i < 2; i++)
 			{
 				readOggPacket();
-				m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket);
+				if (m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket) < 0)
+				{
+					throw new IOException("packet is not a vorbis header");
+				}
 			}
-			return true;
 		}
 
 
@@ -508,8 +484,8 @@ extends TEncodingFormatConversionProvider
 						pointer += getFrameSize();
 					}
 				}
-				getCircularBuffer().write(convbuffer, 0, getFrameSize() * bout);
 				m_vorbisDspState.synthesis_read(bout);
+				getCircularBuffer().write(convbuffer, 0, getFrameSize() * bout);
 			}
 		}
 
@@ -602,10 +578,13 @@ extends TEncodingFormatConversionProvider
 				}
 				if (result == -1)
 				{
-					throw new IOException("Corrupt secondary header.  Exiting.");
+					throw new IOException("can't read packet");
 				}
 				readOggPage();
-				m_oggStreamState.pagein(m_oggPage);
+				if (m_oggStreamState.pagein(m_oggPage) < 0)
+				{
+					throw new IOException("can't read page of Ogg bitstream data");
+				}
 			}
 		}
 
