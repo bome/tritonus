@@ -1,11 +1,6 @@
 # configuration file for the tritonus library
 #
 
-org.tritonus.midi.device.java.JavaSequencerProvider
-org.tritonus.midi.device.alsa.AlsaSequencerProvider
-org.tritonus.midi.device.alsa.AlsaMidiDeviceProvider
-#org.tritonus.midi.device.midishare.MshSequencerProvider
-#org.tritonus.midi.device.midishare.MshMidiDeviceProvider
 
 # end
 #
