@@ -270,7 +270,7 @@ public class AlsaSequencer
 
 	public long getTickPosition()
 	{
-		return m_aSequencer.getQueuePositionTick();
+		return m_controlASequencer.getQueuePositionTick(getQueue());
 	}
 
 
@@ -292,7 +292,7 @@ public class AlsaSequencer
 
 	public long getMicrosecondPosition()
 	{
-		long	lNanoSeconds = m_aSequencer.getQueuePositionTime() / 1000;
+		long	lNanoSeconds = m_controlASequencer.getQueuePositionTime(getQueue()) / 1000;
 		return lNanoSeconds / 1000;
 	}
 

@@ -129,8 +129,15 @@ public class Sequence
 
 	public long getMicrosecondLength()
 	{
-		// TODO:
-		return getTickLength() * 0/*???*/;
+		if (getDivisionType() != PPQ)
+		{
+			return (long) (getTickLength() * 1000000 / (getDivisionType() * getResolution()));
+		}
+		else
+		{
+			// TODO: find all tempo change events and calculate length according to them.
+			return -1;
+		}
 	}
 
 
@@ -152,8 +159,8 @@ public class Sequence
 	public Patch[] getPatchList()
 	{
 		// TODO:
-		// also not implemented  in sun version
-		return null;
+		// not implemented  in sun version, too
+		return new Patch[0];
 	}
 }
 
