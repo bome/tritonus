@@ -47,7 +47,8 @@
   <target name="compile" depends="prepare">
     <javac srcdir="${src}"
 	   depend="yes"
-	   destdir="${build}" />
+	   destdir="${build}"
+	   excludes="AlsaSeqTestCase.java,AlsaCtlTestCase.java,AlsaMixerTestCase.java"/>
   </target>
 
   <target name="test"
@@ -92,6 +93,17 @@
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
       <test name="TDataOutputStreamTestCase" />
+    </junit>
+  </target>
+
+  <target name="test-midi"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
+      <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
+      <!--sysproperty key="tritonus.TraceService" value="true" /-->
+      <formatter type="plain" />
+      <test name="MidiMessageTestCase" />
     </junit>
   </target>
 </project>
