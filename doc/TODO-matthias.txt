@@ -10,7 +10,9 @@ IDEAS
 - check to shadow META-INF/services/javax.sound.* by means of prepending to boot class path.
 - remove midishare and mp3 stuff?
 - use libiiwusynth?
-- use ADPCM?
+- support ADPCM?
+- use TSE3 (portable sequencer engine written in C++)
+- support TSE3MDL file format?
 
 TODO (1 - important, 3 - nice to have)
 ----

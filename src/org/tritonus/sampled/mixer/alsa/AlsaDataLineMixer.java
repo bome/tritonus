@@ -55,7 +55,8 @@ import	org.tritonus.share.GlobalInfo;
 
 import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
+import	org.tritonus.lowlevel.alsa.AlsaPcmHWParams;
+import	org.tritonus.lowlevel.alsa.AlsaPcmHWParamsFormatMask;
 
 
 
@@ -272,14 +273,14 @@ public class AlsaDataLineMixer
 			throw new RuntimeException("cannot open pcm");
 		}
 		int	nReturn;
-		HWParams	hwParams = new HWParams();
+		AlsaPcmHWParams	hwParams = new AlsaPcmHWParams();
 		nReturn = alsaPcm.getAnyHWParams(hwParams);
 		if (nReturn != 0)
 		{
 			TDebug.out("AlsaDataLineMixer.getSupportedFormats(): getAnyHWParams(): " + Alsa.getStringError(nReturn));
 			throw new RuntimeException(Alsa.getStringError(nReturn));
 		}
-		HWParams.FormatMask	formatMask = new HWParams.FormatMask();
+		AlsaPcmHWParamsFormatMask	formatMask = new AlsaPcmHWParamsFormatMask();
 		int	nMinChannels = hwParams.getChannelsMin();
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSupportedFormats(): min channels: " + nMinChannels); }
 		int	nMaxChannels = hwParams.getChannelsMax();

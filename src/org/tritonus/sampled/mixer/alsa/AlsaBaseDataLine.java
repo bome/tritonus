@@ -41,8 +41,8 @@ import	javax.sound.sampled.Mixer;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
-import	org.tritonus.lowlevel.alsa.AlsaPcm.SWParams;
+import	org.tritonus.lowlevel.alsa.AlsaPcmHWParams;
+import	org.tritonus.lowlevel.alsa.AlsaPcmSWParams;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.mixer.TMixer;
 import	org.tritonus.share.sampled.mixer.TBaseDataLine;
@@ -192,7 +192,7 @@ extends TBaseDataLine
 			throw new LineUnavailableException();
 		}
 		int	nReturn;
-		HWParams	hwParams = new HWParams();
+		AlsaPcmHWParams	hwParams = new AlsaPcmHWParams();
 		nReturn = m_alsaPcm.getAnyHWParams(hwParams);
 		if (nReturn != 0)
 		{
@@ -251,7 +251,7 @@ extends TBaseDataLine
 			throw new LineUnavailableException("period size is equal to buffer size");
 		}
 
-		SWParams	swParams = new SWParams();
+		AlsaPcmSWParams	swParams = new AlsaPcmSWParams();
 		nReturn = m_alsaPcm.getSWParams(swParams);
 		if (nReturn != 0)
 		{
