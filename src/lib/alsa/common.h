@@ -20,11 +20,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef _ALSA_COMMON_H
+#define _ALSA_COMMON_H
 
 #include	<alsa/asoundlib.h>
 #include	"../common/HandleFieldHandler.h"
 #include	"../common/common.h"
 #include	"../common/debug.h"
 
+#endif /* _ALSA_COMMON_H */
 
 /*** common.h ***/
