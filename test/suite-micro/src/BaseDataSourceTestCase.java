@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import javax.microedition.media.Control;
 import javax.microedition.media.Controllable;
+import javax.microedition.media.control.MetaDataControl;
 import javax.microedition.media.protocol.DataSource;
 import javax.microedition.media.protocol.SourceStream;
 
@@ -168,15 +169,21 @@ extends BaseControllableTestCase
 		}
 	}
 
+
 	/** TODO:
 	 */
-	public void testControls()
+	public void testDataSourceControls()
 		throws Exception
 	{
 		DataSource	dataSource = createDataSource();
 		dataSource.connect();
 		Control[]	aControls = dataSource.getControls();
-		assertEquals("Control[] length", 0, aControls.length);
+		assertEquals("Control[] length", 1, aControls.length);
+		assertTrue("control is MetaDataControl", aControls[0] instanceof MetaDataControl);
+
+		Control	control = dataSource.getControl("MetaDataControl");
+		assertTrue("control is MetaDataControl", control instanceof MetaDataControl);
+		checkMetaDataControl((MetaDataControl) control);
 	}
 
 
@@ -192,11 +199,47 @@ extends BaseControllableTestCase
 			Control[]	aControls = aSourceStreams[i].getControls();
 			assertEquals("SourceStream's Control[] length", 0, aControls.length);
 		}
+		// TODO: check MetaDataControls
 	}
 
 
 
+	/**	Checks the passed MetaDataControl object.
+		This method checks the passed MetaDataControl for:
+		- the number of keys as returned by getKeys() being
+		greater than 0
+		- the returned individual keys are not null
+		- calling getKeyValue() on each key does not provide
+		an error condition
+		- the returned values are not null
+		- getKeyValue(null) throws an IllegalArgumentException
+	*/
+	private void checkMetaDataControl(MetaDataControl mdControl)
+		throws Exception
+	{
+		String[]	astrKeys = mdControl.getKeys();
+		assertTrue("MetaDataControl number of keys", astrKeys.length >= 1);
+		for (int i = 0; i < astrKeys.length; i++)
+		{
+			assertTrue("MetaDataControl key != null", astrKeys[i] != null);
+			String	strValue = mdControl.getKeyValue(astrKeys[i]);
+			assertTrue("MetaDataControl value != null", strValue != null);
+		}
 
+		boolean	bExceptionThrown = false;
+		try
+		{
+			mdControl.getKeyValue(null);
+		}
+		catch (IllegalArgumentException e)
+		{
+			bExceptionThrown = true;
+		}
+		if (! bExceptionThrown)
+		{
+			fail("IllegalArgumentException on MetaDataControl.getKeyValue(null)");
+		}
+	}
 
 
 	private static interface TestMethod
