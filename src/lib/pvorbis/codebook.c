@@ -188,20 +188,22 @@ int vorbis_staticbook_unpack(oggpack_buffer *opb,static_codebook *s){
     
     break;
   case 1:
-    /* ordered */
-    {
+	  /* ordered */
+  {
       long length=oggpack_read(opb,5)+1;
       s->lengthlist=_ogg_malloc(sizeof(*s->lengthlist)*s->entries);
 
-      for(i=0;i<s->entries;){
-	long num=oggpack_read(opb,_ilog(s->entries-i));
-	if(num==-1)goto _eofout;
-	for(j=0;j<num && i<s->entries;j++,i++)
-	  s->lengthlist[i]=length;
-	length++;
+      for(i=0;i<s->entries;)
+	  {
+		  long num=oggpack_read(opb,_ilog(s->entries-i));
+		  if(num==-1)goto _eofout;
+		  for(j=0;j<num && i<s->entries;j++,i++)
+			  s->lengthlist[i]=length;
+		  length++;
       }
-    }
-    break;
+  }
+  break;
+
   default:
     /* EOF */
     return(-1);
