@@ -30,6 +30,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import javax.microedition.media.protocol.DataSource;
 
+import org.tritonus.mmapi.InputStreamDataSource;
 import org.tritonus.mmapi.JavaSoundToneGenerator;
 import org.tritonus.mmapi.SystemTimeBase;
 import org.tritonus.mmapi.URLDataSource;
@@ -66,6 +67,7 @@ public final class Manager
 		{ "file", URLDataSource.class },
 		{ "http", URLDataSource.class },
 		{ "ftp", URLDataSource.class },
+		// device: ??
 	};
 
 
@@ -75,10 +77,23 @@ public final class Manager
 	*/
 	private static final Object[][]	CONTENT_TYPE_TABLE =
 	{
-		{ "audio/x-wav", PcmAudioPlayer.class },
-		{ "audio/basic", PcmAudioPlayer.class },
-		{ "audio/mpeg", Mp3AudioPlayer.class },
-		{ "audio/x-mid", MidiPlayer.class },
+		{ "audio/ac3", null },
+		{ "audio/basic", JavaSoundAudioPlayer.class },
+		{ "audio/midi", MidiPlayer.class },
+		{ "audio/mpeg", JavaSoundAudioPlayer.class },
+		{ "audio/x-aiff", JavaSoundAudioPlayer.class },
+		{ "audio/x-gsm", JavaSoundAudioPlayer.class },
+		{ "audio/x-it", null },
+		{ "audio/x-midi", MidiPlayer.class },
+		{ "audio/x-mod", null },
+		{ "audio/x-mp3", JavaSoundAudioPlayer.class },
+		{ "audio/x-real-audio", null },
+		{ "audio/x-s3m", null },
+		{ "audio/x-stm", null },
+		{ "audio/x-ulaw", JavaSoundAudioPlayer.class },
+		{ "audio/x-voc", null },
+		{ "audio/x-wav", JavaSoundAudioPlayer.class },
+		{ "audio/x-xm", null },
 	};
 
 
@@ -126,44 +141,77 @@ public final class Manager
 	public static Player createPlayer(String strLocator)
 		throws IOException, MediaException
 	{
+		if (strLocator == null)
+		{
+			throw new IllegalArgumentException();
+		}
  		DataSource	source = createDataSource(strLocator);
  		Player		player = createPlayer(source);
 		return player;
 	}
 
 
-	// TODO:
+
 	/**	TODO:
 	*/
-	public static Player createPlayer(DataSource source)
+	public static Player createPlayer(DataSource dataSource)
 		throws IOException, MediaException
 	{
-		if (source == null)
+		if (dataSource == null)
 		{
-			throw new MediaException();
+			throw new IllegalArgumentException();
 		}
+		dataSource.connect();
+		String	strContentType = dataSource.getContentType();
 		Player	player = null;
 
-		// !!!! HACK !!!!
-		player = new JavaSoundAudioPlayer(source);
-		// !!!! HACK !!!!
-
+		for (int i = 0; i < CONTENT_TYPE_TABLE.length; i++)
+		{
+			if (CONTENT_TYPE_TABLE[i][0].equals(strContentType))
+			{
+				Class	cls = (Class) CONTENT_TYPE_TABLE[i][1];
+				try
+				{
+					Constructor	constructor = cls.getConstructor(new Class[]{DataSource.class});
+					player = (Player) constructor.newInstance(new Object[]{dataSource});
+				}
+				catch (InstantiationException e)
+				{
+					// DO NOTHING
+				}
+				catch (IllegalAccessException e)
+				{
+					// DO NOTHING
+				}
+				catch (NoSuchMethodException e)
+				{
+					// DO NOTHING
+				}
+				catch (InvocationTargetException e)
+				{
+					// DO NOTHING
+				}
+			}
+		}
+		if (player == null)
+		{
+			throw new MediaException("unknown content type: " + strContentType);
+		}
 		return player;
 	}
 
 
 
 	// TODO:
-	// IDEA: use a class InputStreamDataSource
 	/**	TODO:
 	*/
 	public static Player createPlayer(InputStream stream,
 					  String strType)
 		throws IOException, MediaException
 	{
-// 		DataSource	source = createDataSource(stream, strType);
-// 		Player		player = createPlayer(source);
-		return null;	// player;
+ 		DataSource	dataSource = new InputStreamDataSource(stream, strType);
+ 		Player		player = createPlayer(dataSource);
+		return player;
 	}
 
 
@@ -206,7 +254,6 @@ public final class Manager
 
 	/**	TODO:
 	*/
-	// TODO:
 	private static DataSource createDataSource(String strLocator)
 		throws IOException, MediaException
 	{
