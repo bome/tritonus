@@ -201,7 +201,8 @@
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
-      <test name="org.tritonus.test.AuAudioOutputStreamTestCase" />
+      <test name="org.tritonus.test.tritonus.sampled.file.AuAudioOutputStreamTestCase"/>
+      <test name="org.tritonus.test.tritonus.sampled.file.WaveAudioOutputStreamTestCase"/>
     </junit>
   </target>
 
