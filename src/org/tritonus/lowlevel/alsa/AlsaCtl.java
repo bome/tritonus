@@ -1,9 +1,15 @@
 /*
  *	AlsaCtl.java
+$Id$
+$Log$
+Revision 1.5  2001/05/11 08:53:45  pfisterer
+rcs keywords test
+
+
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
