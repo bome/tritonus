@@ -82,9 +82,6 @@ public class AlsaSourceDataLine
 
 
 
-
-
-
 /*
   public void start()
   {
@@ -95,96 +92,96 @@ public class AlsaSourceDataLine
 */
 
 
-protected void stopImpl()
-{
-	if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.stopImpl(): called"); }
-	int	nReturn = 0;
-	// int	nReturn = getAlsaPcm().flushChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
-	if (nReturn != 0)
+	protected void stopImpl()
 	{
-		TDebug.out("flushChannel: " + Alsa.getStringError(nReturn));
-	}
-	// setStarted(false);
-}
-
-
-
-public int available()
-{
-	// TODO:
-	return -1;
-}
-
-
-
-
-// TODO: check if should block
-public int write(byte[] abData, int nOffset, int nLength)
-{
-	if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.write(): begin"); }
-	if (getSwapBytes())
-	{
-		if (m_abSwapBuffer == null || m_abSwapBuffer.length < nOffset + nLength)
+		if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.stopImpl(): called"); }
+		int	nReturn = 0;
+		// int	nReturn = getAlsaPcm().flushChannel(AlsaPcm.SND_PCM_CHANNEL_PLAYBACK);
+		if (nReturn != 0)
 		{
-			m_abSwapBuffer = new byte[nOffset + nLength];
+			TDebug.out("flushChannel: " + Alsa.getStringError(nReturn));
 		}
-		TConversionTool.changeOrderOrSign(
-			abData, nOffset,
-			m_abSwapBuffer, nOffset,
-			nLength, getBytesPerSample());
-		abData = m_abSwapBuffer;
+		// setStarted(false);
 	}
-	int nReturn = writeImpl(abData, nOffset, nLength);
-	if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.write(): end"); }
-	return nReturn;
-}
 
 
 
-
-
-
-/* TODO: check if should block
- */
-public int writeImpl(byte[] abData, int nOffset, int nLength)
-{
-	if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): begin"); }
-	if (nLength > 0 && !isActive())
+	public int available()
 	{
-		start();
+		// TODO:
+		return -1;
 	}
-	int		nFrameSize = getFormat().getFrameSize();
-	int		nRemaining = nLength;
-	while (nRemaining > 0 && isOpen())
+
+
+
+
+	// TODO: check if should block
+	public int write(byte[] abData, int nOffset, int nLength)
 	{
-		synchronized (this)
+		if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.write(): begin"); }
+		if (getSwapBytes())
 		{
-			if (!isOpen())
+			if (m_abSwapBuffer == null || m_abSwapBuffer.length < nOffset + nLength)
 			{
-				return nLength - nRemaining;
+				m_abSwapBuffer = new byte[nOffset + nLength];
 			}
-			if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): trying to write (bytes): " + nRemaining); }
-			int	nRemainingFrames = nRemaining / nFrameSize;
-			if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): trying to write (frames): " + nRemainingFrames); }
-			int	nWrittenFrames = (int) getAlsaPcm().writei(abData, nOffset, nRemainingFrames);
-			if (nWrittenFrames < 0)
-			{
- 				TDebug.out("AlsaSourceDataLine.writeImpl(): " + Alsa.getStringError(nWrittenFrames));
-				return nLength - nRemaining;
-			}
-			if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): written (frames): " + nWrittenFrames); }
-			int	nWrittenBytes = nWrittenFrames * nFrameSize;
-			if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): written (bytes): " + nWrittenBytes); }
-			nOffset += nWrittenBytes;
-			nRemaining -= nWrittenBytes;
+			TConversionTool.changeOrderOrSign(
+				abData, nOffset,
+				m_abSwapBuffer, nOffset,
+				nLength, getBytesPerSample());
+			abData = m_abSwapBuffer;
 		}
+		int nReturn = writeImpl(abData, nOffset, nLength);
+		if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.write(): end"); }
+		return nReturn;
 	}
-	return nLength;
-}
 
 
 
-public void drain()
+
+
+
+	/* TODO: check if should block
+	 */
+	public int writeImpl(byte[] abData, int nOffset, int nLength)
+	{
+		if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): begin"); }
+		if (nLength > 0 && !isActive())
+		{
+			start();
+		}
+		int		nFrameSize = getFormat().getFrameSize();
+		int		nRemaining = nLength;
+		while (nRemaining > 0 && isOpen())
+		{
+			synchronized (this)
+			{
+				if (!isOpen())
+				{
+					return nLength - nRemaining;
+				}
+				if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): trying to write (bytes): " + nRemaining); }
+				int	nRemainingFrames = nRemaining / nFrameSize;
+				if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): trying to write (frames): " + nRemainingFrames); }
+				int	nWrittenFrames = (int) getAlsaPcm().writei(abData, nOffset, nRemainingFrames);
+				if (nWrittenFrames < 0)
+				{
+					TDebug.out("AlsaSourceDataLine.writeImpl(): " + Alsa.getStringError(nWrittenFrames));
+					return nLength - nRemaining;
+				}
+				if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): written (frames): " + nWrittenFrames); }
+				int	nWrittenBytes = nWrittenFrames * nFrameSize;
+				if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaSourceDataLine.writeImpl(): written (bytes): " + nWrittenBytes); }
+				nOffset += nWrittenBytes;
+				nRemaining -= nWrittenBytes;
+			}
+		}
+		return nLength;
+	}
+
+
+
+	public void drain()
 	{
 		// TODO:
 	}
@@ -320,8 +317,8 @@ public void drain()
 */
 
 
+		}
 	}
-}
 
 
 
