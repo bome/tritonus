@@ -49,6 +49,15 @@ public class ASequencer
 	public ASequencer()
 	{
 		super();
+		if (TDebug.TraceASequencer)
+		{
+			TDebug.out("ASequencer.<init>(): begin");
+		}
+		// DO NOTHING (currently)
+		if (TDebug.TraceASequencer)
+		{
+			TDebug.out("ASequencer.<init>(): end");
+		}
 	}
 
 
@@ -1053,14 +1062,14 @@ public class ASequencer
 
 
 
-		///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
 
 
 
-		public void sendNoteEvent(
-			int nType, int nFlags, int nTag, int nQueue, long lTime,
-			int nSourcePort, int nDestClient, int nDestPort,
-			int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
+	public void sendNoteEvent(
+		int nType, int nFlags, int nTag, int nQueue, long lTime,
+		int nSourcePort, int nDestClient, int nDestPort,
+		int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
 	{
 		if (TDebug.TraceASequencerDetails)
 		{

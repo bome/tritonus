@@ -53,14 +53,26 @@ public class AlsaMidiDeviceProvider
 
 	public AlsaMidiDeviceProvider()
 	{
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("AlsaMidiDeviceProvider.<init>(): begin");
+		}
 		synchronized (AlsaMidiDeviceProvider.class)
 		{
+			//TDebug.out("gaga");
 			if (m_devices == null)
 			{
+				//TDebug.out("gaga2");
 				m_devices = new ArrayList();
+				TDebug.out("gaga2a");
 				m_aSequencer = new ASequencer("Tritonus ALSA device manager");
+				//TDebug.out("gaga3");
 				scanPorts();
 			}
+		}
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("AlsaMidiDeviceProvider.<init>(): end");
 		}
 	}
 
