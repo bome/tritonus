@@ -364,6 +364,8 @@
 	   packagenames="org.tritonus.*"
 	   excludepackagenames="org.tritonus.debug,org.tritonus.midi.device.midishare,org.tritonus.sampled.convert.javalayer"
 	   Windowtitle="Tritonus API"
+	   link="http://java.sun.com/j2se/1.4.1/docs/api/"
+	   use="true"
 	   additionalparam="-breakiterator">
   </javadoc>
   <!-- additionalparam="-breakiterator" -->
