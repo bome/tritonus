@@ -42,7 +42,6 @@ CONFIGFILENAME=Configuration.properties
 CONFIGFILE=$(SRCDIR_PRIV)/$(CONFIGFILENAME)
 CONFIGFILE2=$(OBJDIR_PRIV)/$(CONFIGFILENAME)
 
-#vpath %.lex $(SRCDIR2)
 
 vpath %.java $(SRCDIR_PUB)/midi
 vpath %.java $(SRCDIR_PUB)/midi/spi
@@ -167,9 +166,6 @@ $(CONFIGFILE2): $(CONFIGFILE)
 
 .PHONY: mp3jars
 mp3jars:	$(LIBDEST_JL) $(LIBDEST_MP3SP)
-#	mkdir -p META-INF/services
-#	cp src/META-INF/Services/javax.* META-INF/services/
-#	jar cf mp3.jar org/tritonus javazoom META-INF/
 
 $(LIBDEST_JL):	$(OBJ)
 	cp src/javazoom/jl/decoder/*.ser javazoom/jl/decoder/
@@ -177,12 +173,6 @@ $(LIBDEST_JL):	$(OBJ)
 
 #$(LIBDEST_JL):	../javalayer/$(LIBDEST_JL)
 #	cp ../javalayer/$(LIBDEST_JL) .
-
-#.PHONY: mp3jars
-#mp3jars:	all
-#	mkdir -p META-INF/services
-#	cp src/META-INF/Services/javax.* META-INF/services/
-#	jar cf mp3.jar org/tritonus javazoom META-INF/
 
 
 $(LIBDEST_MP3SP):	$(OBJ)

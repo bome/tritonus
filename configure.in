@@ -90,7 +90,7 @@ AC_PROG_LN_S
 
 AC_SUBST(SUBDIRS)
 dnl Checks for libraries.
-SUBDIRS=
+SUBDIRS=src/lib/util
 AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"]; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
 AC_CHECK_LIB(esd,esd_open_sound,[SUBDIRS="$SUBDIRS src/lib/esd"; AC_MSG_RESULT(Information: will build stuff for Enlightened Sound Daemon)],[AC_MSG_RESULT(Information: will not build stuff for Enlightened Sound Daemon)],-laudiofile)
 #AC_CHECK_LIB(audio, AuOpenServer,[SUBDIRS="$SUBDIRS src/lib/nas"; AC_MSG_RESULT(Information: will build stuff for Network Audio System)],[AC_MSG_RESULT(Information: will not build stuff for Network Audio System)],-lXt -lm)
@@ -108,4 +108,5 @@ dnl Checks for library functions.
 AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
 	src/lib/esd/Makefile
+	src/lib/util/Makefile
 	test/Makefile)
