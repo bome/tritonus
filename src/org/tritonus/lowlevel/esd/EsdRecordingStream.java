@@ -41,6 +41,12 @@ extends	Esd
 
 
 
+	static
+	{
+		Esd.loadNativeLibrary();
+	}
+
+
 
 	public EsdRecordingStream()
 	{

@@ -50,6 +50,13 @@ extends	Esd
 
 
 
+	static
+	{
+		Esd.loadNativeLibrary();
+	}
+
+
+
 	public EsdSample()
 	{
 	}

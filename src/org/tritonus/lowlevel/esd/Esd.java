@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,8 @@
 package	org.tritonus.lowlevel.esd;
 
 
+import	org.tritonus.share.TDebug;
+
 
 
 public class Esd
@@ -37,10 +39,39 @@ public class Esd
 	public static final int		ESD_MONO	= 0x0010;
 	public static final int		ESD_STEREO	= 0x0020;
 
+	private static boolean	sm_bIsLibraryAvailable = false;
+
+
 
 	static
 	{
-		System.loadLibrary("tritonusesd");
+		Esd.loadNativeLibrary();
+	}
+
+
+
+	public static void loadNativeLibrary()
+	{
+		if (TDebug.TraceEsdNative) { TDebug.out("Esd.loadNativeLibrary(): loading native library tritonusesd"); }
+		try
+		{
+			System.loadLibrary("tritonusesd");
+			sm_bIsLibraryAvailable = true;
+		}
+		catch (Throwable t)
+		{
+			if (TDebug.TraceEsdNative) { TDebug.out(t); }
+		}
+		if (TDebug.TraceEsdNative) { TDebug.out("Esd.loadNativeLibrary(): loaded"); }
+	}
+
+
+
+	/**	Returns whether the libraries are installed correctly.
+	 */
+	public static boolean isLibraryAvailable()
+	{
+		return sm_bIsLibraryAvailable;
 	}
 }
 
