@@ -235,9 +235,7 @@ public class Lame {
 		if (length<0 || (offset+length)>pcm.length) {
 			throw new IllegalArgumentException("inconsistent parameters");
 		}
-//encoded[0]=0; encoded[1]=0;	   
 		int result=nEncodeBuffer(pcm, offset, length, encoded);
-//System.out.println("result="+result+" encoded bytes.  pcm="+pcm[0]+","+pcm[1]+"  mp3="+encoded[0]+","+encoded[1]);
 		if (result<0) {
 			if (result==-1) {
 				throw new ArrayIndexOutOfBoundsException("Encode buffer too small");

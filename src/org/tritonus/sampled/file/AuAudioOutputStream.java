@@ -47,9 +47,6 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 
 	private static String description="Created by Tritonus";
 
-	// this constant is used for chunk lengths when the length is not known yet
-	private static final int LENGTH_NOT_KNOWN=-1;
-
 	/**
 	* Writes a null-terminated ascii string s to f.
 	* The total number of bytes written is aligned on a 2byte boundary.
@@ -80,17 +77,11 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 	public AuAudioOutputStream(AudioFormat audioFormat,
 	                           long lLength,
 	                           TDataOutputStream dataOutputStream) {
-		// au cannot store more than 2GB
-		// when this check is here, we will truncate the output file
-		// it could be placed in write(), then the
-		// header would say 2GB, but the file would be larger
+		// if length exceeds 2GB, set the length field to NOT_SPECIFIED
 		super(audioFormat,
-		      lLength,
+		      lLength>0x7FFFFFFFl?AudioSystem.NOT_SPECIFIED:lLength,
 		      dataOutputStream,
 		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
-		if (lLength != AudioSystem.NOT_SPECIFIED && lLength>0x7FFFFFFFl) {
-			throw new IllegalArgumentException("AU files cannot be larger than 2GB.");
-		}
 	}
 
 	protected void writeHeader() throws	IOException {
@@ -99,16 +90,11 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 		}
 		AudioFormat		format = getFormat();
 		long			lLength = getLength();
-		// if patching the header, and the length has not been known at first
-		// writing of the header, just truncate the size fields, don't throw an exception
-		if (lLength != AudioSystem.NOT_SPECIFIED && lLength>0x7FFFFFFFl) {
-			lLength=0x7FFFFFFFl;
-		}
 		TDataOutputStream	dos = getDataOutputStream();
 
 		dos.writeInt(AuTool.AU_HEADER_MAGIC);
 		dos.writeInt(AuTool.DATA_OFFSET+getTextLength(description));
-		dos.writeInt((lLength!=AudioSystem.NOT_SPECIFIED)?((int) lLength):LENGTH_NOT_KNOWN);
+		dos.writeInt((lLength!=AudioSystem.NOT_SPECIFIED)?((int) lLength):AuTool.AUDIO_UNKNOWN_SIZE);
 		dos.writeInt(AuTool.getFormatCode(format));
 		dos.writeInt((int) format.getSampleRate());
 		dos.writeInt(format.getChannels());

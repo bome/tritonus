@@ -3,8 +3,8 @@
  */
 
 /*
+ *  Copyright (c) 1999,2000,2001 by Florian Bomers <florian@bome.com>
  *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 1999,2000 by Florian Bomers <florian@bome.com>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ import	java.io.IOException;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioInputStream;
+import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
@@ -84,7 +85,7 @@ public class AuAudioFileReader extends TAudioFileReader {
 		if (TDebug.TraceAudioFileReader) {
 			TDebug.out("AuAudioFileReader.getAudioFileFormat(): data length: " + nDataLength);
 		}
-		if (nDataLength < -1) {
+		if (nDataLength < 0 && nDataLength!=AuTool.AUDIO_UNKNOWN_SIZE) {
 			throw new UnsupportedAudioFileException(
 			    "not an AU file: data length must be positive, 0 or -1 for unknown");
 		}
@@ -93,9 +94,6 @@ public class AuAudioFileReader extends TAudioFileReader {
 		int nEncoding = dataInputStream.readInt();
 		switch (nEncoding) {
 		case AuTool.SND_FORMAT_MULAW_8:		// 8-bit uLaw G.711
-
-
-
 			encoding = AudioFormat.Encoding.ULAW;
 			nSampleSize = 8;
 			break;
@@ -121,9 +119,6 @@ public class AuAudioFileReader extends TAudioFileReader {
 			break;
 
 		case AuTool.SND_FORMAT_ALAW_8:	// 8-bit aLaw G.711
-
-
-
 			encoding = AudioFormat.Encoding.ALAW;
 			nSampleSize = 8;
 			break;
@@ -142,7 +137,7 @@ public class AuAudioFileReader extends TAudioFileReader {
 			throw new UnsupportedAudioFileException(
 			    "corrupt AU file: number of channels must be positive");
 		}
-		// skip  header information field
+		// skip header information field
 		inputStream.skip(nDataOffset - AuTool.DATA_OFFSET);
 		// read header info field
 		//String desc=readDescription(dataInputStream, nDataOffset - AuTool.DATA_OFFSET);
@@ -156,8 +151,10 @@ public class AuAudioFileReader extends TAudioFileReader {
 		                                     true);
 		return new TAudioFileFormat(AudioFileFormat.Type.AU,
 		                            format,
-		                            nDataLength / format.getFrameSize(),
-		                            nDataLength + nDataOffset);
+		                            (nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
+		                            	AudioSystem.NOT_SPECIFIED:(nDataLength / format.getFrameSize()),
+		                            (nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
+		                            	AudioSystem.NOT_SPECIFIED:(nDataLength + nDataOffset));
 	}
 }
 

@@ -26,24 +26,105 @@
 
 #include	<stdlib.h>
 
-#include	"lame/lame.h"
+#include	<lame/lame.h>
 #include	"org_tritonus_lowlevel_lame_Lame.h"
-
-/*
- * Hack: as lame does not support byte swapping (?), add a flag to 
- * lame_global_flags.
- * "swapbyte hack"
- */
-
-typedef struct tagLameConf {
-	lame_global_flags* gf;
-	int channels;
-	int swapbytes;
-} LameConf;
-
 
 static int debug=0;
 
+
+////////////////////////////// lame specific //////////////////////////////////////////////
+
+typedef struct tagLameConf {
+	int channels;
+	int sampleRate;
+	int bitrate;
+	int mode;
+	int quality;
+	int VBR;
+	int mpegVersion;
+	int swapbytes;
+	lame_global_flags* gf;
+} LameConf;
+
+int doInit(LameConf* conf) {
+	int result;
+
+	conf->gf=lame_init();
+	if (conf->gf==NULL) {
+		//throwRuntimeException(env, "out of memory");
+		return org_tritonus_lowlevel_lame_Lame_OUT_OF_MEMORY;
+	}
+	
+	lame_set_num_channels(conf->gf, conf->channels);
+	lame_set_in_samplerate(conf->gf, conf->sampleRate);
+	/*if (conf->mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
+		lame_set_mode(conf->gf, conf->mode);
+	}*/
+	if (conf->VBR) {
+		// not implemented yet
+		//lame_set_VBR(conf->gf, vbr_default);
+		//lame_set_VBR_q(conf->gf, conf->quality);
+		conf->gf->VBR=vbr_default;
+		conf->gf->VBR_q=conf->quality;
+	} else {
+		// not implemented yet
+		//lame_set_brate(conf->gf, conf->bitrate);
+		conf->gf->brate=conf->bitrate;
+	}
+	lame_set_quality(conf->gf, conf->quality);
+	result=lame_init_params(conf->gf);
+
+	// return effective values
+	conf->sampleRate=lame_get_out_samplerate(conf->gf);
+	//conf->bitrate=lame_get_brate(conf->gf);
+	conf->bitrate=conf->gf->brate;
+	//conf->mode=lame_get_mode(conf->gf);
+	conf->mode=conf->gf->mode;
+	//conf->VBR=lame_get_VBR(conf->gf);
+	conf->VBR=conf->gf->VBR;
+	conf->quality=conf->VBR?conf->gf->VBR_q:lame_get_quality(conf->gf);
+	//conf->quality=conf->VBR??lame_get_VBR_q(conf->gf):lame_get_quality(conf->gf);
+	conf->mpegVersion=lame_get_version(conf->gf);
+
+	return result;
+}
+
+int doGetPCMBufferSize(LameConf* conf, int wishedBufferSize) {
+	// lame supports all buffer sizes
+	return wishedBufferSize;
+}
+
+int doEncode(LameConf* conf, short* pcmSamples, int pcmLengthInFrames, char* encodedBytes, int encodedArrayByteSize) {
+	if (conf->gf==NULL) {
+		//throwRuntimeException(env, "not initialized");
+		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
+	}
+	if (conf->channels==1) {
+		return lame_encode_buffer(conf->gf, pcmSamples, pcmSamples, pcmLengthInFrames, 
+					      encodedBytes, encodedArrayByteSize);
+	} else {
+		return lame_encode_buffer_interleaved(conf->gf, pcmSamples, pcmLengthInFrames, 
+					      encodedBytes, encodedArrayByteSize);
+	}
+}
+
+int doEncodeFinish(LameConf* conf, char* encodedBytes, int encodedArrayByteSize) {
+	if (conf->gf==NULL) {
+		//throwRuntimeException(env, "not initialized");
+		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
+	}
+	return lame_encode_flush(conf->gf, encodedBytes, encodedArrayByteSize);
+}
+
+void doClose(LameConf* conf) {
+	if (conf->gf!=NULL) {
+		lame_close(conf->gf);
+		conf->gf=NULL;
+	}
+}
+
+
+////////////////////////////// JNI //////////////////////////////////////////////
 
 //todo: this is BUGGY ! seg fault...
 static void throwRuntimeException(JNIEnv *env, char* pStrMessage) {
@@ -118,7 +199,7 @@ inline void CheckEndianness() {
 }
 
 
-//////////////////////////////////////// native functions ////////////////////////////////////
+//////////////////////////////////////// exported JNI functions ////////////////////////////////////
 
 /*
  * Class:     org_tritonus_lowlevel_lame_Lame
@@ -129,7 +210,7 @@ inline void CheckEndianness() {
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
   (JNIEnv * env, jobject obj, jint channels, jint sampleRate, 
    jint bitrate, jint mode, jint quality, jboolean VBR, jboolean bigEndian) {
-	jint result;
+	int result;
 	LameConf* conf;
 	if (debug) {
 		printf("Java_org_tritonus_lowlevel_lame_Lame_initParams: \n");
@@ -144,54 +225,36 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 		//throwRuntimeException(env, "out of memory");
 		return org_tritonus_lowlevel_lame_Lame_OUT_OF_MEMORY;
 	}
-	conf->gf=lame_init();
-	if (conf->gf==NULL) {
-		//throwRuntimeException(env, "out of memory");
-		return org_tritonus_lowlevel_lame_Lame_OUT_OF_MEMORY;
-	}
-	
-	//set parameters
-	lame_set_num_channels(conf->gf, (int) channels);
-	conf->channels=channels;
-	lame_set_in_samplerate(conf->gf, (int) sampleRate);
-	/*if (mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
-		lame_set_mode(conf->gf, (int) mode);
-	}*/
-	if (VBR) {
-		// not implemented yet
-		//lame_set_VBR(conf->gf, vbr_default);
-		//lame_set_VBR_q(conf->gf, (int) quality);
-		conf->gf->VBR=vbr_default;
-		conf->gf->VBR_q=(int) quality;
-	} else {
-		// not implemented yet
-		//lame_set_brate(conf->gf, (int) bitrate);
-		//conf->gf->brate=(int) bitrate;
-	}
-	lame_set_quality(conf->gf, (int) quality);
 	CheckEndianness();
 	if ((bigEndian && platformEndianness==LA_LITTLE_ENDIAN) ||
 	    (!bigEndian && platformEndianness==LA_BIG_ENDIAN)) {
 		// swap samples
-		//gf->swapbytes=1;
-		// swapbyte hack
 		conf->swapbytes=1;
 	}
-	result=(jint) lame_init_params(conf->gf);
-
+	conf->channels=(int) channels;
+	conf->sampleRate=(int) sampleRate;
+	conf->bitrate=(int) bitrate;
+	conf->mode=(int) mode;
+	conf->quality=(int) quality;
+	conf->VBR=(int) VBR;
+	conf->mpegVersion=0;
+	
+	result=doInit(conf);
+	if (result<0) {
+		free(conf);
+		setNativeGlobalFlags(env, obj, 0);
+		return result;
+	}
+	
 	// update the Lame instance with the effective values
-	//setIntField(env, obj, "effQuality", VBR?lame_get_VBR_q(conf->gf):lame_get_quality(conf->gf));
-	setIntField(env, obj, "effQuality", VBR?conf->gf->VBR_q:lame_get_quality(conf->gf));
-	// not implemented yet in lame
-	//setIntField(env, obj, "effBitRate", lame_get_brate(conf->gf));
-	setIntField(env, obj, "effBitRate", conf->gf->brate);
-	// not implemented yet in lame
-	//setIntField(env, obj, "effVbr", lame_get_VBR(conf->gf));
-	setIntField(env, obj, "effVbr", conf->gf->VBR);
-	//	setIntField(env, obj, "effChMode", lame_get_mode(conf->gf));
-	setIntField(env, obj, "effSampleRate", lame_get_out_samplerate(conf->gf));
-	setIntField(env, obj, "effEncoding", lame_get_version(conf->gf));
-	return result;
+	setIntField(env, obj, "effSampleRate", conf->sampleRate);
+	setIntField(env, obj, "effBitRate", conf->bitrate);
+	setIntField(env, obj, "effChMode", conf->mode);
+	setIntField(env, obj, "effQuality", conf->quality);
+	setIntField(env, obj, "effVbr", conf->VBR);
+	setIntField(env, obj, "effEncoding", conf->mpegVersion);
+	
+	return (jint) result;
 }
 
 /*
@@ -201,7 +264,16 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
  */
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nGetPCMBufferSize
 (JNIEnv *env, jobject obj, jint wishedBufferSize) {
-	return wishedBufferSize;
+    int result=(int) wishedBufferSize;
+	LameConf* conf;
+	conf=getNativeGlobalFlags(env, obj);
+	if (conf!=NULL) {
+		result=doGetPCMBufferSize(conf, (int) wishedBufferSize);
+	} else {
+		//throwRuntimeException(env, "not initialized");
+		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
+	}
+	return (jint) result;
 }
 
 
@@ -228,65 +300,67 @@ typedef struct tagTwoChar {
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 (JNIEnv *env, jobject obj, jbyteArray pcm, jint offset, jint length, jbyteArray encoded) {
 	LameConf* conf;
-	int i; //hack
-	twoChar* s; //hack
-	int result=0;
+	int i;
+	twoChar* s;
+	int result;
 	char* encodedBytes, *pcmSamplesOrig;
 	short* pcmSamples;
-	int pcmSamplesLength;
-	//jsize pcmArrayByteSize=(*env)->GetArrayLength(env, pcm);
+	int pcmLengthInFrames;
+	
 	// todo: consistency check for pcm array ?
 	int encodedArrayByteSize=(int) ((*env)->GetArrayLength(env, encoded));
-	if (debug) {
-		printf("Java_org_tritonus_lowlevel_lame_Lame_encodeBuffer: \n");
-		printf("   offset: %d, length:%d\n", (int) offset, (int) length);
-		//printf("   %d bytes in PCM array\n", (int) pcmArrayByteSize);
-		//printf("   %d bytes in to-be-encoded array\n", (int) encodedArrayByteSize);
-	}
+#ifdef _DEBUG
+	jsize pcmArrayByteSize=(*env)->GetArrayLength(env, pcm);
+	int pcmArraySizeInShorts=(pcmArrayByteSize-offset)/2;
+	printf("Java_org_tritonus_lowlevel_lame_Lame_encodeBuffer: \n");
+	printf("   offset: %d, length:%d, offset+length:%d\n", (int) offset, (int) length, (int) (offset+length));
+	printf("   %d bytes in PCM array\n", (int) pcmArrayByteSize);
+	printf("   %d bytes in to-be-encoded array\n", (int) encodedArrayByteSize);
+	fflush(stdout);
+#endif
 	conf=getNativeGlobalFlags(env, obj);
-	if (conf!=NULL && conf->gf!=NULL) {
-		pcmSamplesLength=length/(conf->channels*2); // always 16 bit
+	if (conf!=NULL) {
+		pcmLengthInFrames=length/(conf->channels*2); // always 16 bit
 		pcmSamplesOrig=(*env)->GetByteArrayElements(env, pcm, NULL);
 		pcmSamples=(short*) pcmSamplesOrig;
 		pcmSamples+=(offset/2); // 16bit
-		// start swapbyte hack
 		if (conf->swapbytes) {
 			// swap bytes
 			i=length/2;
 			s=(twoChar*) pcmSamples;
-			if (debug) {
-				printf("Swapping samples.\n");
-			}
+#ifdef _DEBUG
+			printf("Swapping samples.\n");
+			fflush(stdout);
+#endif
 			for (; i>0; i--, s++) {
 				char help=s->a;
 				s->a=s->b;
 				s->b=help;
 			}
 		}
-		// end swapbyte hack
 		encodedBytes=(*env)->GetByteArrayElements(env, encoded, NULL);
 		
-		if (debug) {
-			printf("   Encoding %d samples at %p into buffer %p of size %d bytes.\n", 
-			       pcmSamplesLength, pcmSamples, encodedBytes, encodedArrayByteSize);
-			printf("   Sample1=%d Sample2=%d\n", pcmSamples[0], pcmSamples[1]);
-		}
+#ifdef _DEBUG
+			printf("   Encoding %d frames at %p into buffer %p of size %d bytes.\n", 
+			       pcmLengthInFrames, pcmSamples, encodedBytes, encodedArrayByteSize);
+			//printf("   Sample1=%d Sample2=%d\n", pcmSamples[0], pcmSamples[1]);
+#endif
+		result=doEncode(conf, pcmSamples, pcmLengthInFrames, encodedBytes, encodedArrayByteSize);
 
-		result=lame_encode_buffer_interleaved(conf->gf, pcmSamples, pcmSamplesLength, 
-						      encodedBytes, encodedArrayByteSize);
-		if (debug) {
-			printf("   MP3-1=%d MP3-2=%d\n", (int) encodedBytes[0], (int) encodedBytes[1]);
-		}
+#ifdef _DEBUG
+		//printf("   MP3-1=%d MP3-2=%d\n", (int) encodedBytes[0], (int) encodedBytes[1]);
+#endif
 		// clean up:
 		// discard any changes in pcmArray
 		(*env)->ReleaseByteArrayElements(env, pcm, pcmSamplesOrig, JNI_ABORT);
 		// commit the encoded bytes
 		(*env)->ReleaseByteArrayElements(env, encoded, encodedBytes, 0);
 	} else {
-		if (debug) {
-			printf("Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer: \n");
-			printf("   no global flags !");
-		}
+#ifdef _DEBUG
+		printf("Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer: \n");
+		printf("   no global flags !\n");
+		fflush(stdout);
+#endif
 		//throwRuntimeException(env, "not initialized");
 		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
 	}
@@ -308,22 +382,21 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeFinish
 		//printf("   %d bytes in the array\n", (int) length);
 	}
 	conf=getNativeGlobalFlags(env, obj);
-	if (conf!=NULL && conf->gf!=NULL) {
+	if (conf!=NULL) {
 		jsize charBufferSize=(*env)->GetArrayLength(env, buffer);
 		char* charBuffer=NULL;
 		if (charBufferSize>0) {
 			charBuffer=(*env)->GetByteArrayElements(env, buffer, NULL);
 		}
-		result=lame_encode_flush(conf->gf, charBuffer, charBufferSize);
+		result=doEncodeFinish(conf, charBuffer, charBufferSize);
+		doClose(conf);
 		if (debug) {
 			printf("   %d bytes returned\n", (int) result);
 		}
 		(*env)->ReleaseByteArrayElements(env, buffer, charBuffer, 0);
-		lame_close(conf->gf);
-		conf->gf=NULL;
 		setNativeGlobalFlags(env, obj, 0);
 		free(conf);
-	} 
+	}
 	else if (debug) {
 		printf("Java_org_tritonus_lowlevel_lame_Lame_encodeFinish: \n");
 		printf("   no global flags !\n");
@@ -344,9 +417,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_nClose(JNIEnv * env,
 	}
 	conf=getNativeGlobalFlags(env, obj);
 	if (conf!=NULL) {
-		if (conf->gf!=NULL) {
-			lame_close(conf->gf);
-		}
+		doClose(conf);
 		setNativeGlobalFlags(env, obj, 0);
 		free(conf);
 	}
