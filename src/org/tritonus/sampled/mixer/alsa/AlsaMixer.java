@@ -62,7 +62,8 @@ import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
 public class AlsaMixer
 	extends		TMixer
 {
-	private static AudioFormat[]	EMPTY_AUDIOFORMAT_ARRAY = new AudioFormat[0];
+	private static final AudioFormat[]	EMPTY_AUDIOFORMAT_ARRAY = new AudioFormat[0];
+	private static final int	CHANNELS_LIMIT = 32;
 
 	// default buffer size in bytes.
 	private static final int	DEFAULT_BUFFER_SIZE = 32768;
@@ -325,6 +326,7 @@ public class AlsaMixer
 		int	nMinChannels = hwParams.getChannelsMin();
 		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): min channels: " + nMinChannels); }
 		int	nMaxChannels = hwParams.getChannelsMax();
+		nMaxChannels = Math.min(nMaxChannels, CHANNELS_LIMIT);
 		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.getSupportedFormats(): max channels: " + nMaxChannels); }
 		hwParams.getFormatMask(formatMask);
 		for (int i = 0; i < 32; i++)
@@ -357,12 +359,14 @@ public class AlsaMixer
 		int nMinChannels,
 		int nMaxChannels)
 	{
+		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): begin"); }
 		for (int nChannels = nMinChannels; nChannels <= nMaxChannels; nChannels++)
 		{
 			AudioFormat	channeledAudioFormat = getChanneledAudioFormat(protoAudioFormat, nChannels);
-				if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): adding AudioFormat: " + channeledAudioFormat); }
+			if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): adding AudioFormat: " + channeledAudioFormat); }
 			collection.add(channeledAudioFormat);
 		}
+		if (TDebug.TraceMixer) { TDebug.out("AlsaMixer.addChanneledAudioFormats(): end"); }
 	}
 
 
