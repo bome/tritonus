@@ -24,7 +24,6 @@
 package org.tritonus.sampled.convert.vorbis;
 
 import java.io.EOFException;
-//import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -122,7 +121,7 @@ extends TEncodingFormatConversionProvider
 
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream)
 	{
-		TDebug.out(">VorbisFormatConversionProvider.getAudioInputStream(): begin");
+		if (TDebug.TraceAudioConverter) { TDebug.out(">VorbisFormatConversionProvider.getAudioInputStream(): begin"); }
 		/** The AudioInputStream to return.
 		 */
 		AudioInputStream	convertedAudioInputStream = null;
@@ -161,7 +160,7 @@ extends TEncodingFormatConversionProvider
 			if (TDebug.TraceAudioConverter) { TDebug.out("<conversion not supported; throwing IllegalArgumentException"); }
 			throw new IllegalArgumentException("conversion not supported");
 		}
-		TDebug.out("<VorbisFormatConversionProvider.getAudioInputStream(): end");
+		if (TDebug.TraceAudioConverter) { TDebug.out("<VorbisFormatConversionProvider.getAudioInputStream(): end"); }
 		return convertedAudioInputStream;
 	}
 
@@ -219,14 +218,16 @@ extends TEncodingFormatConversionProvider
 		private AudioInputStream	m_decodedStream;
 		private byte[]			m_abReadbuffer;
 
-		private StreamState		os;
-		private Page			og;
-		private Packet			op;
+		private StreamState		m_streamState;
+		private Page			m_page;
+		private Packet			m_packet;
   
-		private Info			vi;
-		private Comment			vc;
-		private DspState		vd;
-		private Block			vb;
+		private Info			m_info;
+		private Comment			m_comment;
+		private DspState		m_dspState;
+		private Block			m_block;
+
+		private boolean			eos = false;
 
 
 
@@ -239,7 +240,7 @@ extends TEncodingFormatConversionProvider
 			super(outputFormat,
 			      AudioSystem.NOT_SPECIFIED,
 			      262144, 16384);
-			if (TDebug.TraceAudioConverter) { TDebug.out("EncodedVorbisAudioInputStream.<init>(): begin"); }
+			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedVorbisAudioInputStream.<init>(): begin"); }
 			m_decodedStream = inputStream;
 			m_abReadbuffer = new byte[READ * getFrameSize()];
 
@@ -254,63 +255,65 @@ extends TEncodingFormatConversionProvider
 			String	strMinBitrate = System.getProperty("tritonus.vorbis.minbitrate", "32");
 			int	nMinBitrate = Integer.parseInt(strMinBitrate);
 
-			os = new StreamState();
-			og = new Page();
-			op = new Packet();
+			m_streamState = new StreamState();
+			m_page = new Page();
+			m_packet = new Packet();
   
-			vi = new Info();
-			vc = new Comment();
-			vd = new DspState();
-			vb = new Block();
+			m_info = new Info();
+			m_comment = new Comment();
+			m_dspState = new DspState();
+			m_block = new Block();
 
-			vi.init();
+			m_info.init();
 
 			int	nSampleRate = (int) inputStream.getFormat().getSampleRate();
+			if (TDebug.TraceAudioConverter) { TDebug.out("sample rate: " + nSampleRate); }
+			if (TDebug.TraceAudioConverter) { TDebug.out("channels: " + getChannels()); }
 			if (bUseVBR)
 			{
-				vi.encodeInitVBR(getChannels(),
+				m_info.encodeInitVBR(getChannels(),
 						 nSampleRate,
 						 fQuality);
 			}
 			else
 			{
-				vi.encodeInit(getChannels(),
+				m_info.encodeInit(getChannels(),
 					      nSampleRate,
 					      nMaxBitrate,
 					      nNominalBitrate,
 					      nMinBitrate);
 			}
 
-			vc.init();
-			vc.addTag("ENCODER","Tritonus libvorbis wrapper");
+			m_comment.init();
+			m_comment.addTag("ENCODER","Tritonus libvorbis wrapper");
 
-			vd.initAnalysis(vi);
-			vb.init(vd);
+			m_dspState.initAnalysis(m_info);
+			m_block.init(m_dspState);
 
 			Random random = new Random(System.currentTimeMillis());
-			os.init(random.nextInt());
+			m_streamState.init(random.nextInt());
 
 			Packet header = new Packet();
 			Packet header_comm = new Packet();
 			Packet header_code = new Packet();
 
-			vd.headerOut(vc, header, header_comm, header_code);
-			os.packetIn(header);
-			os.packetIn(header_comm);
-			os.packetIn(header_code);
+			m_dspState.headerOut(m_comment, header, header_comm, header_code);
+			m_streamState.packetIn(header);
+			m_streamState.packetIn(header_comm);
+			m_streamState.packetIn(header_code);
 
 			while (true)
 			{
-				int result = os.flush(og);
+				int result = m_streamState.flush(m_page);
 				if(result == 0)
 				{
 					break;
 				}
-				getCircularBuffer().write(og.getHeader());
-				getCircularBuffer().write(og.getBody());
+				getCircularBuffer().write(m_page.getHeader());
+				getCircularBuffer().write(m_page.getBody());
 			}
 
-			if (TDebug.TraceAudioConverter) { TDebug.out("EncodedVorbisAudioInputStream.<init>(): end"); }
+			if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedVorbisAudioInputStream.<init>(): end"); }
 		}
 
 
@@ -318,8 +321,6 @@ extends TEncodingFormatConversionProvider
 		public void execute()
 		{
 			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedVorbisAudioInputStream.execute(): begin"); }
-			boolean		eos = false;
-
 			int	nFrameSize = getFrameSize();
 			int	nChannels = getChannels();
 			boolean	bBigEndian = isBigEndian();
@@ -338,6 +339,7 @@ extends TEncodingFormatConversionProvider
 
 			while (!eos && writeMore())
 			{
+				if (TDebug.TraceAudioConverter) { TDebug.out("writeMore(): " + writeMore()); }
 				int	bytes;
 				try
 				{
@@ -347,11 +349,11 @@ extends TEncodingFormatConversionProvider
 				catch (IOException e)
 				{
 					if (TDebug.TraceAllExceptions || TDebug.TraceAudioConverter) { TDebug.out(e); }
-					os.clear();
-					vb.clear();
-					vd.clear();
-					vc.clear();
-					vi.clear();
+					m_streamState.clear();
+					m_block.clear();
+					m_dspState.clear();
+					m_comment.clear();
+					m_info.clear();
 					try
 					{
 						close();
@@ -364,10 +366,10 @@ extends TEncodingFormatConversionProvider
 					return;
 				}
 
-				if (bytes == 0 &&  bytes == -1)
+				if (bytes == 0 ||  bytes == -1)
 				{
 					if (TDebug.TraceAudioConverter) { TDebug.out("EOS reached; calling DspState.write(0)"); }
-					vd.write(null, 0);
+					m_dspState.write(null, 0);
 				}
 				else
 				{
@@ -384,27 +386,27 @@ extends TEncodingFormatConversionProvider
 							buffer[nChannel][i] = nSample / fScale;
 						}
 					}
-					vd.write(buffer, nFrames);
+					m_dspState.write(buffer, nFrames);
 				}
 
-				while (vd.blockOut(vb) == 1)
+				while (m_dspState.blockOut(m_block) == 1)
 				{
-					vb.analysis(null);
-					vb.addBlock();
-					while (vd.flushPacket(op) != 0)
+					m_block.analysis(null);
+					m_block.addBlock();
+					while (m_dspState.flushPacket(m_packet) != 0)
 					{
-						os.packetIn(op);
+						m_streamState.packetIn(m_packet);
 						while (!eos /*&& writeMore()*/)
 						{
-							int result = os.pageOut(og);
+							int result = m_streamState.pageOut(m_page);
 							if(result == 0)
 							{
 								break;
 							}
-							getCircularBuffer().write(og.getHeader());
-							getCircularBuffer().write(og.getBody());
+							getCircularBuffer().write(m_page.getHeader());
+							getCircularBuffer().write(m_page.getBody());
 
-							if (og.isEos())
+							if (m_page.isEos())
 							{
 								eos = true;
 								if (TDebug.TraceAudioConverter) { TDebug.out("page has detected EOS"); }
@@ -417,11 +419,12 @@ extends TEncodingFormatConversionProvider
 			if (eos)
 			{
 				if (TDebug.TraceAudioConverter) { TDebug.out("EOS; shutting down encoder"); }
-				os.clear();
-				vb.clear();
-				vd.clear();
-				vc.clear();
-				vi.clear();
+				m_streamState.clear();
+				m_block.clear();
+				m_dspState.clear();
+				m_comment.clear();
+				m_info.clear();
+				getCircularBuffer().close();
 				try
 				{
 					close();
