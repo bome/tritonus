@@ -32,7 +32,7 @@ import	javax.sound.sampled.Mixer;
 
 public abstract class MixerProvider
 {
-	public abstract boolean isMixerSupported(Mixer.Info info);
+	public boolean isMixerSupported(Mixer.Info info);
 
 	public abstract Mixer.Info[] getMixerInfo();
 
