@@ -7,6 +7,7 @@
     <property name="src" value="${basedir}/src" />
     <property name="build" value="${basedir}/build" />
     <property name="dist"  value="${basedir}/dist" />
+    <property name="javadoc.dir"  value="${basedir}/doc/apidoc" />
     <property name="src.classes" value="${src}/classes" />
     <property name="src.misc" value="${src}/misc" />
     <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar ../../javalayer/dist/javalayer.jar" />
@@ -16,8 +17,6 @@
     -->
     <!--property name="build.compiler" value="jikes" /-->
     <!--property name="build.compiler.fulldepend" value="true" /-->
-    <filter token="version" value="0.3.1" />
-    <filter token="year" value="2000" />
 
     <available
 	       classname="grame.midishare.Midi"
@@ -46,6 +45,7 @@
 
   <target name="prepare" depends="init">
     <mkdir dir="${build}" />
+    <mkdir dir="${dist}" />
   </target>
 
   <!--target name="build-javalayer"
@@ -118,7 +118,6 @@
 
   <target name="dist"
 	  depends="compile,compile-javalayer-dependent,compile-jorbis-dependent,compile-midishare-dependent,compile-libs" >
-    <mkdir dir="${dist}" />
 
     <!-- CORE: contains public classes and SPI instantiation support -->
     <jar jarfile="${dist}/tritonus_core.jar">
@@ -332,7 +331,6 @@
 
   <target name="dist-micro"
 	  depends="compile-micro" >
-    <mkdir dir="${dist}" />
 
     <jar jarfile="${dist}/tritonus_micro.jar">
       <fileset dir="${build}">
@@ -343,14 +341,13 @@
   </target>
 
 
-
-
-    <!-- for saol -->
+  <!-- for saol -->
   <target name="compile-saol" depends="prepare">
     <!--sablecc
-	     src="${src.misc}/"
-	     outputdirectory="${src.classes}" /-->
-
+    src="${src.misc}/"
+    outputdirectory="${src.classes}" /-->
+    <!-- currently, this has to be executed manually:
+    sablecc -d src/classes/ src/misc/saol.grammar -->
     <javac srcdir="${src.classes}"
 	   depend="yes"
 	   debug="on"
@@ -361,7 +358,6 @@
 
   <target name="dist-saol"
 	  depends="compile-saol" >
-    <mkdir dir="${dist}" />
 
     <jar jarfile="${dist}/saol.jar">
       <fileset dir="${build}">
@@ -375,5 +371,34 @@
     </jar>
   </target>
 
+    <!-- for dsp -->
+  <target name="compile-dsp" depends="prepare">
+    <javac srcdir="${src}/classes"
+	   depend="yes"
+	   destdir="${build}"
+	   includes="org/tritonus/lowlevel/dsp/" />
+  </target>
+
+  <target name="dist-dsp"
+	  depends="compile-dsp" >
+
+    <jar jarfile="${dist}/tritonus_dsp.jar">
+      <fileset dir="${build}">
+	<include name="org/tritonus/lowlevel/dsp/" />
+      </fileset>
+    </jar>
+  </target>
+
+
+
+  <!-- documentation -->
+  <target name="javadoc" depends="init">
+    <mkdir dir="${javadoc.dir}"/>
+    <javadoc
+	     package="true" sourcepath="src" destdir="${javadoc.dir}"
+	     packagenames="javax.sound.*,org.tritonus.*,com.jcraft.*,javazoom.*"
+	     excludepackagenames="org.tritonus.midi.device.java" >
+    </javadoc>
+  </target>
 
 </project>
