@@ -98,7 +98,43 @@ SUBDIRS=
 AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"]; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
 AC_CHECK_LIB(esd,esd_open_sound,[SUBDIRS="$SUBDIRS src/lib/esd"; AC_MSG_RESULT(Information: will build stuff for Enlightened Sound Daemon)],[AC_MSG_RESULT(Information: will not build stuff for Enlightened Sound Daemon)],-laudiofile)
 AC_CHECK_LIB(mp3lame,lame_init_params,[SUBDIRS="$SUBDIRS src/lib/lame"; AC_MSG_RESULT(Information: will build stuff for LAME mp3 encoder)],[AC_MSG_RESULT(Information: will not build stuff for LAME mp3 encoder)])
+
 dnl AC_MSG_RESULT(hallo x${SUBDIRS}x)
+
+dnl check for javalayer decoder code
+AC_MSG_CHECKING(installed javalayer MP3 decoder)
+JL_LIB=
+JL_DIR=
+JL_TESTFILE=Decoder.java
+JL_TESTFILEPATH=jl/decoder
+JL_TESTPATH="javalayer ../javalayer javazoom ../javazoom"
+for JL_TESTDIR in $JL_TESTPATH; do
+	dnl use PATH in order
+	if test ".$JL_DIR" = "." && test -f "$JL_TESTDIR/$JL_TESTFILEPATH/$JL_TESTFILE"; then
+		JL_DIR=$JL_TESTDIR
+	fi
+done
+if test ".$JL_DIR" = "." ; then
+	AC_MSG_RESULT(no)
+	dnl AC_MSG_WARN(** You haven't downloaded the javalayer MP3 decoder.   **)
+	dnl AC_MSG_WARN(** MP3 decoding will not be possible.                  **)
+	dnl AC_MSG_WARN(** Download the mp3 decoder with the following         **)
+	dnl AC_MSG_WARN(** commands:                                           **)
+	dnl AC_MSG_WARN(** SERVER=anonymous@cvs.javalayer.sourceforge.net      **)
+	dnl AC_MSG_WARN(** SERVERPATH=/cvsroot/javalayer                       **)
+	dnl AC_MSG_WARN(** cvs -d:pserver:\$SERVER:\$SERVERPATH login            **)
+	dnl AC_MSG_WARN(** (press ENTER key for password)                      **)
+	dnl AC_MSG_WARN(** cvs -z3 -d:pserver:\$SERVER:\$SERVERPATH co javalayer **)
+	dnl better to exit here...
+	dnl AC_MSG_ERROR(Exit.)
+else
+	AC_MSG_RESULT(yes)
+	JL_LIB=javalayer.jar
+	dnl HACK: create a symbolic link for java layer code
+	(cd $JL_DIR ; rm -f javazoom ; ln -sf `pwd` javazoom)
+fi
+AC_SUBST(JL_LIB)
+AC_SUBST(JL_DIR)
 
 dnl Checks for header files.
 AC_HEADER_STDC
