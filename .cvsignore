@@ -9,3 +9,4 @@ ChangeLog
 *.log
 autom4te.cache
 tritonus-*.tar.gz
+project.dtd
