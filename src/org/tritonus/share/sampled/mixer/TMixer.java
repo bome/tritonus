@@ -32,7 +32,10 @@ import	java.util.Iterator;
 import	java.util.Set;
 
 import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.Clip;
+import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.Line;
+import	javax.sound.sampled.LineUnavailableException;
 import	javax.sound.sampled.Mixer;
 import	javax.sound.sampled.Port;
 import	javax.sound.sampled.SourceDataLine;
@@ -111,6 +114,10 @@ public abstract class TMixer
 	{
 		super(null,	// TMixer
 		      lineInfo);
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.<init>(): begin");
+		}
 		m_mixerInfo = mixerInfo;
 		m_supportedSourceFormats = supportedSourceFormats;
 		m_supportedTargetFormats = supportedTargetFormats;
@@ -119,6 +126,10 @@ public abstract class TMixer
 		m_supportedPortLineInfos = supportedPortLineInfos;
 		m_openSourceDataLines = new ArraySet();
 		m_openTargetDataLines = new ArraySet();
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.<init>(): end");
+		}
 	}
 
 
@@ -226,9 +237,183 @@ public abstract class TMixer
 
 
 
+	public Line getLine(Line.Info info)
+		throws	LineUnavailableException
+	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getLine(): begin");
+		}
+		DataLine.Info	dataLineInfo = (DataLine.Info) info;
+		Class		lineClass = info.getLineClass();
+		AudioFormat[]	aFormats = dataLineInfo.getFormats();
+		AudioFormat	format = null;
+		Line		line = null;
+		if (lineClass == SourceDataLine.class)
+		{
+			if (TDebug.TraceMixer)
+			{
+				TDebug.out("TMixer.getLine(): type: SourceDataLine");
+			}
+			format = getSupportedSourceFormat(aFormats);
+			line = getSourceDataLine(format, dataLineInfo.getMaxBufferSize());
+		}
+		else if (lineClass == Clip.class)
+		{
+			if (TDebug.TraceMixer)
+			{
+				TDebug.out("TMixer.getLine(): type: Clip");
+			}
+			format = getSupportedSourceFormat(aFormats);
+			line = getClip(format);
+		}
+		else if (lineClass == TargetDataLine.class)
+		{
+			if (TDebug.TraceMixer)
+			{
+				TDebug.out("TMixer.getLine(): type: TargetDataLine");
+			}
+			format = getSupportedTargetFormat(aFormats);
+			line = getTargetDataLine(format, dataLineInfo.getMaxBufferSize());
+		}
+		else
+		{
+			if (TDebug.TraceMixer)
+			{
+				TDebug.out("TMixer.getLine(): unknown line type, will throw exception");
+			}
+			throw new LineUnavailableException("unknown line class: " + lineClass);
+		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getLine(): end");
+		}
+		return line;
+	}
+
+
+
+	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
+		throws LineUnavailableException
+	{
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.getSourceDataLine(): begin"); }
+		throw new LineUnavailableException("not implemented");
+	}
+
+
+
+	protected Clip getClip(AudioFormat format)
+		throws LineUnavailableException
+	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getClip(): begin");
+		}
+		throw new LineUnavailableException("not implemented");
+	}
+
+
+
+	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
+		throws LineUnavailableException
+	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getTargetDataLine(): begin");
+		}
+		throw new LineUnavailableException("not implemented");
+	}
+
+
+
+	private AudioFormat getSupportedSourceFormat(AudioFormat[] aFormats)
+	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getSupportedSourceFormat(): begin");
+		}
+		AudioFormat	format = null;
+		for (int i = 0; i < aFormats.length; i++)
+		{
+			if (TDebug.TraceMixer)
+			{
+				TDebug.out("TMixer.getSupportedSourceFormat(): checking " + aFormats[i] + "...");
+			}
+			if (isSourceFormatSupported(aFormats[i]))
+			{
+				if (TDebug.TraceMixer)
+				{
+					TDebug.out("TMixer.getSupportedSourceFormat(): ...supported");
+				}
+				format = aFormats[i];
+				break;
+			}
+			else
+			{
+				if (TDebug.TraceMixer)
+				{
+					TDebug.out("TMixer.getSupportedSourceFormat(): ...no luck");
+				}
+			}
+		}
+		if (format == null)
+		{
+			throw new IllegalArgumentException("no line matchine one of the passed formats");
+		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getSupportedSourceFormat(): end");
+		}
+		return format;
+	}
+
+
+
+	private AudioFormat getSupportedTargetFormat(AudioFormat[] aFormats)
+	{
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getSupportedTargetFormat(): begin");
+		}
+		AudioFormat	format = null;
+		for (int i = 0; i < aFormats.length; i++)
+		{
+			if (TDebug.TraceMixer)
+			{
+				TDebug.out("TMixer.getSupportedTargetFormat(): checking " + aFormats[i] + " ...");
+			}
+			if (isTargetFormatSupported(aFormats[i]))
+			{
+				if (TDebug.TraceMixer)
+				{
+					TDebug.out("TMixer.getSupportedTargetFormat(): ...supported");
+				}
+				format = aFormats[i];
+				break;
+			}
+			else
+			{
+				if (TDebug.TraceMixer)
+				{
+					TDebug.out("TMixer.getSupportedTargetFormat(): ...no luck");
+				}
+			}
+		}
+		if (format == null)
+		{
+			throw new IllegalArgumentException("no line matchine one of the passed formats");
+		}
+		if (TDebug.TraceMixer)
+		{
+			TDebug.out("TMixer.getSupportedTargetFormat(): end");
+		}
+		return format;
+	}
+
+
+
 /*
   not implemented here:
-  getLine(Line.Info)
   getMaxLines(Line.Info)
 */
 
@@ -364,7 +549,7 @@ public abstract class TMixer
 			}
 		}
 	}
-}
+	}
 
 
 
