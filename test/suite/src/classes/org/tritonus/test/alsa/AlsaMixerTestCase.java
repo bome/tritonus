@@ -48,7 +48,7 @@ extends TestCase
 	public void testOpenClose()
 		throws Exception
 	{
-		int	nDefaultMixerCard = AlsaCtl.getDefaultMixerCard();
+		int	nDefaultMixerCard = 0;
 		String	strMixerName = "hw:" + nDefaultMixerCard;
 		AlsaMixer	mixer = new AlsaMixer(strMixerName);
 		assertTrue(mixer != null);
@@ -62,7 +62,7 @@ extends TestCase
 	public void testControls()
 		throws Exception
 	{
-		int	nDefaultMixerCard = AlsaCtl.getDefaultMixerCard();
+		int	nDefaultMixerCard = 0;
 		String	strMixerName = "hw:" + nDefaultMixerCard;
 		AlsaMixer	mixer = new AlsaMixer(strMixerName);
 		List	controlsList = null;	// mixer.getControls();

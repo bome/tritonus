@@ -97,25 +97,6 @@ extends TestCase
 			System.out.println("card long name: " + strLongName);
 		}
 	}
-
-
-
-	public void testDefaults()
-	{
-		int	nDefault;
-		nDefault = AlsaCtl.getDefaultCard();
-		assertTrue(nDefault >= 0);
-		nDefault = AlsaCtl.getDefaultMixerCard();
-		assertTrue(nDefault >= 0);
-		nDefault = AlsaCtl.getDefaultPcmCard();
-		assertTrue(nDefault >= 0);
-		nDefault = AlsaCtl.getDefaultPcmDevice();
-		assertTrue(nDefault >= 0);
-		nDefault = AlsaCtl.getDefaultRawmidiCard();
-		assertTrue(nDefault >= 0);
-		nDefault = AlsaCtl.getDefaultRawmidiDevice();
-		assertTrue(nDefault >= 0);
-	}
 }
 
 
