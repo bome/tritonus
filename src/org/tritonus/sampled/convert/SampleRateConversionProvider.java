@@ -222,7 +222,7 @@ public class SampleRateConversionProvider
 	
 	// TODO: when target sample rate is < source sample rate (or only slightly above),
 	// this stream calculates ONE sample too much.
-	public class SampleRateConverterStream extends AudioInputStream {
+	public static class SampleRateConverterStream extends AudioInputStream {
 
 		/** the current working buffer with samples of the sourceStream */
 		private FloatSampleBuffer thisBuffer=null;
@@ -767,7 +767,7 @@ private long testOutFramesReturned=0;
 
 	}
 
-	public class SRCAudioFormat extends AudioFormat {
+	public static class SRCAudioFormat extends AudioFormat {
 		private float sampleRate;
 		
 		public SRCAudioFormat(AudioFormat targetFormat) {
