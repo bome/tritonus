@@ -40,8 +40,8 @@ public class Mp3Encoder {
 
 	// currently, there is no convenient method in JavaSound to specify non-standard Encodings.
 	// using tritonus' proposal to overcome this.
-	private static final AudioFormat.Encoding MPEG1L3=org.tritonus.sampled.Encodings.getEncoding("MPEG1L3");
-	private static final AudioFileFormat.Type MP3=org.tritonus.sampled.AudioFileTypes.getType("MP3", "mp3");
+	private static final AudioFormat.Encoding MPEG1L3=org.tritonus.share.sampled.Encodings.getEncoding("MPEG1L3");
+	private static final AudioFileFormat.Type MP3=org.tritonus.share.sampled.AudioFileTypes.getType("MP3", "mp3");
 
 	private static AudioInputStream getInStream(String filename) throws IOException {
 		File file = new File(filename);
@@ -218,7 +218,7 @@ public class Mp3Encoder {
 			System.exit(1);
 		}
 		if (traceConverters) {
-			org.tritonus.TDebug.TraceAudioConverter=true;
+			org.tritonus.share.TDebug.TraceAudioConverter=true;
 		}
 		int inputFiles=0;
 		int success=0;

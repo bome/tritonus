@@ -34,6 +34,7 @@ import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.ArraySet;
+import	org.tritonus.share.TDebug;
 
 
 /**
@@ -84,6 +85,9 @@ public abstract class TSimpleFormatConversionProvider
 	 * TODO: enable method, better implementation
 	 */
 	public void disable() {
+		if (TDebug.TraceAudioConverter) {
+			TDebug.out("TSimpleFormatConversionProvider ("+getClass().getName()+"): disabled");
+		}
 		m_sourceEncodings = new ArraySet();
 		m_targetEncodings = new ArraySet();
 		m_sourceFormats = new ArraySet();

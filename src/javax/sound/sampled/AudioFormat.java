@@ -70,7 +70,8 @@ public class AudioFormat
 		     fSampleRate,
 		     nSampleSizeInBits,
 		     nChannels,
-		     (nChannels * nSampleSizeInBits) / 8,
+		     ((nChannels != AudioSystem.NOT_SPECIFIED) && (nSampleSizeInBits != AudioSystem.NOT_SPECIFIED))?
+		     (nChannels * nSampleSizeInBits) / 8:AudioSystem.NOT_SPECIFIED,
 		     fSampleRate,
 		     bBigEndian);
 	}
