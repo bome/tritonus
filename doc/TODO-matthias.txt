@@ -32,22 +32,21 @@ lowlevel, native
 3 - re-check ALSA seq constants (constants_check.h)
 
 documentation, distibution
-3 - cleanup web pages: contemporary doctype, weblint, ...
-1 - binary dists: esd, alsa, SRC, AOS
-3 - Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
 1 - some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
 1 - make a note in INSTALL that for hand-installation only desired components should be installed. For automatic install, anyway. (see midishare exception)
+1 - binary dists: esd, alsa, SRC, AOS
+3 - cleanup web pages: contemporary doctype, weblint, ...
+3 - Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
 3 - review cdda distribution README
 
 misc
 1 - integrate ogg/vorbis
 1 - test suite for classes (not necessarily interfaces) in javax.sound
-2 - FloatControl.shift() [check behaviour of Sun impl]
-2 - fix bug in AlsaMixer.readControlList()
-3 - change provider search order to be exactely compatible with Sun
 1 - implement available() for lines
 1 - fix start()/stop()/active behaviour for lines
+2 - fix bug in AlsaMixer.readControlList()
 2 - rework sample rate converter
+3 - change provider search order to be exactely compatible with Sun
 
 
 
