@@ -26,6 +26,9 @@
 
 package	javax.sound.sampled;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -39,15 +42,38 @@ public class AudioFormat
 	protected float		frameRate;
 	protected boolean	bigEndian;
 
+	private Map<String, Object>	m_properties;
+	private Map<String, Object>	m_unmodifiableProperties;
 
 
 	public AudioFormat(Encoding encoding,
-			   float fSampleRate,
-			   int nSampleSizeInBits,
-			   int nChannels,
-			   int nFrameSize,
-			   float fFrameRate,
-			   boolean bBigEndian)
+					   float fSampleRate,
+					   int nSampleSizeInBits,
+					   int nChannels,
+					   int nFrameSize,
+					   float fFrameRate,
+					   boolean bBigEndian)
+	{
+		this(encoding,
+			 fSampleRate,
+			 nSampleSizeInBits,
+			 nChannels,
+			 nFrameSize,
+			 fFrameRate,
+			 bBigEndian,
+			 null);
+	}
+
+
+
+	public AudioFormat(Encoding encoding,
+					   float fSampleRate,
+					   int nSampleSizeInBits,
+					   int nChannels,
+					   int nFrameSize,
+					   float fFrameRate,
+					   boolean bBigEndian,
+					   Map<String, Object> properties)
 	{
 		this.encoding = encoding;
 		this.sampleRate = fSampleRate;
@@ -56,6 +82,7 @@ public class AudioFormat
 		this.frameSize = nFrameSize;
 		this.frameRate = fFrameRate;
 		this.bigEndian = bBigEndian;
+		initMaps(properties);
 	}
 
 
@@ -74,6 +101,41 @@ public class AudioFormat
 		     (nChannels * nSampleSizeInBits) / 8:AudioSystem.NOT_SPECIFIED,
 		     fSampleRate,
 		     bBigEndian);
+	}
+
+
+
+	private void initMaps(Map<String, Object> properties)
+	{
+		/* Here, we make a shallow copy of the map. It's unclear if this
+		   is sufficient (of if a deep copy should be made).
+		*/
+		m_properties = new HashMap<String, Object>();
+		if (properties != null)
+		{
+			m_properties.putAll(properties);
+		}
+		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
+	}
+
+
+
+	public Map<String, Object> properties()
+	{
+		return m_unmodifiableProperties;
+	}
+
+
+
+	public Object getProperty(String key)
+	{
+		return m_properties.get(key);
+	}
+
+
+	protected void setProperty(String key, Object value)
+	{
+		m_properties.put(key, value);
 	}
 
 
@@ -214,7 +276,7 @@ public class AudioFormat
 
 
 
-		protected Encoding(String strName)
+		public Encoding(String strName)
 		{
 			m_strName = strName;
 		}
@@ -223,11 +285,12 @@ public class AudioFormat
 
 		public final boolean equals(Object obj)
 		{
-			return super.equals(obj);
+			return toString().equals(obj.toString());
 		}
 
 
 
+		// TODO: change to be based on the string, too?
 		public final int hashCode()
 		{
 			return super.hashCode();
