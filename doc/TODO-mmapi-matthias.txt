@@ -12,6 +12,60 @@ Tritonus IMPL:
   - event testing
   - rework TControllable.getControl(): use private C. getControl(Class)
 
+Tritonus TEST:
+	 - test Player media time methods
+	 - test DataSource Controllable methods
+	 - test TControllable (with subclass that provides controls)
+	 - test MediaException
+
+TEST:
+ContentDescriptor	ok
+tested in ContentDescriptorTestCase, TODO: get C.D. from a living SourceStream
+
+Control			nothing to test
+
+Controllable		TODO
+
+DataSource		TODO
+
+FramePositioningControl	not implemented
+
+GUIControl		TODO
+
+Manager			TODO
+
+MediaException		ok
+testet in MediaExceptionTestCase.
+
+MetaDataControl		TODO
+
+MIDIControl		TODO
+
+PitchControl		TODO
+
+Player			TODO
+
+PlayerListener		TODO
+
+RateControl		TODO
+
+RecordControl		TODO
+
+SourceStream		TODO
+
+StopTimeControl		TODO
+
+TempoControl		TODO
+
+TimeBase		ok
+tested in ManagerTestCase and SystemTimeBaseTestCase.
+
+ToneControl		TODO
+
+VideoControl		not implemented
+
+VolumeControl		TODO
+
 SPEC:
 
 - which Controls make sense for a DataSource?
