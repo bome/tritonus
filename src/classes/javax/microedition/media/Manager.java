@@ -10,13 +10,16 @@ import	java.io.InputStream;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import	javax.microedition.media.protocol.DataSource;
+import javax.microedition.media.protocol.DataSource;
 
-import	org.tritonus.mmapi.SystemTimeBase;
-import	org.tritonus.mmapi.URLDataSource;
-import	org.tritonus.mmapi.PcmAudioPlayer;
-import	org.tritonus.mmapi.Mp3AudioPlayer;
-import	org.tritonus.mmapi.MidiPlayer;
+import org.tritonus.mmapi.JavaSoundToneGenerator;
+import org.tritonus.mmapi.SystemTimeBase;
+import org.tritonus.mmapi.URLDataSource;
+import org.tritonus.mmapi.PcmAudioPlayer;
+import org.tritonus.mmapi.Mp3AudioPlayer;
+import org.tritonus.mmapi.MidiPlayer;
+import org.tritonus.mmapi.ToneGenerator;
+import org.tritonus.share.TDebug;
 
 
 /**	TODO:
@@ -64,6 +67,10 @@ public final class Manager
 	*/
 	private static final TimeBase	sm_systemTimeBase = new SystemTimeBase();
 
+
+	/**	TODO:
+	*/
+	private static ToneGenerator	sm_toneGenerator = null;
 
 
 
@@ -136,11 +143,30 @@ public final class Manager
 
 
 
-	// TODO:
 	/**	TODO:
+		@throws IllegalArgumentException Thrown if note or duration value
+		are out of range.
 	*/
 	public static void playTone(int nNote, int nDuration, int nVolume)
+		throws MediaException
 	{
+		if (TDebug.TraceManager) { TDebug.out("Manager.playTone(): begin"); }
+		if (nNote < 0 || nNote > 127)
+		{
+			throw new IllegalArgumentException("note value out of range (must be [0..127])");
+		}
+		if (nDuration < 0)
+		{
+			throw new IllegalArgumentException("duration value out of range (must be positive)");
+		}
+		nVolume = Math.min(100, Math.max(0, nVolume));
+		if (sm_toneGenerator == null)
+		{
+			if (TDebug.TraceManager) { TDebug.out("Manager.playTone(): initializing ToneGenerator"); }
+			sm_toneGenerator = new JavaSoundToneGenerator();
+		}
+		sm_toneGenerator.playTone(nNote, nDuration, nVolume);
+		if (TDebug.TraceManager) { TDebug.out("Manager.playTone(): end"); }
 	}
 
 
