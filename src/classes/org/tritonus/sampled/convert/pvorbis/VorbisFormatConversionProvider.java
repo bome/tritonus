@@ -35,6 +35,7 @@ import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import javax.sound.sampled.AudioFormat;
@@ -203,12 +204,13 @@ extends TEncodingFormatConversionProvider
 		// hacked together...
 		// ... only works for PCM target encoding ...
 		newTargetFormat = new AudioFormat(targetFormat.getEncoding(),
-						  sourceFormat.getSampleRate(),
-						  newTargetFormat.getSampleSizeInBits(),
-						  newTargetFormat.getChannels(),
-						  newTargetFormat.getFrameSize(),
-						  sourceFormat.getSampleRate(),
-						  newTargetFormat.isBigEndian());
+										  sourceFormat.getSampleRate(),
+										  newTargetFormat.getSampleSizeInBits(),
+										  newTargetFormat.getChannels(),
+										  newTargetFormat.getFrameSize(),
+										  sourceFormat.getSampleRate(),
+										  newTargetFormat.isBigEndian(),
+										  targetFormat.properties());
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat); }
 		return newTargetFormat;
 	}
@@ -324,6 +326,16 @@ extends TEncodingFormatConversionProvider
 
 			m_comment.init();
 			m_comment.addTag("ENCODER","Tritonus libvorbis wrapper");
+			property = outputFormat.getProperty("vorbis.comments");
+			if (property instanceof List)
+			{
+				if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.<init>(): comments present in target format"); }
+				List<String> comments = (List<String>) property;
+				for (int i = 0; i < comments.size(); i++)
+				{
+					m_comment.addComment(comments.get(i));
+				}
+			}
 
 			m_dspState.initAnalysis(m_info);
 			m_block.init(m_dspState);
@@ -741,6 +753,9 @@ extends TEncodingFormatConversionProvider
 		 */
 		private void processComments()
 		{
+			TDebug.out("DecodedVorbisAudioInputStream.processComments(): begin");
+			TDebug.out("DecodedVorbisAudioInputStream.processComments(): vendor: " + m_vorbisComment.getVendor());
+
 // 			byte[][] ptr = m_vorbisComment.user_comments;
 // 			String currComment = "";
 // 			m_songComments.clear();
@@ -769,6 +784,7 @@ extends TEncodingFormatConversionProvider
 			if (TDebug.TraceAudioConverter) TDebug.out("Encoded by: " + m_vorbisComment.getVendor());
 // 			m_songComments.add(currComment);
 // 			if (TDebug.TraceAudioConverter) TDebug.out(currComment);
+			TDebug.out("DecodedVorbisAudioInputStream.processComments(): begin");
 		}
 
 
