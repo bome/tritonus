@@ -28,26 +28,30 @@
 package	javax.sound.midi;
 
 
+import	org.tritonus.share.midi.MidiUtils;
+
 
 public abstract class MidiMessage
 	implements	Cloneable
 {
 	/**	All data of the message.
 	 */
-	private byte[]		m_abData;
+	protected byte[]		data;
+
+	protected int			length;
 
 
 
 	/**	Constructs a MidiMessage.
-		The data of the message (m_abData) are initialized by the
+		The data of the message (data) are initialized by the
 		array passed as a parameter. Note that the data is not copied.
-		Rather, m_abData is set to point at the passed array.
+		Rather, data is set to point at the passed array.
 		This constructor does not use setMessage(byte[], int). So it
 		unaffected by overriding setMessage().
 	 */
 	protected MidiMessage(byte[] abData)
 	{
-		m_abData = abData;
+		data = abData;
 	}
 
 
@@ -64,7 +68,8 @@ public abstract class MidiMessage
 			System.arraycopy(abData, 0, abShortenedData, 0, nLength);
 			abData = abShortenedData;
 		}
-		m_abData = abData;
+		data = abData;
+		length = nLength;
 	}
 
 
@@ -77,8 +82,8 @@ public abstract class MidiMessage
 	 */
 	public byte[] getMessage()
 	{
-		byte[]	abData = new byte[m_abData.length];
-		System.arraycopy(m_abData, 0, abData, 0, m_abData.length);
+		byte[]	abData = new byte[data.length];
+		System.arraycopy(data, 0, abData, 0, data.length);
 		return abData;
 	}
 
@@ -92,22 +97,14 @@ public abstract class MidiMessage
 	 */
 	public int getStatus()
 	{
-		if (m_abData != null)
+		if (data != null)
 		{
-			if (m_abData[0] < 0)
-			{
-				return (int) m_abData[0] + 256;
-			}
-			else
-			{
-				return m_abData[0];
-			}
+			return MidiUtils.getUnsignedInteger(data[0]);
 		}
 		else
 		{
 			return -1;
 		}
-
 	}
 
 
@@ -123,9 +120,9 @@ public abstract class MidiMessage
 	*/
 	public int getLength()
 	{
-		if (m_abData != null)
+		if (data != null)
 		{
-			return m_abData.length;
+			return data.length;
 		}
 		else
 		{
