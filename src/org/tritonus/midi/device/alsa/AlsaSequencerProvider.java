@@ -56,7 +56,7 @@ public class AlsaSequencerProvider
 			if (sm_info == null)
 			{
 				sm_info = new TMidiDevice.Info(
-					"Tritonus ALSA sequencer",
+					"Tritonus ALSA Sequencer",
 					GlobalInfo.getVendor(),
 					"this sequencer uses the ALSA sequencer",
 					GlobalInfo.getVersion());
