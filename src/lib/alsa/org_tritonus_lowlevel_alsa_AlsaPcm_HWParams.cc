@@ -10,7 +10,6 @@
 #include	"HandleFieldHandler.hh"
 
 
-// hacky
 static int	DEBUG = 0;
 static FILE*	debug_file = NULL;
 

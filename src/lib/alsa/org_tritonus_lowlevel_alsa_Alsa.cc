@@ -7,6 +7,9 @@
 #include	"org_tritonus_lowlevel_alsa_Alsa.h"
 
 
+static int	DEBUG = 0;
+static FILE*	debug_file = NULL;
+
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_Alsa
@@ -19,6 +22,8 @@ Java_org_tritonus_lowlevel_alsa_Alsa_getStringError
 {
 	jstring	strError;
 	const char*	err;
+
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_Alsa_getStringError(): begin\n"); }
 	err = snd_strerror(nErrnum);
 	if (err == NULL)
 	{
@@ -29,6 +34,7 @@ Java_org_tritonus_lowlevel_alsa_Alsa_getStringError
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
 	}
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_Alsa_getStringError(): end\n"); }
 	return strError;
 }
 

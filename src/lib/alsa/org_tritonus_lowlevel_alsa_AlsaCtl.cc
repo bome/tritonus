@@ -9,6 +9,9 @@
 #include	"HandleFieldHandler.hh"
 
 
+static int	DEBUG = 0;
+static FILE*	debug_file = NULL;
+
 static HandleFieldHandler<snd_ctl_t*>	handler;
 
 
@@ -23,9 +26,12 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaCtl_close
 (JNIEnv *env, jobject obj)
 {
-	snd_ctl_t*	handle = handler.getHandle(env, obj);
+	snd_ctl_t*	handle = NULL;
 	int		nResult;
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): begin\n"); }
+	handle = handler.getHandle(env, obj);
 	nResult = snd_ctl_close(handle);
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): end\n"); }
 	return nResult;
 }
 
