@@ -52,11 +52,12 @@ public class MidiFileFormat
 						  int nByteLength,
 						  long lMicrosecondLength)
 	{
-		type = nType;
-		divisionType = fDivisionType;
-		resolution = nResolution;
-		byteLength = nByteLength;
-		microsecondLength = lMicrosecondLength;
+		this(nType,
+			 fDivisionType,
+			 nResolution,
+			 nByteLength,
+			 lMicrosecondLength,
+			 null);
 	}
 
 
@@ -67,16 +68,19 @@ public class MidiFileFormat
 						  long lMicrosecondLength,
 						  Map<String, Object> properties)
 	{
-		this(nType,
-			 fDivisionType,
-			 nResolution,
-			 nByteLength,
-			 lMicrosecondLength);
+		type = nType;
+		divisionType = fDivisionType;
+		resolution = nResolution;
+		byteLength = nByteLength;
+		microsecondLength = lMicrosecondLength;
 		/* Here, we make a shallow copy of the map. It's unclear if this
 		   is sufficient (or if a deep copy should be made).
 		*/
 		m_properties = new HashMap<String, Object>();
-		m_properties.putAll(properties);
+		if (properties != null)
+		{
+			m_properties.putAll(properties);
+		}
 		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
 	}
 
@@ -115,7 +119,7 @@ public class MidiFileFormat
 	}
 
 
-	public Map properties()
+	public Map<String, Object> properties()
 	{
 		return m_unmodifiableProperties;
 	}
