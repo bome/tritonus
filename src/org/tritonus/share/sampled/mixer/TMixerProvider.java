@@ -60,6 +60,15 @@ public abstract class TMixerProvider
 
 
 
+	/*
+	  Override this method if you want a thread-safe static initializaiton.
+	 */
+	protected void staticInit()
+	{
+	}
+
+
+
 	private MixerProviderStruct getMixerProviderStruct()
 	{
 		if (TDebug.TraceMixerProvider) { TDebug.out("TMixerProvider.getMixerProviderStruct(): begin"); }
