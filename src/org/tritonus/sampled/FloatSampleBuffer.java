@@ -321,6 +321,12 @@ public class FloatSampleBuffer {
 
 	}
 
+	
+	/**
+	 * Creates a new byte[] buffer and returns it.
+	 * Throws an exception when sample rate doesn't match.
+	 * @see #convertToByteArray(byte[], int, AudioFormat)
+	 *
 	public byte[] convertToByteArray(AudioFormat format) {
 		// throws exception when sampleRate doesn't match
 		// creates a new byte[] buffer and returns it
@@ -553,16 +559,6 @@ public class FloatSampleBuffer {
 
 	public int getFormatType(int ssib, boolean signed, boolean bigEndian) {
 		int bytesPerSample=ssib/8;
-		if (bytesPerSample*8!=ssib) {
-			throw new IllegalArgumentException
-			("FloatSampleBuffer: unsupported sample size of "
-			 +ssib+" bits per sample.");
-		}
-		if (!signed && bytesPerSample>1) {
-			throw new IllegalArgumentException
-			("FloatSampleBuffer: unsigned samples larger than "
-			 +"8 bit are not supported");
-		}
 		int res=0;
 		if (ssib==8) {
 			res=F_8;
@@ -572,6 +568,16 @@ public class FloatSampleBuffer {
 			res=F_24;
 		} else if (ssib==32) {
 			res=F_32;
+		}
+		if (res==0) {
+			throw new IllegalArgumentException
+			("FloatSampleBuffer: unsupported sample size of "
+			 +ssib+" bits per sample.");
+		}
+		if (!signed && bytesPerSample>1) {
+			throw new IllegalArgumentException
+			("FloatSampleBuffer: unsigned samples larger than "
+			 +"8 bit are not supported");
 		}
 		if (signed) {
 			res|=F_SIGNED;
