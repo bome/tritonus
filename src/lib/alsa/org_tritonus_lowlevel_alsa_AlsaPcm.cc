@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaPcm.c
+ *	org_tritonus_lowlevel_alsa_AlsaPcm.cc
  */
 
 /*
@@ -713,4 +713,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setTrace
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaPcm.c ***/
+/*** org_tritonus_lowlevel_alsa_AlsaPcm.cc ***/
