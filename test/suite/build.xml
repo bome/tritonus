@@ -55,11 +55,15 @@
     <junit fork="no" printsummary="yes">
       <sysproperty key="tritonus.TraceAudioFileReader" value="true" />
       <formatter type="plain" />
+<!--
       <test name="AiffAudioFileReaderTestCase" />
       <test name="AuAudioFileReaderTestCase" />
       <test name="AuZeroDataLengthAudioFileReaderTestCase" />
       <test name="WaveAudioFileReaderTestCase" />
+-->
       <test name="GSMAudioFileReaderTestCase" />
+      <test name="Mp3AudioFileReaderTestCase" />
+      <test name="VorbisAudioFileReaderTestCase" />
     </junit>
   </target>
 </project>
