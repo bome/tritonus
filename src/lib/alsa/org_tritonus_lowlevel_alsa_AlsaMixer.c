@@ -8,6 +8,7 @@
 #include	"org_tritonus_lowlevel_alsa_AlsaMixer.h"
 
 
+static int DEBUG = 0;
 
 
 static jfieldID
@@ -64,8 +65,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_open
 {
 	snd_mixer_t*	handle;
 	int		nReturn;
-	const char*		mixerName;
+	const char*	mixerName;
 
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_open(): begin");
+	}
 	mixerName = (*env)->GetStringUTFChars(env, strMixerName, NULL);
 	if (mixerName == NULL)
 	{
@@ -75,6 +80,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_open
 	nReturn = snd_mixer_open(&handle, (char*) mixerName);
 	(*env)->ReleaseStringUTFChars(env, strMixerName, mixerName);
 	setNativeHandle(env, obj, handle);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_open(): end");
+	}
 	return nReturn;
 }
 
@@ -89,8 +98,20 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaMixer_close
 (JNIEnv *env, jobject obj)
 {
-	snd_mixer_t*	handle = getNativeHandle(env, obj);
-	return snd_mixer_close(handle);
+	snd_mixer_t*	handle;
+	int		nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_close(): begin");
+	}
+	handle = getNativeHandle(env, obj);
+	nReturn = snd_mixer_close(handle);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_close(): end");
+	}
+	return nReturn;
 }
 
 
@@ -104,7 +125,19 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList
 (JNIEnv *env, jobject obj, jintArray anIndices, jobjectArray astrNames)
 {
-	snd_mixer_t*	handle = getNativeHandle(env, obj);
+	snd_mixer_t*	handle;
+	int		nReturn;
+
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): begin");
+	}
+	handle = getNativeHandle(env, obj);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): end");
+	}
+	return nReturn;
 }
 
 
@@ -118,15 +151,19 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControl
 (JNIEnv *env, jobject obj, jint nIndex, jstring strName, jintArray anValues)
 {
-	snd_mixer_t*	handle = getNativeHandle(env, obj);
+	snd_mixer_t*			handle;
 	snd_mixer_simple_control_t	control;
-	const char*	name;
-	int		nReturn;
+	const char*			name;
+	int				nReturn;
+	int				nLength;
+	jboolean			bIsCopy;
+	jint*				pnValues;
 
-	int		nLength;
-	jboolean	bIsCopy;
-	jint*		pnValues;
-
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControl(): begin");
+	}
+	handle = getNativeHandle(env, obj);
 	control.sid.index = nIndex;
 	name = (*env)->GetStringUTFChars(env, strName, NULL);
 	if (name == NULL)
@@ -164,6 +201,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControl
 	{
 		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
 	}
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControl(): end");
+	}
 	return nReturn;
 }
 
@@ -179,15 +220,19 @@ JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaMixer_writeControl
 (JNIEnv *env, jobject obj, jint nIndex, jstring strName, jintArray anValues)
 {
-	snd_mixer_t*	handle = getNativeHandle(env, obj);
+	snd_mixer_t*			handle;
 	snd_mixer_simple_control_t	control;
-	const char*	name;
-	int		nReturn;
+	const char*			name;
+	int				nReturn;
+	int				nLength;
+	jboolean			bIsCopy;
+	jint*				pnValues;
 
-	int		nLength;
-	jboolean	bIsCopy;
-	jint*		pnValues;
-
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_writeControl(): begin");
+	}
+	handle = getNativeHandle(env, obj);
 	control.sid.index = nIndex;
 	name = (*env)->GetStringUTFChars(env, strName, NULL);
 	if (name == NULL)
@@ -221,7 +266,25 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_writeControl
 		(*env)->ReleaseIntArrayElements(env, anValues, pnValues, 0);
 	}
 	nReturn = snd_mixer_simple_control_read(handle, &control);
+	if (DEBUG)
+	{
+		printf("Java_org_tritonus_lowlevel_alsa_AlsaMixer_writeControl(): end");
+	}
 	return nReturn;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaMixer
+ * Method:    setTrace
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaMixer_setTrace
+(JNIEnv *env, jclass cls, jboolean bTrace)
+{
+	DEBUG = bTrace;
 }
 
 
