@@ -216,7 +216,7 @@ public class AlsaPcm
 	 *
 	 *	@param nMode optional file open modes (non-blocking,...)
 
-	 */
+	*/
 	private native int open(String strPcmName,
 				int nDirection,
 				int nMode);
@@ -246,6 +246,11 @@ public class AlsaPcm
 	 *	Calls snd_pcm_hw_params_set_format().
 	 */
 	public native int setHWParamsFormat(HWParams hwParams, int nFormat);
+
+	/**
+	 *	Calls snd_pcm_hw_params_set_format_mask().
+	 */
+	public native int setHWParamsFormatMask(HWParams hwParams, HWParams.FormatMask mask);
 
 	/**
 	 *	Calls snd_pcm_hw_params_set_channels().
@@ -357,6 +362,7 @@ public class AlsaPcm
 		public native int getFifoSize();
 		public native int getAccess();
 		public native int getFormat();
+		public native void getFormatMask(FormatMask mask);
 		public native int getSubformat();
 		public native int getChannels();
 		public native int getChannelsMin();
@@ -489,7 +495,84 @@ public class AlsaPcm
 		 *	anValues[0]:	-1, 0 or +1, depending on the direction the exact rate differs from the returned value.
 		 */
 		public native int getTickTimeMax(int[] anValues);
-	}
+
+
+
+
+		public static class FormatMask
+		{
+			/**
+			 *	Holds the pointer to snd_pcm_format_mask_t
+			 *	for the native code.
+			 *	This must be long to be 64bit-clean.
+			 */
+			/*private*/ long	m_lNativeHandle;
+
+
+
+			public FormatMask()
+			{
+				if (TDebug.TraceAlsaPcmNative) { TDebug.out("AlsaPcm.FormatMask.<init>(): begin"); }
+				int	nReturn = malloc();
+				if (nReturn < 0)
+				{
+					throw new RuntimeException("malloc of format_mask failed");
+				}
+				if (TDebug.TraceAlsaPcmNative) { TDebug.out("AlsaPcm.FormatMask.<init>(): end"); }
+			}
+
+
+
+			public void finalize()
+			{
+				// TODO: call free()
+				// call super.finalize() first or last?
+				// and introduce a flag if free() has already been called?
+			}
+
+
+			/**
+			 *	Calls snd_pcm_format_mask_malloc().
+			 */
+			private native int malloc();
+
+
+
+			/**
+			 *	Calls snd_pcm_format_mask_free().
+			 */
+			public native void free();
+
+			/**
+			 *	Calls snd_pcm_format_mask_none().
+			 */
+			public native void none();
+
+			/**
+			 *	Calls snd_pcm_format_mask_any().
+			 */
+			public native void any();
+
+			/**
+			 *	Calls snd_pcm_format_mask_test().
+			 */
+			public native boolean test(int nFormat);
+
+
+			/**
+			 *	Calls snd_pcm_format_mask_set().
+			 */
+			public native void set(int nFormat);
+
+
+			/**
+			 *	Calls snd_pcm_format_mask_reset().
+			 */
+			public native void reset(int nFormat);
+
+
+			}
+		}
 
 
 
@@ -540,7 +623,7 @@ public class AlsaPcm
 		public native int getSilenceThreshold();
 		public native int getSilenceSize();
 	}
-}
+	}
 
 
 
