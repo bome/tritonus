@@ -39,11 +39,22 @@ public class Alsa
 {
 	static
 	{
+		Alsa.loadNativeLibrary();
+	}
+
+
+
+	public static void loadNativeLibrary()
+	{
 		if (TDebug.TraceAlsaNative)
 		{
-			System.out.println("Alsa.<clinit>(): loading native library tritonusalsa");
+			TDebug.out("Alsa.loadNativeLibrary(): loading native library tritonusalsa");
 		}
 		System.loadLibrary("tritonusalsa");
+		if (TDebug.TraceAlsaNative)
+		{
+			TDebug.out("Alsa.loadNativeLibrary(): loaded");
+		}
 	}
 
 

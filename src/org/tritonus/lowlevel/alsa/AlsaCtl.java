@@ -5,6 +5,9 @@
 
 $Id$
 $Log$
+Revision 1.7  2001/07/02 18:41:44  pfisterer
+reorganized native library loading and tracing
+
 Revision 1.6  2001/05/30 09:25:03  pfisterer
 intermediate development state, mainly related to ALSA
 
@@ -50,11 +53,11 @@ public class AlsaCtl
 
 	static
 	{
-		if (TDebug.TraceAlsaNative)
+		Alsa.loadNativeLibrary();
+		if (TDebug.TraceAlsaCtlNative)
 		{
-			System.out.println("AlsaCtl.<clinit>(): loading native library tritonusalsa");
+			setTrace(true);
 		}
-		System.loadLibrary("tritonusalsa");
 	}
 
 
@@ -129,6 +132,7 @@ public class AlsaCtl
 	public native int getPcmInfo(int[] anValues, String[] astrValues);
 
 
+	private static native void setTrace(boolean bTrace);
 }
 
 
