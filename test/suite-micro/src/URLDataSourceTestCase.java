@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.File;
 import java.net.URL;
 
-import javax.microedition.media.Control;
 import javax.microedition.media.protocol.DataSource;
 import javax.microedition.media.protocol.SourceStream;
 

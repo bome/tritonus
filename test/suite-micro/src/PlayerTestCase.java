@@ -31,7 +31,7 @@ import	javax.microedition.media.PlayerListener;
 /**	TestCase for javax.microedition.media.Player.
 */
 public class PlayerTestCase
-extends TestCase
+extends BaseControllableTestCase
 {
 	/** Time to sleep() between return from a transition method and
 	    the test if the event has been delivered.
@@ -44,6 +44,15 @@ extends TestCase
 		super(strName);
 	}
 
+
+	protected Controllable createControllable()
+		throws Exception
+	{
+		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
+		Player	player = Manager.createPlayer(strLocator);
+		player.realize();
+		return player;
+	}
 
 
 	public void testConstants()
@@ -145,45 +154,6 @@ extends TestCase
 		// CLOSED
 		player.close();
 		callControllableMethods(player, "CLOSED");
-	}
-
-
-	/**	Calls both Controllable methods to see if an exception occurs.
-	 */
-	private void callControllableMethods(Controllable controllable,
-					     String strState)
-		throws Exception
-	{
-		boolean	bExceptionThrown;
-		String	strControlType = "GUIControl";
-
-		bExceptionThrown = false;
-		try
-		{
-			controllable.getControls();
-		}
-		catch (IllegalStateException e)
-		{
-			bExceptionThrown = true;
-		}
-		if (! bExceptionThrown)
-		{
-			fail("IllegalStateException on getControls() in " + strState + " state");
-		}
-
-		bExceptionThrown = false;
-		try
-		{
-			controllable.getControl(strControlType);
-		}
-		catch (IllegalStateException e)
-		{
-			bExceptionThrown = true;
-		}
-		if (! bExceptionThrown)
-		{
-			fail("IllegalStateException on getControl(String) in " + strState + " state");
-		}
 	}
 
 
@@ -320,7 +290,7 @@ extends TestCase
 
 
 
-	/**	Calls both Controllable methods to see if an exception occurs.
+	/**	Calls TestMethod's method to see if an exception occurs.
 	 */
 	private void callPlayerMethod(Player player,
 				      TestMethod method,

@@ -22,22 +22,32 @@
 
 import junit.framework.TestCase;
 
-import java.io.IOException;
 import javax.microedition.media.Control;
+import javax.microedition.media.Controllable;
 import javax.microedition.media.protocol.DataSource;
 import javax.microedition.media.protocol.SourceStream;
 
-import org.tritonus.mmapi.InputStreamDataSource;
 
 
 /**	Base TestCases for javax.microedition.media.protocol.DataSource.
 */
 public abstract class BaseDataSourceTestCase
-extends TestCase
+extends BaseControllableTestCase
 {
 	public BaseDataSourceTestCase(String strName)
 	{
 		super(strName);
+	}
+
+
+	/**	Create Controllable for simple tests.
+	*/
+	protected Controllable createControllable()
+		throws Exception
+	{
+		DataSource	dataSource = createDataSource();
+		dataSource.connect();
+		return dataSource;
 	}
 
 
@@ -104,7 +114,7 @@ extends TestCase
 
 
 
-	/**	Calls both Controllable methods to see if an exception occurs.
+	/**	Calls TestMethod's method to see if an exception occurs.
 	 */
 	private void callDataSourceMethod(DataSource dataSource,
 				      TestMethod method,
@@ -157,6 +167,33 @@ extends TestCase
 			assertTrue("SourceStream search type", Util.arrayContains(anLegalSeekTypes, nSeekType));
 		}
 	}
+
+	/** TODO:
+	 */
+	public void testControls()
+		throws Exception
+	{
+		DataSource	dataSource = createDataSource();
+		dataSource.connect();
+		Control[]	aControls = dataSource.getControls();
+		assertEquals("Control[] length", 0, aControls.length);
+	}
+
+
+	// TODO:
+	public void testSourceStreamControls()
+		throws Exception
+	{
+		DataSource	dataSource = createDataSource();
+		dataSource.connect();
+		SourceStream[]	aSourceStreams = dataSource.getStreams();
+		for (int i = 0; i < aSourceStreams.length; i++)
+		{
+			Control[]	aControls = aSourceStreams[i].getControls();
+			assertEquals("SourceStream's Control[] length", 0, aControls.length);
+		}
+	}
+
 
 
 
