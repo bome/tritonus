@@ -51,11 +51,9 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-/**
- * ConversionProvider for GSM files.
- *
- * @author Matthias Pfisterer
- */
+/**	ConversionProvider for GSM files.
+	@author Matthias Pfisterer
+*/
 public class GSMFormatConversionProvider
 	extends		TSimpleFormatConversionProvider
 // extends		TEncodingFormatConversionProvider
