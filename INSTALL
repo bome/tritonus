@@ -28,7 +28,8 @@ Installing steps
 tritonus-<version>. cd into the top-level directory.
 
 2. Issue 'configure' ('./configure' if you build as root) in the
-top-level directory.
+top-level directory. If you are building from the cvs, you have to
+create configure from configure.in by calling 'autoconf'.
 
 3. Issue 'make' or 'make compileinitial' (the second one is
 faster). There are spurious compilation errors with some jdk1.1
@@ -51,7 +52,7 @@ should be in your CLASSPATH
 
 -  tritonus-x.y.z/src/lib/alsa/libtritonusalsa.so.1.0 (if you use the MIDI stuff)
 
--  tritonus-x.y.z/src/lib/esd/libesdtritonus.so.1.0
+-  tritonus-x.y.z/src/lib/esd/libtritonusesd.so.1.0
 
 this contains the native 
 code and should be in your LD_LIBRARY_PATH
