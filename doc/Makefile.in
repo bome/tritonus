@@ -1,3 +1,4 @@
+
 # compilation and packing for the sinfonia library
 #
 
@@ -43,6 +44,8 @@ SRCTMP:=$(wildcard \
 SRC:=$(notdir $(SRCTMP))
 OBJ:=$(SRC:.java=.class)
 
+# !!! TODO: use ant for apidoc? !!!
+
 # documentation generation
 DOCDESTDIR=./apidoc
 DOCSRCPATH=./src
@@ -60,31 +63,13 @@ TESTSRC:=$(wildcard $(TESTSRCDIR)/*.java)
 #----------------- rules -------------------
 
 .PHONY: all
-all: $(LIBDEST) $(NLIBDEST)
+all: apidoc
 
-$(LIBDEST):	$(OBJ)
-	jar cf $(LIBDEST) $(PACKSRCDIR)
-
-$(NLIBDEST):	$(NLIBOBJS)
-	ar cf $(NLIBDEST) $(NLIBOBJS)
-
-.PHONY: rebuildall
-rebuildall: clean
-	$(JAVAC) -d $(DESTDIR) $(SRCTMP)
-	jar cf $(LIBDEST) $(PACKSRCDIR)
-
-test:	all $(TESTSRC)
-	javac -d $(TESTDESTDIR) $(TESTSRC)
-
-.PHONY: dotest
-dotest:	test
-	java test.ui.TestRunner mvptest.TestAll
-
-doc: $(SRC)
+.PHONY: apidoc
+apidoc: $(SRC)
 	-mkdir $(DOCDESTDIR) 
 	javadoc -author -splitindex -windowtitle "Sinfonia Documentation" -d $(DOCDESTDIR) -sourcepath $(DOCSRCPATH) $(PACKAGES)
 
 .PHONY: clean
 clean:
-	rm -rf gnu mvptest apidoc
-
+	rm -rf apidoc *~
