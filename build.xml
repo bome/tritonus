@@ -333,21 +333,21 @@
 
 
     <!-- for jsr-135 -->
-  <target name="compile-micro" depends="prepare">
+  <target name="compile-mmapi" depends="prepare">
     <javac srcdir="${src}/classes"
 	   depend="yes"
 	   destdir="${build}"
-	   includes="javax/microedition/media/,org/tritonus/micro/"
+	   includes="javax/microedition/media/,org/tritonus/mmapi/"
 	   excludes="org/tritonus/whatever" />
   </target>
 
-  <target name="dist-micro"
-	  depends="compile-micro" >
+  <target name="dist-mmapi"
+	  depends="compile-mmapi" >
 
-    <jar jarfile="${dist}/tritonus_micro.jar">
+    <jar jarfile="${dist}/tritonus_mmapi.jar">
       <fileset dir="${build}">
 	<include name="javax/microedition/media/" />
-	<include name="org/tritonus/micro/" />
+	<include name="org/tritonus/mmapi/" />
       </fileset>
     </jar>
   </target>
