@@ -64,13 +64,13 @@ import	org.tritonus.share.ArraySet;
  *         using the float conversion (see next point), in order
  *         to profit of dithering.
  *     <li>All other conversions are done using the FloatSampleBuffer.<br>
- *         Mixdown of channels (x channels -> 1 channel) is done by 
+ *         Mixdown of channels (x channels -> 1 channel) is done by
  *         plainly adding all channels together.
- *         Thus, up mixing and down mixing will not result in the same audio, 
- *         as downmixing does NOT lower the volume and clippings are very 
+ *         Thus, up mixing and down mixing will not result in the same audio,
+ *         as downmixing does NOT lower the volume and clippings are very
  *         probable. To avoid that, the volume of the channels
  *         should be lowered before using this converter for down mixing.
- *     <li>All conversions support upmixing of channels: 
+ *     <li>All conversions support upmixing of channels:
  *         1 channel -> x channels. This is done by
  *         copying the channel to the other channels <b>after</b>
  *         conversion of the format (if necessary).
@@ -84,6 +84,9 @@ import	org.tritonus.share.ArraySet;
 
 public class PCM2PCMConversionProvider
 	extends TSimpleFormatConversionProvider {
+
+	// if true, always use FloatSampleBuffer
+	private static final boolean ONLY_FLOAT_CONVERSION = false;
 
 	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
 	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
@@ -281,7 +284,8 @@ public class PCM2PCMConversionProvider
 				return CONVERT_ONLY_EXPAND_CHANNELS;
 			}
 		}
-		if (sourceChannels==1 && targetChannels>=1 || sourceChannels==targetChannels) {
+		if (!ONLY_FLOAT_CONVERSION &&
+		    (sourceChannels==1 && targetChannels>=1 || sourceChannels==targetChannels)) {
 			// when channels only have to be duplicated, direct conversions can be done
 			if ((sourceType==UNSIGNED8 && targetType==SIGNED8) ||
 			        (sourceType==SIGNED8 && targetType==UNSIGNED8)) {
@@ -296,7 +300,7 @@ public class PCM2PCMConversionProvider
 			           (sourceType==LITTLE_ENDIAN32 && targetType==BIG_ENDIAN32)) {
 				return CONVERT_BYTE_ORDER32;
 				/*  downsampling is better handled with Float conversion -> dithering
-				    } else 
+				    } else
 				    if (sourceType==LITTLE_ENDIAN16 && targetType==SIGNED8) {
 				    return CONVERT_16LTO8S;
 				    } else if (sourceType==LITTLE_ENDIAN16 && targetType==UNSIGNED8) {
