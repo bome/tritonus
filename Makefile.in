@@ -38,6 +38,7 @@ PACKSRCDIR_JL = javazoom
 LIBDEST=tritonus.jar
 LIBDEST_JL=javalayer.jar
 LIBDEST_MP3SP=mp3sp.jar
+LIBDEST_GSM=tritonus_gsm.jar
 #CONFIGFILENAME=Configuration.properties
 #CONFIGFILE=$(SRCDIR_PRIV)/$(CONFIGFILENAME)
 #CONFIGFILE2=$(OBJDIR_PRIV)/$(CONFIGFILENAME)
@@ -155,6 +156,9 @@ $(OBJDIR_PRIV)/util/TCircularBuffer\$$Trigger.class
 
 GSM_OBJ = \
 $(OBJDIR_PRIV)/lowlevel/gsm/GSMDecoder.class \
+$(OBJDIR_PRIV)/lowlevel/gsm/InvalidGSMFrameException.class \
+$(OBJDIR_PRIV)/sampled/TConversionTool.class \
+$(OBJDIR_PRIV)/sampled/file/TAudioFileFormat.class \
 $(OBJDIR_PRIV)/sampled/file/TAudioFileReader.class \
 $(OBJDIR_PRIV)/sampled/file/gsm/GSMAudioFileReader.class \
 $(OBJDIR_PRIV)/sampled/file/gsm/GSMEncoding.class \
@@ -191,7 +195,7 @@ convert:
 	@if [ ! -f .converted ]; then ./ConvertJDK117; echo "" > .converted; fi
 
 $(LIBDEST):	$(OBJ) #$(CONFIGFILE2)
-	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN) -C src META-INF/services/
+	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN) -C src/packaging/tritonus_core/ META-INF/services/
 
 #$(CONFIGFILE2): $(CONFIGFILE)
 #	mkdir -p $(OBJDIR_PRIV)
@@ -210,7 +214,10 @@ $(LIBDEST_JL):	$(OBJ)
 
 
 $(LIBDEST_MP3SP):	$(OBJ)
-	jar cf $(LIBDEST_MP3SP) $(MP3SP_OBJ) -C src/mp3sp META-INF/services/
+	jar cf $(LIBDEST_MP3SP) $(MP3SP_OBJ) -C src/packaging/tritonus_mp3/ META-INF/services/
+
+$(LIBDEST_GSM):	$(OBJ)
+	jar cf $(LIBDEST_GSM) $(GSM_OBJ) -C src/packaging/tritonus_gsm/ META-INF/services/
 
 .PHONY: doc
 doc:	all 

@@ -83,21 +83,37 @@ public class GSMFormatConversionProvider
 	{
 		super(Arrays.asList(INPUT_FORMATS),
 		      Arrays.asList(OUTPUT_FORMATS));
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("GSMFormatConversionProvider.<init>(): called");
+		}
 	}
 
 
 
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream)
 	{
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): called");
+		}
 		if (isConversionSupported(targetFormat,
 					  audioInputStream.getFormat()))
 		{
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): conversion supported; trying to create DecodedGSMAudioInputStream");
+			}
 			return new DecodedGSMAudioInputStream(
 				targetFormat,
 				audioInputStream);
 		}
 		else
 		{
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): conversion not supported; throwing IllegalArgumentException");
+			}
 			throw new IllegalArgumentException("conversion not supported");
 		}
 	}
@@ -122,7 +138,10 @@ public class GSMFormatConversionProvider
 		{
 			// TODO: try to find out length (possible?)
 			super(outputFormat, -1);
-			TDebug.out("DecodedGSMAudioInputStream.<init>(): called");
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("DecodedGSMAudioInputStream.<init>(): called");
+			}
 			m_encodedStream = inputStream;
 			m_decoder = new GSMDecoder();
 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
@@ -133,7 +152,10 @@ public class GSMFormatConversionProvider
 
 		public void execute()
 		{
-			TDebug.out("DecodedGSMAudioInputStream.execute(): called");
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("DecodedGSMAudioInputStream.execute(): called");
+			}
 			try
 			{
 				int	nRead = m_encodedStream.read(m_abFrameBuffer);
@@ -143,7 +165,10 @@ public class GSMFormatConversionProvider
 				 */
 				if (nRead != ENCODED_GSM_FRAME_SIZE)
 				{
-					TDebug.out("DecodedGSMAudioInputStream.execute(): not read whole GSM frame (" + nRead + ")");
+					if (TDebug.TraceAudioConverter)
+					{
+						TDebug.out("DecodedGSMAudioInputStream.execute(): not read whole GSM frame (" + nRead + ")");
+					}
 					m_circularBuffer.close();
 					return;
 				}
@@ -178,7 +203,10 @@ public class GSMFormatConversionProvider
 				}
 			}
 			m_circularBuffer.write(m_abBuffer);
-			TDebug.out("DecodedGSMAudioInputStream.execute(): decoded GSM frame written");
+			if (TDebug.TraceAudioConverter)
+			{
+				TDebug.out("DecodedGSMAudioInputStream.execute(): decoded GSM frame written");
+			}
 		}
 
 
