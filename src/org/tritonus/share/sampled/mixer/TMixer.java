@@ -60,7 +60,6 @@ public abstract class TMixer
 	private Collection	m_supportedTargetFormats;
 	private Collection	m_supportedSourceLineInfos;
 	private Collection	m_supportedTargetLineInfos;
-	// private Collection	m_supportedPortInfos;
 	private Set		m_openSourceDataLines;
 	private Set		m_openTargetDataLines;
 
@@ -495,7 +494,7 @@ public abstract class TMixer
 			}
 		}
 	}
-	}
+}
  
 
 
