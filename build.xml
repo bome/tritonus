@@ -90,6 +90,18 @@
 		<jar
 			jarfile="${dist}/tritonus_mp3.jar"
 			basedir="${dist}/tritonus_mp3" />
+
+		<mkdir dir="${dist}/tritonus_gsm" />
+		<copydir src="${build}" dest="${dist}/tritonus_gsm"
+			includes="org/tritonus/lowlevel/gsm/,org/tritonus/sampled/convert/gsm/,org/tritonus/sampled/file/gsm/" />
+		<copydir
+			src="${src}/packaging/tritonus_gsm"
+			dest="${dist}/tritonus_gsm"
+			includes="**" />
+		<jar
+			jarfile="${dist}/tritonus_gsm.jar"
+			basedir="${dist}/tritonus_gsm" />
+		<!-- TODO: delete temporary directory -->
 	</target>
 
 	<target name="install" depends="dist">
