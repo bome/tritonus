@@ -20,7 +20,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tritonus.test.tritonus;
+package org.tritonus.test.tritonus.share.midi;
 
 import junit.framework.TestCase;
 
