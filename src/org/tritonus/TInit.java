@@ -38,7 +38,6 @@ import	javax.sound.sampled.spi.AudioFileReader;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.TConfiguration;
 import	org.tritonus.TDebug;
 import	org.tritonus.midi.TMidiConfig;
 import	org.tritonus.sampled.TAudioConfig;
@@ -179,26 +178,6 @@ public class TInit
 							TAudioConfig.addMixerProvider(provider);
 						}
 				});
-
-		// additional classes
-/*
-		String	strInitClasses = TConfiguration.getResourceString("initClasses");
-		String[]	astrInitClasses = TConfiguration.tokenize(strInitClasses);
-		for (int i = 0; i < astrInitClasses.length; i++)
-		{
-			try
-			{
-				Class.forName(astrInitClasses[i]);
-			}
-			catch (ClassNotFoundException e)
-			{
-				if (TDebug.TraceInit)
-				{
-					TDebug.out(e);
-				}
-			}
-		}
-*/
 	}
 
 
@@ -209,12 +188,10 @@ public class TInit
 	private static void registerClasses(Class providerClass,
 					    ProviderRegistrationAction action)
 	{
-/*
 		if (TDebug.TraceInit)
 		{
 			TDebug.out("TInit.registerClasses(): before getting of resource string");
 		}
-*/
 		Iterator	providers = Service.providers(providerClass);
 		if (providers != null)
 		{
