@@ -44,11 +44,11 @@ extends TestCase
 
 	public void testEmptyMap()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		TAudioFormat format = new TAudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											   44100.0F, 16, 2, 4, 44100.0F,
 											   true, prop);
-		Map propReturn = format.properties();
+		Map<String, Object> propReturn = format.properties();
 		assertTrue(propReturn.isEmpty());
 		Object result = propReturn.get("bitrate");
 		assertNull(result);
@@ -58,12 +58,12 @@ extends TestCase
 
 	public void testCopying()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		TAudioFormat format = new TAudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											   44100.0F, 16, 2, 4, 44100.0F,
 											   true, prop);
-		Map propReturn = format.properties();
+		Map<String, Object> propReturn = format.properties();
 		assertTrue(prop != propReturn);
 		prop.put("bitrate", new Float(42.5F));
 		Object result = propReturn.get("bitrate");
@@ -73,11 +73,11 @@ extends TestCase
 
 	public void testUnmodifiable()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		TAudioFormat format = new TAudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											   44100.0F, 16, 2, 4, 44100.0F,
 											   true, prop);
-		Map propReturn = format.properties();
+		Map<String, Object> propReturn = format.properties();
 		try
 		{
 			propReturn.put("author", "Matthias Pfisterer");
@@ -91,13 +91,13 @@ extends TestCase
 
 	public void testGet()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		prop.put("author", "Matthias Pfisterer");
 		TAudioFormat format = new TAudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											   44100.0F, 16, 2, 4, 44100.0F,
 											   true, prop);
-		Map propReturn = format.properties();
+		Map<String, Object> propReturn = format.properties();
 		assertEquals(new Float(22.5F), propReturn.get("bitrate"));
 		assertEquals("Matthias Pfisterer", propReturn.get("author"));
 	}
