@@ -28,39 +28,50 @@ package	javax.sound.midi;
 
 import	java.util.ArrayList;
 import	java.util.List;
-
+import	java.util.Vector;
 
 
 
 public class Track
 {
 	private List		m_events;
-	private long		m_lTicks;
+	// private Vector		m_events;
 
 
 
 
 	public Track()
 	{
-		m_lTicks = 0;
 		m_events = new ArrayList();
+		// m_events = new Vector();
 	}
 
 
 
 	public synchronized boolean add(MidiEvent event)
 	{
-		// if (!m_events.contains(event))
-		// {
-			m_events.add(event);
+		if (!m_events.contains(event))
+		{
+			int	nIndex = size() - 1;
+			for (nIndex = size() - 1;
+			     nIndex >= 0 && get(nIndex).getTick() > event.getTick();
+			     nIndex--)
+			{
+				//if (event == get(nIndex))
+				//{
+					/*
+					 *	Event is already there
+					 */
+				//return false;
+				//}
+			}
+			m_events.add(nIndex + 1, event);
 			return true;
-/*
 		}
 		else
 		{
 			return false;
 		}
-*/
 	}
 
 
@@ -76,6 +87,7 @@ public class Track
 		// TODO: throws ArrayIndexOutOfBoundsException ??
 	{
 		return (MidiEvent) m_events.get(nIndex);
+		// return (MidiEvent) m_events.elementAt(nIndex);
 	}
 
 
@@ -87,9 +99,14 @@ public class Track
 
 
 
+
 	public long ticks()
 	{
-		return m_lTicks;
+		/*
+		 *	Since ordering by tich value is guaranteed, we can simply
+		 *	pick the last event and return its tick value.
+		 */
+		return get(size() - 1).getTick();
 	}
 
 }
