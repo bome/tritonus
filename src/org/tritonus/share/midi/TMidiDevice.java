@@ -56,6 +56,16 @@ public abstract class TMidiDevice
 	 */
 	private boolean			m_bOpen;
 
+	/**	Whether to handle input from the physical port
+		and to allow Transmitters.
+	 */
+	private boolean		m_bUseIn;
+
+	/**	Whether to handle output to the physical port
+		and to allow Receivers.
+	 */
+	private boolean		m_bUseOut;
+
 	/**	The number of Receivers that refer to this MidiDevice.
 	 *	This is currently only maintained for information purposes.
 	 *
@@ -79,8 +89,26 @@ public abstract class TMidiDevice
 	 */
 	public TMidiDevice(MidiDevice.Info info)
 	{
+		this(info, true, true);
+	}
+
+
+
+	/**	Initialize this class.
+	 *	This sets the info from the passed one, sets the open status
+	 *	to false, the number of Receivers to zero and the collection
+	 *	of Transmitters to be empty.
+	 *
+	 *	@param info	The info object that describes this instance.
+	 */
+	public TMidiDevice(MidiDevice.Info info,
+			   boolean bUseIn,
+			   boolean bUseOut)
+	{
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.<init>(): begin"); }
 		m_info = info;
+		m_bUseIn = bUseIn;
+		m_bUseOut = bUseOut;
 		m_bOpen = false;
 		m_nNumReceivers = 0;
 		m_transmitters = new ArrayList();
@@ -165,6 +193,34 @@ public abstract class TMidiDevice
 
 
 
+	/**	Returns whether to handle input.
+		If this is true, retrieving Transmitters is possible
+		and input from the physical port is passed to them.
+
+		@see #m_bUseIn
+		@see #getUseOut
+	 */
+	protected boolean getUseIn()
+	{
+		return m_bUseIn;
+	}
+
+
+
+	/**	Returns whether to handle output.
+		If this is true, retrieving Receivers is possible
+		and output to them is passed to the physical port.
+
+		@see #m_bUseOut
+		@see #getUseIn
+	 */
+	protected boolean getUseOut()
+	{
+		return m_bUseOut;
+	}
+
+
+
 	/**	Returns the device time in microseconds.
 		This is a default implementation, telling the application
 		program that the device doesn't track time. If a device wants
@@ -179,20 +235,30 @@ public abstract class TMidiDevice
 
 	public int getMaxReceivers()
 	{
+		int	nMaxReceivers = 0;
+		if (getUseOut())
+		{
 		/*
 		 *	The value -1 means unlimited.
 		 */
-		return -1;
+			nMaxReceivers = -1;
+		}
+		return nMaxReceivers;
 	}
 
 
 
 	public int getMaxTransmitters()
 	{
+		int	nMaxTransmitters = 0;
+		if (getUseIn())
+		{
 		/*
 		 *	The value -1 means unlimited.
 		 */
-		return -1;
+			nMaxTransmitters = -1;
+		}
+		return nMaxTransmitters;
 	}
 
 
@@ -204,6 +270,10 @@ public abstract class TMidiDevice
 	public Receiver getReceiver()
 		throws	MidiUnavailableException
 	{
+		if (! getUseOut())
+		{
+			throw new MidiUnavailableException("Receivers are not supported by this device");
+		}
 		return new TReceiver();
 	}
 
@@ -216,6 +286,10 @@ public abstract class TMidiDevice
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
+		if (! getUseIn())
+		{
+			throw new MidiUnavailableException("Transmitters are not supported by this device");
+		}
 		return new TTransmitter();
 	}
 
