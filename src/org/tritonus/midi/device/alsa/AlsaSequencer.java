@@ -55,16 +55,18 @@ public class AlsaSequencer
 	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
 	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
 
-	private AlsaSeq		m_controlAlsaSeq;
-	private AlsaSeq		m_dataAlsaSeq;
-	private int		m_nControlClient;
-	private int		m_nDataClient;
-	private int		m_nControlPort;
-	private int		m_nDataPort;
-	private int		m_nQueue;
-	private AlsaMidiIn	m_alsaMidiIn;
-	private AlsaMidiOut	m_alsaMidiOut;
-	private Thread		m_loaderThread;
+	private AlsaSeq			m_controlAlsaSeq;
+	private AlsaSeq			m_dataAlsaSeq;
+	private AlsaSeq.QueueStatus	m_queueStatus;
+	private AlsaSeq.QueueTempo	m_queueTempo;
+	private int			m_nControlClient;
+	private int			m_nDataClient;
+	private int			m_nControlPort;
+	private int			m_nDataPort;
+	private int			m_nQueue;
+	private AlsaMidiIn		m_alsaMidiIn;
+	private AlsaMidiOut		m_alsaMidiOut;
+	private Thread			m_loaderThread;
 
 
 
@@ -114,25 +116,65 @@ public class AlsaSequencer
 
 
 
+	private AlsaSeq.QueueStatus getQueueStatus()
+	{
+		return m_queueStatus;
+	}
+
+
+
+	private AlsaSeq.QueueTempo getQueueTempo()
+	{
+		return m_queueTempo;
+	}
+
+
+
+	private AlsaSeq getDataAlsaSeq()
+	{
+		return m_dataAlsaSeq;
+	}
+
+
+
+	private AlsaSeq getControlAlsaSeq()
+	{
+		return m_controlAlsaSeq;
+	}
+
+
+
+	private void updateQueueStatus()
+	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.updateQueueStatus(): begin"); }
+		// TODO: error handling
+		getControlAlsaSeq().getQueueStatus(getQueue(), getQueueStatus());
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.updateQueueStatus(): end"); }
+	}
+
+
+
 	protected void openImpl()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): begin"); }
 		m_controlAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (control)");
-		m_nControlClient = m_controlAlsaSeq.getClientId();
-		m_nControlPort = m_controlAlsaSeq.createPort("control port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_nControlClient = getControlAlsaSeq().getClientId();
+		m_nControlPort = getControlAlsaSeq().createPort("control port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
 		m_dataAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (data)");
-		m_nDataClient = m_dataAlsaSeq.getClientId();
-		m_nDataPort = m_dataAlsaSeq.createPort("data port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
+		m_nDataClient = getDataAlsaSeq().getClientId();
+		m_nDataPort = getDataAlsaSeq().createPort("data port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
 
-		// m_nQueue = m_controlAlsaSeq.allocQueue();
-		m_nQueue = m_dataAlsaSeq.allocQueue();
-		m_dataAlsaSeq.setQueueLocked(getQueue(), false);
-		m_alsaMidiOut = new AlsaMidiOut(m_dataAlsaSeq, getDataPort(), getQueue());
+		// m_nQueue = getControlAlsaSeq().allocQueue();
+		m_nQueue = getDataAlsaSeq().allocQueue();
+		m_queueStatus = new AlsaSeq.QueueStatus();
+		m_queueTempo = new AlsaSeq.QueueTempo();
+		getDataAlsaSeq().setQueueLocked(getQueue(), false);
+		m_alsaMidiOut = new AlsaMidiOut(getDataAlsaSeq(), getDataPort(), getQueue());
 		m_alsaMidiOut.setHandleMetaMessages(true);
 
 		// this establishes the subscription, too
-		m_alsaMidiIn = new AlsaMidiIn(m_dataAlsaSeq, getDataPort(), getDataClient(), getDataPort(), this);
+		m_alsaMidiIn = new AlsaMidiIn(getDataAlsaSeq(), getDataPort(), getDataClient(), getDataPort(), this);
 		// start the receiving thread
 		m_alsaMidiIn.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): end"); }
@@ -145,12 +187,16 @@ public class AlsaSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): begin"); }
 		m_alsaMidiIn.interrupt();
 		m_alsaMidiIn = null;
+		getQueueStatus().free();
+		m_queueStatus = null;
+		getQueueTempo().free();
+		m_queueTempo = null;
 		// TODO:
 		// m_aSequencer.releaseQueue(getQueue());
 		// m_aSequencer.destroyPort(getPort());
-		m_controlAlsaSeq.close();
+		getControlAlsaSeq().close();
 		m_controlAlsaSeq = null;
-		m_dataAlsaSeq.close();
+		getDataAlsaSeq().close();
 		m_dataAlsaSeq = null;
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): end"); }
 	}
@@ -183,8 +229,13 @@ public class AlsaSequencer
 
 	public boolean isRunning()
 	{
-		// TODO:
-		return false;
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): begin"); }
+		updateQueueStatus();
+		int	nStatus = getQueueStatus().getStatus();
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): queueu status: " + nStatus); }
+		boolean	bRunning = nStatus != 0;
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): end"); }
+		return bRunning;
 	}
 
 
@@ -225,32 +276,15 @@ public class AlsaSequencer
 
 
 
-	protected float getTempoImpl()
-	{
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTempoImpl(): begin"); }
-		float	fTempo;
-		if (isOpen())
-		{
-			fTempo = m_controlAlsaSeq.getQueueTempo(getQueue());
-		}
-		else
-		{
-			fTempo = 0.0F;
-		}
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTempoImpl(): returning: " + fTempo); }
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTempoImpl(): end"); }
-		return fTempo;
-	}
-
-
-
 	protected void setTempoImpl(float fRealMPQ)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): begin"); }
 		if (isOpen())
 		{
 			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): setting tempo to " + (int) fRealMPQ); }
-			m_controlAlsaSeq.setQueueTempo(getQueue(), getSequence().getResolution(), (int) (fRealMPQ));
+			getQueueTempo().setTempo((int) fRealMPQ);
+			getQueueTempo().setPpq(getResolution());
+			getControlAlsaSeq().setQueueTempo(getQueue(), getQueueTempo());
 		}
 		else
 		{
@@ -264,10 +298,11 @@ public class AlsaSequencer
 	public long getTickPosition()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTickPosition(): begin"); }
-		long lPosition;
+		long	lPosition;
 		if (isOpen())
 		{
-			lPosition = m_controlAlsaSeq.getQueuePositionTick(getQueue());
+			updateQueueStatus();
+			lPosition = getQueueStatus().getTickTime();
 		}
 		else
 		{
@@ -285,7 +320,7 @@ public class AlsaSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): begin"); }
 		if (isOpen())
 		{
-			m_controlAlsaSeq.setQueuePositionTick(getControlPort(), getQueue(), lTick);
+			getControlAlsaSeq().setQueuePositionTick(getControlPort(), getQueue(), lTick);
 		}
 		else
 		{
@@ -302,7 +337,8 @@ public class AlsaSequencer
 		long	lPosition;
 		if (isOpen())
 		{
-			long	lNanoSeconds = m_controlAlsaSeq.getQueuePositionTime(getQueue()) / 1000;
+			updateQueueStatus();
+			long	lNanoSeconds = getQueueStatus().getRealTime();
 			lPosition = lNanoSeconds / 1000;
 		}
 		else
@@ -322,7 +358,7 @@ public class AlsaSequencer
 		if (isOpen())
 		{
 			long	lNanoSeconds = lMicroseconds * 1000;
-			m_controlAlsaSeq.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
+			getControlAlsaSeq().setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
 		}
 		else
 		{
@@ -484,14 +520,14 @@ public class AlsaSequencer
 
 	private void startSeq()
 	{
-		m_controlAlsaSeq.startQueue(getQueue(), getControlPort());
+		getControlAlsaSeq().startQueue(getQueue(), getControlPort());
 	}
 
 
 
 	private void stopSeq()
 	{
-		m_controlAlsaSeq.stopQueue(getQueue(), getControlPort());
+		getControlAlsaSeq().stopQueue(getQueue(), getControlPort());
 	}
 
 	///////////////////////////////////////////////////
