@@ -42,6 +42,9 @@ public class AlsaMixerProvider
 	public AlsaMixerProvider()
 	{
 		super();
+		// uncomment this for hardcore debugging
+		try {
+
 		if (TDebug.TraceMixerProvider)
 		{
 			TDebug.out("AlsaMixerProvider.<init>(): begin");
@@ -57,21 +60,16 @@ public class AlsaMixerProvider
 			{
 				System.out.println("AlsaMixerProvider.<init>(): card #" + i + ": " +  anCards[i]);
 			}
-/*
-  AlsaCtl.loadCard(anCards[i]);
-  if (TDebug.TraceMixerProvider)
-  {
-  System.out.println("AlsaMixerProvider.<init>(): card loaded");
-  }
-*/
 			if (TDebug.TraceMixerProvider)
 			{
 				System.out.println("AlsaMixerProvider.<init>(): creating Ctl object...");
 			}
+			String	strPcmName = "hw:" + anCards[i];
 			AlsaCtl	ctl = null;
 			try
 			{
-				ctl = new AlsaCtl("hw:" + anCards[i], 0);
+				ctl = new AlsaCtl(strPcmName,
+						  0 /* TODO: is this open mode or direction? */);
 			}
 			catch (Exception e)
 			{
@@ -111,15 +109,18 @@ public class AlsaMixerProvider
 				}
 			}
 
-			AlsaMixer	mixer = new AlsaMixer("hw:" + anCards[i]);
+			AlsaMixer	mixer = new AlsaMixer(strPcmName);
 			super.addMixer(mixer);
 		}
-		if (TDebug.TraceMixerProvider)
-		{
-			TDebug.out("AlsaMixerProvider.<init>(): end");
-		}
+	// uncomment this for hardcore debugging
+	} catch (Throwable t) { t.printStackTrace(); }
+
+	if (TDebug.TraceMixerProvider)
+	{
+		TDebug.out("AlsaMixerProvider.<init>(): end");
 	}
-}
+	}
+	}
 
 
 
