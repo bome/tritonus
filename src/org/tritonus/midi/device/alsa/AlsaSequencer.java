@@ -47,6 +47,8 @@ import	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
 import	org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.midi.MidiUtils;
+import	org.tritonus.share.midi.TMidiDevice.TReceiver;
+import	org.tritonus.share.midi.TMidiDevice.TTransmitter;
 import	org.tritonus.share.midi.TSequencer;
 
 

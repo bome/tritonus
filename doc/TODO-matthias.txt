@@ -47,6 +47,8 @@ misc
 3 - change provider search order to be exactely compatible with Sun
 1 - implement available() for lines
 1 - fix start()/stop()/active behaviour for lines
+2 - rework sample rate converter
+
 
 
 TEST
