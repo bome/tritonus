@@ -39,7 +39,6 @@ public class AlsaMixer
 	  (Better solution: inner classes)
 	*/
 	/*private*/ long	m_lNativeHandle;
-	private List	m_controlsList;
 
 
 
@@ -86,40 +85,6 @@ public class AlsaMixer
 	private native int register();
 	private native int load();
 	public native int close();
-
-
-	public native AlsaMixerElement findElement(String strName, int nIndex);
-
-	public List getControls()
-	{
-		if (m_controlsList == null)
-		{
-			m_controlsList = createControls();
-		}
-		return m_controlsList;
-	}
-
-
-
-	private List createControls()
-	{
-		List	controlsList = new ArrayList();
-		// TODO: loop making arrays bigger and bigger
-		int		nArraySize = 32;
-		int[]		anIndices = new int[nArraySize];
-		String[]	astrNames = new String[nArraySize];
-		int	nControlsCount = readControlList(anIndices, astrNames);
-		System.out.println("num of controls: " + nControlsCount);
-		for (int i = 0; i < nControlsCount; i++)
-		{
-/*
-			AlsaMixerControl	control = new AlsaMixerControl(this, anIndices[i], astrNames[i]);
-			control.read();
-			controlsList.add(control);
-*/
-		}
-		return controlsList;
-	}
 
 
 
