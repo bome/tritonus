@@ -219,6 +219,6 @@ AC_OUTPUT(Makefile
 	src/lib/cooked_ioctl/Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
-	src/lib/gsvorbis/Makefile
+	src/lib/vorbis/Makefile
 	doc/Makefile
 	test/Makefile)

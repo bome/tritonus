@@ -20,8 +20,8 @@
       <include name="javax/sound/" />
       <include name="org/tritonus/" />
       <exclude name="org/tritonus/sampled/convert/javalayer/" />
-      <exclude name="org/tritonus/sampled/convert/vorbis/" />
-      <exclude name="org/tritonus/sampled/file/vorbis/" />
+      <exclude name="org/tritonus/sampled/convert/jorbis/" />
+      <exclude name="org/tritonus/sampled/file/jorbis/" />
       <exclude name="org/tritonus/midi/device/midishare/" />
       <!--exclude name="org/tritonus/sampled/cdda/" /-->
       <exclude name="org/tritonus/debug/" />
@@ -49,8 +49,8 @@
 	  if="jorbis-present">
     <javac srcdir="${src}"
 	   destdir="${build}" >
-      <include name="org/tritonus/sampled/convert/vorbis/" />
-      <include name="org/tritonus/sampled/file/vorbis/" />
+      <include name="org/tritonus/sampled/convert/jorbis/" />
+      <include name="org/tritonus/sampled/file/jorbis/" />
     </javac>
   </target>
 
