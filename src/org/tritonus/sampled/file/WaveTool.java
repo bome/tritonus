@@ -75,15 +75,17 @@ public class WaveTool {
 	public static short getFormatCode(AudioFormat format) {
 		AudioFormat.Encoding encoding = format.getEncoding();
 		int nSampleSize = format.getSampleSizeInBits();
-		boolean smallEndian = !format.isBigEndian();
+		boolean littleEndian = !format.isBigEndian();
 		boolean frameSizeOK=format.getFrameSize()==AudioSystem.NOT_SPECIFIED
 		                    || format.getChannels()!=AudioSystem.NOT_SPECIFIED
 		                    || format.getFrameSize()==nSampleSize/8*format.getChannels();
 
-		if (((encoding.equals(AudioFormat.Encoding.PCM_SIGNED) 
-		      && smallEndian && nSampleSize>8)
-		     || (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED) && nSampleSize==8))
-		    && frameSizeOK) {
+		if (nSampleSize==8 && frameSizeOK
+		    && (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)
+		        || encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED))) {
+		     	return WAVE_FORMAT_PCM;
+		} else if (nSampleSize>8 && frameSizeOK && littleEndian
+		           && encoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
 			return WAVE_FORMAT_PCM;
 		} else if (encoding.equals(AudioFormat.Encoding.ULAW)
 		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
@@ -100,9 +102,8 @@ public class WaveTool {
 		}
 		else if (encoding.equals(GSM0610)) {
 			return WAVE_FORMAT_GSM610;
-		} else {
-			return WAVE_FORMAT_UNSPECIFIED;
 		}
+		return WAVE_FORMAT_UNSPECIFIED;
 	}
 
 }

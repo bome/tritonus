@@ -81,7 +81,7 @@ public class WaveAudioFileWriter
 	// overwritten for quicker and more accurate check
 	protected boolean isAudioFormatSupportedImpl(AudioFormat format,
 	        AudioFileFormat.Type fileType) {
-		return WaveTool.getFormatCode(format)!=WaveTool.WAVE_FORMAT_UNSPECIFIED;
+		return WaveTool.getFormatCode(format) != WaveTool.WAVE_FORMAT_UNSPECIFIED;
 	}
 
 

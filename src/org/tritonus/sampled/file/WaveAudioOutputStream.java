@@ -56,7 +56,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		      dataOutputStream,
 		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
 		// wave cannot store more than 4GB
-		if (lLength != AudioSystem.NOT_SPECIFIED 
+		if (lLength != AudioSystem.NOT_SPECIFIED
 		    && (lLength+WaveTool.DATA_OFFSET)>0xFFFFFFFFl) {
 			if (TDebug.TraceAudioOutputStream) {
 				TDebug.out("WaveAudioOutputStream: Length exceeds 4GB: "
@@ -66,8 +66,8 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 			}
 			throw new IllegalArgumentException("Wave files cannot be larger than 4GB.");
 		}
-		formatCode=WaveTool.getFormatCode(getFormat());
-		if (formatCode==WaveTool.WAVE_FORMAT_UNSPECIFIED) {
+		formatCode = WaveTool.getFormatCode(getFormat());
+		if (formatCode == WaveTool.WAVE_FORMAT_UNSPECIFIED) {
 			throw new IllegalArgumentException("Unknown encoding/format for this wave file.");
 		}
 
@@ -93,7 +93,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 		// if patching the header, and the length has not been known at first
 		// writing of the header, just truncate the size fields, don't throw an exception
-		if (lLength != AudioSystem.NOT_SPECIFIED 
+		if (lLength != AudioSystem.NOT_SPECIFIED
 		    && lLength+dataOffset>0xFFFFFFFFl) {
 			lLength=0xFFFFFFFFl-dataOffset;
 		}
