@@ -129,6 +129,15 @@
   </target>
 
 
+  <target name="test-encodings" depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.EncodingsTestCase" />
+    </junit>
+  </target>
+
+
   <target name="clean" depends="init">
     <delete dir="${build.dir}"/>
   </target>
