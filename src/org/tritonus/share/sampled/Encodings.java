@@ -28,7 +28,7 @@ package	org.tritonus.share.sampled;
 import	java.util.Iterator;
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
-import	org.tritonus.util.StringHashedSet;
+import	org.tritonus.share.StringHashedSet;
 import	org.tritonus.share.TDebug;
 
 /**

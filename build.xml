@@ -47,24 +47,41 @@
 		<jar jarfile="${dist}/tritonus_core.jar"
 			basedir="${build}"
 			includes="javax/sound/,org/tritonus/core/" />
-		<copydir src="${build}" dest="${dist}/tritonus_core"
-			includes="javax/sound/**" />
-		<copydir src="${src}/packaging/tritonus_core" dest="${dist}/tritonus_core"
-			includes="**" />
 		<jar jarfile="${dist}/tritonus_share.jar"
 			basedir="${build}"
-			includes="javax/sound/**,org/tritonus/**"/>
-		<copydir src="${build}" dest="${dist}/tritonus_core"
-			includes="javax/sound/**" />
+			includes="org/tritonus/share/"/>
+		<mkdir dir="${dist}/tritonus_remaining" />
+		<copydir src="${build}" dest="${dist}/tritonus_remaining"
+			includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/" />
 		<copydir
 			src="${src}/packaging/tritonus_core"
-			dest="${dist}/tritonus_core"
+			dest="${dist}/tritonus_remaining"
 			includes="**" />
-		<mkdir dir="${dist}/tritonus_mixer_esd" />
 		<jar
-			jarfile="${dist}/tritonus_mixer_esd.jar"
-			basedir="${build}"
-			includes="org/tritonus/lowlevel/esd/**,org/tritonus/sampled/mixer/esd/**" />
+			jarfile="${dist}/tritonus_remaining.jar"
+			basedir="${dist}/tritonus_remaining" />
+	</target>
+
+	<target name="install" depends="dist">
+		<copydir
+			src="${dist}"
+			dest="${java_ext_path}"
+			includes="*.jar" />
+	</target>
+
+	<target name="install-link" depends="dist, uninstall">
+		<exec
+			dir="${java_ext_path}"
+			command="ln -s ${dist}/*.jar ${java_ext_path}"
+			output="/dev/null" />
+	</target>
+
+	<target name="uninstall" depends="init">
+		<echo message="ext path: ${java_ext_path}" />
+		<delete
+			dir="${java_ext_path}"
+			includes="./javalayer.jar" />
+		<delete file="${java_ext_path}/javalayer.jar" />
 	</target>
 
 	<target name="clean" depends="init">

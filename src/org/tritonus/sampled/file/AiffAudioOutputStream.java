@@ -31,6 +31,9 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioSystem;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.sampled.file.TAudioOutputStream;
+import	org.tritonus.share.sampled.file.TDataOutputStream;
+
 
 /**
  * AudioOutputStream for AIFF and AIFF-C files.

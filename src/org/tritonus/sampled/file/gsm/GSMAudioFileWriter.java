@@ -39,12 +39,12 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.sampled.file.AudioOutputStream;
-import	org.tritonus.sampled.file.TAudioFileWriter;
-import	org.tritonus.sampled.file.TDataOutputStream;
-import	org.tritonus.sampled.file.HeaderLessAudioOutputStream;
-import	org.tritonus.sampled.file.SeekableTDOS;
-import	org.tritonus.sampled.file.NonSeekableTDOS;
+import	org.tritonus.share.sampled.file.AudioOutputStream;
+import	org.tritonus.share.sampled.file.TAudioFileWriter;
+import	org.tritonus.share.sampled.file.TDataOutputStream;
+import	org.tritonus.share.sampled.file.HeaderLessAudioOutputStream;
+import	org.tritonus.share.sampled.file.SeekableTDOS;
+import	org.tritonus.share.sampled.file.NonSeekableTDOS;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 

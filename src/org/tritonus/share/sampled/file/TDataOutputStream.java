@@ -1,9 +1,9 @@
 /*
- *	HeaderLessAudioOutputStream.java
+ *	TDataOutputStream.java
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999 by Florian Bomers <florian@bome.com>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,28 +23,53 @@
  */
 
 
-package	org.tritonus.sampled.file;
+package	org.tritonus.share.sampled.file;
 
+
+import	java.io.DataOutput;
 import	java.io.IOException;
-import	javax.sound.sampled.AudioFormat;
+import	java.io.InputStream;
 
-/**	
- * AudioOutputStream for files without a header; the input is written as it is
+
+/**
+ * Interface for the file writing classes.
+ * <p>Like that it is possible to write to a file without knowing
+ * the length before.
  *
  * @author Florian Bomers
  */
+public interface TDataOutputStream
+	extends DataOutput
+{
+	public boolean supportsSeek();
 
-// todo: implement directly AudioOutputStream without using TAudioOutputStream
 
-public class HeaderLessAudioOutputStream extends TAudioOutputStream {
 
-	public HeaderLessAudioOutputStream(AudioFormat audioFormat,
-				   long lLength,
-				   TDataOutputStream dataOutputStream) {
-		super(audioFormat, lLength, dataOutputStream, false);
-	}
+	public void seek(long position)
+		throws IOException;
 
-	protected void writeHeader() throws IOException {}
+
+
+	public long getFilePointer()
+		throws IOException;
+
+
+
+	public long length()
+		throws IOException;
+
+
+	public void writeLittleEndian32(int value)
+		throws IOException;
+
+
+	public void writeLittleEndian16(short value)
+		throws IOException;
+	
+	public void close()
+		throws	IOException;
 }
 
-/*** HeaderLessAudioOutputStream.java ***/
+
+
+/*** TDataOutputStream.java ***/

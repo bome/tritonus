@@ -39,6 +39,12 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.file.AudioOutputStream;
+import	org.tritonus.share.sampled.file.TAudioFileWriter;
+import	org.tritonus.share.sampled.file.TDataOutputStream;
+import	org.tritonus.share.sampled.file.NonSeekableTDOS;
+import	org.tritonus.share.sampled.file.SeekableTDOS;
+
 
 /**
  * Class for writing AIFF and AIFF-C files.

@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.file;
+package	org.tritonus.share.sampled.file;
 
 
 import	java.io.File;

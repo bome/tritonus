@@ -32,8 +32,8 @@ import	org.tritonus.share.TDebug;
 
 public class GlobalInfo
 {
-	private static final String	VENDOR = "Tritonus is free software. See http://tritonus.sourceforge.net/";
-	private static final String	VERSION = "0.3.0";
+	private static final String	VENDOR = "Tritonus is free software. See http://www.tritonus.org/";
+	private static final String	VERSION = "0.3.1";
 
 
 

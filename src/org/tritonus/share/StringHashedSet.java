@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.util;
+package	org.tritonus.share;
 
 import	java.util.ArrayList;
 import	java.util.Collection;

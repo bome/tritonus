@@ -39,6 +39,12 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.file.AudioOutputStream;
+import	org.tritonus.share.sampled.file.TAudioFileWriter;
+import	org.tritonus.share.sampled.file.TDataOutputStream;
+import	org.tritonus.share.sampled.file.NonSeekableTDOS;
+import	org.tritonus.share.sampled.file.SeekableTDOS;
+
 
 /**
  * Class for writing Microsoft(tm) WAVE files
@@ -100,11 +106,11 @@ public class WaveAudioFileWriter
 	}
 
 	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    OutputStream outputStream)
-	throws	IOException {
+		AudioFormat audioFormat,
+		long lLengthInBytes,
+		AudioFileFormat.Type fileType,
+		OutputStream outputStream)
+		throws	IOException {
 		// it should be thrown an exception if it is tried to write
 		// to a stream but lLengthInFrames is AudioSystem.NOT_SPECIFIED
 		TDataOutputStream	dataOutputStream = new NonSeekableTDOS(outputStream);
