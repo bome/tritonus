@@ -125,6 +125,10 @@ public class MidiSystem
 		throws	MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSynthesizerInfo();
+		if (TDebug.TraceMidiSystem)
+		{
+			TDebug.out("MidiSystem.getSynthesizer(): using default synthesizer info: " + info);
+		}
 		return (Synthesizer) getMidiDevice(info);
 	}
 
