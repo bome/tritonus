@@ -2,6 +2,7 @@
  *	MidiMessageTest.java
  */
 
+import	javax.sound.midi.InvalidMidiDataException;
 import	javax.sound.midi.MidiMessage;
 import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.MetaMessage;
@@ -95,15 +96,35 @@ public class MidiMessageTest
 		ShortMessage	sm = new ShortMessage();
 		t1 = sm.getMessage();
 		l1 = sm.getLength();
-		out("ShortMessage() data: " + t1);
-		for (int i = 0; i < t1.length; i++)
-		{
-			out("" + t1[i]);
-		}
+		out("ShortMessage() data: ");
+		out(t1);
 		out("ShortMessage().getLength(): " + l1);
 		out("ShortMessage().getStatus(): " + sm.getStatus());
 		out("ShortMessage().getData1(): " + sm.getData1());
 		out("ShortMessage().getData2(): " + sm.getData2());
+		out("----------------------------------------");
+		MetaMessage	mm = new MetaMessage();
+		String	strTitle = "no name";
+		while (strTitle.length() < 200)
+		{
+			strTitle += strTitle;
+		}
+		// setting sequence/track name
+		try
+		{
+			mm.setMessage(3, strTitle.getBytes(), strTitle.length() - 1);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			e.printStackTrace();
+		}
+		out("MetaMessage() getMessage(): ");
+		out(mm.getMessage());
+		out("MetaMessage() getData(): ");
+		out(mm.getData());
+		out("MetaMessage().getLength(): " + mm.getLength());
+		out("MetaMessage().getStatus(): " + mm.getStatus());
+		out("MetaMessage().getType(): " + mm.getType());
 	}
 
 
@@ -153,6 +174,17 @@ public class MidiMessageTest
 	private static void out(String strMessage)
 	{
 		System.out.println(strMessage);
+	}
+
+
+
+	private static void out(byte[] abArray)
+	{
+		out("data length: " + abArray.length);
+		for (int i = 0; i < abArray.length; i++)
+		{
+			out("" + abArray[i]);
+		}
 	}
 }
 
