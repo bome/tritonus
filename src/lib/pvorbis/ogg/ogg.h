@@ -41,42 +41,6 @@ typedef struct {
   long body_len;
 } ogg_page;
 
-/* ogg_stream_state contains the current encode/decode state of a logical
-   Ogg bitstream **********************************************************/
-
-typedef struct {
-  unsigned char   *body_data;    /* bytes from packet bodies */
-  long    body_storage;          /* storage elements allocated */
-  long    body_fill;             /* elements stored; fill mark */
-  long    body_returned;         /* elements of fill returned */
-
-
-  int     *lacing_vals;      /* The values that will go to the segment table */
-  ogg_int64_t *granule_vals; /* granulepos values for headers. Not compact
-				this way, but it is simple coupled to the
-				lacing fifo */
-  long    lacing_storage;
-  long    lacing_fill;
-  long    lacing_packet;
-  long    lacing_returned;
-
-  unsigned char    header[282];      /* working space for header encode */
-  int              header_fill;
-
-  int     e_o_s;          /* set when we have buffered the last packet in the
-                             logical bitstream */
-  int     b_o_s;          /* set after we've written the initial page
-                             of a logical bitstream */
-  long    serialno;
-  long    pageno;
-  ogg_int64_t  packetno;      /* sequence number for decode; the framing
-                             knows where there's a hole in the data,
-                             but we need coupling so that the codec
-                             (which is in a seperate abstraction
-                             layer) also knows about the gap */
-  ogg_int64_t   granulepos;
-
-} ogg_stream_state;
 
 /* ogg_packet is used to encapsulate the data and metadata belonging
    to a single raw Ogg/Vorbis packet *************************************/
@@ -135,20 +99,6 @@ extern long  oggpackB_bytes(oggpack_buffer *b);
 extern long  oggpackB_bits(oggpack_buffer *b);
 extern unsigned char *oggpackB_get_buffer(oggpack_buffer *b);
 
-/* Ogg BITSTREAM PRIMITIVES: decoding **************************/
-
-extern int      ogg_stream_pagein(ogg_stream_state *os, ogg_page *og);
-extern int      ogg_stream_packetout(ogg_stream_state *os,ogg_packet *op);
-extern int      ogg_stream_packetpeek(ogg_stream_state *os,ogg_packet *op);
-
-/* Ogg BITSTREAM PRIMITIVES: general ***************************/
-
-extern int      ogg_stream_init(ogg_stream_state *os,int serialno);
-extern int      ogg_stream_clear(ogg_stream_state *os);
-extern int      ogg_stream_reset(ogg_stream_state *os);
-extern int      ogg_stream_reset_serialno(ogg_stream_state *os,int serialno);
-extern int      ogg_stream_destroy(ogg_stream_state *os);
-extern int      ogg_stream_eos(ogg_stream_state *os);
 
 extern void     ogg_page_checksum_set(ogg_page *og);
 

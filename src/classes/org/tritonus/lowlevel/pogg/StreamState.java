@@ -35,24 +35,8 @@ import org.tritonus.share.TDebug;
  */
 public class StreamState
 {
-	static
-	{
-		Ogg.loadNativeLibrary();
-		if (TDebug.TraceOggNative)
-		{
-			setTrace(true);
-		}
-	}
-
 	private static final int	INITIAL_BODY_DATA_SIZE = 16 * 1024;
 	private static final int	INITIAL_LACING_VALUES_SIZE = 1024;
-
-	/**
-	 *	Holds the pointer to ogg_stream_state
-	 *	for the native code.
-	 *	This must be long to be 64bit-clean.
-	 */
-	private long	m_lNativeHandle;
 
 	/** The serial number of the stream.
 		This is set by init().
@@ -71,7 +55,10 @@ public class StreamState
 	 */
 	private int		m_nBodyReturned;
 
-	/** Lacing values.
+	/** Lacing values.  Bit 0 to 7 contain the lacing value (mask
+		0xFF).  Bit 8 is set if the segment belongs to the first
+		packet of the stream (mask 0x100).  Bit 9 is set ig the
+		segment belongs to the last packet of the stream (mask 0x200).
 	 */
 	private int[]	m_anLacingValues;
 
@@ -79,8 +66,18 @@ public class StreamState
 	 */
 	private long[]	m_alGranuleValues;
 
+	/** Number of elements used in m_anLacingValues and m_alGranuleValues.
+		The elements with the index m_nLacingFill is the first free element.
+	*/
 	private int		m_nLacingFill;
+
+	/** Pointer to the index in m_anLacingValues where the lacing values
+		of the last decoded packet start (??)
+	 */
 	private int		m_nLacingPacket;
+
+	/**
+	 */
 	private int		m_nLacingReturned;
 
 	private byte[]	m_abHeader;
@@ -98,27 +95,14 @@ public class StreamState
 	public StreamState()
 	{
 		if (TDebug.TraceOggNative) { TDebug.out("StreamState.<init>(): begin"); }
-		int	nReturn = malloc();
-		if (nReturn < 0)
-		{
-			throw new RuntimeException("malloc of ogg_stream_state failed");
-		}
 		if (TDebug.TraceOggNative) { TDebug.out("StreamState.<init>(): end"); }
 	}
 
 
 
-	public void finalize()
+	public void free()
 	{
-		// TODO: call free()
-		// call super.finalize() first or last?
-		// and introduce a flag if free() has already been called?
 	}
-
-
-
-	private native int malloc();
-	public native void free();
 
 
 
@@ -146,22 +130,16 @@ public class StreamState
 		m_lGranulePos = 0;
 
 		// TODO: necessary?
-		for(int i = 0; i < m_abBodyData.length; i++)
+		for (int i = 0; i < m_abBodyData.length; i++)
 			m_abBodyData[i] = 0;
-		for(int i = 0; i < m_anLacingValues.length; i++)
+		for (int i = 0; i < m_anLacingValues.length; i++)
 			m_anLacingValues[i] = 0;
-		for(int i = 0; i < m_alGranuleValues.length; i++)
+		for (int i = 0; i < m_alGranuleValues.length; i++)
 			m_alGranuleValues[i] = 0;
 
 		// TODO: remove return value
-		// return 0;
-		return init_native(nSerialNo);
+		return 0;
 	}
-
-	/** Calls ogg_stream_init().
-	 */
-	private native int init_native(int nSerialNo);
-
 
 	/** Calls ogg_stream_clear().
 	 */
@@ -187,54 +165,38 @@ public class StreamState
 		m_lGranulePos = 0;
 
 		// TODO: remove return value
-		// return 0;
-		return clear_native();
+		return 0;
 	}
-
-	/** Calls ogg_stream_clear().
-	 */
-	private native int clear_native();
-
 
 	/** Calls ogg_stream_reset().
 	 */
 	public int reset()
 	{
-		return reset_native();
+		m_nBodyFill = 0;
+		m_nBodyReturned = 0;
+
+		m_nLacingFill = 0;
+		m_nLacingPacket = 0;
+		m_nLacingReturned = 0;
+
+		m_nHeaderFill = 0;
+
+		m_bBos = false;
+		m_bEos = false;
+		m_nPageNo = -1;
+		m_lPacketNo = 0;
+		m_lGranulePos = 0;
+
+		// TODO: remove return value
+		return 0;
 	}
-
-	/** Calls ogg_stream_reset().
-	 */
-	private native int reset_native();
-
-
-	/** Calls ogg_stream_destroy().
-	 */
-	// TODO: remove calls to this method
-	public int destroy()
-	{
-		clear();
-		return destroy_native();
-	}
-
-	/** Calls ogg_stream_destroy().
-	 */
-	private native int destroy_native();
-
 
 	/** Calls ogg_stream_eos().
 	 */
 	public boolean isEOSReached()
 	{
-		// return m_bEos;
-		return isEOSReached_native();
+		return m_bEos;
 	}
-
-	/** Calls ogg_stream_eos().
-	 */
-	private native boolean isEOSReached_native();
-
-
 
 	/** Calls ogg_stream_packetin().
 	 */
@@ -289,7 +251,7 @@ public class StreamState
 		/* for the sake of completeness */
 		m_lPacketNo++;
 
-		if(packet.isEos())
+		if (packet.isEos())
 			m_bEos = true;
 		return 0;
 	}
@@ -299,8 +261,8 @@ public class StreamState
 	/** Calls ogg_stream_pageout().
 	 */
 /* This constructs pages from buffered packet segments.  The pointers
-returned are to static buffers; do not free. The returned buffers are
-good only until the next call (using the same ogg_stream_state) */
+   returned are to static buffers; do not free. The returned buffers are
+   good only until the next call (using the same ogg_stream_state) */
 	public int pageOut(Page page)
 	{
 		if ((m_bEos && m_nLacingFill > 0) ||       /* 'were done, now flush' */
@@ -443,7 +405,7 @@ good only until the next call (using the same ogg_stream_state) */
 
 		/* set pointers in the ogg_page struct */
 		page.setData(m_abHeader, 0, vals + 27,
-				   m_abBodyData, m_nBodyReturned, bytes);
+					 m_abBodyData, m_nBodyReturned, bytes);
 		m_nHeaderFill = vals + 27;
 
 		/* advance the lacing data and set the body_returned pointer */
@@ -465,43 +427,242 @@ good only until the next call (using the same ogg_stream_state) */
 
 
 
-	/** Calls ogg_stream_pagein().
-	 */
+	/** add the incoming page to the stream state; we decompose the
+       page into packet segments here as well.
+
+	   @return 0 on success, -1 if the stream serial number stored in
+	   the page does not match the one stored in the stream state or
+	   if the protocol version stored in the page is greater than 0.
+	*/
 	public int pageIn(Page page)
 	{
-		return pageIn_native(page);
+		byte[] header = page.getHeader();
+		byte[] body = page.getBody();
+		int nBodyOffset = 0;
+		int bodysize = body.length;
+		int segptr = 0;
+
+		int version = page.getVersion();
+		boolean continued = page.isContinued();
+		boolean bos = page.isBos();
+		boolean eos = page.isEos();
+		long granulepos = page.getGranulePos();
+		int serialno = page.getSerialNo();
+		int pageno = page.getPageNo();
+		int segments = header[26] & 0xFF;
+
+		/* clean up 'returned data' */
+		int lr = m_nLacingReturned;
+		int br = m_nBodyReturned;
+
+		/* body data */
+		if (br > 0)
+		{
+			m_nBodyFill -= br;
+			if (m_nBodyFill > 0)
+			{
+				System.arraycopy(m_abBodyData, br, m_abBodyData, 0,
+								 m_nBodyFill);
+			}
+			m_nBodyReturned = 0;
+		}
+
+		if (lr > 0)
+		{
+			/* segment table */
+			if (m_nLacingFill - lr > 0)
+			{
+				System.arraycopy(m_anLacingValues, lr, m_anLacingValues, 0,
+								 m_nLacingFill - lr);
+				System.arraycopy(m_alGranuleValues, lr, m_alGranuleValues, 0,
+								 m_nLacingFill - lr);
+			}
+			m_nLacingFill -= lr;
+			m_nLacingPacket -= lr;
+			m_nLacingReturned = 0;
+		}
+
+		/* check the serial number */
+		if (serialno != m_nSerialNo)
+			return -1;
+		if (version > 0)
+			return -1;
+
+		assureLacingValuesCapacity(segments + 1);
+
+		/* are we in sequence? */
+		if (pageno != m_nPageNo)
+		{
+			int i;
+
+			/* unroll previous partial packet (if any) */
+			for (i = m_nLacingPacket; i < m_nLacingFill; i++)
+				m_nBodyFill -= (m_anLacingValues[i] & 0xFF);
+			m_nLacingFill = m_nLacingPacket;
+
+			/* make a note of dropped data in segment table */
+			if (m_nPageNo != -1)
+			{
+				m_anLacingValues[m_nLacingFill] = 0x400;
+				m_nLacingFill++;
+				m_nLacingPacket++;
+			}
+
+			/* are we a 'continued packet' page?  If so, we'll need to skip
+			   some segments */
+			if (continued)
+			{
+				bos = false;
+				for (; segptr < segments; segptr++)
+				{
+					int val = header[27 + segptr] & 0xFF;
+					nBodyOffset += val;
+					bodysize -= val;
+					if (val < 255)
+					{
+						segptr++;
+						break;
+					}
+				}
+			}
+		}
+  
+		if (bodysize > 0)
+		{
+			assureBodyDataCapacity(bodysize);
+			System.arraycopy(body, nBodyOffset, m_abBodyData, m_nBodyFill,
+							 bodysize);
+			m_nBodyFill += bodysize;
+		}
+
+		int saved = -1;
+		while (segptr < segments)
+		{
+			int val = header[27 + segptr] & 0xFF;
+			m_anLacingValues[m_nLacingFill] = val;
+			m_alGranuleValues[m_nLacingFill] = -1;
+
+			if (bos)
+			{
+				m_anLacingValues[m_nLacingFill] |= 0x100;
+				bos = false;
+			}
+
+			if (val < 255)
+				saved = m_nLacingFill;
+
+			m_nLacingFill++;
+			segptr++;
+
+			if (val < 255)
+				m_nLacingPacket = m_nLacingFill;
+		}
+  
+		/* set the granulepos on the last granuleval of the last full packet */
+		if (saved != -1)
+		{
+			m_alGranuleValues[saved] = granulepos;
+		}
+
+		if (eos)
+		{
+			m_bEos = true;
+			if (m_nLacingFill > 0)
+				m_anLacingValues[m_nLacingFill - 1] |= 0x200;
+		}
+
+		m_nPageNo = pageno + 1;
+
+		return 0;
 	}
-
-
-	/** Calls ogg_stream_pagein().
-	 */
-	private native int pageIn_native(Page page);
 
 
 	/** Calls ogg_stream_packetout().
 	 */
 	public int packetOut(Packet packet)
 	{
-		return packetOut_native(packet);
+		return packetOutInternal(packet, true);
 	}
-
-
-	/** Calls ogg_stream_packetout().
-	 */
-	private native int packetOut_native(Packet packet);
 
 
 	/** Calls ogg_stream_packetpeek().
 	 */
 	public int packetPeek(Packet packet)
 	{
-		return packetPeek_native(packet);
+		return packetOutInternal(packet, false);
 	}
 
 
-	/** Calls ogg_stream_packetpeek().
-	 */
-	private native int packetPeek_native(Packet packet);
+	/** Retrieves a packet from the internal storage for emission.
+		This method is called by packetOut and packetPeek.
+
+		@param packet the Packet object to store the retrieved packet
+		data in. May be null if bAdvance is false.
+
+		@param bAdvance should the internal pointers to the packet
+		data storage be advanced to the next packet after retrieving
+		this one? Called with a value of true for ordinary packet out
+		and with a value of false for packet peek.
+
+		@return
+	*/
+	private int packetOutInternal(Packet packet, boolean bAdvance)
+	{
+		/* The last part of decode. We have the stream broken into
+		   packet segments.  Now we need to group them into packets
+		   (or return the out of sync markers) */
+
+		int ptr = m_nLacingReturned;
+
+		if (m_nLacingPacket <= ptr)
+			return 0;
+
+		if ((m_anLacingValues[ptr] & 0x400) != 0)
+		{
+			/* we need to tell the codec there's a gap; it might need
+			   to handle previous packet dependencies. */
+			m_nLacingReturned++;
+			m_lPacketNo++;
+			return -1;
+		}
+
+		if (packet == null && ! bAdvance)
+			return 1; /* just using peek as an inexpensive way
+                               to ask if there's a whole packet
+                               waiting */
+
+		/* Gather the whole packet. We'll have no holes or a partial
+		 * packet */
+		int size = m_anLacingValues[ptr] & 0xFF;
+		int bytes = size;
+		/* last packet of the stream? */
+		boolean eos = (m_anLacingValues[ptr] & 0x200) != 0;
+		/* first packet of the stream? */
+		boolean bos = (m_anLacingValues[ptr] & 0x100) != 0;
+
+		while (size == 255)
+		{
+			int val = m_anLacingValues[++ptr];
+			size = val & 0xff;
+			if ((val & 0x200) != 0)
+				eos = true;
+			bytes += size;
+		}
+
+		if (packet != null)
+		{
+			packet.setData(m_abBodyData, m_nBodyReturned, bytes);
+			packet.setFlags(bos, eos, m_alGranuleValues[ptr], m_lPacketNo);
+		}
+
+		if (bAdvance)
+		{
+			m_nBodyReturned += bytes;
+			m_nLacingReturned = ptr + 1;
+			m_lPacketNo++;
+		}
+		return 1;
+	}
 
 
 	private void assureBodyDataCapacity(int needed)
@@ -533,10 +694,6 @@ good only until the next call (using the same ogg_stream_state) */
 			m_alGranuleValues = alNewGranuleValues;
 		}
 	}
-
-
-
-	private static native void setTrace(boolean bTrace);
 }
 
 

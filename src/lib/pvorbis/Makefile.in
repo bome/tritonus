@@ -60,7 +60,6 @@ JNIOBJ=\
 	org_tritonus_lowlevel_pogg_Buffer.o \
 	org_tritonus_lowlevel_pogg_Packet.o \
 	org_tritonus_lowlevel_pogg_Page.o \
-	org_tritonus_lowlevel_pogg_StreamState.o \
 	org_tritonus_lowlevel_pvorbis_Block.o \
 	org_tritonus_lowlevel_pvorbis_DspState.o \
 	org_tritonus_lowlevel_pvorbis_Info.o
@@ -77,7 +76,6 @@ JNICLASSFILES=\
 	Buffer.class \
 	Packet.class \
 	Page.class \
-	StreamState.class \
 	Block.class \
 	DspState.class \
 	Info.class
@@ -86,7 +84,6 @@ JNICLASSES=\
 	org.tritonus.lowlevel.pogg.Buffer \
 	org.tritonus.lowlevel.pogg.Packet \
 	org.tritonus.lowlevel.pogg.Page \
-	org.tritonus.lowlevel.pogg.StreamState \
 	org.tritonus.lowlevel.pvorbis.Block \
 	org.tritonus.lowlevel.pvorbis.DspState \
 	org.tritonus.lowlevel.pvorbis.Info

@@ -111,10 +111,16 @@ public class Packet
 
 	/**	Sets the data in the packet.
 	 */
-	public native void setData(byte[] abData, int nLength);
+	public native void setData(byte[] abData, int nOffset, int nLength);
 
 
-	public native void setFlags(boolean bBos, boolean bEos, long lGranulePos);
+	public native void setFlags(boolean bBos, boolean bEos, long lGranulePos,
+								long lPacketNo);
+
+	public void setFlags(boolean bBos, boolean bEos, long lGranulePos)
+	{
+		setFlags(bBos, bEos, lGranulePos, 0);
+	}
 
 
 	private static native void setTrace(boolean bTrace);

@@ -203,7 +203,7 @@ Java_org_tritonus_lowlevel_pogg_Packet_getPacketNo
  */
 JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_pogg_Packet_setData
-(JNIEnv* env, jobject obj, jbyteArray abData, jint nLength)
+(JNIEnv* env, jobject obj, jbyteArray abData, jint nOffset, jint nLength)
 {
 	ogg_packet*	handle;
 	jbyte* data;
@@ -214,7 +214,7 @@ Java_org_tritonus_lowlevel_pogg_Packet_setData
 	/* ATTENTION!! The memory allocated here is not freed! So we have
 	 * a memory leak here. */
 	handle->packet = malloc(nLength);
-	(void) memcpy(handle->packet, data, nLength);
+	(void) memcpy(handle->packet, data + nOffset, nLength);
 	(*env)->ReleaseByteArrayElements(env, abData, data, JNI_ABORT);
 	handle->bytes = nLength;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_setData(): end\n"); }
@@ -228,7 +228,8 @@ Java_org_tritonus_lowlevel_pogg_Packet_setData
  */
 JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_pogg_Packet_setFlags
-(JNIEnv* env, jobject obj, jboolean bBos, jboolean bEos, jlong lGranulePos)
+(JNIEnv* env, jobject obj, jboolean bBos, jboolean bEos, jlong lGranulePos,
+ jlong lPacketNo)
 {
 	ogg_packet*	handle;
 
@@ -237,6 +238,7 @@ Java_org_tritonus_lowlevel_pogg_Packet_setFlags
 	handle->b_o_s = bBos;
 	handle->e_o_s = bEos;
 	handle->granulepos = lGranulePos;
+	handle->packetno = lPacketNo;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_setFlags(): end\n"); }
 }
 

@@ -120,12 +120,12 @@ public class DspState
 		buffer.writeInit();
 
 		getInfo().pack(buffer);
-		infoPacket.setData(buffer.getBuffer(), buffer.bytes());
+		infoPacket.setData(buffer.getBuffer(), 0, buffer.bytes());
 		infoPacket.setFlags(true, false, 0);
 
 		buffer.reset();
 		comment.pack(buffer);
-		commentPacket.setData(buffer.getBuffer(), buffer.bytes());
+		commentPacket.setData(buffer.getBuffer(), 0, buffer.bytes());
 		commentPacket.setFlags(false, false, 0);
 
 		int nReturn = headerOut_native(codePacket);
