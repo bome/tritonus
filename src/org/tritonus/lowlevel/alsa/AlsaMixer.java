@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -19,12 +18,9 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
-
 package	org.tritonus.lowlevel.alsa;
-
 
 import	java.util.ArrayList;
 import	java.util.List;
@@ -32,6 +28,9 @@ import	java.util.List;
 import	org.tritonus.share.TDebug;
 
 
+
+/**	Object carrying a snd_mixer_t.
+ */
 public class AlsaMixer
 {
 	/*
@@ -78,15 +77,36 @@ public class AlsaMixer
 	}
 
 
+	/**	Calls snd_mixer_open().
+	 */
 	private native int open(int nMode);
+
+
+	/**	Calls snd_mixer_attach().
+	 */
 	private native int attach(String strCardName);
 
-	// incomplete
+	/**	Calls snd_mixer_selem_register(.., NULL, NULL).
+		This is a hack, taken over from alsamixer.
+	*/
 	private native int register();
+
+	/**	Calls snd_mixer_load().
+	 */
 	private native int load();
+
+
+	/**	Calls snd_mixer_free().
+	 */
+	private native int free();
+
+
+	/**	Calls snd_mixer_close().
+	 */
 	public native int close();
 
 
+	// getCount() ??
 
 	/**
 	   The caller has to allocate the indices and names arrays big
@@ -96,6 +116,8 @@ public class AlsaMixer
 	   is returned. In this case, it's the task of the caller to allocate
 	   bigger arrays and try again.
 	   Both arrays must be of the same size.
+
+	   Calls snd_mixer_first_elem() and snd_mixer_elem_next().
 	 */
 	public native int readControlList(int[] anIndices, String[] astrNames);
 
