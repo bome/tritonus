@@ -68,10 +68,6 @@ import com.jcraft.jorbis.Block;
 public class JorbisFormatConversionProvider
 	extends		TEncodingFormatConversionProvider
 {
-	/*	Debugging (profiling) hack.
-	 */
-	private static final boolean	MEASURE_DECODING_TIME = false;
-
 	// only used as abbreviation
 	private static final AudioFormat.Encoding	VORBIS = Encodings.getEncoding("VORBIS");
 	private static final AudioFormat.Encoding	PCM_SIGNED = Encodings.getEncoding("PCM_SIGNED");
@@ -102,17 +98,6 @@ public class JorbisFormatConversionProvider
 		// TODO: other channel configurations
 	};
 
-
-
-	/**	This is the size of the circular buffer.
-	 *	This value is in bytes. It is
-	 *	chosen so that one (decoded) GSM frame fits into the buffer.
-	 *	GSM frames contain 160 samples.
-	 */
-	// TODO: should become obsolete
-	private static final int	BUFFER_SIZE = 320;
-
-	private static final int	ENCODED_GSM_FRAME_SIZE = 33;
 
 
 
@@ -172,17 +157,25 @@ public class JorbisFormatConversionProvider
 
 
 	// TODO: recheck !!
-	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat) {
+	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat)
+	{
+		AudioFormat	newTargetFormat = null;
 		// return first of the matching formats
 		// pre-condition: the predefined target formats (FORMATS2) must be well-defined !
 		Iterator iterator=getCollectionTargetFormats().iterator();
-		while (iterator.hasNext()) {
-			AudioFormat format=(AudioFormat) iterator.next();
-			if (AudioFormats.matches(targetFormat, format)) {
-				return format;
+		while (iterator.hasNext())
+		{
+			AudioFormat format = (AudioFormat) iterator.next();
+			if (AudioFormats.matches(targetFormat, format))
+			{
+				newTargetFormat = format;
 			}
 		}
-		throw new IllegalArgumentException("conversion not supported");
+		if (newTargetFormat == null)
+		{
+			throw new IllegalArgumentException("conversion not supported");
+		}
+		return newTargetFormat;
 	}
 		
 
@@ -196,7 +189,7 @@ public class JorbisFormatConversionProvider
 	/* Class should be private, but is public due to a bug (?) in the
 	   aspectj compiler. */
 	/*private*/public static class DecodedJorbisAudioInputStream
-		extends TAsynchronousFilteredAudioInputStream
+	extends TAsynchronousFilteredAudioInputStream
 	{
 		public static boolean		DEBUG = false;
 
@@ -620,112 +613,6 @@ public class JorbisFormatConversionProvider
 		}
 
 	}
-
-
-
-
-// 	public static class DecodedJorbisAudioInputStream
-// 		extends TAsynchronousFilteredAudioInputStream
-// 	{
-// 		/*
-// 		  Seems like DataInputStream (opposite to InputStream) is only needed for
-// 		  readFully(). readFully-behavious should perhaps be implemented in
-// 		  AudioInputStream anyway (so this construct may become obsolete).
-// 		 */
-// 		private DataInputStream		m_encodedStream;
-// 		// TODO: obsolete
-// 		// private GSMDecoder		m_decoder;
-
-// 		/*
-// 		 *	Holds one encoded GSM frame.
-// 		 */
-// 		// TODO: obsolete
-// 		private byte[]			m_abFrameBuffer;
-// 		private byte[]			m_abBuffer;
-
-
-// 		public DecodedJorbisAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
-// 		{
-// 			super(outputFormat,
-// 			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() * 160);
-// 			// if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): begin"); }
-// 			m_encodedStream = new DataInputStream(inputStream);
-// // 			m_decoder = new GSMDecoder();
-// // 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
-// // 			m_abBuffer = new byte[BUFFER_SIZE];
-// 			// if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): end"); }
-// 		}
-
-
-
-// 		public void execute()
-// 		{
-// 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.execute(): begin"); }
-// 			try
-// 			{
-// 				m_encodedStream.readFully(m_abFrameBuffer);
-// 			}
-// 			catch (IOException e)
-// 			{
-// 				/*
-// 				  Not only errors, but also EOF is caught here.
-// 				 */
-// 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-// 				m_circularBuffer.close();
-// 				return;
-// 			}
-
-// // 			try
-// // 			{
-// // 				long	lTimestamp1;
-// // 				long	lTimestamp2;
-// // 				if (MEASURE_DECODING_TIME)
-// // 				{
-// // 					lTimestamp1 = System.currentTimeMillis();
-// // 				}
-// // 				m_decoder.decode(m_abFrameBuffer, 0,
-// // 						 m_abBuffer, 0, isBigEndian());
-// // 				// testing test hack
-// // 				// m_abBuffer[0] = 0;
-// // 				if (MEASURE_DECODING_TIME)
-// // 				{
-// // 					lTimestamp2 = System.currentTimeMillis();
-// // 					System.out.println("GSM decode (ms): " + (lTimestamp2 - lTimestamp1));
-// // 				}
-// // 			}
-// // 			catch (InvalidGSMFrameException e)
-// // 			{
-// // 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-// // 				m_circularBuffer.close();
-// // 				return;
-// // 			}
-
-// 			m_circularBuffer.write(m_abBuffer);
-// 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.execute(): decoded vorbis frame written"); }
-// 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.execute(): end"); }
-// 		}
-
-
-
-// 		/** Returns if the stream is big-endian.
-// 		    This is only a convenience method.
-// 		    It fetches the value from the stream's
-// 		    AudioFormat.
-// 		*/
-// 		private boolean isBigEndian()
-// 		{
-// 			return getFormat().isBigEndian();
-// 		}
-
-
-
-// 		public void close()
-// 			throws	IOException
-// 		{
-// 			super.close();
-// 			m_encodedStream.close();
-// 		}
-// 	}
 }
 
 
