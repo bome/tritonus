@@ -124,10 +124,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq0_createPort
 static void
 fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo, jintArray anValues, jobjectArray astrValues)
 {
-	jstring		strName;
-	jstring		strEventFilter;
 	jint*		pnValues;
 
+	if (DEBUG) { (void) fprintf(debug_file, "fillClientInfoArrays(): begin\n"); }
 	checkArrayLength(env, anValues, 6);
 	pnValues = env->GetIntArrayElements(anValues, NULL);
 	if (pnValues == NULL)
@@ -143,11 +142,13 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 	env->ReleaseIntArrayElements(anValues, pnValues, 0);
 
 	checkArrayLength(env, astrValues, 2);
-	strName = env->NewStringUTF(snd_seq_client_info_get_name(clientInfo));
-	env->SetObjectArrayElement(astrValues, 0, strName);
+	setStringArrayElement(env, astrValues, 0, snd_seq_client_info_get_name(clientInfo));
 	// TODO: does not represent a string (unsigned char)?
+/*
 	strEventFilter = env->NewStringUTF((const char*) snd_seq_client_info_get_event_filter(clientInfo));
 	env->SetObjectArrayElement(astrValues, 1, strEventFilter);
+*/
+	if (DEBUG) { (void) fprintf(debug_file, "fillClientInfoArrays(): end\n"); }
 }
 
 
