@@ -19,8 +19,11 @@ LN_S = @LN_S@
 RM_F = @RM_F@
 MKDIR_P = @MKDIR_P@
 
+DESTDIR = @BUILD_DIR@
+DISTDIR = @DIST_DIR@
+
 %.class: %.java
-	export CLASSPATH=.:src:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $<
+	export CLASSPATH=$(DESTDIR):src:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $<
 
 
 SRCDIR_PUB = src/javax/sound
@@ -28,22 +31,33 @@ SRCDIR_PRIV = src/org/tritonus
 SRCDIR_JL = src/javazoom/jl/decoder
 SRCDIR_JESD = src/com/jcraft/jesd
 
-DESTDIR = .
-
 OBJDIR_PUB = $(DESTDIR)/javax/sound
 OBJDIR_PRIV = $(DESTDIR)/org/tritonus
 OBJDIR_JL = $(DESTDIR)/javazoom/jl/decoder
 OBJDIR_JESD = $(DESTDIR)/com/jcraft/jesd
 
-PACKSRCDIR_MAIN = javax/sound org/tritonus com/jcraft/jesd
+PACKAGING_ABSOLUTE_DIR=@SRC_ABSOLUTE_PATH@/src/packaging
+
+PACKSRCDIR_CORE = javax/sound org/tritonus/core
+PACKSRCDIR_SHARE = org/tritonus/share
+PACKSRCDIR_REMAINING = org/tritonus/lowlevel org/tritonus/midi org/tritonus/sampled
+PACKSRCDIR_MP3 = org/tritonus/sampled/convert/Mpeg* org/tritonus/sampled/file/Mpeg*
+PACKSRCDIR_GSM = org/tritonus/lowlevel/gsm org/tritonus/sampled/file/gsm org/tritonus/sampled/convert/gsm
+
 PACKSRCDIR_JL = javazoom
-LIBDEST=tritonus.jar
+
+LIBDEST_CORE=tritonus_core.jar
+LIBDEST_SHARE=tritonus_share.jar
+LIBDEST_REMAINING=tritonus_remaining.jar
+LIBDEST_MP3=tritonus_mp3.jar
 LIBDEST_JL=javalayer.jar
-LIBDEST_MP3SP=mp3sp.jar
 LIBDEST_GSM=tritonus_gsm.jar
-PLUGINS=$(LIBDEST_JL) $(LIBDEST_MP3SP) $(LIBDEST_GSM)
-LIBDEST_ABSOLUTE_PREFIX=@SRC_ABSOLUTE_PATH@
-# or LIBDEST_ABSOLUTE_PREFIX=$(CURDIR)
+
+PLUGINS=$(LIBDEST_JL) $(LIBDEST_MP3) $(LIBDEST_GSM) $(LIBDEST_SHARE)
+
+LIBS=$(LIBDEST_CORE) $(LIBDEST_SHARE) $(LIBDEST_REMAINING) $(LIBDEST_MP3) $(LIBDEST_JL) $(LIBDEST_GSM)
+
+LIBDEST_ABSOLUTE_PREFIX=@SRC_ABSOLUTE_PATH@/$(DISTDIR)
 
 vpath %.java $(SRCDIR_PUB)/midi
 vpath %.java $(SRCDIR_PUB)/midi/spi
@@ -152,103 +166,82 @@ srcdir=.
 DISTFILES=ConvertJDK117 INSTALL LGPL Makefile.in NEWS README README.midi README.mp3 config.guess config.sub configure.in configure  doc src test util #new
 SUBDIRS=@SUBDIRS@
 CONVERTTARGETS = @CONVERTTARGETS@
-MP3SP_OBJ = \
-$(OBJDIR_PRIV)/sampled/file/TAudioFileFormat.class \
-$(OBJDIR_PRIV)/sampled/file/TAudioFileReader.class \
-$(OBJDIR_PRIV)/sampled/file/MpegAudioFileReader.class \
-$(OBJDIR_PRIV)/sampled/file/MpegEncoding.class \
-$(OBJDIR_PRIV)/sampled/file/MpegFileFormatType.class \
-$(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TMatrixFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TSimpleFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TAsynchronousFilteredAudioInputStream.class \
-$(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider\$$DecodedMpegAudioInputStream.class \
-$(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider\$$DecodedMpegAudioInputStream\$$DMAISObuffer.class \
-$(OBJDIR_PRIV)/TDebug.class \
-$(OBJDIR_PRIV)/TDebug\$$AssertException.class \
-$(OBJDIR_PRIV)/util/ArraySet.class \
-$(OBJDIR_PRIV)/util/TCircularBuffer.class \
-$(OBJDIR_PRIV)/util/TCircularBuffer\$$Trigger.class
-
-GSM_OBJ = \
-$(OBJDIR_PRIV)/lowlevel/gsm/Add.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Encoder.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/GSMDecoder.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Gsm_Def.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Gsm_State.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/InvalidGSMFrameException.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Long_term.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Lpc.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Rpe.class \
-$(OBJDIR_PRIV)/lowlevel/gsm/Short_term.class \
-$(OBJDIR_PRIV)/sampled/AudioUtils.class \
-$(OBJDIR_PRIV)/sampled/TConversionTool.class \
-$(OBJDIR_PRIV)/sampled/file/AudioOutputStream.class \
-$(OBJDIR_PRIV)/sampled/file/HeaderLessAudioOutputStream.class \
-$(OBJDIR_PRIV)/sampled/file/NonSeekableTDOS.class \
-$(OBJDIR_PRIV)/sampled/file/SeekableTDOS.class \
-$(OBJDIR_PRIV)/sampled/file/TAudioFileFormat.class \
-$(OBJDIR_PRIV)/sampled/file/TAudioFileReader.class \
-$(OBJDIR_PRIV)/sampled/file/TAudioFileWriter.class \
-$(OBJDIR_PRIV)/sampled/file/TAudioOutputStream.class \
-$(OBJDIR_PRIV)/sampled/file/TDataOutputStream.class \
-$(OBJDIR_PRIV)/sampled/file/gsm/GSMAudioFileReader.class \
-$(OBJDIR_PRIV)/sampled/file/gsm/GSMAudioFileWriter.class \
-$(OBJDIR_PRIV)/sampled/file/gsm/GSMEncoding.class \
-$(OBJDIR_PRIV)/sampled/file/gsm/GSMFileFormatType.class \
-$(OBJDIR_PRIV)/sampled/convert/TEncodingFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TSimpleFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/TAsynchronousFilteredAudioInputStream.class \
-$(OBJDIR_PRIV)/sampled/convert/gsm/GSMFormatConversionProvider.class \
-$(OBJDIR_PRIV)/sampled/convert/gsm/GSMFormatConversionProvider\$$DecodedGSMAudioInputStream.class \
-$(OBJDIR_PRIV)/sampled/convert/gsm/GSMFormatConversionProvider\$$EncodedGSMAudioInputStream.class \
-$(OBJDIR_PRIV)/TDebug.class \
-$(OBJDIR_PRIV)/TDebug\$$AssertException.class \
-$(OBJDIR_PRIV)/util/ArraySet.class \
-$(OBJDIR_PRIV)/util/TCircularBuffer.class \
-$(OBJDIR_PRIV)/util/TCircularBuffer\$$Trigger.class
 
 
 #----------------- rules -------------------
 
 .PHONY: all
-all: $(CONVERTTARGETS) $(LIBDEST) $(LIBDEST_JL)
+all: builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
+	@rm -rf $(DESTDIR)/META-INF
 
 .PHONY: compileinitial
 compileinitial: $(CONVERTTARGETS) compileinitialimpl
 
 .PHONY: compileinitialimpl
-compileinitialimpl: $(SRC)
-	export CLASSPATH=.:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $(SRCTMP)
+compileinitialimpl: builddir $(SRC)
+	export CLASSPATH=$(DESTDIR):$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $(SRCTMP)
 	$(MAKE) all
 
 .PHONY: convert
 convert:
 	@if [ ! -f .converted ]; then ./ConvertJDK117; echo "" > .converted; fi
 
-$(LIBDEST):	$(OBJ)
-	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN) -C src/packaging/tritonus_core/ META-INF/services/
+.PHONY: builddir
+builddir:
+	@$(MKDIR_P) $(DESTDIR)
 
+.PHONY: distdir
+distdir:
+	@$(MKDIR_P) $(DISTDIR)
 
-.PHONY: mp3jars
-mp3jars:	$(LIBDEST_JL) $(LIBDEST_MP3SP)
+.PHONY: metainfdir
+metainfdir:
+	@rm -rf $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF
+	@$(MKDIR_P) $(DESTDIR)/META-INF/services
 
-$(LIBDEST_JL):	$(OBJ)
-	cp src/javazoom/jl/decoder/*.ser javazoom/jl/decoder/
-	jar cf $(LIBDEST_JL) $(PACKSRCDIR_JL)
+$(LIBDEST_CORE): $(OBJ) distdir
+	@echo Creating $(LIBDEST_CORE)
+	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_core/manifest.mf \
+		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_CORE) $(PACKSRCDIR_CORE)
 
-#$(LIBDEST_JL):	../javalayer/$(LIBDEST_JL)
-#	cp ../javalayer/$(LIBDEST_JL) .
+$(LIBDEST_SHARE):	$(OBJ) distdir
+	@echo Creating $(LIBDEST_SHARE)
+	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_SHARE) $(PACKSRCDIR_SHARE)
 
+$(LIBDEST_REMAINING):	$(OBJ) distdir metainfdir
+	@echo Creating $(LIBDEST_REMAINING)
+	@$(RM_F) $(DESTDIR)/META-INF/services/javax*
+	@cp src/packaging/tritonus_core/META-INF/services/javax* $(DESTDIR)/META-INF/services/
+	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_REMAINING) \
+		$(PACKSRCDIR_REMAINING) META-INF/services/
 
-$(LIBDEST_MP3SP):	$(OBJ)
-	jar cf $(LIBDEST_MP3SP) $(MP3SP_OBJ) -C src/packaging/tritonus_mp3/ META-INF/services/
+$(LIBDEST_MP3):	$(OBJ) distdir metainfdir
+	@echo Creating $(LIBDEST_MP3)
+	@$(RM_F) $(DESTDIR)/META-INF/services/javax*
+	@cp src/packaging/tritonus_mp3/META-INF/services/javax* $(DESTDIR)/META-INF/services/
+	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_mp3/manifest.mf \
+		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_MP3) $(PACKSRCDIR_MP3) META-INF/services/
 
-$(LIBDEST_GSM):	$(OBJ)
-	jar cf $(LIBDEST_GSM) $(GSM_OBJ) -C src/packaging/tritonus_gsm/ META-INF/services/
+$(LIBDEST_GSM):	$(OBJ) distdir metainfdir
+	@echo Creating $(LIBDEST_GSM)
+	@$(RM_F) $(DESTDIR)/META-INF/services/javax*
+	@cp src/packaging/tritonus_gsm/META-INF/services/javax* $(DESTDIR)/META-INF/services/
+	@cd $(DESTDIR) ; jar cmf $(PACKAGING_ABSOLUTE_DIR)/tritonus_gsm/manifest.mf \
+		$(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_GSM) $(PACKSRCDIR_GSM) META-INF/services/
+
+$(LIBDEST_JL):	$(OBJ) distdir
+	@echo Creating $(LIBDEST_JL)
+	@cp src/javazoom/jl/decoder/*.ser $(DESTDIR)/javazoom/jl/decoder/
+	@cd $(DESTDIR) ; jar cf $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_JL) $(PACKSRCDIR_JL)
+
+.PHONY: jar_index
+jar_index: $(LIBS)
+	@echo Creating indexes for $(LIBDEST_CORE), $(LIBDEST_MP3), and $(LIBDEST_GSM)
+	@cd $(DISTDIR) ; jar -i $(LIBDEST_CORE)
+	@cd $(DISTDIR) ; jar -i $(LIBDEST_MP3)
+	@cd $(DISTDIR) ; jar -i $(LIBDEST_GSM)
 
 .PHONY: doc
 doc:	all 
@@ -260,16 +253,24 @@ test:	all
 
 .PHONY: install
 install: all
-	$(INSTALL_DATA) $(LIBDEST) $(JAVAEXTPATH)
-	$(INSTALL_DATA) $(LIBDEST_JL) $(JAVAEXTPATH)
+	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_CORE) $(JAVAEXTPATH)
+	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_SHARE) $(JAVAEXTPATH)
+	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_REMAINING) $(JAVAEXTPATH)
+	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_JL) $(JAVAEXTPATH)
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install; done
 
 .PHONY: install-link
 install-link: all
-	@echo "Creating link for $(LIBDEST) in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST)
-	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST) $(LIBDEST))
-	@echo "Creating link for $(LIBDEST_JL) in $(JAVAEXTPATH)"
+	@echo "Creating link for $(DISTDIR)/$(LIBDEST_CORE) in $(JAVAEXTPATH)"
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_CORE)
+	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_CORE) $(LIBDEST_CORE))
+	@echo "Creating link for $(DISTDIR)/$(LIBDEST_SHARE) in $(JAVAEXTPATH)"
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_SHARE)
+	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_SHARE) $(LIBDEST_SHARE))
+	@echo "Creating link for $(DISTDIR)/$(LIBDEST_REMAINING) in $(JAVAEXTPATH)"
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_REMAINING)
+	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_REMAINING) $(LIBDEST_REMAINING))
+	@echo "Creating link for $(DISTDIR)/$(LIBDEST_JL) in $(JAVAEXTPATH)"
 	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_JL)
 	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_JL) $(LIBDEST_JL))
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install-link; done
@@ -277,7 +278,9 @@ install-link: all
 .PHONY: uninstall
 uninstall:
 	@echo "Removing tritonus jars in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST)
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_CORE)
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_SHARE)
+	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_REMAINING)
 	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_JL)
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d uninstall; done
 
@@ -286,7 +289,8 @@ uninstall-link: uninstall
 
 .PHONY: clean
 clean:
-	rm -rf $(LIBDEST) $(LIBDEST_JL) $(LIBDEST_MP3SP) org javax javazoom
+	cd $(DISTDIR) ; $(RM_F) $(LIBS)
+	rm -rf $(DESTDIR)/org $(DESTDIR)/javax $(DESTDIR)/javazoom $(DESTDIR)/com $(DESTDIR)/META-INF
 	find . -name '*~' -exec rm '{}' ';'
 	find . -name '*.class' -exec rm '{}' ';'
 	find . -name '.directory' -exec rm '{}' ';'
@@ -327,8 +331,8 @@ devdist:
 
 devdist-upload: devdist
 	echo tritonus-`date +%Y-%m-%d.tar.gz` >.fname
-	scp `cat .fname` pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
+	scp `cat .fname` tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
 	-rm -f .fname
 
 plugins-upload:	$(PLUGINS)
-	scp $(PLUGINS) pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
+	cd $(DISTDIR) ; scp $(PLUGINS) tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
