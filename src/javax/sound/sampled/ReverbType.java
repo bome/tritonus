@@ -108,7 +108,7 @@ public class ReverbType
 
 	public final int hashCode()
 	{
-		return hashCode();
+		return super.hashCode();
 	}
 
 
