@@ -1,4 +1,7 @@
-cdda_url.txt
+cdda.txt
+
+Usage
+=====
 
 For reading CDs digitally, a special URLHandler is used to provide a
 high-level interface.
@@ -52,9 +55,22 @@ cdda:#4
 cdda://#4
 reads track 4 of the default drive
 
+
+Internal architecture
+=====================
+
+The implementation is divided into low-level, mid-level and high-level parts.
+
+The low-level part is intended to handle native calls to access operating system specific APIs. The interface can be chosen freely by the implementor. It typically closely resemble the structure of the underlying API.
+Currently, there are two implementations: One based on cdparanoia (http://www.xiph.org/paranoia/). The other is based on Linux' "cooked ioctl" interface. Code is under src/org/tritonus/lowlevel/cdda/[cdparanoia,cooked_ioctl]/ and src/lib/[cdparanoia/cooked_ioctl]/.
+
+The mid-level part brings together the different operating-specific interfaces to a common interface. The common interface is org.tritonus.lowlevel.cdda.CddaMidLevel. For each low-level part there should be a corresponding wrapper implementing the mid-level interface. The implementations are typically in src/org/tritonus/lowlevel/cdda/*/*MidLevel.java.
+
+The high-level part provides the facilities of the low- and mid-level parts as an URL. Te form of the URLs is described above. The implementation is in src/org/tritonus/sampled/cdda/.
+
 --
 open questions:
 - url to read the TOC of the default drive?
-Reset possible?
+Reset of AudioInputStream possible?
 Restrictions on simultaneous reading of multiple tracks?
 Byte order? -- set format of returned ais after endianess that the drive reports?
