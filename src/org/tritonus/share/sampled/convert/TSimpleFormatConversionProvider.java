@@ -42,12 +42,19 @@ import	org.tritonus.share.ArraySet;
  *	If this is not the case, use TEncodingFormatConversionProvider or
  *	TMatrixFormatConversionProvider.
  *
- *	<p>Overriding classes must implement at least
- *	<code>AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream)</code>
- *	and provide a constructor that calls the protected constructor of this class.
+ *	<p>Overriding classes must 
+ *      provide a constructor that calls the protected constructor of this class and override
+ *	<code>AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream)</code>.
+ *	The latter method should be able to handle the case that all fields are NOT_SPECIFIED
+ *      and provide appropriate default values.
  *
  * @author Matthias Pfisterer
  */
+
+// todo:
+// - declare a constant ALL_BUT_SAME_VALUE (==-2) or so that can be used in format lists
+// - consistent implementation of replacing NOT_SPECIFIED when not given in conversion
+
 public abstract class TSimpleFormatConversionProvider
 	extends		TFormatConversionProvider
 {
@@ -74,7 +81,7 @@ public abstract class TSimpleFormatConversionProvider
 	/**
 	 * Disables this FormatConversionProvider.
 	 * This may be useful when e.g. native libraries are not present.
-	 * TODO: enable method
+	 * TODO: enable method, better implementation
 	 */
 	public void disable() {
 		m_sourceEncodings = new ArraySet();

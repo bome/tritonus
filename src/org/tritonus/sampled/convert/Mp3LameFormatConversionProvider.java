@@ -26,8 +26,12 @@
 package	org.tritonus.sampled.convert;
 
 
+import	java.io.File;
+import	java.io.FileOutputStream;
+import	java.io.ByteArrayInputStream;
 import	java.io.InputStream;
 import	java.io.IOException;
+import	java.io.OutputStream;
 
 import	java.util.Arrays;
 import	java.util.Iterator;
@@ -35,18 +39,24 @@ import	java.util.Iterator;
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
+import	javax.sound.sampled.spi.FormatConversionProvider;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import	org.tritonus.share.TCircularBuffer;
 import	org.tritonus.share.sampled.AudioFormatSet;
+import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
 import org.tritonus.lowlevel.lame.Lame;
 
 /**
  * ConversionProvider for encoding MP3 audio files with the lame lib.
+ * <p>
+ * It uses a sloppy implementation of the MPEG1L3 encoding:
+ * It is used as a common denominator. So users can always ask for
+ * MPEG1L3 encoding but may get in fact an MPEG2L3 or MPEG2.5L3 encoded
+ * stream.
  *
  * @author Florian Bomers
  */
@@ -67,10 +77,14 @@ public class Mp3LameFormatConversionProvider
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 
+	private static final int MPEG_BITS_PER_SAMPLE=ALL; // TODO! should be 0...
+	private static final int MPEG_FRAME_RATE=ALL; // TODO
+	private static final int MPEG_FRAME_SIZE=ALL; // TODO
+
 	public static final AudioFormat.Encoding MPEG1L3 = Encodings.getEncoding("MPEG1L3");
 	// Lame converts automagically to MPEG2 or MPEG2.5, if necessary.
-	//public static final AudioFormat.Encoding MPEG2L3 = Encodings.getEncoding("MPEG2L3");
-	//public static final AudioFormat.Encoding MPEG2DOT5L3 = Encodings.getEncoding("MPEG2DOT5L3");
+	public static final AudioFormat.Encoding MPEG2L3 = Encodings.getEncoding("MPEG2L3");
+	public static final AudioFormat.Encoding MPEG2DOT5L3 = Encodings.getEncoding("MPEG2DOT5L3");
 
 	/*
 	 * Lame provides these formats:
@@ -126,24 +140,24 @@ public class Mp3LameFormatConversionProvider
 	};
 
 	private static final AudioFormat[] INPUT_FORMATS = {
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 12000, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 12000, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 22050, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 22050, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 24000, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 24000, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 32000, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 32000, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, ALL, ALL, ALL, true),
+	    new AudioFormat(8000, 16, ALL, true, false),
+	    new AudioFormat(8000, 16, ALL, true, true),
+	    new AudioFormat(11025, 16, ALL, true, false),
+	    new AudioFormat(11025, 16, ALL, true, true),
+	    new AudioFormat(12000, 16, ALL, true, false),
+	    new AudioFormat(12000, 16, ALL, true, true),
+	    new AudioFormat(16000, 16, ALL, true, false),
+	    new AudioFormat(16000, 16, ALL, true, true),
+	    new AudioFormat(22050, 16, ALL, true, false),
+	    new AudioFormat(22050, 16, ALL, true, true),
+	    new AudioFormat(24000, 16, ALL, true, false),
+	    new AudioFormat(24000, 16, ALL, true, true),
+	    new AudioFormat(32000, 16, ALL, true, false),
+	    new AudioFormat(32000, 16, ALL, true, true),
+	    new AudioFormat(44100, 16, ALL, true, false),
+	    new AudioFormat(44100, 16, ALL, true, true),
+	    new AudioFormat(48000, 16, ALL, true, false),
+	    new AudioFormat(48000, 16, ALL, true, true),
 	};
 
 
@@ -217,6 +231,62 @@ public class Mp3LameFormatConversionProvider
 			return EMPTY_FORMAT_ARRAY;
 		}
 	}
+    
+	protected AudioFormat getDefaultTargetFormat(AudioFormat.Encoding targetEncoding, 
+						     AudioFormat sourceFormat) {
+		// always set bits per sample to MPEG_BITS_PER_SAMPLE
+		// set framerate to MPEG_FRAME_RATE, framesize to FRAME_SIZE
+		// always retain sample rate, endianness, 	
+		// quick check
+		if ((sourceFormat.getChannels()>2)
+		    || (!targetEncoding.equals(MPEG1L3)
+			&& !targetEncoding.equals(MPEG2L3)
+			&& !targetEncoding.equals(MPEG2DOT5L3))
+		    || (!sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED))) {
+			return null;
+		}
+		AudioFormat	targetFormat = new AudioFormat(
+							       targetEncoding,
+							       sourceFormat.getSampleRate(),
+							       MPEG_BITS_PER_SAMPLE,
+							       sourceFormat.getChannels(),
+							       getFrameSize(targetEncoding,
+									    sourceFormat.getSampleRate(),
+									    MPEG_BITS_PER_SAMPLE,
+									    sourceFormat.getChannels(),
+									    MPEG_FRAME_RATE,
+									    false,
+									    0),
+							       MPEG_FRAME_RATE,
+							       sourceFormat.isBigEndian());
+		return targetFormat;
+	}
+
+    // implementation from TSimpleFormatConversionProvider
+	protected int getFrameSize(
+				   AudioFormat.Encoding encoding,
+				   float sampleRate,
+				   int sampleSize,
+				   int channels,
+				   float frameRate,
+				   boolean bigEndian,
+				   int oldFrameSize) {
+	    if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)
+		|| encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
+		return super.getFrameSize(
+				   encoding,
+				   sampleRate,
+				   sampleSize,
+				   channels,
+				   frameRate,
+				   bigEndian,
+				   oldFrameSize);
+	    }
+	    // return default frame rate for MPEG
+	    return MPEG_FRAME_RATE;
+	}
+
+
 
 	public static class EncodedMpegAudioInputStream
 		extends TAsynchronousFilteredAudioInputStream {

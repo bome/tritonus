@@ -26,6 +26,7 @@
 package	org.tritonus.share.sampled.convert;
 
 
+import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
@@ -50,17 +51,18 @@ public abstract class TFormatConversionProvider
 	// TODO: find a better solution; move out of TFormatConversionProvider
 	// very primitive, not too useful
 	// perhaps use some overwritable method getDefaultAudioFormat(Encoding)
+	// $$fb2000-10-04: use AudioSystem.NOT_SPECIFIED for all fields.
 	public AudioInputStream getAudioInputStream(AudioFormat.Encoding targetEncoding, AudioInputStream audioInputStream)
 	{
 		AudioFormat	sourceFormat = audioInputStream.getFormat();
 		AudioFormat	targetFormat = new AudioFormat(
 			targetEncoding,
-			sourceFormat.getSampleRate(),
-			sourceFormat.getSampleSizeInBits(),
-			sourceFormat.getChannels(),
-			sourceFormat.getFrameSize(),
-			sourceFormat.getFrameRate(),
-			sourceFormat.isBigEndian());
+			AudioSystem.NOT_SPECIFIED,   // sample rate
+			AudioSystem.NOT_SPECIFIED,   // sample size in bits
+			AudioSystem.NOT_SPECIFIED,   // channels
+			AudioSystem.NOT_SPECIFIED,   // frame size
+			AudioSystem.NOT_SPECIFIED,   // frame rate
+			sourceFormat.isBigEndian());  // big endian
 		return getAudioInputStream(targetFormat, audioInputStream);
 	}
 
