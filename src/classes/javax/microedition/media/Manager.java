@@ -8,13 +8,15 @@ package	javax.microedition.media;
 import	java.io.IOException;
 import	java.io.InputStream;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import	javax.microedition.media.protocol.DataSource;
 
-import	org.tritonus.micro.SystemTimeBase;
-import	org.tritonus.micro.URLDataSource;
-import	org.tritonus.micro.PcmAudioPlayer;
-import	org.tritonus.micro.Mp3AudioPlayer;
-import	org.tritonus.micro.MidiPlayer;
+import	org.tritonus.mmapi.SystemTimeBase;
+import	org.tritonus.mmapi.URLDataSource;
+import	org.tritonus.mmapi.PcmAudioPlayer;
+import	org.tritonus.mmapi.Mp3AudioPlayer;
+import	org.tritonus.mmapi.MidiPlayer;
 
 
 /**	TODO:
@@ -176,7 +178,8 @@ public final class Manager
 				Class	cls = (Class) PROTOCOL_TABLE[i][1];
 				try
 				{
-					dataSource = (DataSource) cls.newInstance();
+					Constructor	constructor = cls.getConstructor(new Class[]{String.class});
+					dataSource = (DataSource) constructor.newInstance(new Object[]{strLocator});
 				}
 				catch (InstantiationException e)
 				{
@@ -186,7 +189,14 @@ public final class Manager
 				{
 					// DO NOTHING
 				}
-				dataSource.setLocator(strLocator);
+				catch (NoSuchMethodException e)
+				{
+					// DO NOTHING
+				}
+				catch (InvocationTargetException e)
+				{
+					// DO NOTHING
+				}
 			}
 		}
 		if (dataSource == null)
