@@ -68,8 +68,15 @@ extends TestCase
 
 	protected abstract void checkSequencer(Sequencer seq)
 		throws Exception;
+
+	/** Get the prefix for error messages (containing the sequencer's name).
+	 */
+	protected static String getMessagePrefix(Sequencer seq)
+	{
+		return seq.getDeviceInfo().getName();
+	}
 }
 
 
 
-/*** IllegalStateTestCase.java ***/
+/*** BaseSequencerTestCase.java ***/
