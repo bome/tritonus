@@ -282,6 +282,23 @@ extends TestCase
 		assertEquals("frame length",
 			     lExpectedFrameLength,
 			     audioInputStream.getFrameLength());
+		if (getCheckRealLengths() || bRealLengthExpected)
+		{
+			int	nExpectedDataLength = (int) (lExpectedFrameLength * getFrameSize());
+			byte[]	abRetrievedData = new byte[nExpectedDataLength];
+			int	nRead = audioInputStream.read(abRetrievedData);
+			assertEquals("reading data",
+				     nExpectedDataLength,
+				     nRead);
+// 			for (int i = 0; i < nExpectedDataLength; i++)
+// 			{
+// 				assertEquals("data content", 0, abRetrievedData[i]);
+// 			}
+		}
+		else
+		{
+			// TODO: try to at least read some bytes?
+		}
 	}
 
 
