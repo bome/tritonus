@@ -21,6 +21,7 @@
  */
 
 
+import	java.io.BufferedInputStream;
 import	java.io.File;
 import	java.io.FileInputStream;
 import	java.io.InputStream;
@@ -94,9 +95,12 @@ extends TestCase
 	protected void setUp()
 		throws Exception
 	{
-		String	strClassName = getClassName();
-		Class	cls = Class.forName(strClassName);
-		m_audioFileReader = (AudioFileReader) cls.newInstance();
+		if (getTestAudioFileReader())
+		{
+			String	strClassName = getClassName();
+			Class	cls = Class.forName(strClassName);
+			m_audioFileReader = (AudioFileReader) cls.newInstance();
+		}
 	}
 
 
@@ -108,12 +112,35 @@ extends TestCase
 
 
 
+	private boolean getTestAudioFileReader()
+	{
+		return true;
+	}
+
+
+
+	private boolean getTestAudioSystem()
+	{
+		return true;
+	}
+
+
+
 	public void testAudioFileFormatFile()
 		throws Exception
 	{
 		File	file = new File(getFilename());
-		AudioFileFormat	audioFileFormat = getAudioFileReader().getAudioFileFormat(file);
-		checkAudioFileFormat(audioFileFormat, true);
+		AudioFileFormat	audioFileFormat = null;
+		if (getTestAudioFileReader())
+		{
+			audioFileFormat = getAudioFileReader().getAudioFileFormat(file);
+			checkAudioFileFormat(audioFileFormat, true);
+		}
+		if (getTestAudioSystem())
+		{
+			audioFileFormat = AudioSystem.getAudioFileFormat(file);
+			checkAudioFileFormat(audioFileFormat, true);
+		}
 	}
 
 
@@ -122,8 +149,17 @@ extends TestCase
 		throws Exception
 	{
 		URL	url = new URL("file:" + getFilename());
-		AudioFileFormat	audioFileFormat = getAudioFileReader().getAudioFileFormat(url);
-		checkAudioFileFormat(audioFileFormat, false);
+		AudioFileFormat	audioFileFormat = null;
+		if (getTestAudioFileReader())
+		{
+			audioFileFormat = getAudioFileReader().getAudioFileFormat(url);
+			checkAudioFileFormat(audioFileFormat, false);
+		}
+		if (getTestAudioSystem())
+		{
+			audioFileFormat = AudioSystem.getAudioFileFormat(url);
+			checkAudioFileFormat(audioFileFormat, false);
+		}
 	}
 
 
@@ -132,8 +168,20 @@ extends TestCase
 		throws Exception
 	{
 		InputStream	inputStream = new FileInputStream(getFilename());
-		AudioFileFormat	audioFileFormat = getAudioFileReader().getAudioFileFormat(inputStream);
-		checkAudioFileFormat(audioFileFormat, false);
+		BufferedInputStream	bufferedInputStream = new BufferedInputStream(inputStream);
+		AudioFileFormat	audioFileFormat = null;
+		if (getTestAudioFileReader())
+		{
+			audioFileFormat = getAudioFileReader().getAudioFileFormat(bufferedInputStream);
+			checkAudioFileFormat(audioFileFormat, false);
+		}
+		inputStream = new FileInputStream(getFilename());
+		bufferedInputStream = new BufferedInputStream(inputStream);
+		if (getTestAudioSystem())
+		{
+			audioFileFormat = AudioSystem.getAudioFileFormat(bufferedInputStream);
+			checkAudioFileFormat(audioFileFormat, false);
+		}
 	}
 
 
@@ -166,8 +214,17 @@ extends TestCase
 		throws Exception
 	{
 		File	file = new File(getFilename());
-		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(file);
-		checkAudioInputStream(audioInputStream, true);
+		AudioInputStream	audioInputStream = null;
+		if (getTestAudioFileReader())
+		{
+			audioInputStream = getAudioFileReader().getAudioInputStream(file);
+			checkAudioInputStream(audioInputStream, true);
+		}
+		if (getTestAudioSystem())
+		{
+			audioInputStream = AudioSystem.getAudioInputStream(file);
+			checkAudioInputStream(audioInputStream, true);
+		}
 	}
 
 
@@ -176,8 +233,17 @@ extends TestCase
 		throws Exception
 	{
 		URL	url = new URL("file:" + getFilename());
-		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(url);
-		checkAudioInputStream(audioInputStream, false);
+		AudioInputStream	audioInputStream = null;
+		if (getTestAudioFileReader())
+		{
+			audioInputStream = getAudioFileReader().getAudioInputStream(url);
+			checkAudioInputStream(audioInputStream, false);
+		}
+		if (getTestAudioSystem())
+		{
+			audioInputStream = AudioSystem.getAudioInputStream(url);
+			checkAudioInputStream(audioInputStream, false);
+		}
 	}
 
 
@@ -186,8 +252,20 @@ extends TestCase
 		throws Exception
 	{
 		InputStream	inputStream = new FileInputStream(getFilename());
-		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(inputStream);
-		checkAudioInputStream(audioInputStream, false);
+		BufferedInputStream	bufferedInputStream = new BufferedInputStream(inputStream);
+		AudioInputStream	audioInputStream = null;
+		if (getTestAudioFileReader())
+		{
+			audioInputStream = getAudioFileReader().getAudioInputStream(bufferedInputStream);
+			checkAudioInputStream(audioInputStream, false);
+		}
+		inputStream = new FileInputStream(getFilename());
+		bufferedInputStream = new BufferedInputStream(inputStream);
+		if (getTestAudioSystem())
+		{
+			audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
+			checkAudioInputStream(audioInputStream, false);
+		}
 	}
 
 
