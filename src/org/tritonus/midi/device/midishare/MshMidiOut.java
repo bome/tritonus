@@ -45,10 +45,15 @@ public class MshMidiOut
 		Midi.Connect (m_refNum,0,1);
 	}
 
-	protected void enqueueMessage(MidiMessage event, long lTick)
+	protected void enqueueMessage(MidiMessage event, long date_micro)
 	{
-		int mshEv = MshEventConverter.decodeMessage(event,lTick);
-		Midi.Send(m_refNum,mshEv);
+		int mshEv = MshEventConverter.decodeMessage(event,date_micro);
+		
+		if (date_micro == -1)
+			Midi.SendIm(m_refNum,mshEv);
+		else
+			Midi.SendAt(m_refNum,mshEv,(int)(date_micro/1000));
+		
 	}
 
 }

@@ -27,16 +27,16 @@
 
 package	org.tritonus.midi.device.midishare;
 
-
+/*
 import	com.sun.java.util.collections.ArrayList;
 import	com.sun.java.util.collections.Iterator;
 import	com.sun.java.util.collections.List;
+*/
 
-/*
 import	java.util.ArrayList;
 import	java.util.List;
 import	java.util.Iterator;
-*/
+
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiEvent;
@@ -57,14 +57,16 @@ public class MshMidiDevice
 	extends		TMidiDevice
 	implements	MshMidiIn.MshMidiInListener, MshClient
 {
-	private int			m_refNum;		 // the MidiShare application refnum
-	public int 			m_filter = 0;    // the application filter
+	private int			m_refNum;	// the MidiShare application refnum
+	public int 			m_filter = 0;   // the application filter
 
 	private boolean		m_bUseIn;
 	private boolean		m_bUseOut;
 	
 	private MshMidiIn	m_mshMidiIn;
 	private MshMidiOut	m_mshMidiOut;
+	
+	private long		m_timeOffset;    // offset relative to the MidiShare time
 	
 	
 	public MshMidiDevice()
@@ -122,7 +124,11 @@ public class MshMidiDevice
 	{
 		int i;
 		TDebug.out("MidiShareMidiDevice.openImpl(): called");
+		
+		// TO DO check if MidiShare is available
+		
 		m_refNum = Midi.Open("JavaSound In/Out");
+		m_timeOffset = Midi.GetTime();
 		
 		if (m_refNum < 0)  TDebug.out(" Midi.Open : error ");
 		if ((m_filter = Midi.NewFilter()) == 0) TDebug.out(" Midi.NewFilter : error ");
@@ -179,7 +185,7 @@ public class MshMidiDevice
 
 	public long getMicroSecondPosition()
 	{
-		return -1;
+		return ((long)(Midi.GetTime() - m_timeOffset))*1000;
 	}
 
 
@@ -201,7 +207,8 @@ public class MshMidiDevice
 		{
 			TDebug.out("MshMidiDevice.dequeueEvent(): message: " + message);
 		}
-		sendImpl(message, -1L);
+		// the date of events read from the device are in millisecond
+		sendImpl(message, (((long)event.getTick() - m_timeOffset))*1000);
 	}
 
 
@@ -253,8 +260,7 @@ public class MshMidiDevice
 					AlsaMidiDevice.this.getClient(), AlsaMidiDevice.this.getPort());
 				return true;
 			}
-			catch (RuntimeException e)
-			{
+			catch (RuntimeException e)			{
 				return false;
 			}
 		}
