@@ -27,16 +27,17 @@
 
 package	org.tritonus.midi.device.midishare;
 
-/*
+
 import	com.sun.java.util.collections.ArrayList;
 import	com.sun.java.util.collections.Iterator;
 import	com.sun.java.util.collections.List;
-*/
 
+
+/*
 import	java.util.ArrayList;
 import	java.util.List;
 import	java.util.Iterator;
-
+*/
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiEvent;
@@ -57,7 +58,7 @@ public class MshMidiDevice
 	extends		TMidiDevice
 	implements	MshMidiIn.MshMidiInListener, MshClient
 {
-	private int			m_refNum;	// the MidiShare application refnum
+	private int			m_refNum = -1;	// the MidiShare application refnum
 	public int 			m_filter = 0;   // the application filter
 
 	private boolean		m_bUseIn;
@@ -120,54 +121,71 @@ public class MshMidiDevice
 		return m_refNum;
 	}
 
-	protected void openImpl()
+	protected void openImpl() throws MidiUnavailableException
 	{
 		int i;
 		TDebug.out("MidiShareMidiDevice.openImpl(): called");
 		
-		// TO DO check if MidiShare is available
+		try {
 		
-		m_refNum = Midi.Open("JavaSound In/Out");
-		m_timeOffset = Midi.GetTime();
-		
-		if (m_refNum < 0)  TDebug.out(" Midi.Open : error ");
-		if ((m_filter = Midi.NewFilter()) == 0) TDebug.out(" Midi.NewFilter : error ");
-		
-		// Midi Filter configuration
-		for (i = 0 ; i<256; i++) {
-	          Midi.AcceptPort(m_filter, i, 1);
-	          Midi.AcceptType(m_filter, i, 1);
-	    }
-	                    
-	    for (i = 0 ; i<16; i++) { Midi.AcceptChan(m_filter, i, 1); }
-	   	Midi.SetFilter(m_refNum, m_filter);
-	   	
-	   	// TODO : types to be rejected 
-	   	Midi.AcceptType(m_filter, Midi.typeActiveSens,0);
+			if (Midi.Share() == 0)  throw  new MidiUnavailableException("MidiShare not installed");
 			
-		
-		if (getUseIn())
-		{
-			m_mshMidiIn = new MshMidiIn(m_refNum, this);
-			m_mshMidiIn.start();
+			if (m_refNum == -1) {
+			
+				m_refNum = Midi.Open("JavaSound In/Out");
+				if (m_refNum < 0)  throw  new MidiUnavailableException("MidiShare MidiOpen error");
+				
+				if ((m_filter = Midi.NewFilter()) == 0) {
+					Midi.Close(m_refNum);
+					throw  new MidiUnavailableException ("MidiShare MidiNewFilter error");
+				}
+				
+				m_timeOffset = Midi.GetTime();
+				
+				// Midi Filter configuration
+				for (i = 0 ; i<256; i++) {
+			          Midi.AcceptPort(m_filter, i, 1);
+			          Midi.AcceptType(m_filter, i, 1);
+			    }
+			                    
+			    for (i = 0 ; i<16; i++) { Midi.AcceptChan(m_filter, i, 1); }
+			   	Midi.SetFilter(m_refNum, m_filter);
+			   	
+			   	// TODO : types to be rejected 
+			   	Midi.AcceptType(m_filter, Midi.typeActiveSens,0);
+					
+				
+				if (getUseIn())
+				{
+					m_mshMidiIn = new MshMidiIn(m_refNum, this);
+					m_mshMidiIn.start();
+				}
+				
+				if (getUseOut())
+				{
+					m_mshMidiOut = new MshMidiOut(m_refNum);
+				}
+				
+				if (TDebug.TraceAlsaMidiDevice)
+				{
+					TDebug.out("MidiShareMidiDevice.openImpl(): completed");
+				}
+			}
+				
+		}catch(MidiUnavailableException e) {
+		 	throw  e;
+		}catch(UnsatisfiedLinkError e1) { 
+			throw  new MidiUnavailableException("MidiShare native JMidi library not installed");
+		}catch(Error e2) { 
+			throw  new MidiUnavailableException("MidiShare In/Out open error");
 		}
-		
-		if (getUseOut())
-		{
-			m_mshMidiOut = new MshMidiOut(m_refNum);
-		}
-		
-		if (TDebug.TraceAlsaMidiDevice)
-		{
-			TDebug.out("MidiShareMidiDevice.openImpl(): completed");
-		}
+	
 	}
 
 
 	protected void closeImpl()
 	{
-		if (getUseIn())
-		{
+		if (getUseIn()){
 			m_mshMidiIn.interrupt();
 			m_mshMidiIn = null;
 		}
@@ -178,8 +196,10 @@ public class MshMidiDevice
 			m_filter = 0;
 		}
 		
-		if (m_refNum > 0) Midi.Close(m_refNum);
-		m_refNum = -1;
+		if (m_refNum > 0) {
+			Midi.Close(m_refNum);
+			m_refNum = -1;
+		}
 	}
 
 

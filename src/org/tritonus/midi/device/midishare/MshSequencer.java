@@ -65,20 +65,32 @@ final public class MshSequencer
 		super(info);
 		m_fTempoInMPQ = 500000;
 	}
+
 	
 	protected void openImpl() throws MidiUnavailableException
 	{
-		if (m_refNum == -1) {
+		try {
 		
-			// Opens the MidiShare native sequencer
-		 	m_refNum = MidiPlayer.Open(availableName("JavaSound Player"));
-		 	if (m_refNum < 0)  throw  new MidiUnavailableException("MidiShare sequencer open error");
-		 	
-		 	// To be changed later
-		 	Midi.Connect(0,m_refNum,1);
-		 	Midi.Connect(m_refNum,0,1);
-		 	
-		 	m_state = new PlayerState();
+			if (Midi.Share() == 0)  throw  new MidiUnavailableException("MidiShare not installed");
+			
+			if (m_refNum == -1) {
+				// Opens the MidiShare native sequencer
+			 	m_refNum = MidiPlayer.Open(availableName("JavaSound Player"));
+			 	if (m_refNum < 0)  throw  new MidiUnavailableException("MidiShare MidiOpen error");
+			 	
+			 	// To be changed later
+			 	Midi.Connect(0,m_refNum,1);
+			 	Midi.Connect(m_refNum,0,1);
+			 	
+			 	m_state = new PlayerState();
+			}
+		
+		}catch(MidiUnavailableException e) {
+		 	throw  e;
+		}catch(UnsatisfiedLinkError e1) { 
+			throw  new MidiUnavailableException("MidiShare native JPlayer library not installed");
+		}catch(Error e2) { 
+			throw  new MidiUnavailableException("MidiShare sequencer open error");
 		}
 	}
 
