@@ -43,7 +43,7 @@ import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
+import	org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 

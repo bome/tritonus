@@ -41,12 +41,12 @@ import	org.tritonus.lowlevel.esd.Esd;
 import	org.tritonus.lowlevel.esd.EsdRecordingStream;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
+import	org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
 public class EsdTargetDataLine
-	extends		TSourceTargetDataLine
+	extends		TBaseDataLine
 	implements	TargetDataLine
 {
 	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};

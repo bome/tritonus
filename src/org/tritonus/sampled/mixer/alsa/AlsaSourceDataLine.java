@@ -44,7 +44,7 @@ import	org.tritonus.lowlevel.alsa.AlsaPcm.HWParams;
 import	org.tritonus.lowlevel.alsa.AlsaPcm.SWParams;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
+import	org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
@@ -204,7 +204,7 @@ public class AlsaSourceDataLine
 
 
 
-	// IDEA: move inner classes to TSourceTargetDataLine
+	// IDEA: move inner classes to TBaseDataLine
 	public class AlsaSourceDataLineGainControl
 		extends		FloatControl
 	{

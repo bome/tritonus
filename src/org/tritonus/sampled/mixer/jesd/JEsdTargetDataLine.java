@@ -39,7 +39,7 @@ import	javax.sound.sampled.Mixer;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
+import	org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 import	com.jcraft.jesd.JEsd;
 import	com.jcraft.jesd.JEsdException;
@@ -47,7 +47,7 @@ import	com.jcraft.jesd.JEsdException;
 
 
 public class JEsdTargetDataLine
-	extends		TSourceTargetDataLine
+	extends		TBaseDataLine
 	implements	TargetDataLine
 {
 	private JEsd			m_esdStream;

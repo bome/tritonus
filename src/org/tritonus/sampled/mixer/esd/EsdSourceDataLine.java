@@ -43,12 +43,12 @@ import	org.tritonus.lowlevel.esd.EsdStream;
 import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.TVolumeUtils;
 import	org.tritonus.share.sampled.mixer.TMixer;
-import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
+import	org.tritonus.share.sampled.mixer.TBaseDataLine;
 
 
 
 public class EsdSourceDataLine
-	extends		TSourceTargetDataLine
+	extends		TBaseDataLine
 	implements	SourceDataLine
 {
 	private EsdStream		m_esdStream;
@@ -344,7 +344,7 @@ public class EsdSourceDataLine
 
 
 
-	// IDEA: move inner classes to TSourceTargetDataLine
+	// IDEA: move inner classes to TBaseDataLine
 	public class EsdSourceDataLineGainControl
 		extends		FloatControl
 	{
@@ -395,7 +395,7 @@ public class EsdSourceDataLine
 
 
 
-	// IDEA: move inner classes to TSourceTargetDataLine
+	// IDEA: move inner classes to TBaseDataLine
 	public class EsdSourceDataLinePanControl
 		extends		FloatControl
 	{
