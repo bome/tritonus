@@ -55,6 +55,19 @@ public class AlsaSequencer
 	private static final SyncMode[]	MASTER_SYNC_MODES = {SyncMode.INTERNAL_CLOCK};
 	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
 
+	private static final ShortMessage	CLOCK_MESSAGE = new ShortMessage();
+	static
+	{
+		try
+		{
+			CLOCK_MESSAGE.setMessage(ShortMessage.TIMING_CLOCK);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			if (TDebug.TraceSequencer || TDebug.TraceAllExceptions) { TDebug.out(e); }
+		}
+	}
+
 	private AlsaSeq			m_controlAlsaSeq;
 	private AlsaSeq			m_dataAlsaSeq;
 	private AlsaSeq.QueueInfo	m_queueInfo;
@@ -68,6 +81,7 @@ public class AlsaSequencer
 	private AlsaMidiIn		m_alsaMidiIn;
 	private AlsaMidiOut		m_alsaMidiOut;
 	private Thread			m_loaderThread;
+	private Thread			m_syncThread;
 
 
 
@@ -212,6 +226,8 @@ public class AlsaSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): begin"); }
 		setTempoInMPQ(500000);
 		startSeq();
+// 		m_syncThread = new MasterSynchronizer();
+// 		m_syncThread.start();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): end"); }
@@ -617,6 +633,30 @@ public class AlsaSequencer
 		public void run()
 		{
 			loadSequenceToNative();
+		}
+	}
+
+
+
+
+	private class MasterSynchronizer
+		extends	Thread
+	{
+		public MasterSynchronizer()
+		{
+			setPriority(10);
+		}
+
+
+		public void run()
+		{
+			long	lTickMax = getSequence().getTickLength();
+			long	lTickStep = getSequence().getResolution() / 24;
+			for (long lTick = 0; lTick < lTickMax; lTick += lTickStep)
+			{
+				TDebug.out("MasterSynchronizer.run(): enqueueing clock message with tick " + lTick);
+				enqueueMessage(CLOCK_MESSAGE, lTick);
+			}
 		}
 	}
 }
