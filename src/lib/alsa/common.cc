@@ -54,11 +54,16 @@ checkArrayLength(JNIEnv *env, jarray array, int nRequiredLength)
 {
 	int	nLength;
 
+	// printf("+1");
 	nLength = env->GetArrayLength(array);
+	// printf("+2");
 	if (nLength < nRequiredLength)
 	{
+	// printf("+2a");
 		throwRuntimeException(env, "array does not have enough elements");
+	// printf("+2b");
 	}
+	// printf("+3");
 }
 
 

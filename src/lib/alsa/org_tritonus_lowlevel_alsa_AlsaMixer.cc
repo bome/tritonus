@@ -243,20 +243,31 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList
 	nIndex = 0;
 	element = snd_mixer_first_elem(handle);
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): first element: %p\n", element); }
+	// printf("before loop");
 	while (element != NULL)
 	{
 		// TODO: should not throw exception, but return -1 (and clean the array)
+		// printf("1");
 		checkArrayLength(env, anIndices, nIndex + 1);
+		// printf("2");
 		checkExceptionSpecial();
+		// printf("3");
 		checkArrayLength(env, astrNames, nIndex + 1);
+		// printf("4");
 		checkExceptionSpecial();
+		// printf("5");
 		indices[nIndex] = snd_mixer_selem_get_index(element);
+		// printf("6");
 		setStringArrayElement(env, astrNames, nIndex,
 				      snd_mixer_selem_get_name(element));
+		// printf("7");
 		nIndex++;
+		// printf("8");
 		element = snd_mixer_elem_next(element);
+		// printf("9\n");
 		if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): next element: %p\n", element); }
 	}
+	// printf("after loop\n");
 	nReturn = nIndex;
 	env->ReleaseIntArrayElements(anIndices, indices, 0);
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): end\n"); }
