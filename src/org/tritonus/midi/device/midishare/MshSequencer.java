@@ -48,7 +48,7 @@ import	grame.midishare.*;
 import	grame.midishare.player.*;
 
 
-public class MidiShareSequencer
+public class MshSequencer
 	extends		TSequencer
 {
 
@@ -60,19 +60,19 @@ public class MidiShareSequencer
 	private int 		m_recTrack = -1;	// Track in record mode
 	
 
-	public MidiShareSequencer(MidiDevice.Info info)
+	public MshSequencer(MidiDevice.Info info)
 	{
 		super(info);
 		m_fTempoInMPQ = 500000;
 	}
 	
-	protected void openImpl()
+	protected void openImpl() throws MidiUnavailableException
 	{
 		if (m_refNum == -1) {
 		 	m_refNum = MidiPlayer.Open("JavaSound Player");
 		 	
 		 	// Reporting error??
-		 	if (m_refNum < 0)  TDebug.out("MidiShare sequencer open error");
+		 	if (m_refNum < 0)  throw  new MidiUnavailableException("MidiShare sequencer open error");
 		 	
 		 	// To be changed later
 		 	Midi.Connect(0,m_refNum,1);
@@ -115,7 +115,7 @@ public class MidiShareSequencer
 		if ((mshSeq = Midi.NewSeq()) != 0) {
 			for (nTrack = 0; nTrack < aTracks.length; nTrack++){
 				for (nEv = 0; nEv<aTracks[nTrack].size() ; nEv++) {
-					mshEv = MidiShareEventConverter.decodeEvent(aTracks[nTrack].get(nEv));
+					mshEv = MshEventConverter.decodeEvent(aTracks[nTrack].get(nEv));
 					if (mshEv != 0){
 						// Set the tracknumber
 						Midi.SetRefnum(mshEv,IsTempoMap(Midi.GetType(mshEv)) ? 0 : Math.min(256,nTrack+1));
@@ -125,7 +125,7 @@ public class MidiShareSequencer
 			}
 			MidiPlayer.SetAllTrack(m_refNum,mshSeq,sequence.getResolution());
 		}else {
-			 // reporting allocation error??
+			throw new InvalidMidiDataException(" No more MidiShare events");
 		}
 	}
 	
