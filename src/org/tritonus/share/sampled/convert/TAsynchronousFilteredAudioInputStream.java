@@ -83,11 +83,13 @@ public abstract class TAsynchronousFilteredAudioInputStream
 		super(new ByteArrayInputStream(EMPTY_BYTE_ARRAY),
 		      outputFormat,
 		      lLength);
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): begin"); }
 		m_circularBuffer = new TCircularBuffer(
 			nBufferSize,
 			false,	// blocking read
 			true,	// blocking write
 			this);	// trigger
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): end"); }
 	}
 
 
@@ -95,6 +97,8 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read()
 		throws	IOException
 	{
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(): begin"); }
+		int	nByte = -1;
 		if (m_abSingleByte == null)
 		{
 			m_abSingleByte = new byte[1];
@@ -102,13 +106,15 @@ public abstract class TAsynchronousFilteredAudioInputStream
 		int	nReturn = read(m_abSingleByte);
 		if (nReturn == -1)
 		{
-			return -1;
+			nByte = -1;
 		}
 		else
 		{
 			//$$fb 2001-04-14 nobody really knows that...
-			return m_abSingleByte[0] & 0xFF;
+			nByte = m_abSingleByte[0] & 0xFF;
 		}
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(): end"); }
+		return nByte;
 	}
 
 
@@ -116,8 +122,10 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read(byte[] abData)
 		throws	IOException
 	{
-		//return m_circularBuffer.read(abData);
-		return read(abData, 0, abData.length);
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): begin"); }
+		int	nRead = read(abData, 0, abData.length);
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): end"); }
+		return nRead;
 	}
 
 
@@ -125,10 +133,13 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read(byte[] abData, int nOffset, int nLength)
 		throws	IOException
 	{
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): begin"); }
 		//$$fb 2001-04-22: this returns at maximum circular buffer
 		// length. This is not very efficient...
 		//$$fb 2001-04-25: we should check that we do not exceed getFrameLength() !
-		return m_circularBuffer.read(abData, nOffset, nLength);
+		int	nRead = m_circularBuffer.read(abData, nOffset, nLength);
+		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): end"); }
+		return nRead;
 	}
 
 
