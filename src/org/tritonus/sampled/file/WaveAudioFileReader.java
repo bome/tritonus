@@ -212,7 +212,7 @@ public class WaveAudioFileReader extends TAudioFileReader {
 		           false);
 	}
 
-	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
+	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileLengthInBytes)
 	throws	UnsupportedAudioFileException, IOException {
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
 		int magic = dataInputStream.readInt();
@@ -248,6 +248,8 @@ public class WaveAudioFileReader extends TAudioFileReader {
 		                            (int) (totalLength + WaveTool.CHUNK_HEADER_SIZE));
 	}
 }
+
+
 
 /*** WaveAudioFileReader.java ***/
 

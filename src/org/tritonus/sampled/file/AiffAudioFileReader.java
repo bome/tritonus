@@ -44,13 +44,11 @@ import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.TDebug;
 
 
-/**
- * Class for reading AIFF and AIFF-C files.
+/** Class for reading AIFF and AIFF-C files.
  *
  * @author Florian Bomers
  * @author Matthias Pfisterer
  */
-
 public class AiffAudioFileReader extends TAudioFileReader {
 
 	private void skipChunk(DataInputStream dataInputStream, int chunkLength, int chunkRead)
@@ -128,9 +126,11 @@ public class AiffAudioFileReader extends TAudioFileReader {
 	}
 
 
-	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
+
+	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
 	throws	UnsupportedAudioFileException, IOException {
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
+		if (TDebug.TraceAudioFileReader) {TDebug.out("AiffAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
 		int	nMagic = dataInputStream.readInt();
 		if (nMagic != AiffTool.AIFF_FORM_MAGIC) {
 			throw new UnsupportedAudioFileException(
@@ -201,11 +201,16 @@ public class AiffAudioFileReader extends TAudioFileReader {
 		}
 
 		// TODO: length argument has to be in frames
-		return new TAudioFileFormat(bIsAifc ? AudioFileFormat.Type.AIFC : AudioFileFormat.Type.AIFF,
-		                            format,
-		                            nDataChunkLength / format.getFrameSize(), nTotalLength + 8);
+		AudioFileFormat	audioFileFormat = new TAudioFileFormat(
+			bIsAifc ? AudioFileFormat.Type.AIFC : AudioFileFormat.Type.AIFF,
+			format,
+			nDataChunkLength / format.getFrameSize(),
+			nTotalLength + 8);
+		if (TDebug.TraceAudioFileReader) {TDebug.out("AiffAudioFileReader.getAudioFileFormat(InputStream, long): end"); }
+		return audioFileFormat;
 	}
-
 }
+
+
 
 /*** AiffAudioFileReader.java ***/

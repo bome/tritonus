@@ -3,9 +3,8 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
- *
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -20,21 +19,14 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
 
 package	org.tritonus.sampled.file.gsm;
 
 
-// import	java.io.DataInputStream;
-// import	java.io.File;
 import	java.io.InputStream;
-// import	java.io.BufferedInputStream;
 import	java.io.IOException;
 import	java.io.EOFException;
-// import	java.io.SequenceInputStream;
-// import	java.io.ByteArrayInputStream;
 
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
@@ -51,8 +43,8 @@ import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
 
 
 
-/*
- * @author Matthias Pfisterer
+/**	AudioFileReader class for GSM 06.10 data.
+	@author Matthias Pfisterer
  */
 public class GSMAudioFileReader
 	extends	TRereadingAudioFileReader
@@ -71,7 +63,7 @@ public class GSMAudioFileReader
 
 
 
-	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
+	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) { TDebug.out("GSMAudioFileReader.getAudioFileFormat(): begin"); }
@@ -94,8 +86,8 @@ public class GSMAudioFileReader
 		int nByteSize=AudioSystem.NOT_SPECIFIED;
 		int nFrameSize=AudioSystem.NOT_SPECIFIED;
 
-		if (getFileLengthInBytes()!=AudioSystem.NOT_SPECIFIED) {
-			long lByteSize=getFileLengthInBytes();
+		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED) {
+			long lByteSize = lFileSizeInBytes;
 			long lFrameSize=lByteSize/33;
 			// need to handle overflow
 			if (lByteSize>Integer.MAX_VALUE) {

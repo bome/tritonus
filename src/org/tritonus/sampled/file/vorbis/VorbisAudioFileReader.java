@@ -55,6 +55,7 @@ import	com.jcraft.jorbis.Block;
 public class VorbisAudioFileReader
 	extends	TRereadingAudioFileReader
 {
+	// TODO: this is not enough. Fix this value!
 	private static final int	BUFFERING_AMOUNT = 1000;
 
 
@@ -66,7 +67,7 @@ public class VorbisAudioFileReader
 
 
 
-	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
+	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): begin"); }
@@ -241,9 +242,10 @@ public class VorbisAudioFileReader
 		int nByteSize = AudioSystem.NOT_SPECIFIED;
 		int nFrameSize = AudioSystem.NOT_SPECIFIED;
 
-		if (getFileLengthInBytes() != AudioSystem.NOT_SPECIFIED)
+		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED)
 		{
-			long lByteSize=getFileLengthInBytes();
+			long lByteSize = lFileSizeInBytes;
+			// TODO: fix these values!!
 			long lFrameSize=lByteSize/33;
 			// need to handle overflow
 			if (lByteSize>Integer.MAX_VALUE) {

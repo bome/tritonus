@@ -82,7 +82,7 @@ public class MpegAudioFileReader
 
 
 
-	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
+	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) { TDebug.out("MpegAudioFileReader.getAudioFileFormat(): begin"); }

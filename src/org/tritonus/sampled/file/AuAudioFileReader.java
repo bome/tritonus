@@ -44,8 +44,7 @@ import	org.tritonus.share.sampled.file.TAudioFileFormat;
 import	org.tritonus.share.sampled.file.TAudioFileReader;
 
 
-/**
- * Class for reading Sun/Next AU files.
+/** Class for reading Sun/Next AU files.
  *
  * @author Florian Bomers
  * @author Matthias Pfisterer
@@ -65,8 +64,12 @@ public class AuAudioFileReader extends TAudioFileReader {
 		return ret;
 	}
 
-	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
-	throws	UnsupportedAudioFileException, IOException {
+
+
+	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
+		throws	UnsupportedAudioFileException, IOException
+	{
+		if (TDebug.TraceAudioFileReader) {TDebug.out("AuAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
 		int	nMagic = dataInputStream.readInt();
 		if (nMagic != AuTool.AU_HEADER_MAGIC) {
@@ -149,14 +152,19 @@ public class AuAudioFileReader extends TAudioFileReader {
 		                                     (nSampleSize * nNumChannels) / 8,
 		                                     (float) nSampleRate,
 		                                     true);
-		return new TAudioFileFormat(AudioFileFormat.Type.AU,
-		                            format,
-		                            (nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
-		                            	AudioSystem.NOT_SPECIFIED:(nDataLength / format.getFrameSize()),
-		                            (nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
-		                            	AudioSystem.NOT_SPECIFIED:(nDataLength + nDataOffset));
+		AudioFileFormat	audioFileFormat = new TAudioFileFormat(
+			AudioFileFormat.Type.AU,
+			format,
+			(nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
+			AudioSystem.NOT_SPECIFIED:(nDataLength / format.getFrameSize()),
+			(nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
+			AudioSystem.NOT_SPECIFIED:(nDataLength + nDataOffset));
+		if (TDebug.TraceAudioFileReader) {TDebug.out("AuAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
+		return audioFileFormat;
 	}
 }
+
+
 
 /*** AuAudioFileReader.java ***/
 
