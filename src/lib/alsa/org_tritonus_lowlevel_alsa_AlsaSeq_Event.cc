@@ -425,18 +425,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setCommon
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setCommon(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	handle->type = nType;
-	//printf("handle->type: %d\n", handle->type);
-	//printf(": %d\n", );
 	handle->flags = nFlags;
-	//printf("handle->flags: %d\n", handle->flags);
 	handle->tag = nTag;
-	//printf("handle->tag: %d\n", handle->tag);
 	handle->queue = nQueue;
-	//printf("handle->queue: %d\n", handle->queue);
 	if ((handle->flags & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
 	{
 		handle->time.tick = lTimestamp;
-		//printf("handle->time.tick: %d\n", handle->time.tick);
 	}
 	else
 	{
@@ -444,15 +438,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setCommon
 		handle->time.time.tv_nsec = lTimestamp % 1000000000;
 	}
 
-	// is set by the sequencer to sending client
-	//handle->source.client = nSourceClient;
+	// source client is set by the sequencer to sending client
 	handle->source.port = nSourcePort;
-	//printf("handle->source.port: %d\n", handle->source.port);
 	handle->dest.client = nDestClient;
-	//printf("handle->dest.client: %d\n", handle->dest.client);
 	handle->dest.port = nDestPort;
-	//printf("handle->dest.port: %d\n", handle->dest.port);
-
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setCommon(): end\n"); }
 }
 
