@@ -559,10 +559,13 @@ public abstract class TSequencer
 	public void setMasterSyncMode(SyncMode syncMode)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setMasterSyncMode(): begin"); }
-		if (m_masterSyncModes.contains(syncMode) && getMasterSyncMode().equals(syncMode))
+		if (m_masterSyncModes.contains(syncMode))
 		{
-			m_masterSyncMode = syncMode;
-			setMasterSyncModeImpl(syncMode);
+			if (! getMasterSyncMode().equals(syncMode))
+			{
+				m_masterSyncMode = syncMode;
+				setMasterSyncModeImpl(syncMode);
+			}
 		}
 		else
 		{
@@ -606,10 +609,13 @@ public abstract class TSequencer
 	public void setSlaveSyncMode(SyncMode syncMode)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSlaveSyncMode(): begin"); }
-		if (m_slaveSyncModes.contains(syncMode) && getSlaveSyncMode().equals(syncMode))
+		if (m_slaveSyncModes.contains(syncMode))
 		{
-			m_slaveSyncMode = syncMode;
-			setSlaveSyncModeImpl(syncMode);
+			if (! getSlaveSyncMode().equals(syncMode))
+			{
+				m_slaveSyncMode = syncMode;
+				setSlaveSyncModeImpl(syncMode);
+			}
 		}
 		else
 		{
