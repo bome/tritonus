@@ -58,14 +58,6 @@ public class AlsaMidiDevice
 	 */
 	private int		m_nPort;
 
-	/**	Whether to handle input from the physical port.
-	 */
-	private boolean		m_bUseIn;
-
-	/**	Whether to handle output to the physical port.
-	 */
-	private boolean		m_bUseOut;
-
 	/**	The object interfacing to the ALSA sequencer.
 	 */
 	private AlsaSeq	m_alsaSeq;
@@ -94,15 +86,6 @@ public class AlsaMidiDevice
 
 
 
-	/**
-	 */
-	public AlsaMidiDevice(int nClient, int nPort)
-	{
-		this(nClient, nPort, true, true);
-	}
-
-
-
 	public AlsaMidiDevice(int nClient, int nPort, boolean bUseIn, boolean bUseOut)
 	{
 		this(new TMidiDevice.Info("ALSA MIDI port (" + nClient + ":" + nPort + ")",
@@ -116,25 +99,9 @@ public class AlsaMidiDevice
 
 	protected AlsaMidiDevice(MidiDevice.Info info, int nClient, int nPort, boolean bUseIn, boolean bUseOut)
 	{
-		super(info);
+		super(info, bUseIn, bUseOut);
 		m_nClient = nClient;
 		m_nPort = nPort;
-		m_bUseIn = bUseIn;
-		m_bUseOut = bUseOut;
-	}
-
-
-
-	private boolean getUseIn()
-	{
-		return m_bUseIn;
-	}
-
-
-
-	private boolean getUseOut()
-	{
-		return m_bUseOut;
 	}
 
 
@@ -281,7 +248,10 @@ public class AlsaMidiDevice
 	public Receiver getReceiver()
 		throws	MidiUnavailableException
 	{
-		// TODO: check number
+		if (! getUseOut())
+		{
+			throw new MidiUnavailableException("Receivers are not supported by this device");
+		}
 		return new AlsaReceiver();
 	}
 
@@ -290,7 +260,10 @@ public class AlsaMidiDevice
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException
 	{
-		// TODO: check number
+		if (! getUseIn())
+		{
+			throw new MidiUnavailableException("Transmitters are not supported by this device");
+		}
 		return new AlsaTransmitter();
 	}
 
