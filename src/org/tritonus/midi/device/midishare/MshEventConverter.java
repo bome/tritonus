@@ -47,12 +47,12 @@ final public class MshEventConverter {
 	// Java MidiEvent to MidiShare event conversion
 	//---------------------------------------------
 	
-	static public int decodeEvent(MidiEvent event)
+	static public int decodeEvent(MidiEvent event) throws InvalidMidiDataException, MidiException
 	{
 		return decodeMessage(event.getMessage(), event.getTick());
 	}
 
-	static public int decodeMessage(MidiMessage event, long lTick)
+	static public int decodeMessage(MidiMessage event, long lTick) throws InvalidMidiDataException, MidiException
 	{
 		if (event instanceof ShortMessage)
 		{
@@ -66,12 +66,13 @@ final public class MshEventConverter {
 		{
 			return  decodeMetaMessage((MetaMessage) event, lTick);
 		}
-		return 0;
+		throw new InvalidMidiDataException("MshEventConverter.decodeMessage(): UNKNOWN MidiMessage class");
 	}
 	
-	static  private int decodeShortMessage(ShortMessage shortMessage, long lTime)
+	static  private int decodeShortMessage(ShortMessage shortMessage, long lTime) throws InvalidMidiDataException, MidiException
 	{
 		int nChannel = shortMessage.getChannel();
+		
 		switch (shortMessage.getCommand())
 		{
 		case 0x80:	// note off
@@ -99,14 +100,16 @@ final public class MshEventConverter {
 			//system realtime/system exclusive
 			// these should not occur in a ShortMessage
 			// Hey, system realtime are short messages!
+			throw new InvalidMidiDataException("MshEventConverter.decodeShortMessage(): F0 Byte");
+			
 		default:
 			TDebug.out("MshEventConverter.decodeShortMessage(): UNKNOWN EVENT TYPE!");
-			return 0;
+			throw new InvalidMidiDataException("MshEventConverter.decodeShortMessage(): UNKNOWN EVENT TYPE!");
 		}
 	}
 
 	
-	static private int decodeMetaMessage(MetaMessage message, long lTick)
+	static private int decodeMetaMessage(MetaMessage message, long lTick) throws InvalidMidiDataException, MidiException
 	{
 		byte[]	abMessageData = message.getData();
 		System.out.println("Meta "+ message.getType());
@@ -146,7 +149,7 @@ final public class MshEventConverter {
 					
 			default:
 				TDebug.out("MshEventConverter.decodeMetaMessage(): UNKNOWN EVENT TYPE!");
-				return  0;
+				throw new InvalidMidiDataException("MshEventConverter.decodeMetaMessage(): UNKNOWN EVENT TYPE!");
 		}
 	}
 
@@ -155,13 +158,10 @@ final public class MshEventConverter {
 	// MidiShare event to Java event conversion
 	//------------------------------------------
 	
-	static public MidiEvent encodeEvent(int event) 
+	static public MidiEvent encodeEvent(int event) throws InvalidMidiDataException
 	{
-		try {
-			MidiMessage message = encodeMessage(event);
-			return new MidiEvent(message, Midi.GetDate(event));
-		}catch (InvalidMidiDataException ex) {}
-		return null;
+		MidiMessage message = encodeMessage(event);
+		return new MidiEvent(message, Midi.GetDate(event));
 	}
 
 	
@@ -170,8 +170,8 @@ final public class MshEventConverter {
 		switch (Midi.GetType(event)) {
 		
 			case Midi.typeNote: // should never occur
-					TDebug.out("MshMidiOut.encodeMessage(): TYPE NOTE!");
-					return null;
+					TDebug.out("MshEventConverter.encodeMessage(): TYPE NOTE!");
+					throw new InvalidMidiDataException("MshEventConverter.encodeMessage(): TYPE NOTE!");
 			case Midi.typeKeyOn:
 					return makeKeyOnMessage(event);
 			case Midi.typeKeyOff:
@@ -220,7 +220,7 @@ final public class MshEventConverter {
 					return makeSysexMessage(event);
 		
 			default:
-					return null;
+					throw new InvalidMidiDataException("MshEventConverter.encodeMessage()");
 		}
 	}
 
@@ -229,20 +229,19 @@ final public class MshEventConverter {
 	// Key Off
 	//----------
 	
-	static private int makeKeyOffEvent(long lTime, int nChannel, int nNote, int nVelocity)
+	static private int makeKeyOffEvent(long lTime, int nChannel, int nNote, int nVelocity) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeKeyOff);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,nNote);
-		 	Midi.SetField(ev,1,nVelocity);
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,nNote);
+		Midi.SetField(ev,1,nVelocity);
+		return ev;	
 	}	
 
-	static private MidiMessage makeKeyOffMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeKeyOffMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0x80, Midi.GetChan(ev), Midi.GetField(ev,0),  Midi.GetField(ev,1));
@@ -253,20 +252,19 @@ final public class MshEventConverter {
 	// Key On
 	//----------
 
-	static private int makeKeyOnEvent(long lTime, int nChannel, int nNote, int nVelocity)
+	static private int makeKeyOnEvent(long lTime, int nChannel, int nNote, int nVelocity) throws MidiException
 	{
-		int ev = Midi.NewEv(Midi.typeKeyOn);
+		int ev = Midi.NewEv(Midi.typeKeyOn);	
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,nNote);
-		 	Midi.SetField(ev,1,nVelocity);
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,nNote);
+		Midi.SetField(ev,1,nVelocity);
+		return ev;	
 	}
 
-	static private MidiMessage makeKeyOnMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeKeyOnMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0x90, Midi.GetChan(ev), Midi.GetField(ev,0),  Midi.GetField(ev,1));
@@ -277,20 +275,19 @@ final public class MshEventConverter {
 	// Key Press
 	//----------
 	
-	static private int makeKeyPressureEvent(long lTime, int nChannel, int nNote, int nPressure)
+	static private int makeKeyPressureEvent(long lTime, int nChannel, int nNote, int nPressure) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeKeyPress);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,nNote);
-		 	Midi.SetField(ev,1,nPressure);
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,nNote);
+		Midi.SetField(ev,1,nPressure);
+		return ev;	
 	}
 
-	static private MidiMessage makeKeyPressureMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeKeyPressureMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0xA0, Midi.GetChan(ev), Midi.GetField(ev,0),  Midi.GetField(ev,1));
@@ -301,20 +298,19 @@ final public class MshEventConverter {
 	// Ctrl Change
 	//------------
 
-	static private int makeControlChangeEvent(long lTime, int nChannel, int nControl, int nValue)
+	static private int makeControlChangeEvent(long lTime, int nChannel, int nControl, int nValue) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeCtrlChange);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,nControl);
-		 	Midi.SetField(ev,1,nValue);
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,nControl);
+		Midi.SetField(ev,1,nValue);
+		return ev;	
 	}
 
-	static private MidiMessage makeControlChangeMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeControlChangeMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0xB0, Midi.GetChan(ev), Midi.GetField(ev,0),  Midi.GetField(ev,1));
@@ -325,16 +321,15 @@ final public class MshEventConverter {
 	// Prog Change
 	//------------
 
-	static private int makeProgramChangeEvent(long lTime, int nChannel, int nProgram)
+	static private int makeProgramChangeEvent(long lTime, int nChannel, int nProgram) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeProgChange);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,nProgram);
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,nProgram);
+		return ev;	
 	}
 
 	static private MidiMessage makeProgChangeMessage(int ev) throws	InvalidMidiDataException
@@ -348,19 +343,18 @@ final public class MshEventConverter {
 	// Chan Press
 	//------------
 
-	static private int makeChannelPressureEvent(long lTime, int nChannel, int nPressure)
+	static private int makeChannelPressureEvent(long lTime, int nChannel, int nPressure) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeChanPress);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,nPressure);
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,nPressure);
+		return ev;	
 	}
 
-	static private MidiMessage makeChannelPressureMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeChannelPressureMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0xD0, Midi.GetChan(ev), Midi.GetField(ev,0), 0);
@@ -371,17 +365,16 @@ final public class MshEventConverter {
 	// Pitch Bend
 	//------------
 
-	static private int makePitchBendEvent(long lTime, int nChannel, int nPitch)
+	static private int makePitchBendEvent(long lTime, int nChannel, int nPitch) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typePitchWheel);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	Midi.SetChan(ev,nChannel);
-		 	Midi.SetField(ev,0,MidiUtils.get14bitLSB(nPitch));
-		 	Midi.SetField(ev,1,MidiUtils.get14bitMSB(nPitch));
-		 }
-		 return ev;	
+		Midi.SetDate(ev,(int)lTime);
+		Midi.SetChan(ev,nChannel);
+		Midi.SetField(ev,0,MidiUtils.get14bitLSB(nPitch));
+		Midi.SetField(ev,1,MidiUtils.get14bitMSB(nPitch));
+		return ev;	
 	}
 
 	static private MidiMessage makePitchBendMessage(int ev) throws	InvalidMidiDataException
@@ -395,27 +388,26 @@ final public class MshEventConverter {
 	// Systeme Exclusif
 	//-----------------
 
-	static private int decodeSysexMessage(SysexMessage event, long lTime)
+	static private int decodeSysexMessage(SysexMessage event, long lTime) throws MidiException
 	{
 		byte[]	abMessageData = event.getData();
 		int ev = Midi.NewEv(Midi.typeSysEx);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		
 		// the last byte of abMessageData is 0xF7, it should not be put in the MidiShare event
 	
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTime);
-		 	for (int i = 0; i < abMessageData.length-1; i++) {Midi.AddField(ev,abMessageData[i]);}
+		Midi.SetDate(ev,(int)lTime);
+		for (int i = 0; i < abMessageData.length-1; i++) {Midi.AddField(ev,abMessageData[i]);}
 		 	
-		 	if (Midi.CountFields(ev) != abMessageData.length-1) { // check event
-		 		Midi.FreeEv(ev);
-		 		ev = 0;
-		 	}
-		 }
-		 return ev;	
+		if (Midi.CountFields(ev) != abMessageData.length-1) { // check event
+		 	Midi.FreeEv(ev);	;
+		 	throw new MidiException("No more MidiShare events");
+		}
+		return ev;	
 	}
 	
 	
-	static private MidiMessage makeSysexMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeSysexMessage(int ev) throws InvalidMidiDataException
 	{
 		int n = Midi.CountFields(ev);
 		byte[] abMessageData = new byte[n+1];
@@ -436,36 +428,34 @@ final public class MshEventConverter {
 
 	// A vÈrifier
 	
-	static private int makeNumSeqEvent(long lTick,byte[] abMessageData)
+	static private int makeNumSeqEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeSeqNum);
 		int num;
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	num = (int)abMessageData[0];
-		 	num <<= 8;
-		 	num|= (int)abMessageData[1];
-		 	Midi.SetField(ev,0, num);
-		}
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		num = (int)abMessageData[0];
+		num <<= 8;
+		num|= (int)abMessageData[1];
+		Midi.SetField(ev,0, num);
 		return ev;	
 	}
 	
 	// A vÈrifier
 	
-	static private int makeTextEventAux(int ev, long lTick, byte[] abMessageData) 
+	static private int makeTextEventAux(int ev, long lTick, byte[] abMessageData) throws MidiException 
 	{
-		if (ev != 0) {
-			Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	for (int i = 0; i< abMessageData.length; i++) 
-		 		 Midi.AddField(ev, abMessageData[i]);
-		 }
-		 return ev;
+		if (ev==0) throw new MidiException("No more MidiShare events");
+		
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		for (int i = 0; i< abMessageData.length; i++) Midi.AddField(ev, abMessageData[i]);
+		return ev;
 	}
 	
-	static private MetaMessage makeTextMessageAux(int event, int type) throws	InvalidMidiDataException
+	static private MetaMessage makeTextMessageAux(int event, int type) throws InvalidMidiDataException
 	{
 		MetaMessage metaMessage = new MetaMessage();
 		int len = Midi.CountFields(event);
@@ -475,54 +465,53 @@ final public class MshEventConverter {
 		return metaMessage;
 	}
 	
-	static private int makeTextEvent(long lTick,byte[] abMessageData)
+	static private int makeTextEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeText),lTick,abMessageData);
 	}
 		
-	static private int makeCopyrightEvent(long lTick,byte[] abMessageData)
+	static private int makeCopyrightEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeCopyright),lTick,abMessageData);
 	}
 	
-	static private int makeSeqNameEvent(long lTick,byte[] abMessageData)
+	static private int makeSeqNameEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeSeqName),lTick,abMessageData);
 	}
 	
-	static private int makeInstrNameEvent(long lTick,byte[] abMessageData)
+	static private int makeInstrNameEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeInstrName),lTick,abMessageData);
 	}
 	
-	static private int makeLyricEvent(long lTick,byte[] abMessageData)
+	static private int makeLyricEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeLyric),lTick,abMessageData);
 	}
 	
-	static private int makeMarkerEvent(long lTick,byte[] abMessageData)
+	static private int makeMarkerEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeMarker),lTick,abMessageData);
 	}
 	
-	static private int makeCuePointEvent(long lTick,byte[] abMessageData)
+	static private int makeCuePointEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeCuePoint),lTick,abMessageData);
 	}
 	
-	static private int makeChanPrefEvent(long lTick,byte[] abMessageData)
+	static private int makeChanPrefEvent(long lTick,byte[] abMessageData) throws MidiException
 	{	
 		int ev = Midi.NewEv(Midi.typeChanPrefix);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	Midi.SetField(ev,0, abMessageData[0]);
-		}
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		Midi.SetField(ev,0, abMessageData[0]);
 		return ev;	
 	}
 	
-	static private MidiMessage makeChanPrefixMessage(int event) throws	InvalidMidiDataException
+	static private MidiMessage makeChanPrefixMessage(int event) throws InvalidMidiDataException
 	{
 		MetaMessage metaMessage = new MetaMessage();
 		byte[] data = new byte[1];
@@ -532,14 +521,13 @@ final public class MshEventConverter {
 	}
 
 	
-	static private int makeEndTrackEvent(long lTick,byte[] abMessageData)
+	static private int makeEndTrackEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeEndTrack);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		}
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
 		return ev;	
 	}
 	
@@ -550,25 +538,25 @@ final public class MshEventConverter {
 		return metaMessage;
 	}
 	
-	static private int makeTempoEvent(long lTick,byte[] abMessageData)
+	static private int makeTempoEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeTempo);
 		int tempo;
+		if (ev==0) throw new MidiException("No more MidiShare events");
+		
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	tempo = signedByteToUnsigned(abMessageData[0]);
-		 	tempo <<= 8;
-		 	tempo|=  signedByteToUnsigned(abMessageData[1]);
-		 	tempo <<= 8;
-		 	tempo|=  signedByteToUnsigned(abMessageData[2]);
-		 	Midi.SetField(ev, 0, tempo);
-		}
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		tempo = signedByteToUnsigned(abMessageData[0]);
+		tempo <<= 8;
+		tempo|=  signedByteToUnsigned(abMessageData[1]);
+		tempo <<= 8;
+		tempo|=  signedByteToUnsigned(abMessageData[2]);
+		Midi.SetField(ev, 0, tempo);
 		return ev;	
 	}
 	
-	static private MidiMessage makeTempoMessage(int event) throws	InvalidMidiDataException
+	static private MidiMessage makeTempoMessage(int event) throws InvalidMidiDataException
 	{
 		MetaMessage metaMessage = new MetaMessage();
 		int tempo = Midi.GetField(event,0);
@@ -581,26 +569,25 @@ final public class MshEventConverter {
 		return metaMessage;
 	}
 	
-	static private int makeSMPTEOffsetEvent(long lTick,byte[] abMessageData)
+	static private int makeSMPTEOffsetEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeSMPTEOffset);
 		int tmp;
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	tmp =  abMessageData[0]*3600;        		/* hours -> sec.       */
-        	tmp = tmp + abMessageData[1]*30;			/* min.  -> sec.       */
-          	tmp+= abMessageData[2];          			/* sec.                */
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		tmp =  abMessageData[0]*3600;        	/* hours -> sec.       */
+        	tmp = tmp + abMessageData[1]*30;	/* min.  -> sec.       */
+          	tmp+= abMessageData[2];          	/* sec.                */
           	Midi.AddField( ev,tmp);
-          	tmp= abMessageData[3]* 100;              	/* frame count *100    */
-          	tmp+= abMessageData[4];                  	/* fractionnal frame   */
+          	tmp= abMessageData[3]* 100;              /* frame count *100    */
+          	tmp+= abMessageData[4];                  /* fractionnal frame   */
           	Midi.AddField( ev, tmp);
-		}
 		return ev;	
 	}
 	
-	static private MidiMessage makeSMPTEOffsetMessage(int event) throws	InvalidMidiDataException
+	static private MidiMessage makeSMPTEOffsetMessage(int event) throws InvalidMidiDataException
 	{
 		MetaMessage metaMessage = new MetaMessage();
 		int l = Midi.GetField(event,0);
@@ -616,22 +603,21 @@ final public class MshEventConverter {
 		return metaMessage;
 	}
 	
-	static private int makeTimeSignEvent(long lTick,byte[] abMessageData)
+	static private int makeTimeSignEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeTimeSign);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	Midi.SetField(ev,0, abMessageData[0]);
-		 	Midi.SetField(ev,1, abMessageData[1]);
-		 	Midi.SetField(ev,2, abMessageData[2]);
-		 	Midi.SetField(ev,3, abMessageData[3]);
-		}
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		Midi.SetField(ev,0, abMessageData[0]);
+		Midi.SetField(ev,1, abMessageData[1]);
+		Midi.SetField(ev,2, abMessageData[2]);
+		Midi.SetField(ev,3, abMessageData[3]);
 		return ev;	
 	}
 	
-	static private MidiMessage makeTimeSignMessage(int event) throws	InvalidMidiDataException
+	static private MidiMessage makeTimeSignMessage(int event) throws InvalidMidiDataException
 	{
 		MetaMessage metaMessage = new MetaMessage();
 		int l = Midi.GetField(event,0);
@@ -644,16 +630,15 @@ final public class MshEventConverter {
 		return metaMessage;
 	}
 	
-	static private int makeKeySignEvent(long lTick,byte[] abMessageData)
+	static private int makeKeySignEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		int ev = Midi.NewEv(Midi.typeKeySign);
+		if (ev==0) throw new MidiException("No more MidiShare events");
 		 
-		if (ev != 0) {
-		 	Midi.SetDate(ev,(int)lTick);
-		 	Midi.SetChan(ev,0);
-		 	Midi.SetField(ev,0, abMessageData[0]);
-		 	Midi.SetField(ev,1, abMessageData[1]);
-		}
+		Midi.SetDate(ev,(int)lTick);
+		Midi.SetChan(ev,0);
+		Midi.SetField(ev,0, abMessageData[0]);
+		Midi.SetField(ev,1, abMessageData[1]);
 		return ev;	
 	}
 	
@@ -668,7 +653,7 @@ final public class MshEventConverter {
 		return metaMessage;
 	}
 	
-	static private int makeSpecificEvent(long lTick,byte[] abMessageData)
+	static private int makeSpecificEvent(long lTick,byte[] abMessageData) throws MidiException
 	{
 		return makeTextEventAux(Midi.NewEv(Midi.typeSpecific),lTick,abMessageData);
 	}

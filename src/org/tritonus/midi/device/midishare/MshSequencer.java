@@ -56,7 +56,7 @@ final public class MshSequencer
 	private float		m_fTempoFactor;
 	
 	private int 		m_refNum  = -1; 	// Player renum
-	private PlayerState m_state = null;		// Player state
+	private PlayerState 	m_state = null;		// Player state
 	private int 		m_recTrack = -1;	// Track in record mode
 	
 
@@ -83,6 +83,7 @@ final public class MshSequencer
 			 	Midi.Connect(m_refNum,0,1);
 			 	
 			 	m_state = new PlayerState();
+				//MidiPlayer.SetSynchroIn(m_refNum, MidiPlayer.kClockSync);
 			}
 		
 		}catch(MidiUnavailableException e) {
@@ -123,16 +124,19 @@ final public class MshSequencer
 		if (((mshSeq = Midi.NewSeq()) != 0) && ((mshSeq1 = Midi.NewSeq()) != 0)) {
 			for (nTrack = 0; nTrack < aTracks.length; nTrack++){
 				for (nEv = 0; nEv<aTracks[nTrack].size() ; nEv++) {
-					mshEv = MshEventConverter.decodeEvent(aTracks[nTrack].get(nEv));
-					if (mshEv != 0){
-						// Set the tracknumber
+					
+					try{
+						mshEv = MshEventConverter.decodeEvent(aTracks[nTrack].get(nEv));
 						Midi.SetRefnum(mshEv,IsTempoMap(Midi.GetType(mshEv)) ? 0 : Math.min(256,nTrack+1));
 						Midi.AddSeq(mshSeq1,mshEv);
-					}else{
-						Midi.FreeSeq(mshSeq);
+			
+					}catch (InvalidMidiDataException e) {  	// MidiEvent that can not be converted
+					}catch (MidiException e) {		// MidiShare allocation error
+						Midi.FreeSeq(mshSeq);	
 						Midi.FreeSeq(mshSeq1);
-						throw new InvalidMidiDataException("No more MidiShare events");			
+						throw new InvalidMidiDataException("No more MidiShare events");	
 					}
+					
 				}
 				// Mix the temporary sequence in the result sequence
 				MidiSequence.Mix(mshSeq1,mshSeq);
