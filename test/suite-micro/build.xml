@@ -1,4 +1,4 @@
-<project name="tritonus_tests" default="compile" basedir=".">
+<project name="tritonus_tests" default="test" basedir=".">
   <target name="init">
     <tstamp/>
     <property name="src" value="src" />
@@ -34,19 +34,26 @@
 
 
   <target name="test"
-	  depends="test-datasource">
+	  depends="test-api,test-implementation">
   </target>
 
-  <target name="test-datasource"
+  <target name="test-api"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
-      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
-      <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
-      <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
       <test name="ManagerTestCase" />
       <test name="PlayerTestCase" />
       <test name="DataSourceTestCase" />
+      <test name="ContentDescriptorTestCase" />
+    </junit>
+  </target>
+
+  <target name="test-implementation"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <formatter type="plain" />
+      <test name="InputStreamDataSourceTestCase" />
+      <test name="URLDataSourceTestCase" />
     </junit>
   </target>
 
