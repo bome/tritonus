@@ -79,20 +79,22 @@ public abstract class TSimpleFormatConversionProvider
 		collectEncodings(m_targetFormats, m_targetEncodings);
 	}
 
-	/**
-	 * Disables this FormatConversionProvider.
-	 * This may be useful when e.g. native libraries are not present.
-	 * TODO: enable method, better implementation
-	 */
-	public void disable() {
-		if (TDebug.TraceAudioConverter) {
-			TDebug.out("TSimpleFormatConversionProvider ("+getClass().getName()+"): disabled");
-		}
+
+
+	/**	Disables this FormatConversionProvider.
+		This may be useful when e.g. native libraries are not present.
+		TODO: enable method, better implementation
+	*/
+	protected void disable()
+	{
+		if (TDebug.TraceAudioConverter) { TDebug.out("TSimpleFormatConversionProvider.disable(): disabling " + getClass().getName()); }
 		m_sourceEncodings = new ArraySet();
 		m_targetEncodings = new ArraySet();
 		m_sourceFormats = new ArraySet();
 		m_targetFormats = new ArraySet();
 	}		
+
+
 
 	private static void collectEncodings(Collection formats,
 				      Collection encodings)
