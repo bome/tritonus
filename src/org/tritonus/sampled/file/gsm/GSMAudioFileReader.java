@@ -81,25 +81,22 @@ public class GSMAudioFileReader
 			throw new UnsupportedAudioFileException("not a GSM stream: wrong magic number");
 		}
 
-		// calculate frame size
-		// not specifying it causes Sun's Wave file writer to write rubbish
-		int nByteSize=AudioSystem.NOT_SPECIFIED;
-		int nFrameSize=AudioSystem.NOT_SPECIFIED;
 
-		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED) {
-			long lByteSize = lFileSizeInBytes;
-			long lFrameSize=lByteSize/33;
-			// need to handle overflow
-			if (lByteSize>Integer.MAX_VALUE) {
-				nByteSize=Integer.MAX_VALUE;
-			} else {
-				nByteSize=(int) lByteSize;
-			}
-			if (lFrameSize>Integer.MAX_VALUE) {
-				nFrameSize=Integer.MAX_VALUE;
-			} else {
-				nFrameSize=(int) lFrameSize;
-			}
+		/*
+		  If the file size is known, we derive the number of frames
+		  ('frame size') from it.
+		  If the values don't fit into integers, we leave them at
+		  NOT_SPECIFIED. 'Unknown' is considered less incorrect than
+		  a wrong value.
+		*/
+		// [fb] not specifying it causes Sun's Wave file writer to write rubbish
+		int	nByteSize = AudioSystem.NOT_SPECIFIED;
+		int	nFrameSize = AudioSystem.NOT_SPECIFIED;
+		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED
+		    && lFileSizeInBytes <= Integer.MAX_VALUE)
+		{
+			nByteSize = (int) lFileSizeInBytes;
+			nFrameSize = (int) (lFileSizeInBytes / 33);
 		}
 
 		AudioFormat	format = new AudioFormat(

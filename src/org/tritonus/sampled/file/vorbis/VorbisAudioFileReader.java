@@ -55,8 +55,8 @@ import	com.jcraft.jorbis.Block;
 public class VorbisAudioFileReader
 	extends	TRereadingAudioFileReader
 {
-	// TODO: this is not enough. Fix this value!
-	private static final int	BUFFERING_AMOUNT = 1000;
+	// Note: this value is only an estimate
+	private static final int	BUFFERING_AMOUNT = 10000;
 
 
 
@@ -234,30 +234,25 @@ public class VorbisAudioFileReader
 		}
 		int	nChannels = vi.channels;
 		float	fSampleRate = vi.rate;
-		System.err.println("\nBitstream is " + vi.channels + " channel, " + vi.rate + "Hz");
-		System.err.println("Encoded by: " + new String(vc.vendor, 0, vc.vendor.length - 1) + "\n");
+		if (TDebug.TraceAudioFileReader) { TDebug.out("\nBitstream is " + vi.channels + " channel, " + vi.rate + "Hz"); }
+		if (TDebug.TraceAudioFileReader) { TDebug.out("Encoded by: " + new String(vc.vendor, 0, vc.vendor.length - 1) + "\n"); }
 
-		// calculate frame size
-		// not specifying it causes Sun's Wave file writer to write rubbish
-		int nByteSize = AudioSystem.NOT_SPECIFIED;
-		int nFrameSize = AudioSystem.NOT_SPECIFIED;
-
-		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED)
+		/*
+		  If the file size is known, we derive the number of frames
+		  ('frame size') from it.
+		  If the values don't fit into integers, we leave them at
+		  NOT_SPECIFIED. 'Unknown' is considered less incorrect than
+		  a wrong value.
+		*/
+		// [fb] not specifying it causes Sun's Wave file writer to write rubbish
+		int	nByteSize = AudioSystem.NOT_SPECIFIED;
+		int	nFrameSize = AudioSystem.NOT_SPECIFIED;
+		if (lFileSizeInBytes != AudioSystem.NOT_SPECIFIED
+		    && lFileSizeInBytes <= Integer.MAX_VALUE)
 		{
-			long lByteSize = lFileSizeInBytes;
-			// TODO: fix these values!!
-			long lFrameSize=lByteSize/33;
-			// need to handle overflow
-			if (lByteSize>Integer.MAX_VALUE) {
-				nByteSize=Integer.MAX_VALUE;
-			} else {
-				nByteSize=(int) lByteSize;
-			}
-			if (lFrameSize>Integer.MAX_VALUE) {
-				nFrameSize=Integer.MAX_VALUE;
-			} else {
-				nFrameSize=(int) lFrameSize;
-			}
+			nByteSize = (int) lFileSizeInBytes;
+			// TODO: check if we can calculate a useful value here
+			// nFrameSize = (int) (lFileSizeInBytes / 33);
 		}
 
 		AudioFormat	format = new AudioFormat(
