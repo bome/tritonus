@@ -89,8 +89,8 @@ public class TestSystemMixer
 			GlobalInfo.getVendor(),
 			"Test System Mixer #0",
 			GlobalInfo.getVersion()),
-		      new Line.Info(Mixer.class),
-		      Arrays.asList(PORT_LINE_INFOS));
+		      new Line.Info(Mixer.class)/*,
+						  Arrays.asList(PORT_LINE_INFOS)*/);
 		if (TDebug.TraceMixer)
 		{
 			TDebug.out("TestSystemMixer.<init>: beginning.");
