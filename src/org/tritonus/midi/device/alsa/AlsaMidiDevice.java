@@ -68,10 +68,14 @@ public class AlsaMidiDevice
 
 	/**	The object interfacing to the ALSA sequencer.
 	 */
-	private AlsaSeq	m_aSequencer;
+	private AlsaSeq	m_alsaSeq;
+
+	/**	The object used for getting timestamps.
+	 */
+	private AlsaSeq.QueueStatus	m_queueStatus;
 
 	/**	The ALSA port id of the handler.
-	 *	This is used by m_aSequencer.
+	 *	This is used by m_alsaSeq.
 	 */
 	private int		m_nOwnPort;
 
@@ -135,16 +139,27 @@ public class AlsaMidiDevice
 
 
 
+	private AlsaSeq getAlsaSeq()
+	{
+		return m_alsaSeq;
+	}
+
+
+
+	private AlsaSeq.QueueStatus getQueueStatus()
+	{
+		return m_queueStatus;
+	}
+
+
+
 	protected void openImpl()
 	{
-		if (TDebug.TraceAlsaMidiDevice)
-		{
-			TDebug.out("AlsaMidiDevice.openImpl(): called");
-		}
+		if (TDebug.TraceAlsaMidiDevice) { TDebug.out("AlsaMidiDevice.openImpl(): called"); }
 		// create an ALSA client...
-		m_aSequencer = new AlsaSeq("Tritonus Midi port handler");
+		m_alsaSeq = new AlsaSeq("Tritonus Midi port handler");
 		// ...and an ALSA port
-		m_nOwnPort = m_aSequencer.createPort(
+		m_nOwnPort = getAlsaSeq().createPort(
 			"handler port",
 			AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ,
 			0,
@@ -158,10 +173,11 @@ public class AlsaMidiDevice
 			 *	It calls this.dequeueEvent() if
 			 *	it receives an event.
 			 */
-			m_nTimestampingQueue = m_aSequencer.allocQueue();
-			m_aSequencer.startQueue(m_nOwnPort, getTimestampingQueue());
+			m_nTimestampingQueue = getAlsaSeq().allocQueue();
+			m_queueStatus = new AlsaSeq.QueueStatus();
+			getAlsaSeq().startQueue(m_nOwnPort, getTimestampingQueue());
 			m_alsaMidiIn = new AlsaMidiIn(
-				m_aSequencer, m_nOwnPort,
+				getAlsaSeq(), m_nOwnPort,
 				getClient(), getPort(),
 				getTimestampingQueue(), true,
 				this);
@@ -170,13 +186,10 @@ public class AlsaMidiDevice
 		if (getUseOut())
 		{
 			// uses subscribers, immediately
-			m_alsaMidiOut = new AlsaMidiOut(m_aSequencer, m_nOwnPort);
+			m_alsaMidiOut = new AlsaMidiOut(getAlsaSeq(), m_nOwnPort);
 			m_alsaMidiOut.subscribe(getClient(), getPort());
 		}
-		if (TDebug.TraceAlsaMidiDevice)
-		{
-			TDebug.out("AlsaMidiDevice.openImpl(): completed");
-		}
+		if (TDebug.TraceAlsaMidiDevice) { TDebug.out("AlsaMidiDevice.openImpl(): completed"); }
 	}
 
 
@@ -187,20 +200,28 @@ public class AlsaMidiDevice
 		{
 			m_alsaMidiIn.interrupt();
 			m_alsaMidiIn = null;
+			// release timestamping queue
+			m_queueStatus.free();
+			m_queueStatus = null;
 		}
 		// TODO:
-		// m_aSequencer.destroyPort(m_nOwnPort);
-		// release timestamping queue
-		m_aSequencer.close();
-		m_aSequencer = null;
+		// getAlsaSeq().destroyPort(m_nOwnPort);
+		getAlsaSeq().close();
+		m_alsaSeq = null;
 	}
 
 
 
 	public long getMicroSecondPosition()
 	{
-		long	lNanoSeconds = m_aSequencer.getQueuePositionTime(getTimestampingQueue());
-		return lNanoSeconds / 1000;
+		long	lPosition = 0;
+		if (m_queueStatus != null)
+		{
+			getAlsaSeq().getQueueStatus(getTimestampingQueue(), getQueueStatus());
+			long	lNanoSeconds = getQueueStatus().getRealTime();
+			lPosition = lNanoSeconds / 1000;
+		}
+		return lPosition;
 	}
 
 
@@ -302,7 +323,7 @@ public class AlsaMidiDevice
 		{
 			try
 			{
-				AlsaMidiDevice.this.m_aSequencer.subscribePort(
+				AlsaMidiDevice.this.getAlsaSeq().subscribePort(
 					nClient, nPort,
 					AlsaMidiDevice.this.getClient(), AlsaMidiDevice.this.getPort());
 				return true;
