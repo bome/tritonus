@@ -22,7 +22,7 @@
  */
 
 
-package	org.tritonus.util;
+package	org.tritonus.core;
 
 
 import	java.util.ArrayList;
@@ -39,6 +39,8 @@ import	java.io.IOException;
 import	java.net.URL;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.util.ArraySet;
+
 
 
 public class Service

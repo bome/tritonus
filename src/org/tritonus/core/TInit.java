@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus;
+package	org.tritonus.core;
 
 
 import	java.util.Iterator;
@@ -39,9 +39,9 @@ import	javax.sound.sampled.spi.FormatConversionProvider;
 import	javax.sound.sampled.spi.MixerProvider;
 
 import	org.tritonus.TDebug;
-import	org.tritonus.midi.TMidiConfig;
-import	org.tritonus.sampled.TAudioConfig;
-import	org.tritonus.util.Service;
+import	org.tritonus.core.TMidiConfig;
+import	org.tritonus.core.TAudioConfig;
+import	org.tritonus.core.Service;
 
 
 

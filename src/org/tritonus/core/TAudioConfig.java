@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled;
+package	org.tritonus.core;
 
 
 import	java.util.Set;

@@ -9,11 +9,11 @@ the javalayer project.  The big credit for this goes to Eric B. who
 wrote the decoder.
 
 The decoder is now fully integrated into Tritonus.
-For a runnable program, see the file test/MpegPlayer.java.
+For a runnable program, see AudioPlayer.java from the Java Sound Examples.
 
-The decoder can also be used as plug-in for any JavaSound
-implementation (like JDK1.3 on Windows). Have a look at
-http://tritonus.org for more info.
+The decoder can also be used as plug-in for any Java Sound
+implementation (like the Sun jdk1.3). Have a look at
+http://tritonus.sourceforge.net/plugins.html for more info.
 
 JavaLayer project:
 http://javazoom.hypermart.net/javalayer/javalayer.html
@@ -23,7 +23,7 @@ MP3 ENCODING
 ------------
 MP3 file creation is supported with native access to
 the LAME library. A pure Java MP3 encoder does not exist 
-in our knowledge and would probably too slow - nowadays.
+in our knowledge and would probably be too slow - nowadays.
 LAME is acknowledged to provide high quality mp3 encoding.
 Additionally, it is completely open source (LGPL) and does 
 not use 3rd party source code.

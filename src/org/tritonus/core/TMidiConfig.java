@@ -23,7 +23,8 @@
  */
 
 
-package	org.tritonus.midi;
+package	org.tritonus.core;
+
 
 import	java.io.InputStream;
 import	java.io.IOException;

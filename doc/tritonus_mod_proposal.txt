@@ -16,28 +16,30 @@ external usage.
 
 - tritonus_core:
 	javax.sound.*
-	org.tritonus.TInit
-	org.tritonus.midi.TMidiConfig
-	org.tritonus.sampled.TAudioConfig
-	org.tritonus.util.Service
+	org.tritonus.core.TInit		(formerly: org.tritonus.TInit)
+	org.tritonus.core.TMidiConfig	(formerly: org.tritonus.midi.TMidiConfig)
+	org.tritonus.core.TAudioConfig	(formerly: org.tritonus.sampled.TAudioConfig)
+	org.tritonus.core.Service	(formerly: org.tritonus.util.Service)
 
 - tritonus_share.jar:
-	org.tritonus.TDebug
-	org.tritonus.TNotifier
-	org.tritonus.util.ArraySet
-	org.tritonus.util.GlobalInfo
-	org.tritonus.util.TCircularBuffer	??
-	org.tritonus.midi.MidiUtils		?? (only used in AlsaMidiChannel)
-	org.tritonus.midi.file.TMidiFileFormat	?? (only used by StandardMidiFileReader)
-	org.tritonus.midi.device.TMidiDevice
-	org.tritonus.midi.device.TSequencer
-	org.tritonus.sampled.AudioFileTypes
-	org.tritonus.sampled.AudioUtils
-	org.tritonus.sampled.Encodings
-	org.tritonus.sampled.FloatSampleBuffer
-	org.tritonus.sampled.TConversionTool
-	org.tritonus.sampled.convert.* (without subdirs)
-	org.tritonus.sampled.file.* (without subdirs)
+	org.tritonus.share.TDebug	(formerly: org.tritonus.TDebug)
+	org.tritonus.share.TNotifier	(formerly: org.tritonus.TNotifier)
+	org.tritonus.share.ArraySet	(formerly: org.tritonus.util.ArraySet)
+	org.tritonus.share.GlobalInfo	(formerly: org.tritonus.util.GlobalInfo)
+	org.tritonus.share.TCircularBuffer	?? (only used by AsyncFilteredAIS)	(formerly: org.tritonus.util.TCircularBuffer)
+	org.tritonus.share.midi.MidiUtils		?? (only used in AlsaMidiChannel)	(formerly: org.tritonus.midi.MidiUtils)
+	org.tritonus.share.midi.TMidiFileFormat	?? (only used by StandardMidiFileReader)	(formerly: org.tritonus.midi.file.TMidiFileFormat)
+	org.tritonus.share.midi.TMidiDevice		(formerly: org.tritonus.midi.device.TSequencer)
+	org.tritonus.share.midi.TSequencer		(formerly: org.tritonus.midi.device.TSequencer)
+	org.tritonus.share.sampled.AudioFileTypes	(formerly: org.tritonus.sampled.AudioFileTypes)
+	org.tritonus.share.sampled.AudioFormats		(formerly: org.tritonus.sampled.AudioFormats)
+	org.tritonus.share.sampled.AudioUtils		(formerly: org.tritonus.sampled.AudioUtils)
+	org.tritonus.share.sampled.Encodings		(formerly: org.tritonus.sampled.Encodings)
+	org.tritonus.share.sampled.FloatSampleBuffer	(formerly: org.tritonus.sampled.FloatSampleBuffer)
+	org.tritonus.share.sampled.TConversionTool	(formerly: org.tritonus.sampled.TConversionTool)
+	org.tritonus.share.sampled.TVolumeUtils ??	(formerly: org.tritonus.sampled.TVolumeUtils)
+	org.tritonus.share.sampled.convert.* (without subdirs)	(formerly: org.tritonus.sampled.convert.*)
+	org.tritonus.share.sampled.mixer.* (without subdirs)	(formerly: org.tritonus.mixer.file.*)
 
 - tritonus_midi_alsa:
 	org.tritonus.midi.device.alsa.*
@@ -78,12 +80,12 @@ external usage.
 	org.tritonus.lowlevel.esd.*
 
 Package structure changes:
+- many classes go to core or share (see above)
 - MpegFormatConversionProvider goes to org.tritonus.sampled.convert.mp3
 - PCM2PCMConversionProvider, SmartFormatConversionProvider, AlawFormatConversionProvider and UlawFormatConversionProvider go to org.tritonus.sampled.convert.standard
 - MpegAudioFileReader, MpegEncodings and MpegFileFormatType go to org.tritonus.sampled.file.mp3
 - Aiff*, Au* and Wave* go to org.tritonus.sampled.file.standard
 - org.tritonus.TConfiguration is no longer needed and will be removed.
-
 
 Notes:
 - javalayer is seperated from tritonus_mp3 for legal reasons.
