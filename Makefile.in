@@ -41,7 +41,7 @@ PACKAGING_ABSOLUTE_DIR=@SRC_ABSOLUTE_PATH@/src/packaging
 PACKSRCDIR_CORE = javax/sound org/tritonus/core
 PACKSRCDIR_SHARE = org/tritonus/share
 PACKSRCDIR_REMAINING = org/tritonus/lowlevel org/tritonus/midi org/tritonus/sampled
-PACKSRCDIR_MP3 = org/tritonus/sampled/convert/Mpeg* org/tritonus/sampled/file/Mpeg*
+PACKSRCDIR_MP3 = org/tritonus/sampled/convert/javalayer/Mpeg* org/tritonus/sampled/file/Mpeg*
 PACKSRCDIR_GSM = org/tritonus/lowlevel/gsm org/tritonus/sampled/file/gsm org/tritonus/sampled/convert/gsm
 
 PACKSRCDIR_JL = javazoom
@@ -53,7 +53,7 @@ LIBDEST_MP3=tritonus_mp3.jar
 LIBDEST_JL=javalayer.jar
 LIBDEST_GSM=tritonus_gsm.jar
 
-PLUGINS=$(LIBDEST_JL) $(LIBDEST_MP3) $(LIBDEST_GSM) $(LIBDEST_SHARE)
+PLUGINS=$(LIBDEST_MP3) $(LIBDEST_GSM) $(LIBDEST_SHARE) #$(LIBDEST_JL)
 
 LIBS=$(LIBDEST_CORE) $(LIBDEST_SHARE) $(LIBDEST_REMAINING) $(LIBDEST_MP3) $(LIBDEST_JL) $(LIBDEST_GSM)
 
