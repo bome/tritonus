@@ -382,11 +382,17 @@ bindist: bindist-esd bindist-alsa
 
 #TODO: dependancies, readme
 bindist-esd:
-	tar czf tritonus-esd-linux-x86-`date +%Y-%m-%d`.tar.gz -C doc/bindists/esd readme.txt -C ../../../dist tritonus_share.jar tritonus_esd.jar -C ../src/lib/esd libtritonusesd.so libtritonusesd.so.1 libtritonusesd.so.1.0
+	tar czf tritonus-esd-linux-x86-`date +%Y-%m-%d`.tar.gz \
+	-C doc/bindists/esd readme.txt \
+	-C ../../../dist tritonus_share.jar tritonus_esd.jar \
+	-C ../src/lib/esd libtritonusesd.so libtritonusesd.so.1 libtritonusesd.so.1.0
 
 #TODO: dependancies, readme
 bindist-alsa:
-	tar czf tritonus-alsa-linux-x86-`date +%Y-%m-%d`.tar.gz -C doc/bindists/alsa readme.txt -C ../../../dist tritonus_share.jar tritonus_alsa.jar -C ../src/lib/alsa libtritonusalsa.so libtritonusalsa.so.1 libtritonusalsa.so.1.0
+	tar czf tritonus-alsa-linux-x86-`date +%Y-%m-%d`.tar.gz \
+	-C doc/bindists/alsa readme.txt \
+	-C ../../../dist tritonus_share.jar tritonus_alsa.jar \
+	-C ../src/lib/alsa libtritonusalsa.so libtritonusalsa.so.1 libtritonusalsa.so.1.0
 
 bindist-upload:	bindist
 	scp tritonus-esd-linux-x86-`date +%Y-%m-%d`.tar.gz  tritonus-alsa-linux-x86-`date +%Y-%m-%d`.tar.gz www.tritonus.org:vtritonus/htdocs
