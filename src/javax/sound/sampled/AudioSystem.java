@@ -1058,26 +1058,34 @@ public class AudioSystem
 	{
 		Set		supportedTypes = new HashSet();
 		Iterator	audioFileWriters = TAudioConfig.getAudioFileWriters();
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.getAudioFileTypes()");
+		}
 		while (audioFileWriters.hasNext())
 		{
 			AudioFileWriter	audioFileProvider = (AudioFileWriter) audioFileWriters.next();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.getAudioFileTypes(): trying AudioFileWriter: " + audioFileProvider);
+				TDebug.out("trying AudioFileWriter: " + audioFileProvider);
 			}
 			AudioFileFormat.Type[]	aSupportedTypes = audioFileProvider.getAudioFileTypes();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.getAudioFileTypes(): AudioFileWriter supports the following Types:");
+				TDebug.out("this AudioFileWriter supports the following Types:");
 			}
 			for (int i = 0; i < aSupportedTypes.length; i++)
 			{
 				if (TDebug.TraceAudioSystem)
 				{
-					TDebug.out("AudioSystem.getAudioFileTypes():" + aSupportedTypes[i]);
+					TDebug.out(aSupportedTypes[i].toString());
 				}
 				supportedTypes.add(aSupportedTypes[i]);
 			}
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< returning "+supportedTypes.size()+" types.");
 		}
 		return (AudioFileFormat.Type[]) supportedTypes.toArray(EMPTY_TYPE_ARRAY);
 	}
@@ -1149,26 +1157,34 @@ public class AudioSystem
 	{
 		Set		supportedTypes = new HashSet();
 		Iterator	audioFileWriters = TAudioConfig.getAudioFileWriters();
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.getAudioFileTypes()");
+		}
 		while (audioFileWriters.hasNext())
 		{
 			AudioFileWriter	audioFileProvider = (AudioFileWriter) audioFileWriters.next();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.getAudioFileTypes(): trying AudioFileWriter: " + audioFileProvider);
+				TDebug.out("trying AudioFileWriter: " + audioFileProvider);
 			}
 			AudioFileFormat.Type[]	aSupportedTypes = audioFileProvider.getAudioFileTypes(audioInputStream);
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.getAudioFileTypes(): AudioFileWriter supports the following Types:");
+				TDebug.out("this AudioFileWriter supports the following Types:");
 			}
 			for (int i = 0; i < aSupportedTypes.length; i++)
 			{
 				if (TDebug.TraceAudioSystem)
 				{
-					TDebug.out("AudioSystem.getAudioFileTypes():" + aSupportedTypes[i]);
+					TDebug.out(aSupportedTypes[i].toString());
 				}
 				supportedTypes.add(aSupportedTypes[i]);
 			}
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< returning "+supportedTypes.size()+" types.");
 		}
 		return (AudioFileFormat.Type[]) supportedTypes.toArray(EMPTY_TYPE_ARRAY);
 	}
@@ -1227,8 +1243,16 @@ public class AudioSystem
 			int	nWritten = -1;
 			// $$fb 2000-04-02: need to check whether this audioFileWriter is actually
 			//                  capable of handling this file type !
+			if (TDebug.TraceAudioSystem)
+			{
+				TDebug.out(">AudioSystem.handleAudioFileWriter("+audioFileWriter.getClass().getName()+") checking for type "+m_fileType);
+			}
 			if (!audioFileWriter.isFileTypeSupported(m_fileType)) 
 			{
+				if (TDebug.TraceAudioSystem)
+				{
+					TDebug.out("< is not capable of handling this file type");
+				}
 				return false;
 			}
 			try
@@ -1254,6 +1278,10 @@ public class AudioSystem
 					// TODO: debug message
 				}
 				m_nWritten = nWritten;
+				if (TDebug.TraceAudioSystem)
+				{
+					TDebug.out("< wrote "+nWritten+" bytes");
+				}
 				// interrupt the iteration
 				return true;
 			}
@@ -1263,6 +1291,10 @@ public class AudioSystem
 				{
 					TDebug.out(e);
 				}
+			}
+			if (TDebug.TraceAudioSystem)
+			{
+				TDebug.out("< does not support this file type.");
 			}
 			// continue the iteration
 			return false;
@@ -1351,14 +1383,22 @@ public class AudioSystem
 	{
 		Iterator	mixerProviders = TAudioConfig.getMixerProviders();
 		boolean	bCompleted = false;
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.doMixerProviderIteration()");
+			}
 		while (mixerProviders.hasNext() && ! bCompleted)
 		{
 			MixerProvider	mixerProvider = (MixerProvider) mixerProviders.next();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.doMixerProviderIteration(): handling MixerProvider: " + mixerProvider);
+				TDebug.out("handling MixerProvider: " + mixerProvider);
 			}
 			bCompleted = action.handleMixerProvider(mixerProvider);
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< found="+bCompleted);
 		}
 	}
 
@@ -1381,14 +1421,22 @@ public class AudioSystem
 	{
 		Mixer.Info[]	mixerInfos = getMixerInfo();
 		boolean	bCompleted = false;
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.doMixerIteration()");
+		}
 		for (int nMixer = 0; nMixer < mixerInfos.length && ! bCompleted; nMixer++)
 		{
 			Mixer	mixer = getMixer(mixerInfos[nMixer]);
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.doMixerIteration(): handling Mixer: " + mixer);
+				TDebug.out("handling Mixer: " + mixer);
 			}
 			bCompleted = action.handleMixer(mixer);
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< found="+bCompleted);
 		}
 	}
 
@@ -1413,14 +1461,22 @@ public class AudioSystem
 	{
 		Iterator	formatConversionProviders = TAudioConfig.getFormatConversionProviders();
 		boolean bCompleted = false;
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.doFormatConversionProviderIteration()");
+		}
 		while (formatConversionProviders.hasNext() && ! bCompleted)
 		{
 			FormatConversionProvider	formatConversionProvider = (FormatConversionProvider) formatConversionProviders.next();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.doFormatConversionProviderIteration(): handling FormatConversionProvider: " + formatConversionProvider);
+				TDebug.out("handling FormatConversionProvider: " + formatConversionProvider);
 			}
 			bCompleted = action.handleFormatConversionProvider(formatConversionProvider);
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< found="+bCompleted);
 		}
 	}
 
@@ -1445,14 +1501,22 @@ public class AudioSystem
 	{
 		Iterator	audioFileReaders = TAudioConfig.getAudioFileReaders();
 		boolean bCompleted = false;
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.doAudioFileReaderIteration()");
+		}
 		while (audioFileReaders.hasNext() && ! bCompleted)
 		{
 			AudioFileReader	audioFileReader = (AudioFileReader) audioFileReaders.next();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.doAudioFileReaderIteration(): handling AudioFileReader: " + audioFileReader);
+				TDebug.out("handling AudioFileReader: " + audioFileReader);
 			}
 			bCompleted = action.handleAudioFileReader(audioFileReader);
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< found="+bCompleted);
 		}
 	}
 
@@ -1477,14 +1541,22 @@ public class AudioSystem
 	{
 		Iterator	audioFileWriters = TAudioConfig.getAudioFileWriters();
 		boolean bCompleted = false;
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out(">AudioSystem.doAudioFileWriterIteration()");
+		}
 		while (audioFileWriters.hasNext() && ! bCompleted)
 		{
 			AudioFileWriter	audioFileWriter = (AudioFileWriter) audioFileWriters.next();
 			if (TDebug.TraceAudioSystem)
 			{
-				TDebug.out("AudioSystem.doAudioFileWriterIteration(): handling AudioFileWriter: " + audioFileWriter);
+				TDebug.out("handling AudioFileWriter: " + audioFileWriter);
 			}
 			bCompleted = action.handleAudioFileWriter(audioFileWriter);
+		}
+		if (TDebug.TraceAudioSystem)
+		{
+			TDebug.out("< found="+bCompleted);
 		}
 	}
 

@@ -73,6 +73,7 @@ public abstract class FormatConversionProvider
 		if (TDebug.TraceAudioConverter)
 		{
 			TDebug.out(">FormatConversionProvider.isConversionSupported(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out("class: "+getClass().getName());
 			TDebug.out("checking if conversion possible");
 			TDebug.out("from: " + sourceFormat);
 			TDebug.out("to: " + targetEncoding);
@@ -100,6 +101,7 @@ public abstract class FormatConversionProvider
 		if (TDebug.TraceAudioConverter)
 		{
 			TDebug.out(">FormatConversionProvider.isConversionSupported(AudioFormat, AudioFormat):");
+			TDebug.out("class: "+getClass().getName());
 			TDebug.out("checking if conversion possible");
 			TDebug.out("from: " + sourceFormat);
 			TDebug.out("to: " + targetFormat);
@@ -109,7 +111,6 @@ public abstract class FormatConversionProvider
 		{
 			if (TDebug.TraceAudioConverter)
 			{
-				TDebug.out("FormatConversionProvider.isConversionSupported():");
 				TDebug.out("checking against possible target format: " + aTargetFormats[i]);
 			}
 			if (aTargetFormats[i] != null && aTargetFormats[i].matches(targetFormat))
