@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.convert;
+package	org.tritonus.sampled.convert.javalayer;
 
 
 import	java.io.InputStream;
@@ -34,7 +34,6 @@ import	java.util.Arrays;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
-// import	javax.sound.sampled.spi.FormatConversionProvider;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
