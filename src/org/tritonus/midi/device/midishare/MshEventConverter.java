@@ -144,6 +144,7 @@ final public class MidiShareEventConverter {
 					
 			default:
 				TDebug.out("MshMidiOut.decodeMetaMessage(): UNKNOWN EVENT TYPE!");
+				System.out.println("Length " + message.getLength());
 				return 0;
 		}
 	}
@@ -408,7 +409,7 @@ final public class MidiShareEventConverter {
 	// Meta events (MIDIFiles)
 	//------------------------
 
-	// A vérifier
+	// A vÈrifier
 	
 	static private int makeNumSeqEvent(long lTick,byte[] abMessageData)
 	{
@@ -418,22 +419,22 @@ final public class MidiShareEventConverter {
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	num = (int)abMessageData[1];
+		 	num = (int)abMessageData[0];
 		 	num <<= 8;
-		 	num|= (int)abMessageData[2];
+		 	num|= (int)abMessageData[1];
 		 	Midi.SetField(ev,0, num);
 		}
 		return ev;	
 	}
 	
-	// A vérifier
+	// A vÈrifier
 	
 	static private int makeTextEventAux(int ev, long lTick, byte[] abMessageData) 
 	{
 		if (ev != 0) {
 			Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	for (int i = 1; i< abMessageData.length; i++) 
+		 	for (int i = 0; i< abMessageData.length; i++) 
 		 		 Midi.AddField(ev, abMessageData[i]);
 		 }
 		 return ev;
@@ -491,7 +492,7 @@ final public class MidiShareEventConverter {
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	Midi.SetField(ev,0, abMessageData[1]);
+		 	Midi.SetField(ev,0, abMessageData[0]);
 		}
 		return ev;	
 	}
@@ -532,11 +533,11 @@ final public class MidiShareEventConverter {
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	tempo = signedByteToUnsigned(abMessageData[1]);
+		 	tempo = signedByteToUnsigned(abMessageData[0]);
+		 	tempo <<= 8;
+		 	tempo|=  signedByteToUnsigned(abMessageData[1]);
 		 	tempo <<= 8;
 		 	tempo|=  signedByteToUnsigned(abMessageData[2]);
-		 	tempo <<= 8;
-		 	tempo|=  signedByteToUnsigned(abMessageData[3]);
 		 	Midi.SetField(ev, 0, tempo);
 		}
 		return ev;	
@@ -563,12 +564,12 @@ final public class MidiShareEventConverter {
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	tmp =  abMessageData[1]*3600;        		/* hours -> sec.       */
-        	tmp = tmp + abMessageData[2]*30;			/* min.  -> sec.       */
-          	tmp+= abMessageData[3];          			/* sec.                */
+		 	tmp =  abMessageData[0]*3600;        		/* hours -> sec.       */
+        	tmp = tmp + abMessageData[1]*30;			/* min.  -> sec.       */
+          	tmp+= abMessageData[2];          			/* sec.                */
           	Midi.AddField( ev,tmp);
-          	tmp= abMessageData[4]* 100;              	/* frame count *100    */
-          	tmp+= abMessageData[5];                  	/* fractionnal frame   */
+          	tmp= abMessageData[3]* 100;              	/* frame count *100    */
+          	tmp+= abMessageData[4];                  	/* fractionnal frame   */
           	Midi.AddField( ev, tmp);
 		}
 		return ev;	
@@ -597,10 +598,10 @@ final public class MidiShareEventConverter {
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	Midi.SetField(ev,0, abMessageData[1]);
-		 	Midi.SetField(ev,1, abMessageData[2]);
-		 	Midi.SetField(ev,2, abMessageData[3]);
-		 	Midi.SetField(ev,3, abMessageData[4]);
+		 	Midi.SetField(ev,0, abMessageData[0]);
+		 	Midi.SetField(ev,1, abMessageData[1]);
+		 	Midi.SetField(ev,2, abMessageData[2]);
+		 	Midi.SetField(ev,3, abMessageData[3]);
 		}
 		return ev;	
 	}
@@ -625,8 +626,8 @@ final public class MidiShareEventConverter {
 		if (ev != 0) {
 		 	Midi.SetDate(ev,(int)lTick);
 		 	Midi.SetChan(ev,0);
-		 	Midi.SetField(ev,0, abMessageData[1]);
-		 	Midi.SetField(ev,1, abMessageData[2]);
+		 	Midi.SetField(ev,0, abMessageData[0]);
+		 	Midi.SetField(ev,1, abMessageData[1]);
 		}
 		return ev;	
 	}
