@@ -23,6 +23,7 @@
 package	org.tritonus.mmapi;
 
 
+import	java.util.Enumeration;
 import	java.util.Vector;
 
 import	javax.microedition.media.Control;
@@ -32,19 +33,39 @@ import	javax.microedition.media.Player;
 import	javax.microedition.media.PlayerListener;
 import	javax.microedition.media.TimeBase;
 import	javax.microedition.media.control.StopTimeControl;
+import	javax.microedition.media.control.VolumeControl;
 import	javax.microedition.media.protocol.DataSource;
 
-import org.tritonus.share.TDebug;
 
 
+/**	Base class for Player implementation.
+*/
 public abstract class TPlayer
 extends TControllable
 implements Player
 {
+	/**	Default playback rate.
+		Since in MMAPI, playback rate is specified in
+		'milli-percentage', the value 100000 is equal to 100 %.
+	*/
+	protected static final int	DEFAULT_RATE = 100000;
+
 	private DataSource		m_dataSource;
 	private TimeBase		m_timeBase;
 	private Vector			m_listeners;
 	private int			m_nState;
+
+	/**	Start time of the player in terms of media time.
+		Set by {@link setMediaTime(long) setMediaTime} and
+		{@link stop() stop}.
+	*/
+	private long			m_lMediaStartTime;
+
+	/**	Start time of the player in terms of TimeBase time.
+		Set by {@link start() start}.
+	*/
+	private long			m_lTimeBaseStartTime;
+	private EventQueue		m_eventQueue;
 	private TStopTimeControl	m_stopTimeControl;
 
 
@@ -65,6 +86,7 @@ implements Player
 		m_listeners = new Vector();
 		m_nState = UNREALIZED;
 		m_timeBase = getDefaultTimeBase();
+		m_eventQueue = new EventQueue();
 		m_stopTimeControl = null;
 	}
 
@@ -87,7 +109,6 @@ implements Player
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				MediaException	me = new MediaException("can't realize Player");
 				// NOTE: The following is a 1.4 construct.
 				me.initCause(e);
@@ -121,7 +142,6 @@ implements Player
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				MediaException	me = new MediaException("can't prefetch Player");
 				// NOTE: The following is a 1.4 construct.
 				me.initCause(e);
@@ -152,19 +172,20 @@ implements Player
 			setState(STARTED);
 			try
 			{
+				m_lTimeBaseStartTime = getTimeBaseTime();
 				doStart();
+				postStartedEvent();
+				if (getStopTimeControl() != null)
+				{
+					getStopTimeControl().init();
+				}
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				MediaException	me = new MediaException("can't start Player");
 				// NOTE: The following is a 1.4 construct.
 				me.initCause(e);
 				throw me;
-			}
-			if (getStopTimeControl() != null)
-			{
-				getStopTimeControl().init();
 			}
 		}
 	}
@@ -195,14 +216,15 @@ implements Player
 			try
 			{
 				doStop();
-				// TODO: send event depending on bAtTime
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				// Exception is ignored.
+				// IGNORED
 			}
+			// we need this if we want to start again.
+			m_lMediaStartTime = calculateCurrentMediaTime();
 			setState(PREFETCHED);
+			postStoppedEvent(bAtTime);
 		}
 	}
 
@@ -228,8 +250,7 @@ implements Player
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				// Exception is ignored.
+				// IGNORED
 			}
 			setState(REALIZED);
 		}
@@ -254,7 +275,7 @@ implements Player
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				// IGNORED
 			}
 			// FALL THROUGH
 
@@ -265,7 +286,7 @@ implements Player
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				// IGNORED
 			}
 			// FALL THROUGH
 
@@ -281,9 +302,10 @@ implements Player
 			}
 			catch (Exception e)
 			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				// IGNORED
 			}
 			setState(CLOSED);
+			postClosedEvent();
 		}
 	}
 
@@ -302,7 +324,7 @@ implements Player
 
 		@see #getDefaultTimeBase()
 	*/
-	public void setTimeBase(TimeBase timeBase)
+	public synchronized void setTimeBase(TimeBase timeBase)
 		throws MediaException
 	{
 		// The following call can throw an IllegalStateException.
@@ -317,7 +339,7 @@ implements Player
 
 
 
-	public TimeBase getTimeBase()
+	public synchronized TimeBase getTimeBase()
 	{
 		// The following call can throw an IllegalStateException.
 		checkStateRealized();
@@ -326,23 +348,143 @@ implements Player
 	}
 
 
+	/**	Get the current TimeBase time.
+		Just a convenience method.
 
-	// TODO:
-	public long setMediaTime(long lNow)
+		@return the time of this player's TimeBase in microseconds.
+	*/
+	protected long getTimeBaseTime()
 	{
+		return getTimeBase().getTime();
+	}
+
+
+	/**	TODO:
+		From within this method, doSetMediaTime(long) is called.
+		@throws IllegalStateException as specified by the contract.
+		@throws MediaException in one of two cases: a) during setting
+		the media time, the player is restarted and either start()
+		or stop() throws a MediaException b) if doSetMediaTime
+		throws an Exception.
+	*/
+	public synchronized long setMediaTime(long lMediaTime)
+		throws MediaException
+	{
+		boolean	bRestarting = false;
 		// The following check can throw an IllegalStateException.
 		checkStateRealized();
-		return -1;
+
+		if (getState() == STARTED && getRestartingOnSetMediaTime())
+		{
+			stop();
+			bRestarting = true;
+		}
+
+		lMediaTime = Math.max(0, lMediaTime);
+		long	lDuration = getDuration();
+		if (lDuration != TIME_UNKNOWN)
+		{
+			lMediaTime = Math.min(lDuration, lMediaTime);
+		}
+
+		m_lMediaStartTime = lMediaTime;
+
+		try
+		{
+			doSetMediaTime(lMediaTime);
+		}
+		catch (Exception e)
+		{
+			MediaException	me = new MediaException("can't start Player");
+			// NOTE: The following is a 1.4 construct.
+			me.initCause(e);
+			throw me;
+		}
+
+		if (bRestarting)
+		{
+			start();
+		}
+		return lMediaTime;
+	}
+
+
+	/**	Returns if the player should be restated on setMediaTime().
+		If this is true, stop() is called from setMediaTime()
+		prior to actually setting the time. Afterwards, start() is
+		called.
+
+		The default behaviour is to do this, since this class'
+		implementation of the method always returns true.
+		If a subclass doesn't need this behaviour, it
+		can override this method to return false.
+
+		Currently, this behaviour is enforced for all players
+		derived from this class (note that this method can't be
+		overridden because it is final). This is because the effect
+		of not doing so has not been checked.
+	*/
+	protected final boolean getRestartingOnSetMediaTime()
+	{
+		return true;
 	}
 
 
 
-	// TODO:
+	protected abstract void doSetMediaTime(long lMediaTime)
+		throws Exception;
+
+
+
+	/*	TODO:
+	 */
 	public long getMediaTime()
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
-		return -1;
+
+		return getMediaTimeImpl();
+	}
+
+
+	/*	TODO:
+	 */
+	protected long getMediaTimeImpl()
+	{
+		long	lMediaTime;
+
+		if (getState() == STARTED)
+		{
+			lMediaTime = calculateCurrentMediaTime();
+		}
+		else
+		{
+			lMediaTime = m_lMediaStartTime;
+		}
+		return lMediaTime;
+	}
+
+
+	/**	calculate the current media time.
+		This method assumes that the player is started.
+	*/
+	private long calculateCurrentMediaTime()
+	{
+		long	lTimeBaseNow = getTimeBaseTime();
+		long	lMediaTime = (lTimeBaseNow - m_lTimeBaseStartTime);
+		lMediaTime = (lMediaTime * getRate()) / DEFAULT_RATE;
+		lMediaTime += m_lMediaStartTime;
+		return lMediaTime;
+	}
+
+
+	/**	Get the playback rate of the player.
+		See RateControl.
+		Currently, always returns .
+	 */
+	private int getRate()
+	{
+		return DEFAULT_RATE;
 	}
 
 
@@ -404,6 +546,115 @@ implements Player
 	}
 
 
+
+	protected void postEvent(String strEvent,
+				 Object eventData)
+	{
+ 		m_eventQueue.addEvent(strEvent,
+				      eventData);
+	}
+
+
+
+	protected void postMediaTimeEvent(String strEvent)
+	{
+		long	lMediaTime = getMediaTimeImpl();
+		postEvent(strEvent, new Long(lMediaTime));
+	}
+
+
+
+	protected void postStartedEvent()
+	{
+		// TODO: reconsider if there is a member startTime
+		postMediaTimeEvent(PlayerListener.STARTED);
+	}
+
+
+
+	protected void postStoppedEvent(boolean bAtTime)
+	{
+		String	strEvent = bAtTime ? PlayerListener.STOPPED_AT_TIME : PlayerListener.STOPPED;
+		postMediaTimeEvent(strEvent);
+	}
+
+
+
+	protected void postEndOfMediaEvent()
+	{
+		postMediaTimeEvent(PlayerListener.END_OF_MEDIA);
+	}
+
+
+
+	protected void postDurationUpdatedEvent()
+	{
+		long	lDuration = getDuration();
+		postEvent(PlayerListener.DURATION_UPDATED, new Long(lDuration));
+	}
+
+
+
+	protected void postDeviceAvailableEvent(boolean bAvailable,
+						String strDevice)
+	{
+		String	strEvent = bAvailable ? PlayerListener.DEVICE_AVAILABLE : PlayerListener.DEVICE_UNAVAILABLE;
+		postEvent(strEvent, strDevice);
+	}
+
+
+
+	protected void postControlChangedEvent(Control control)
+	{
+		String	strEvent = (control instanceof VolumeControl) ?
+			PlayerListener.VOLUME_CHANGED :
+			PlayerListener.SIZE_CHANGED;
+		postEvent(strEvent, control);
+	}
+
+
+
+	protected void postErrorEvent(String strMessage)
+	{
+		postEvent(PlayerListener.ERROR, strMessage);
+	}
+
+
+
+	protected void postClosedEvent()
+	{
+		postEvent(PlayerListener.CLOSED, null);
+	}
+
+
+
+	protected void postRecordEvent(boolean bStarted)
+	{
+		String	strEvent = bStarted ?
+			PlayerListener.RECORD_STARTED :
+			PlayerListener.RECORD_STOPPED;
+		postMediaTimeEvent(strEvent);
+	}
+
+
+
+	protected void postRecordErrorEvent(String strMessage)
+	{
+		postEvent(PlayerListener.RECORD_ERROR, strMessage);
+	}
+
+
+
+	protected void postBufferingEvent(boolean bStarted)
+	{
+		String	strEvent = bStarted ?
+			PlayerListener.BUFFERING_STARTED :
+			PlayerListener.BUFFERING_STOPPED;
+		postMediaTimeEvent(strEvent);
+	}
+
+
+
 	protected DataSource getDataSource()
 	{
 		return m_dataSource;
@@ -428,7 +679,6 @@ implements Player
 	private void setState(int nState)
 	{
 		m_nState = nState;
-		// TODO: sent event
 	}
 
 
@@ -524,10 +774,119 @@ implements Player
 
 
 
+
+	private class EventQueue
+	extends Thread
+	{
+		private Vector		m_events;
+
+
+		public EventQueue()
+		{
+			m_events = new Vector();
+			setDaemon(true);
+			start();
+		}
+
+
+
+		public void addEvent(String strEvent, Object eventData)
+		{
+			EventRecord	eventRecord = new EventRecord(strEvent, eventData);
+			synchronized (this)
+			{
+				m_events.addElement(eventRecord);
+				notify();
+			}
+		}
+
+
+
+		public void run()
+		{
+			while (true)
+			{
+				synchronized (this)
+				{
+					while (m_events.size() == 0)
+					{
+						try
+						{
+							wait();
+						}
+						catch (InterruptedException e)
+						{
+							// IGNORED
+						}
+					}
+					for (int i = 0; i < m_events.size(); i++)
+					{
+						EventRecord	eventRecord = (EventRecord) m_events.elementAt(0);
+						m_events.removeElementAt(0);
+						deliver(eventRecord);
+					}
+				}
+			}
+		}
+
+
+
+		private void deliver(EventRecord eventRecord)
+		{
+			Vector	listeners = null;
+			synchronized (TPlayer.this.m_listeners)
+			{
+				listeners = (Vector) TPlayer.this.m_listeners.clone();
+			}
+			Enumeration	enum = listeners.elements();
+			while (enum.hasMoreElements())
+			{
+				PlayerListener	listener = (PlayerListener) enum.nextElement();
+				listener.playerUpdate(TPlayer.this,
+						      eventRecord.getEvent(),
+						      eventRecord.getEventData());
+			}
+
+		}
+	}
+
+
+	/**	Internal storage object for EventQueue.
+		Instances of this class form the entries
+		in the EventQueue. The objects store the
+		(type of) event and the event data.
+	*/
+	private /*static*/ class EventRecord
+	{
+		private String		m_strEvent;
+		private Object		m_eventData;
+
+
+		public EventRecord(String strEvent,
+				   Object eventData)
+		{
+			m_strEvent = strEvent;
+			m_eventData = eventData;
+		}
+
+
+		public String getEvent()
+		{
+			return m_strEvent;
+		}
+
+
+		public Object getEventData()
+		{
+			return m_eventData;
+		}
+	}
+
+
 	/**	StopTimeControl for TPlayer.
 		The basic idea is to have a thread that sleeps until the desired
 		stop time and then calls the normal stop() method.
-	 */
+	*/
 	protected class TStopTimeControl
 	implements StopTimeControl, Runnable
 	{
@@ -545,7 +904,7 @@ implements Player
 		/**
 		   cases:
 
-		 */
+		*/
 		public void setStopTime(long lStopTime)
 		{
 			if (getStopTime() != RESET &&
@@ -611,7 +970,7 @@ implements Player
 		/**
 		   NOTE: the current implementation only works correctely if
 		   the rate is 1.0. This has to be reworked in the future.
-		 */
+		*/
 		public void run()
 		{
 			/*	If Thread.sleep() throws an InterruptedException,
@@ -633,7 +992,6 @@ implements Player
 			catch (InterruptedException e)
 			{
 				bInterrupted = true;
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			if (! m_thread.isInterrupted() || bInterrupted)
 			{

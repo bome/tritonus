@@ -82,6 +82,13 @@ extends TPlayer
 		throws Exception
 	{
 	}
+
+
+
+	protected void doSetMediaTime(long lMediaTime)
+		throws Exception
+	{
+	}
 }
 
 
