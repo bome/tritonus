@@ -42,7 +42,7 @@ import	javax.sound.midi.MidiSystem;
 
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.TSequencer;
+import	org.tritonus.share.midi.TMidiDevice;
 import	org.tritonus.midi.device.midishare.*;
 
 
@@ -51,7 +51,7 @@ import	grame.midishare.player.*;
 import	grame.midishare.tools.*;
 
 final public class MshSequencer
-	extends		TSequencer
+	extends		TMidiDevice
 {
 
 	private float		m_fTempoInMPQ;
