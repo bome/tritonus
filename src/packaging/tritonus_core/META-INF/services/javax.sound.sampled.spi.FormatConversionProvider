@@ -2,7 +2,7 @@
 #
 
 org.tritonus.sampled.convert.gsm.GSMFormatConversionProvider
-org.tritonus.sampled.convert.MpegFormatConversionProvider
+org.tritonus.sampled.convert.javalayer.MpegFormatConversionProvider
 org.tritonus.sampled.convert.Mp3LameFormatConversionProvider
 org.tritonus.sampled.convert.UlawFormatConversionProvider
 org.tritonus.sampled.convert.AlawFormatConversionProvider
