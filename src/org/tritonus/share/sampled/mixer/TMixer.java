@@ -119,17 +119,36 @@ public abstract class TMixer
 			TDebug.out("TMixer.<init>(): begin");
 		}
 		m_mixerInfo = mixerInfo;
-		m_supportedSourceFormats = supportedSourceFormats;
-		m_supportedTargetFormats = supportedTargetFormats;
-		m_supportedSourceLineInfos = supportedSourceLineInfos;
-		m_supportedTargetLineInfos = supportedTargetLineInfos;
-		m_supportedPortLineInfos = supportedPortLineInfos;
+		setSupportInformation(
+			supportedSourceFormats,
+			supportedTargetFormats,
+			supportedSourceLineInfos,
+			supportedTargetLineInfos,
+			supportedPortLineInfos);
 		m_openSourceDataLines = new ArraySet();
 		m_openTargetDataLines = new ArraySet();
 		if (TDebug.TraceMixer)
 		{
 			TDebug.out("TMixer.<init>(): end");
 		}
+	}
+
+
+
+	protected void setSupportInformation(
+			 Collection supportedSourceFormats,
+			 Collection supportedTargetFormats,
+			 Collection supportedSourceLineInfos,
+			 Collection supportedTargetLineInfos,
+			 Collection supportedPortLineInfos)
+	{
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.setSupportInformation(): begin"); }
+		m_supportedSourceFormats = supportedSourceFormats;
+		m_supportedTargetFormats = supportedTargetFormats;
+		m_supportedSourceLineInfos = supportedSourceLineInfos;
+		m_supportedTargetLineInfos = supportedTargetLineInfos;
+		m_supportedPortLineInfos = supportedPortLineInfos;
+		if (TDebug.TraceMixer) { TDebug.out("TMixer.setSupportInformation(): end"); }
 	}
 
 
