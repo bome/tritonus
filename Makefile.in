@@ -50,10 +50,13 @@ vpath %.java $(SRCDIR_PUB)/sampled/spi
 vpath %.java $(SRCDIR_PRIV)
 vpath %.java $(SRCDIR_PRIV)/lowlevel/alsa
 vpath %.java $(SRCDIR_PRIV)/lowlevel/esd
+vpath %.java $(SRCDIR_PRIV)/lowlevel/gsm
 vpath %.java $(SRCDIR_PRIV)/lowlevel/saint
 vpath %.java $(SRCDIR_PRIV)/sampled
 vpath %.java $(SRCDIR_PRIV)/sampled/convert
+vpath %.java $(SRCDIR_PRIV)/sampled/convert/gsm
 vpath %.java $(SRCDIR_PRIV)/sampled/file
+vpath %.java $(SRCDIR_PRIV)/sampled/file/gsm
 vpath %.java $(SRCDIR_PRIV)/sampled/mixer
 vpath %.java $(SRCDIR_PRIV)/sampled/mixer/alsa
 vpath %.java $(SRCDIR_PRIV)/sampled/mixer/esd
@@ -74,10 +77,13 @@ vpath %.class $(OBJDIR_PUB)/sampled/spi
 vpath %.class $(OBJDIR_PRIV)
 vpath %.class $(OBJDIR_PRIV)/lowlevel/alsa
 vpath %.class $(OBJDIR_PRIV)/lowlevel/esd
+vpath %.class $(OBJDIR_PRIV)/lowlevel/gsm
 vpath %.class $(OBJDIR_PRIV)/lowlevel/saint
 vpath %.class $(OBJDIR_PRIV)/sampled
 vpath %.class $(OBJDIR_PRIV)/sampled/convert
+vpath %.class $(OBJDIR_PRIV)/sampled/convert/gsm
 vpath %.class $(OBJDIR_PRIV)/sampled/file
+vpath %.class $(OBJDIR_PRIV)/sampled/file/gsm
 vpath %.class $(OBJDIR_PRIV)/sampled/mixer
 vpath %.class $(OBJDIR_PRIV)/sampled/mixer/alsa
 vpath %.class $(OBJDIR_PRIV)/sampled/mixer/esd
@@ -99,10 +105,13 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/*.java \
 	$(SRCDIR_PRIV)/lowlevel/alsa/*.java \
 	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
+	$(SRCDIR_PRIV)/lowlevel/gsm/*.java \
 	$(SRCDIR_PRIV)/lowlevel/saint/*.java \
 	$(SRCDIR_PRIV)/sampled/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/*.java \
+	$(SRCDIR_PRIV)/sampled/convert/gsm/*.java \
 	$(SRCDIR_PRIV)/sampled/file/*.java \
+	$(SRCDIR_PRIV)/sampled/file/gsm/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/alsa/*.java \
 	$(SRCDIR_PRIV)/sampled/mixer/esd/*.java \

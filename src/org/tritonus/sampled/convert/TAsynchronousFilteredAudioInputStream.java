@@ -77,7 +77,11 @@ public abstract class TAsynchronousFilteredAudioInputStream
 		super(new ByteArrayInputStream(EMPTY_BYTE_ARRAY),
 		      outputFormat,
 		      lLength);
-		m_circularBuffer = new TCircularBuffer(nBufferSize, false, true, this);
+		m_circularBuffer = new TCircularBuffer(
+			nBufferSize,
+			false,	// blocking read
+			true,	// blocking write
+			this);	// trigger
 	}
 
 
