@@ -29,7 +29,7 @@
 	       classname="javazoom.jl.decoder.Decoder"
 	       property="javalayer-present" />
     <available
-	       classname="com.jcraft.jorbis.JorbisException"
+	       classname="com.jcraft.jorbis.JOrbisException"
 	       property="jorbis-present" />
 
     <property
