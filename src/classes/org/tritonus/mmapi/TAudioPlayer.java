@@ -2,7 +2,7 @@
  *	TAudioPlayer.java
  */
 
-package	org.tritonus.micro;
+package	org.tritonus.mmapi;
 
 
 import	javax.microedition.media.Control;
@@ -102,7 +102,6 @@ extends TPlayer
 
 
 	public void setLoopCount(int nCount)
-		throws MediaException
 	{
 		// TODO:
 	}

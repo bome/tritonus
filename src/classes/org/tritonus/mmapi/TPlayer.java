@@ -2,7 +2,7 @@
  *	TPlayer.java
  */
 
-package	org.tritonus.micro;
+package	org.tritonus.mmapi;
 
 
 import	java.util.Vector;
@@ -138,7 +138,6 @@ implements Player
 
 
 	public void setLoopCount(int nCount)
-		throws MediaException
 	{
 		// TODO:
 	}
@@ -158,6 +157,15 @@ implements Player
 	public void removePlayerListener(PlayerListener playerListener)
 	{
 		m_listeners.remove(playerListener);
+	}
+
+
+	/**	TODO:
+	 */
+	public String getContentType()
+	{
+		// TODO:
+		return null;
 	}
 }
 

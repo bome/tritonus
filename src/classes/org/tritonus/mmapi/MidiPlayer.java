@@ -2,7 +2,7 @@
  *	MidiPlayer.java
  */
 
-package	org.tritonus.micro;
+package	org.tritonus.mmapi;
 
 
 

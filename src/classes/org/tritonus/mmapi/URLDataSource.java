@@ -2,7 +2,7 @@
  *	URLDataSource.java
  */
 
-package	org.tritonus.micro;
+package	org.tritonus.mmapi;
 
 
 import	java.io.IOException;
@@ -32,10 +32,10 @@ extends DataSource
 	private URL		m_url;
 	private SourceStream	m_sourceStream;
 
-	public URLDataSource()
+	public URLDataSource(String strLocator)
 		throws MediaException
 	{
-		super();
+		super(strLocator);
 		m_controllable = new TControllable(EMPTY_CONTROL_ARRAY);
 	}
 

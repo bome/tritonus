@@ -2,7 +2,7 @@
  *	TControllable.java
  */
 
-package	org.tritonus.micro;
+package	org.tritonus.mmapi;
 
 
 import	javax.microedition.media.Control;

@@ -8,7 +8,7 @@ import javax.microedition.media.MediaException;
 
 
 public class JavaSoundToneGenerator
-extends ToneGenerator
+implements ToneGenerator
 {
 	public JavaSoundToneGenerator()
 		throws MediaException

@@ -2,7 +2,7 @@
  *	SystemTimeBase.java
  */
 
-package	org.tritonus.micro;
+package	org.tritonus.mmapi;
 
 
 import	javax.microedition.media.TimeBase;
