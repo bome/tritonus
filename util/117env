@@ -1,2 +1,0 @@
-export PATH=.:/home/matthias/bin:/usr/local/java/jdk117_v3/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games
-export CLASSPATH=.:/usr/local/java/jdk117_v3/lib/classes.zip:/home/matthias/Classes:/home/matthias/java/jmvp/jmvp.jar:/home/matthias/java/xml-tr1/xml.jar:/home/matthias/java/1.1collections/lib/collections.jar
