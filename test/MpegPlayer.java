@@ -45,7 +45,7 @@ import	javax.sound.sampled.spi.FormatConversionProvider;
 public class MpegPlayer
 	extends		Thread
 {
-	private static final boolean	DEBUG = false;
+	private static final boolean	DEBUG = true;
 
 	private static final int	EXTERNAL_BUFFER_SIZE = 128000;
 
@@ -152,7 +152,8 @@ public class MpegPlayer
 		{
 			System.out.println("MpegPlayer.run(): after write loop");
 		}
-		//line.close();
+		System.out.println("after write loop");
+		line.close();
 	}
 
 

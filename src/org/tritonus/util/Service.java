@@ -74,6 +74,7 @@ public class Service
 				try
 				{
 					Class	cls = Class.forName(strClassName);
+					System.out.println("now creating instance");
 					Object	instance = cls.newInstance();
 					providers.add(instance);
 				}

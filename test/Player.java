@@ -121,11 +121,11 @@ public class Player
 			{
 				e.printStackTrace();
 			}
-			int	nFramesToWrite = nRead;
-			System.out.println("Player.run(): in loop, trying to write: " + nFramesToWrite);
+			// int	nFramesToWrite = nRead;
 			if (nRead >= 0)
 			{
-				int	nWritten = line.write(m_data, 0, nFramesToWrite);
+				System.out.println("Player.run(): in loop, trying to write: " + nRead);
+				int	nWritten = line.write(m_data, 0, nRead);
 				System.out.println("Player.run(): written: " + nWritten);
 			}
 		}

@@ -155,7 +155,7 @@ public class AlsaSourceDataLine
 			format.getChannels(),
 			0,
 			AlsaPcm.SND_PCM_START_FULL,
-			AlsaPcm.SND_PCM_STOP_STOP,
+			AlsaPcm.SND_PCM_STOP_ROLLOVER,
 			false,
 			false,
 			m_nFragmentSize,
