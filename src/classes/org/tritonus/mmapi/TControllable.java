@@ -58,21 +58,29 @@ implements Controllable
 		 */
 		checkState();
 
-		/*
-		  TODO: some passed class object should be used that describes the type of the desired control.
-		*/
 		Class	controlClass = getClassFromString(strControlType);
 		if (controlClass != null)
 		{
-			for (int i = 0; i < m_aControls.length; i++)
-			{
-				if (controlClass.isInstance(m_aControls[i]))
-				{
-					return m_aControls[i];
-				}
-			}
+			return getControl(controlClass);
 		}
 		return null;
+	}
+
+
+	/*
+	  This is how the signature should look like.
+	*/
+	private Control getControl(Class controlClass)
+	{
+		Control	control = null;
+		for (int i = 0; i < m_aControls.length; i++)
+		{
+			if (controlClass.isInstance(m_aControls[i]))
+			{
+				control = m_aControls[i];
+			}
+		}
+		return control;
 	}
 
 
