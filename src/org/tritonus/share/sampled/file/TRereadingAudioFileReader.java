@@ -21,10 +21,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-
-
-
 package	org.tritonus.share.sampled.file;
 
 
@@ -45,7 +41,7 @@ import	org.tritonus.share.TDebug;
 	detecting the AudioFileFormat and resets it
 	afterwards, before forming the AudioInputStream.
 	The effect is that the complete content of the
-	file goes to the AudioInputStream. Headers are
+	stream goes to the AudioInputStream. Headers are
 	only read to report some properties in the
 	AudioFileFormat. Typically, this behaviour is
 	needed for compression schemas where the decoder
@@ -59,17 +55,38 @@ import	org.tritonus.share.TDebug;
 public abstract class TRereadingAudioFileReader
 	extends	TAudioFileReader
 {
+	/**	The amount of buffering in bytes.
+		This value is used in constructing the BufferedInputStream.
+		It should be big enough to hold the entire header of
+		the audio file format.
+
+		@see #TRereadingAudioFileReader(int)
+		@see #getBufferingAmount()
+	 */
 	private int	m_nBufferingAmount;
 
 
 
+	/**	Constructor.
+		@param nBufferingAmount the amount of buffering in bytes that
+		should be used in this instance.
+		@see #m_nBufferingAmount
+		@see #getBufferingAmount()
+	 */
 	protected TRereadingAudioFileReader(int nBufferingAmount)
 	{
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TRereadingAudioFileReader.<init>(): begin"); }
 		m_nBufferingAmount = nBufferingAmount;
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TRereadingAudioFileReader.<init>(): end"); }
 	}
 
 
 
+	/**	Get the amount of buffering in bytes.
+		@return the number of bytes to be used for buffering.
+		@see #m_nBufferingAmount
+		@see #TRereadingAudioFileReader(int)
+	 */
 	private int getBufferingAmount()
 	{
 		return m_nBufferingAmount;
@@ -77,7 +94,24 @@ public abstract class TRereadingAudioFileReader
 
 
 
-	public AudioInputStream getAudioInputStream(InputStream inputStream)
+	/**	Get an AudioInputStream.
+		This implementation creates a BufferedInputStream on top of
+		the stream passed in with a buffer size retrieved by
+		getBufferingAmount(). It calls
+		getAudioFileFormat(InputStream, long) with this buffered
+		stream. After this call, the buffered stream is reset,
+		before using it for the construction of the AudioInputStream.
+		In other words, the whole content of the passed InputStream,
+		including headers and such, goes to the AudioInputStream.
+
+		@param inputStream	The InputStream to read from.
+		@param lFileLengthInBytes	The size of the originating
+		file, if known. If it isn't known, AudioSystem.NOT_SPECIFIED
+		should be passed. This value may be used for byteLength in
+		AudioFileFormat, if this value can't be derived from the
+		informmation in the file header.
+	*/
+	protected AudioInputStream getAudioInputStream(InputStream inputStream, long lFileSizeInBytes)
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) { TDebug.out("TRereadingAudioFileReader.getAudioInputStream(): begin"); }
@@ -126,20 +160,16 @@ public abstract class TRereadingAudioFileReader
 		  audioFileFormat.getFrameLength());*/
 		BufferedInputStream bufferedInputStream=new BufferedInputStream(inputStream, getBufferingAmount());
 		bufferedInputStream.mark(getBufferingAmount());
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(bufferedInputStream);
+		AudioFileFormat	audioFileFormat = getAudioFileFormat(bufferedInputStream, lFileSizeInBytes);
 		bufferedInputStream.reset();
 		AudioInputStream	audioInputStream =
 			new AudioInputStream(
 				bufferedInputStream,
 				audioFileFormat.getFormat(),
 				audioFileFormat.getFrameLength());
-		
 		if (TDebug.TraceAudioFileReader) { TDebug.out("TRereadingAudioFileReader.getAudioInputStream(): end"); }
 		return audioInputStream;
 	}
-
-
-
 }
 
 
