@@ -31,6 +31,12 @@ JdkVersion=`cat $TEMPFILE | cut -d" " -f3 | sed 's!"!!g'`
 dnl AC_MSG_RESULT(version: x${JdkVersion}x)
 
 case $JdkVersion in
+    1.6* )
+	echo "JDK 1.6 detected"
+	;;
+    1.5* )
+	echo "JDK 1.5 detected"
+	;;
     1.4* )
 	echo "JDK 1.4 detected"
 	;;
