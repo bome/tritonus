@@ -30,6 +30,8 @@ import javax.microedition.media.protocol.SourceStream;
 import org.tritonus.mmapi.InputStreamDataSource;
 
 
+/**	Base TestCases for javax.microedition.media.protocol.DataSource.
+*/
 public abstract class BaseDataSourceTestCase
 extends TestCase
 {

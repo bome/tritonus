@@ -29,6 +29,8 @@ import javax.microedition.media.protocol.SourceStream;
 
 
 
+/**	TestCase for javax.microedition.media.protocol.DataSource.
+*/
 public class DataSourceTestCase
 extends TestCase
 {

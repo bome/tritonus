@@ -27,7 +27,8 @@ import	javax.microedition.media.Manager;
 import	javax.microedition.media.Player;
 
 
-
+/**	TestCase for javax.microedition.media.Player.
+*/
 public class PlayerTestCase
 extends TestCase
 {

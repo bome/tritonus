@@ -26,6 +26,8 @@ import javax.microedition.media.protocol.ContentDescriptor;
 
 
 
+/**	TestCase for javax.microedition.media.protocol.ContentDescriptor.
+*/
 public class ContentDescriptorTestCase
 extends TestCase
 {

@@ -33,6 +33,8 @@ import javax.microedition.media.protocol.SourceStream;
 import org.tritonus.mmapi.URLDataSource;
 
 
+/**	TestCase for org.tritonus.mmapi.URLDataSourceTestCase.
+*/
 public class URLDataSourceTestCase
 extends BaseDataSourceTestCase
 {

@@ -28,6 +28,8 @@ import	javax.microedition.media.protocol.DataSource;
 
 
 
+/**	TestCase for javax.microedition.media.Manager.
+*/
 public class ManagerTestCase
 extends TestCase
 {
