@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,11 @@ public abstract class TSequencer
 	implements	Sequencer
 {
 	private static final float	MPQ_BPM_FACTOR = 6.0E7F;
+
+
+	private boolean		m_bRunning;
+
+
 	/**	The Sequence to play or to record to.
 	 */
 	private Sequence	m_sequence;
@@ -70,7 +75,7 @@ public abstract class TSequencer
 	 */
 	private Set[]		m_aControllerListeners;
 
-	// private float		m_fTempoInMPQ;
+	private float		m_fNominalTempoInMPQ;
 	private float		m_fTempoFactor;
 
 
@@ -78,15 +83,12 @@ public abstract class TSequencer
 	{
 		super(info);
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): begin"); }
+		m_bRunning = false;
 		m_sequence = null;
 		m_metaListeners = new ArraySet();
 		m_aControllerListeners = new Set[128];
-		m_fTempoFactor = 1.0F;
-/*
-  TODO: find a way of safe calling
 		setTempoFactor(1.0F);
 		setTempoInMPQ(500000);
-*/
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): end"); }
 	}
 
@@ -125,6 +127,109 @@ public abstract class TSequencer
 
 
 
+	public void start()
+	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.start(): begin"); }
+		if (! isRunning())
+		{
+			m_bRunning = true;
+			// TODO: check open status, perhaps sequence present
+			startImpl();
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.start(): end"); }
+	}
+
+
+	/**
+	 *	Subclasses have to override this method to be notified of
+	 *	starting.
+	 */
+	protected void startImpl()
+	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TSequencer.startImpl(): begin"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("TSequencer.startImpl(): end"); }
+	}
+
+
+
+	public void stop()
+	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.stop(): begin"); }
+		if (isRunning())
+		{
+			stopImpl();
+			m_bRunning = false;
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.stop(): end"); }
+	}
+
+
+
+	/**
+	 *	Subclasses have to override this method to be notified of
+	 *	stopping.
+	 */
+	protected void stopImpl()
+	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TSequencer.stopImpl(): begin"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("TSequencer.stopImpl(): end"); }
+	}
+
+
+
+	public boolean isRunning()
+	{
+		return m_bRunning;
+	}
+
+
+
+	/**	Returns the resolution (ticks per quarter) of the current sequence.
+		If no sequence is set, a bogus default value != 0 is returned.
+	*/
+	protected int getResolution()
+	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getResolution(): begin"); }
+		Sequence	sequence = getSequence();
+		int		nResolution;
+		if (sequence != null)
+		{
+			nResolution = sequence.getResolution();
+		}
+		else
+		{
+			nResolution = 1;
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getResolution(): end"); }
+		return nResolution;
+	}
+
+
+
+	protected float getNominalTempoInMPQ()
+	{
+		return m_fNominalTempoInMPQ;
+	}
+
+
+
+	protected void setNominalTempoInMPQ(float fMPQ)
+	{
+		m_fNominalTempoInMPQ = fMPQ;
+		setRealTempo();
+	}
+
+
+
+	protected void setRealTempo()
+	{
+		float	fRealTempo = getNominalTempoInMPQ() / getTempoFactor();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setRealTempo(): real tempo: " + fRealTempo); }
+		setTempoImpl(fRealTempo);
+	}
+
+
+
 	public float getTempoInBPM()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInBPM(): begin"); }
@@ -138,7 +243,8 @@ public abstract class TSequencer
 	public void setTempoInBPM(float fBPM)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInBPM(): begin"); }
-		setTempoInMPQ(MPQ_BPM_FACTOR / fBPM);
+		float	fMPQ = MPQ_BPM_FACTOR / fBPM;
+		setTempoInMPQ(fMPQ);
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInBPM(): end"); }
 	}
 
@@ -147,7 +253,8 @@ public abstract class TSequencer
 	public float getTempoInMPQ()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInMPQ(): begin"); }
-		float fMPQ = getTempoNative() * getTempoFactor();
+		// float fMPQ = getTempoNative() * getTempoFactor();
+		float	fMPQ = getNominalTempoInMPQ();
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInMPQ(): end"); }
 		return fMPQ;
 	}
@@ -157,9 +264,9 @@ public abstract class TSequencer
 	public void setTempoInMPQ(float fMPQ)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInMPQ(): begin"); }
-		float	fRealTempo = fMPQ / getTempoFactor();
-		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInMPQ(): real tempo: " + fRealTempo); }
-		setTempoNative(fRealTempo);
+		setNominalTempoInMPQ(fMPQ);
+//		float	fRealTempo = fMPQ / getTempoFactor();
+//		setTempoNative(fRealTempo);
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInMPQ(): end"); }
 	}
 
@@ -168,18 +275,8 @@ public abstract class TSequencer
 	public void setTempoFactor(float fFactor)
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoFactor(): begin"); }
-		/*
-		 *	Get nominal tempo, using the old tempo factor.
-		 */
-		float	fNominalTempo = getTempoInMPQ();
 		m_fTempoFactor = fFactor;
-		/*
-		 *	Calculate the new real tempo, using the new tempo
-		 *	factor.
-		 */
-		float	fRealTempo = fNominalTempo / fFactor;
-		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoFactor(): real tempo: " + fRealTempo); }
-		setTempoNative(fRealTempo);
+		setRealTempo();
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoFactor(): end"); }
 	}
 
@@ -202,7 +299,8 @@ public abstract class TSequencer
 	 *
 	 *	@return the real tempo of the native sequencer in MPQ
 	 */
-	protected abstract float getTempoNative();
+	// TODO: no longer needed
+	protected abstract float getTempoImpl();
 
 
 
@@ -212,7 +310,7 @@ public abstract class TSequencer
 	 *	The implementation should not take into account the
 	 *	tempo factor. This is handled elsewhere.
 	 */
-	protected abstract void setTempoNative(float fMPQ);
+	protected abstract void setTempoImpl(float fMPQ);
 
 
 
@@ -391,6 +489,23 @@ public abstract class TSequencer
 				controllerEventListener.controlChange(copiedMessage);
 			}
 		}
+	}
+
+
+
+	protected void notifyListeners(MidiMessage message)
+	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.sendToListeners(): begin"); }
+		if (message instanceof MetaMessage)
+		{
+			// TODO: use extra thread for event delivery
+			sendMetaMessage((MetaMessage) message);
+		}
+		else if (message instanceof ShortMessage && ((ShortMessage) message).getCommand() == ShortMessage.CONTROL_CHANGE)
+		{
+			sendControllerEvent((ShortMessage) message);
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.sendToListeners(): end"); }
 	}
 }
 
