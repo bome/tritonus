@@ -25,8 +25,11 @@
 
 package	org.tritonus.share;
 
+
 import	java.io.PrintStream;
 import  java.util.StringTokenizer;
+import  java.security.AccessControlException;
+
 
 
 public class TDebug
@@ -159,11 +162,7 @@ public class TDebug
 		{
 			strValue = System.getProperty(strPropertyName, "false");
 		}
-		/*
-		  It is important here to catch exceptions because in applets,
-		  the above statement may produce an AccessControlException.
-		 */
-		catch (Exception e)
+		catch (AccessControlException e)
 		{
 			if (SHOW_ACCESS_CONTROL_EXCEPTIONS)
 			{
