@@ -117,7 +117,7 @@ public class AlsaDataLineMixer
 	public AlsaDataLineMixer(String strPcmName)
 	{
 		super(new TMixerInfo(
-			"Alsa Mixer (" + strPcmName + ")",
+			"Alsa DataLine Mixer (" + strPcmName + ")",
 			GlobalInfo.getVendor(),
 			"Mixer for the Advanced Linux Sound Architecture (card " + strPcmName + ")",
 			GlobalInfo.getVersion()),

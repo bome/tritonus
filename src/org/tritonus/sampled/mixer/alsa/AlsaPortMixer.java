@@ -110,9 +110,9 @@ extends TMixer
 	public AlsaPortMixer(String strDeviceName)
 	{
 		super(new TMixerInfo(
-			      "Alsa System Mixer (" + strDeviceName + ")",
+			      "Alsa Port Mixer (" + strDeviceName + ")",
 			      GlobalInfo.getVendor(),
-			      "Alsa System Mixer (" + strDeviceName + ")",
+			      "System Mixer for the Advanced Linux Sound System (card " + strDeviceName + ")",
 			      GlobalInfo.getVersion()),
 		      new Line.Info(Mixer.class));
 		if (TDebug.TraceMixer) { TDebug.out("AlsaPortMixer.<init>: begin"); }
