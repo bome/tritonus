@@ -29,6 +29,7 @@ import	org.tritonus.share.TDebug;
  */
 public class FilterDesign
 {
+	public static final int		WINDOW_UNKNOWN = -1;
 	public static final int		WINDOW_RECTANGULAR = 0;
 	public static final int		WINDOW_HAMMING = 1;
 
