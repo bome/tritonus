@@ -73,7 +73,7 @@ typedef struct private_state {
      memory and not others'; packet storage is always tracked.
      Cleared next call to a _dsp_ function */
   unsigned char *header;
-  unsigned char *header1;
+	//unsigned char *header1;
   unsigned char *header2;
 
   bitrate_manager_state bms;

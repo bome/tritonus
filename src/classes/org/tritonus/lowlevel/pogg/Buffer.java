@@ -28,6 +28,8 @@
 
 package org.tritonus.lowlevel.pogg;
 
+import java.io.UnsupportedEncodingException;
+
 import org.tritonus.share.TDebug;
 
 
@@ -163,6 +165,85 @@ public class Buffer
 	/** Calls oggpack_get_buffer().
 	 */
 	public native byte[] getBuffer();
+
+
+	/** Writes a string as UTF-8.
+		Note: no length coding and no end byte are written,
+		just the pure string!
+	 */
+	public void write(String str)
+	{
+		write(str, false);
+	}
+
+
+	/** Writes a string as UTF-8, including a length coding.
+		In front of the string, the length in bytes is written
+		as a 32 bit integer. No end byte is written.
+	 */
+	public void writeWithLength(String str)
+	{
+		write(str, true);
+	}
+
+
+	/** Writes a string as UTF-8, with or without a length coding.
+		If a length coding is requested, the length in (UTF8-)bytes is written
+		as a 32 bit integer in front of the string.
+		No end byte is written.
+	 */
+	private void write(String str, boolean bWithLength)
+	{
+		byte[] aBytes = null;
+		try
+		{
+			aBytes = str.getBytes("UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			if (TDebug.TraceAllExceptions) TDebug.out(e);
+		}
+		if (bWithLength)
+		{
+			write(aBytes.length, 32);
+		}
+		for (int i = 0; i < aBytes.length; i++)
+		{
+			write(aBytes[i], 8);
+		}
+	}
+
+
+	/** Reads a UTF-8 coded string with length coding.
+		It is expected that at the current read position,
+		there is a 32 bit integer containing the length in (UTF8-)bytes,
+		followed by the specified number of bytes in UTF-8 coding.
+
+		@return the string read from the buffer or null if an error occurs.
+	 */
+	public String readString()
+	{
+		int length = read(32);
+		if (length < 0)
+		{
+			return null;
+		}
+		byte[] aBytes = new byte[length];
+		for (int i = 0; i < length; i++)
+		{
+			aBytes[i] = (byte) read(8);
+		}
+		String s = null;
+		try
+		{
+			s = new String(aBytes, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			if (TDebug.TraceAllExceptions) TDebug.out(e);
+		}
+		return s;
+	}
 
 
 	private static native void setTrace(boolean bTrace);

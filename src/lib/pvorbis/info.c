@@ -415,36 +415,6 @@ static int _vorbis_pack_info(oggpack_buffer *opb,vorbis_info *vi){
   return(0);
 }
 
-static int _vorbis_pack_comment(oggpack_buffer *opb,vorbis_comment *vc){
-  char temp[]="Xiph.Org libVorbis I 20030909";
-  int bytes = strlen(temp);
-
-  /* preamble */  
-  oggpack_write(opb,0x03,8);
-  _v_writestring(opb,"vorbis", 6);
-
-  /* vendor */
-  oggpack_write(opb,bytes,32);
-  _v_writestring(opb,temp, bytes);
-  
-  /* comments */
-
-  oggpack_write(opb,vc->comments,32);
-  if(vc->comments){
-    int i;
-    for(i=0;i<vc->comments;i++){
-      if(vc->user_comments[i]){
-	oggpack_write(opb,vc->comment_lengths[i],32);
-	_v_writestring(opb,vc->user_comments[i], vc->comment_lengths[i]);
-      }else{
-	oggpack_write(opb,0,32);
-      }
-    }
-  }
-  oggpack_write(opb,1,1);
-
-  return(0);
-}
  
 static int _vorbis_pack_books(oggpack_buffer *opb,vorbis_info *vi){
   codec_setup_info     *ci=vi->codec_setup;
@@ -502,30 +472,11 @@ err_out:
   return(-1);
 } 
 
-int vorbis_commentheader_out(vorbis_comment *vc,
-    				      ogg_packet *op){
-
-  oggpack_buffer opb;
-
-  oggpack_writeinit(&opb);
-  if(_vorbis_pack_comment(&opb,vc)) return OV_EIMPL;
-
-  op->packet = _ogg_malloc(oggpack_bytes(&opb));
-  memcpy(op->packet, opb.buffer, oggpack_bytes(&opb));
-
-  op->bytes=oggpack_bytes(&opb);
-  op->b_o_s=0;
-  op->e_o_s=0;
-  op->granulepos=0;
-
-  return 0;
-}
 
 int vorbis_analysis_headerout(vorbis_dsp_state *v,
-			      vorbis_comment *vc,
-			      ogg_packet *op,
-			      ogg_packet *op_comm,
-			      ogg_packet *op_code){
+							  ogg_packet *op,
+							  ogg_packet *op_code)
+{
   int ret=OV_EIMPL;
   vorbis_info *vi=v->vi;
   oggpack_buffer opb;
@@ -551,20 +502,6 @@ int vorbis_analysis_headerout(vorbis_dsp_state *v,
   op->e_o_s=0;
   op->granulepos=0;
 
-  /* second header packet (comments) **********************************/
-
-  oggpack_reset(&opb);
-  if(_vorbis_pack_comment(&opb,vc))goto err_out;
-
-  if(b->header1)_ogg_free(b->header1);
-  b->header1=_ogg_malloc(oggpack_bytes(&opb));
-  memcpy(b->header1,opb.buffer,oggpack_bytes(&opb));
-  op_comm->packet=b->header1;
-  op_comm->bytes=oggpack_bytes(&opb);
-  op_comm->b_o_s=0;
-  op_comm->e_o_s=0;
-  op_comm->granulepos=0;
-
   /* third header packet (modes/codebooks) ****************************/
 
   oggpack_reset(&opb);
@@ -584,14 +521,11 @@ int vorbis_analysis_headerout(vorbis_dsp_state *v,
  err_out:
   oggpack_writeclear(&opb);
   memset(op,0,sizeof(*op));
-  memset(op_comm,0,sizeof(*op_comm));
   memset(op_code,0,sizeof(*op_code));
 
   if(b->header)_ogg_free(b->header);
-  if(b->header1)_ogg_free(b->header1);
   if(b->header2)_ogg_free(b->header2);
   b->header=NULL;
-  b->header1=NULL;
   b->header2=NULL;
   return(ret);
 }

@@ -39,8 +39,6 @@ getDspStateNativeHandle(JNIEnv *env, jobject obj)
 
 vorbis_info*
 getInfoNativeHandle(JNIEnv *env, jobject obj);
-vorbis_comment*
-getCommentNativeHandle(JNIEnv *env, jobject obj);
 vorbis_block*
 getBlockNativeHandle(JNIEnv *env, jobject obj);
 ogg_packet*
@@ -115,34 +113,26 @@ Java_org_tritonus_lowlevel_pvorbis_DspState_initAnalysis_1native
 /*
  * Class:     org_tritonus_lowlevel_pvorbis_DspState
  * Method:    headerOut_native
- * Signature: (Lorg/tritonus/lowlevel/vorbis/Comment;Lorg/tritonus/lowlevel/ogg/Packet;Lorg/tritonus/lowlevel/ogg/Packet;Lorg/tritonus/lowlevel/ogg/Packet;)I
+ * Signature: (Lorg/tritonus/lowlevel/ogg/Packet;Lorg/tritonus/lowlevel/ogg/Packet;)I
  */
 JNIEXPORT jint JNICALL
 Java_org_tritonus_lowlevel_pvorbis_DspState_headerOut_1native
 (JNIEnv* env, jobject obj,
- jobject comment,
  jobject packet,
- jobject commentPacket,
  jobject codePacket)
 {
 	vorbis_dsp_state*	handle;
-	vorbis_comment*		commentHandle;
 	ogg_packet*		packetHandle;
-	ogg_packet*		commentPacketHandle;
 	ogg_packet*		codePacketHandle;
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_DspState_headerOut(): begin\n"); }
 	handle = getHandle(env, obj);
-	commentHandle = getCommentNativeHandle(env, comment);
 	packetHandle = getPacketNativeHandle(env, packet);
-	commentPacketHandle = getPacketNativeHandle(env, commentPacket);
 	codePacketHandle = getPacketNativeHandle(env, codePacket);
 	nReturn = vorbis_analysis_headerout(handle,
-					    commentHandle,
-					    packetHandle,
-					    commentPacketHandle,
-					    codePacketHandle);
+										packetHandle,
+										codePacketHandle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pvorbis_DspState_headerOut(): end\n"); }
 	return nReturn;
 }

@@ -410,13 +410,15 @@ Java_org_tritonus_lowlevel_pogg_Buffer_getBuffer
 {
 	oggpack_buffer*	handle;
 	unsigned char*	buffer;
+	int bytes;
 	jbyteArray	abBuffer;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_getBuffer(): begin\n"); }
 	handle = getHandle(env, obj);
 	buffer = oggpack_get_buffer(handle);
-	abBuffer = (*env)->NewByteArray(env, handle->storage);
-	(*env)->SetByteArrayRegion(env, abBuffer, 0, handle->storage, buffer);
+	bytes = oggpack_bytes(handle);
+	abBuffer = (*env)->NewByteArray(env, bytes);
+	(*env)->SetByteArrayRegion(env, abBuffer, 0, bytes, buffer);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Buffer_getBuffer(): end\n"); }
 	return abBuffer;
 }

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2003 - 2004 by Matthias Pfisterer
+ *  Copyright (c) 2003 - 2005 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -161,6 +161,50 @@ Java_org_tritonus_lowlevel_pogg_Packet_isEos
 	return bReturn;
 }
 
+
+/*
+ * Class:     org_tritonus_lowlevel_pogg_Packet
+ * Method:    setData
+ * Signature: ([BI)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_pogg_Packet_setData
+(JNIEnv* env, jobject obj, jbyteArray abData, jint nLength)
+{
+	ogg_packet*	handle;
+	jbyte* data;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_setData(): begin\n"); }
+	handle = getHandle(env, obj);
+	data = (*env)->GetByteArrayElements(env, abData, NULL);
+	/* ATTENTION!! The memory allocated here is not freed! So we have
+	 * a memory leak here. */
+	handle->packet = malloc(nLength);
+	(void) memcpy(handle->packet, data, nLength);
+	(*env)->ReleaseByteArrayElements(env, abData, data, JNI_ABORT);
+	handle->bytes = nLength;
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_setData(): end\n"); }
+}
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pogg_Packet
+ * Method:    setFlags
+ * Signature: (ZZJ)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_pogg_Packet_setFlags
+(JNIEnv* env, jobject obj, jboolean bBos, jboolean bEos, jlong lGranulePos)
+{
+	ogg_packet*	handle;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_setFlags(): begin\n"); }
+	handle = getHandle(env, obj);
+	handle->b_o_s = bBos;
+	handle->e_o_s = bEos;
+	handle->granulepos = lGranulePos;
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_setFlags(): end\n"); }
+}
 
 
 /*

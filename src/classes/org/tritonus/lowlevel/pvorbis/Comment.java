@@ -32,12 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tritonus.lowlevel.pogg.Ogg;
+import org.tritonus.lowlevel.pogg.Buffer;
 import org.tritonus.share.TDebug;
 
 
 /** Wrapper for vorbis_comment.
  */
 public class Comment
+implements VorbisConstants
 {
 
 	private String m_vendor;
@@ -88,18 +90,16 @@ public class Comment
 	public native void free();
 
 
-	/** Calls vorbis_comment_init().
+	/** Initializes the comment object.
+		Sets the vendor string to null and 
+		removes all comments.
 	 */
 	public void init()
 	{
+		m_vendor = null;
+		m_comments = new ArrayList<String>();
 		init_native();
 	}
-/*
-{
-m_vendor = null;
-m_comments = new ArrayList<String>();
-}
- */
 
 
 	/** Calls vorbis_comment_init().
@@ -107,35 +107,30 @@ m_comments = new ArrayList<String>();
 	public native void init_native();
 
 
-	/** Calls vorbis_comment_add().
+	/** Adds a comment to the list of comments.
+		The passed string is added to the list of comments as it is.
+		The string should have the format 'TAG=content'.
 	 */
 	public void addComment(String strComment)
 	{
+		m_comments.add(strComment);
 		addComment_native(strComment);
 	}
-/*
-{
-m_comments.add(strComment);
-}
- */
+
 
 	/** Calls vorbis_comment_add().
 	 */
-public native void addComment_native(String strComment);
+	public native void addComment_native(String strComment);
 
 
-/** Calls vorbis_comment_add_tag().
- */
-public void addTag(String strTag, String strContents)
-{
-	addTag_native(strTag, strContents);
-}
+	/** Adds a comment with a specific tag
+	 */
+	public void addTag(String strTag, String strContents)
+	{
+		addComment(strTag + "=" + strContents);
+		addTag_native(strTag, strContents);
+	}
 
-/*
-{
-addComment(strTag + "=" + strContents);
-}
- */
 
 	/** Calls vorbis_comment_add_tag().
 	 */
@@ -217,14 +212,10 @@ return null;
 	 */
 	public String getVendor()
 	{
+		// return m_vendor;
 		return getVendor_native();
 	}
 
-/*
-  {
-return m_vendor;
-}
- */
 
 	/** Accesses vendor.
 	 */
@@ -235,19 +226,81 @@ return m_vendor;
 	 */
 	public void clear()
 	{
+		// m_comments.clear();
+		// m_vendor = null;
 		clear_native();
 	}
 
-/*
-{
-m_comments.clear();
-m_vendor = null;
-}
- */
 
 	/** Calls vorbis_comment_clear().
 	 */
 	public native void clear_native();
+
+
+	public int pack(Buffer buffer)
+	{
+		String strVendor = "tritonus.org pvorbis library";
+		//String strVendor = "Xiph.Org libVorbis I 20030909";
+
+		/* preamble */  
+		buffer.write(0x03, 8);
+		buffer.write("vorbis");
+
+		/* vendor */
+		buffer.writeWithLength(strVendor);
+  
+		/* comments */
+		buffer.write(m_comments.size(), 32);
+		if(m_comments.size() > 0)
+		{
+			for(int i = 0; i < m_comments.size(); i++)
+			{
+				buffer.writeWithLength(m_comments.get(i));
+			}
+		}
+		buffer.write(1, 1);
+
+		return 0;
+	}
+
+
+	public int unpack(Buffer buffer)
+	{
+		String s = buffer.readString();
+		if (s == null)
+		{
+			clear();
+			return OV_EBADHEADER;
+		}
+		m_vendor = s;
+		int nNumComments = buffer.read(32);
+		if (nNumComments < 0)
+		{
+			clear();
+			return OV_EBADHEADER;
+		}
+		for (int i = 0; i < nNumComments; i++)
+		{
+			s = buffer.readString();
+			if (s == null)
+			{
+				clear();
+				return OV_EBADHEADER;
+			}
+			m_comments.add(s);
+		}
+
+		/* EOP check */
+		if (buffer.read(1) != 1)
+		{
+			clear();
+			return OV_EBADHEADER;
+		}
+
+		// everything ok.
+		return 0;
+	}
+
 
 	private static native void setTrace(boolean bTrace);
 }

@@ -30,6 +30,7 @@ package org.tritonus.lowlevel.pvorbis;
 
 import org.tritonus.lowlevel.pogg.Ogg;
 import org.tritonus.lowlevel.pogg.Packet;
+import org.tritonus.lowlevel.pogg.Buffer;
 import org.tritonus.share.TDebug;
 
 
@@ -104,20 +105,43 @@ public class DspState
 		Packet commentPacket,
 		Packet codePacket)
 	{
-		return headerOut_native(
-			comment,
+		// for testing, write the comment header here, too
+		//Packet testCommentPacket = new Packet();
+		Buffer buffer = new Buffer();
+		buffer.writeInit();
+		comment.pack(buffer);
+		//TDebug.out("Buffer bytes: " + buffer.bytes());
+		commentPacket.setData(buffer.getBuffer(), buffer.bytes());
+		int nReturn = headerOut_native(
 			packet,
-			commentPacket,
 			codePacket);
+/*
+		byte[] buffer1 = commentPacket.getData();
+		byte[] buffer2 = testCommentPacket.getData();
+		TDebug.out("comment buffers: " + buffer1.length + ", " + buffer2.length);
+		String s = "";
+		for (int i = 0; i < buffer1.length; i++)
+		{
+			s += "" + buffer1[i] + ", ";
+		}
+		TDebug.out("buffer1: " + s);
+		s = "";
+		for (int i = 0; i < buffer2.length; i++)
+		{
+			s += "" + buffer2[i] + ", ";
+		}
+		TDebug.out("buffer2: " + s);
+*/
+		buffer.free();
+		//testCommentPacket.free();
+		return nReturn;
 	}
 
 
 	/** Calls vorbis_analysis_headerout().
 	 */
 	public native int headerOut_native(
-		Comment comment,
 		Packet packet,
-		Packet commentPacket,
 		Packet codePacket);
 
 

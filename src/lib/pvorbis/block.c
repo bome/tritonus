@@ -341,9 +341,8 @@ void vorbis_dsp_clear(vorbis_dsp_state *v){
     }
 
     if(b){
-      /* free header, header1, header2 */
+      /* free header, header2 */
       if(b->header)_ogg_free(b->header);
-      if(b->header1)_ogg_free(b->header1);
       if(b->header2)_ogg_free(b->header2);
       _ogg_free(b);
     }
@@ -357,9 +356,8 @@ float **vorbis_analysis_buffer(vorbis_dsp_state *v, int vals){
   vorbis_info *vi=v->vi;
   private_state *b=v->backend_state;
 
-  /* free header, header1, header2 */
+  /* free header, header2 */
   if(b->header)_ogg_free(b->header);b->header=NULL;
-  if(b->header1)_ogg_free(b->header1);b->header1=NULL;
   if(b->header2)_ogg_free(b->header2);b->header2=NULL;
 
   /* Do we have enough storage space for the requested buffer? If not,

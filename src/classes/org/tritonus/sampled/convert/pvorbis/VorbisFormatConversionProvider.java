@@ -754,8 +754,14 @@ extends TEncodingFormatConversionProvider
 		private void processComments()
 		{
 			TDebug.out("DecodedVorbisAudioInputStream.processComments(): begin");
-			TDebug.out("DecodedVorbisAudioInputStream.processComments(): vendor: " + m_vorbisComment.getVendor());
+			/*if (TDebug.TraceAudioConverter)*/ TDebug.out("DecodedVorbisAudioInputStream.processComments(): encoded by: " + m_vorbisComment.getVendor());
 
+			String[] astrComments = m_vorbisComment.getUserComments();
+			TDebug.out("user comments:");
+			for (int i = 0; i < astrComments.length; i++)
+			{
+				TDebug.out(astrComments[i]);
+			}
 // 			byte[][] ptr = m_vorbisComment.user_comments;
 // 			String currComment = "";
 // 			m_songComments.clear();
@@ -781,10 +787,9 @@ extends TEncodingFormatConversionProvider
 // 			currComment = "Bitstream: " + m_vorbisInfo.getChannels() + " channel," + m_vorbisInfo.rate + "Hz";
 // 			m_songComments.add(currComment);
 // 			if (TDebug.TraceAudioConverter) TDebug.out(currComment);
-			if (TDebug.TraceAudioConverter) TDebug.out("Encoded by: " + m_vorbisComment.getVendor());
 // 			m_songComments.add(currComment);
 // 			if (TDebug.TraceAudioConverter) TDebug.out(currComment);
-			TDebug.out("DecodedVorbisAudioInputStream.processComments(): begin");
+			TDebug.out("DecodedVorbisAudioInputStream.processComments(): end");
 		}
 
 

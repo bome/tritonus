@@ -182,12 +182,9 @@ extern double   vorbis_granule_time(vorbis_dsp_state *v,
 /* Vorbis PRIMITIVES: analysis/DSP layer ****************************/
 
 extern int      vorbis_analysis_init(vorbis_dsp_state *v,vorbis_info *vi);
-extern int      vorbis_commentheader_out(vorbis_comment *vc, ogg_packet *op);
 extern int      vorbis_analysis_headerout(vorbis_dsp_state *v,
-					  vorbis_comment *vc,
-					  ogg_packet *op,
-					  ogg_packet *op_comm,
-					  ogg_packet *op_code);
+										  ogg_packet *op,
+										  ogg_packet *op_code);
 extern float  **vorbis_analysis_buffer(vorbis_dsp_state *v,int vals);
 extern int      vorbis_analysis_wrote(vorbis_dsp_state *v,int vals);
 extern int      vorbis_analysis_blockout(vorbis_dsp_state *v,vorbis_block *vb);

@@ -103,6 +103,14 @@ public class Packet
 	public native boolean isEos();
 
 
+	/**	Sets the data in the packet.
+	 */
+	public native void setData(byte[] abData, int nLength);
+
+
+	public native void setFlags(boolean bBos, boolean bEos, long lGranulePos);
+
+
 	private static native void setTrace(boolean bTrace);
 }
 
