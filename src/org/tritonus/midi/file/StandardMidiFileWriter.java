@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -19,36 +18,42 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
 
 package	org.tritonus.midi.file;
 
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.File;
 
-import	java.io.DataOutputStream;
-import	java.io.FileOutputStream;
-import	java.io.OutputStream;
-import	java.io.IOException;
-import	java.io.File;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Track;
+import javax.sound.midi.spi.MidiFileWriter;
 
-import	javax.sound.midi.MidiEvent;
-import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.ShortMessage;
-import	javax.sound.midi.SysexMessage;
-import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.Sequence;
-import	javax.sound.midi.Track;
-import	javax.sound.midi.spi.MidiFileWriter;
-
-import	org.tritonus.share.TDebug;
-
+import org.tritonus.share.TDebug;
 
 
+
+/**	Writer for Standard Midi Files.
+	This writer can write type 0 and type 1 files. It cannot write type
+	2 files.
+ */
 public class StandardMidiFileWriter
-	extends		MidiFileWriter
+extends MidiFileWriter
 {
+	/**	TODO:
+	 */
 	public static boolean		USE_RUNNING_STATUS = true;
+
+	/**	TODO:
+	 */
 	public static boolean		CANCEL_RUNNING_STATUS_ON_META_AND_SYSEX = true;
 
 	// IDEA: put into a file MidiConstants
@@ -61,7 +66,8 @@ public class StandardMidiFileWriter
 	private static final int	STATUS_META = 4;
 
 
-
+	/**	TODO:
+	 */
 	public int[] getMidiFileTypes()
 	{
 		return new int[]{0, 1};
@@ -69,6 +75,8 @@ public class StandardMidiFileWriter
 
 
 
+	/**	TODO:
+	 */
 	public int[] getMidiFileTypes(Sequence sequence)
 	{
 		Track[]	tracks = sequence.getTracks();
@@ -84,10 +92,12 @@ public class StandardMidiFileWriter
 
 
 
+	/**	TODO:
+	 */
 	public int write(Sequence sequence,
 			 int nFileType,
 			 OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		if (! isFileTypeSupported(nFileType, sequence))
 		{
@@ -123,10 +133,12 @@ public class StandardMidiFileWriter
 
 
 
+	/**	TODO:
+	 */
 	public int write(Sequence sequence,
 			 int nFileType,
 			 File file)
-		throws	IOException
+		throws IOException
 	{
 		OutputStream	outputStream = new FileOutputStream(file);
 		int	nBytes = write(sequence,
@@ -138,9 +150,11 @@ public class StandardMidiFileWriter
 
 
 
+	/**	TODO:
+	 */
 	private static int writeTrack(Track track,
 				      DataOutputStream dataOutputStream)
-		throws	IOException
+		throws IOException
 	{
 		int	nLength = 0;
 		if (dataOutputStream != null)
@@ -180,11 +194,13 @@ public class StandardMidiFileWriter
 
 
 
+	/**	TODO:
+	 */
 	private static int writeEvent(MidiEvent event,
 				      MidiEvent previousEvent,
 				      int[] anRunningStatusByte,
 				      DataOutputStream dataOutputStream)
-		throws	IOException
+		throws IOException
 	{
 		int	nLength = 0;
 		long	lTickDelta = 0;
@@ -289,12 +305,12 @@ public class StandardMidiFileWriter
 
 
 
-	/**
-	 *	outputStream == 0 signals to only calculate the number of
-	 *	needed to represent the value.
-	 */
+	/**	TODO:
+		outputStream == 0 signals to only calculate the number of
+		needed to represent the value.
+	*/
 	private static int writeVariableLengthQuantity(long lValue, OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		int	nLength = 0;
 		// IDEA: use a loop
