@@ -40,8 +40,6 @@ import	java.util.Iterator;
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
 
-
-
 public class MshSequencerProvider
 	extends		MidiDeviceProvider
 {
@@ -78,4 +76,4 @@ public class MshSequencerProvider
 
 
 
-/*** MidiShareSequencerProvider.java ***/
+/*** MshSequencerProvider.java ***/
