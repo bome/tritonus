@@ -1,0 +1,22 @@
+Tritonus IMPL:
+
+  - complete JavaSoundAudioPlayer
+  - implement media time methods
+  - test them
+  - StopTime, VolumeControl
+  - realize()/deallocate()
+  - properties
+  - rework playTone()
+  - test InputStreamDataSurce
+  - more player tests
+  - event testing
+  - rework TControllable.getControl(): use private C. getControl(Class)
+
+SPEC:
+
+- which Controls make sense for a DataSource?
+- idempotence of DataSource's connect(), disconnect(), start() and stop()
+- synchronization of  - " -
+- synchronization of  Player's realize(), prefetch(), start(), ...
+- DataSource supposed to parse file headers? Or Players? Should DataSource deliver "raw data"?
+- DataSource: what happens if start() is called on a disconnected DataSource? Suggestion: automatically calls connect().
