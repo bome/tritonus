@@ -2,6 +2,25 @@
  *	org_tritonus_lowlevel_alsa_AlsaSeq_Event.cc
  */
 
+/*
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as published
+ *   by the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Library General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+
 #include	<sys/asoundlib.h>
 #include	"common.h"
 #include	"org_tritonus_lowlevel_alsa_AlsaSeq_Event.h"
@@ -443,6 +462,33 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setCommon
 	handle->dest.client = nDestClient;
 	handle->dest.port = nDestPort;
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setCommon(): end\n"); }
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaSeq_Event
+ * Method:    setTimestamp
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setTimestamp
+(JNIEnv* env, jobject obj, jlong lTimestamp)
+{
+	snd_seq_event_t*	handle;
+
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setTimestamp(): begin\n"); }
+	handle = handler.getHandle(env, obj);
+	if ((handle->flags & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
+	{
+		handle->time.tick = lTimestamp;
+	}
+	else
+	{
+		handle->time.time.tv_sec = lTimestamp / 1000000000;
+		handle->time.time.tv_nsec = lTimestamp % 1000000000;
+	}
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024Event_setTimestamp(): end\n"); }
 }
 
 
