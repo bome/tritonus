@@ -1163,7 +1163,7 @@ sendEvent(JNIEnv *env,
 	int	nReturn = 0;
 
 	nReturn = snd_seq_event_output(seq, pEvent);
-	// IDEA: execute flush only if event wants to circumvent queues?
+	// IDEA: execute drain only if event wants to circumvent queues?
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_event_output failed");
@@ -1188,7 +1188,7 @@ sendEvent(JNIEnv *env,
 		printf("return: %d\n", nReturn);
 		printf("errno: %d\n", errno);
 		perror("abc");
-		throwRuntimeException(env, "snd_seq_flush_output failed");
+		throwRuntimeException(env, "snd_seq_drain_output failed");
 	}
 }
 
