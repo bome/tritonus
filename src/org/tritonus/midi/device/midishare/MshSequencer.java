@@ -433,6 +433,10 @@ final public class MshSequencer
 			// TODO: remove subscription
 		}
 	}
+	
+	protected  float getTempoNative() {return 0;}
+	
+	protected  void setTempoNative(float fMPQ){}
 
 
 }
