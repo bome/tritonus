@@ -4,6 +4,8 @@
 
 #include <endian.h>
 #include <stdlib.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>   /* should declare swab(), but doesn't seem so (gcc 2.95.4/glibc 2.3.1) */
 void swab(void*, void*, ssize_t);
 
@@ -217,7 +219,7 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC
 		pbCopy[nTrack - nFirstTrack] = cdda_track_copyp(cdrom, nTrack);
 		pbPre[nTrack - nFirstTrack] = cdda_track_preemp(cdrom, nTrack);
 		pnChannels[nTrack - nFirstTrack] = cdda_track_channels(cdrom, nTrack);
-		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): %d: %d %ld %ld\n", nTrack - nFirstTrack, nTrack, pnStartFrame[nTrack - nFirstTrack], pnLength[nTrack - nFirstTrack]); }
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_readTOC(): %d: %d %ld %ld\n", nTrack - nFirstTrack, nTrack, (long) pnStartFrame[nTrack - nFirstTrack], (long) pnLength[nTrack - nFirstTrack]); }
 	}
 
 	(*env)->ReleaseIntArrayElements(env, anStartFrame, pnStartFrame, 0);
