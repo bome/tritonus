@@ -107,7 +107,7 @@ public interface Port
 
 		public final int hashCode()
 		{
-			return hashCode();
+			return super.hashCode();
 		}
 
 
