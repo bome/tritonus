@@ -347,11 +347,10 @@
 	   depend="yes"
 	   destdir="${build}"
 	   includes="javax/microedition/media/,org/tritonus/mmapi/"
-	   excludes="org/tritonus/whatever" />
+	   excludes="org/tritonus/mmapi/debug" />
   </target>
 
   <target name="compile-mmapi-debug" depends="prepare">
-<!-- TODO: use ajc -->
     <ajc srcdir="${src}/classes"
 	   destdir="${build}"
 	   includes="javax/microedition/media/,org/tritonus/mmapi/"
@@ -380,6 +379,14 @@
     </jar>
   </target>
 
+  <target name="javadoc-mmapi" depends="init">
+    <mkdir dir="${javadoc.dir}"/>
+    <javadoc
+	     package="true" sourcepath="src/classes" destdir="${javadoc.dir}"
+	     packagenames="javax.microedition.media.*,org.tritonus.mmapi.*" 
+	     excludepackagenames="org.tritonus.mmapi.debug" >
+    </javadoc>
+  </target>
 
   <!-- for saol -->
   <target name="compile-saol" depends="prepare">
