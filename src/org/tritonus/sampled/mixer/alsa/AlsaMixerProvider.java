@@ -50,11 +50,11 @@ public class AlsaMixerProvider
 		if (! sm_bInitialized)
 		{
 			int[]	anCards = AlsaCtl.getCards();
-			if (TDebug.TraceMixerProvider) { System.out.println("AlsaMixerProvider.<init>(): num cards: " + anCards.length); }
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): num cards: " + anCards.length); }
 			for (int i = 0; i < anCards.length; i++)
 			{
-				if (TDebug.TraceMixerProvider)  { System.out.println("AlsaMixerProvider.<init>(): card #" + i + ": " +  anCards[i]); }
-				if (TDebug.TraceMixerProvider) { System.out.println("AlsaMixerProvider.<init>(): creating Ctl object..."); }
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>():card #" + i + ": " + anCards[i]); }
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): creating Ctl object..."); }
 				String	strPcmName = "hw:" + anCards[i];
 				// String	strPcmName = AlsaMixer.getPcmName(anCards[i]);
 				AlsaCtl	ctl = null;
@@ -83,12 +83,12 @@ public class AlsaMixerProvider
 					TDebug.out("AlsaMixerProvider.<init>(): mixer name: " + astrValues[5]);
 				}
 				int[]	anDevices = ctl.getPcmDevices();
-				if (TDebug.TraceMixerProvider) { System.out.println("AlsaMixerProvider.<init>(): num devices: " + anDevices.length); }
+				if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): num devices: " + anDevices.length); }
 				// TODO: compine devices into one AlsaMixer?
 				// pass device number to AlsaMixer constructor?
 				for (int nDevice = 0; nDevice < anDevices.length; nDevice++)
 				{
-					if (TDebug.TraceMixerProvider) { System.out.println("AlsaMixerProvider.<init>(): device #" + nDevice + ": " +  anDevices[nDevice]); }
+					if (TDebug.TraceMixerProvider) { TDebug.out("AlsaMixerProvider.<init>(): device #" + nDevice + ": " +  anDevices[nDevice]); }
 				}
 				// ctl.close();
 
