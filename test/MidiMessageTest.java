@@ -13,6 +13,32 @@ public class MidiMessageTest
 {
 	public static void main(String[] args)
 	{
+		String	strType = args[0];
+		if (strType.equals("base"))
+		{
+			baseMessage();
+		}
+		else if (strType.equals("short"))
+		{
+			shortMessage();
+		}
+		else if (strType.equals("sysex"))
+		{
+			sysexMessage();
+		}
+		else if (strType.equals("meta"))
+		{
+			metaMessage();
+		}
+		else
+		{
+			System.out.println("use one of 'base', 'short', 'sysex' and 'meta'");
+		}
+	}
+
+
+	private static void baseMessage()
+	{
 		byte[]		data = new byte[1];
 		MidiMessage	m;
 		byte[]		t1;
@@ -93,6 +119,17 @@ public class MidiMessageTest
 			out("MidiMessage.getMessage() does copy");
 		}
 		out("----------------------------------------");
+	}
+
+
+	private static void shortMessage()
+	{
+		byte[]		data = new byte[1];
+		MidiMessage	m;
+		byte[]		t1;
+		byte[]		t2;
+		int		l1;
+
 		ShortMessage	sm = new ShortMessage();
 		t1 = sm.getMessage();
 		l1 = sm.getLength();
@@ -103,7 +140,62 @@ public class MidiMessageTest
 		out("ShortMessage().getData1(): " + sm.getData1());
 		out("ShortMessage().getData2(): " + sm.getData2());
 		out("----------------------------------------");
+	}
+
+
+
+	private static void sysexMessage()
+	{
+		byte[]		data = new byte[1];
+		MidiMessage	m;
+		byte[]		t1;
+		byte[]		t2;
+		int		l1;
+
+		SysexMessage	sxm = new SysexMessage();
+		t1 = sxm.getMessage();
+		l1 = sxm.getLength();
+		out("SysexMessage() data: ");
+		out(t1);
+		out("SysexMessage().getLength(): " + l1);
+		out("----------------------------------------");
+
+		sxm = new SysexMessage();
+		byte[] databytes ={(byte) 240,120,100,100,(byte) 247};
+		try
+		{
+			sxm.setMessage(databytes,5);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			e.printStackTrace();
+		}
+		out("SysexMessage.getMessage(): ");
+		out(sxm.getMessage());
+		out("SysexMessage.getData(): ");
+		out(sxm.getData());
+		out("SysexMessage.getLength(): " + sxm.getLength());
+		out("SysexMessage.getStatus(): " + sxm.getStatus());
+	}
+
+
+
+	private static void metaMessage()
+	{
+		byte[]		data = new byte[1];
+		MidiMessage	m;
+		byte[]		t1;
+		byte[]		t2;
+		int		l1;
+
 		MetaMessage	mm = new MetaMessage();
+		t1 = mm.getMessage();
+		l1 = mm.getLength();
+		out("MetaMessage() data: ");
+		out(t1);
+		out("MetaMessage().getLength(): " + l1);
+		out("----------------------------------------");
+		mm = new MetaMessage();
 		String	strTitle = "no name";
 		while (strTitle.length() < 200)
 		{
@@ -127,22 +219,6 @@ public class MidiMessageTest
 		out("MetaMessage().getType(): " + mm.getType());
 
 		out("----------------------------------------");
-		SysexMessage	sxm = new SysexMessage();
-		byte[] databytes ={(byte) 240,120,100,100,(byte) 247};
-		try
-		{
-			sxm.setMessage(databytes,5);
-		}
-		catch (InvalidMidiDataException e)
-		{
-			e.printStackTrace();
-		}
-		out("SysexMessage.getMessage(): ");
-		out(sxm.getMessage());
-		out("SysexMessage.getData(): ");
-		out(sxm.getData());
-		out("SysexMessage.getLength(): " + sxm.getLength());
-		out("SysexMessage.getStatus(): " + sxm.getStatus());
 	}
 
 
