@@ -10,9 +10,9 @@
 <project name="tritonus" default="dist" basedir=".">
 
   <taskdef name="ajc"
-    classname="org.aspectj.tools.ant.taskdefs.Ajc" >
- </taskdef>
-
+	   classname="org.aspectj.tools.ant.taskdefs.Ajc" >
+  </taskdef>
+  <property name="usejavac" value="false" />
 
   &common;
 
@@ -22,7 +22,7 @@
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 usejavac="false" >
+	 usejavac="${usejavac}" >
       <include name="javax/sound/" />
       <include name="org/tritonus/core/" />
       <include name="org/tritonus/share/" />
@@ -38,7 +38,7 @@
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 usejavac="false" >
+	 usejavac="${usejavac}" >
       <include name="org/tritonus/lowlevel/" />
       <include name="org/tritonus/midi/" />
       <include name="org/tritonus/sampled/" />
@@ -67,7 +67,7 @@
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 usejavac="false" >
+	 usejavac="${usejavac}" >
       <include name="org/tritonus/sampled/convert/javalayer/" />
       <classpath>
 	<pathelement path="${classpath}"/>
@@ -82,7 +82,7 @@
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 usejavac="false" >
+	 usejavac="${usejavac}" >
       <include name="org/tritonus/sampled/convert/vorbis/" />
       <include name="org/tritonus/sampled/file/vorbis/" />
       <include name="org/tritonus/debug/AJDebugVorbis.java" />
