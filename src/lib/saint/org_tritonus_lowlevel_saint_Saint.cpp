@@ -168,7 +168,7 @@ Java_org_tritonus_lowlevel_saint_Saint_setOutput
 (JNIEnv *env, jobject obj, jobject outputStream, jint nOutputFormat)
 {
 	cerr << "in (native) setOutput()" << endl;
-	jstreambuf*	outputStreamBuf = new jstreambuf(env, outputStream);
+	jstreambuf*	outputStreamBuf = new jstreambuf(env, outputStream, 128000);
 	ostream*	outputOStream = new ostream(outputStreamBuf);
 	Out*	pOut = new Out(outputOStream, nOutputFormat);
 	Saint*	saint = getNativeHandle(env, obj);
