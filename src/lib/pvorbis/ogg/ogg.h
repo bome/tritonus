@@ -32,14 +32,6 @@ typedef struct {
   long storage;
 } oggpack_buffer;
 
-/* ogg_page is used to encapsulate the data in one Ogg bitstream page *****/
-
-typedef struct {
-  unsigned char *header;
-  long header_len;
-  unsigned char *body;
-  long body_len;
-} ogg_page;
 
 
 /* ogg_packet is used to encapsulate the data and metadata belonging
@@ -99,17 +91,6 @@ extern long  oggpackB_bytes(oggpack_buffer *b);
 extern long  oggpackB_bits(oggpack_buffer *b);
 extern unsigned char *oggpackB_get_buffer(oggpack_buffer *b);
 
-
-extern void     ogg_page_checksum_set(ogg_page *og);
-
-extern int      ogg_page_version(ogg_page *og);
-extern int      ogg_page_continued(ogg_page *og);
-extern int      ogg_page_bos(ogg_page *og);
-extern int      ogg_page_eos(ogg_page *og);
-extern ogg_int64_t  ogg_page_granulepos(ogg_page *og);
-extern int      ogg_page_serialno(ogg_page *og);
-extern long     ogg_page_pageno(ogg_page *og);
-extern int      ogg_page_packets(ogg_page *og);
 
 extern void     ogg_packet_clear(ogg_packet *op);
 

@@ -59,7 +59,6 @@ OGGOBJ=bitwise.o framing.o
 JNIOBJ=\
 	org_tritonus_lowlevel_pogg_Buffer.o \
 	org_tritonus_lowlevel_pogg_Packet.o \
-	org_tritonus_lowlevel_pogg_Page.o \
 	org_tritonus_lowlevel_pvorbis_Block.o \
 	org_tritonus_lowlevel_pvorbis_DspState.o \
 	org_tritonus_lowlevel_pvorbis_Info.o
@@ -75,7 +74,6 @@ JNIHEADERS:=$(JNIOBJ:.o=.h)
 JNICLASSFILES=\
 	Buffer.class \
 	Packet.class \
-	Page.class \
 	Block.class \
 	DspState.class \
 	Info.class
@@ -83,7 +81,6 @@ JNICLASSFILES=\
 JNICLASSES=\
 	org.tritonus.lowlevel.pogg.Buffer \
 	org.tritonus.lowlevel.pogg.Packet \
-	org.tritonus.lowlevel.pogg.Page \
 	org.tritonus.lowlevel.pvorbis.Block \
 	org.tritonus.lowlevel.pvorbis.DspState \
 	org.tritonus.lowlevel.pvorbis.Info

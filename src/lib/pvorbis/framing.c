@@ -26,96 +26,10 @@
 
 /* A complete description of Ogg framing exists in docs/framing.html */
 
-int ogg_page_version(ogg_page *og){
-  return((int)(og->header[4]));
-}
-
-int ogg_page_continued(ogg_page *og){
-  return((int)(og->header[5]&0x01));
-}
-
-int ogg_page_bos(ogg_page *og){
-  return((int)(og->header[5]&0x02));
-}
-
-int ogg_page_eos(ogg_page *og){
-  return((int)(og->header[5]&0x04));
-}
-
-ogg_int64_t ogg_page_granulepos(ogg_page *og){
-  unsigned char *page=og->header;
-  ogg_int64_t granulepos=page[13]&(0xff);
-  granulepos= (granulepos<<8)|(page[12]&0xff);
-  granulepos= (granulepos<<8)|(page[11]&0xff);
-  granulepos= (granulepos<<8)|(page[10]&0xff);
-  granulepos= (granulepos<<8)|(page[9]&0xff);
-  granulepos= (granulepos<<8)|(page[8]&0xff);
-  granulepos= (granulepos<<8)|(page[7]&0xff);
-  granulepos= (granulepos<<8)|(page[6]&0xff);
-  return(granulepos);
-}
-
-int ogg_page_serialno(ogg_page *og){
-  return(og->header[14] |
-	 (og->header[15]<<8) |
-	 (og->header[16]<<16) |
-	 (og->header[17]<<24));
-}
- 
-long ogg_page_pageno(ogg_page *og){
-  return(og->header[18] |
-	 (og->header[19]<<8) |
-	 (og->header[20]<<16) |
-	 (og->header[21]<<24));
-}
 
 
 
-/* returns the number of packets that are completed on this page (if
-   the leading packet is begun on a previous page, but ends on this
-   page, it's counted */
 
-/* NOTE:
-If a page consists of a packet begun on a previous page, and a new
-packet begun (but not completed) on this page, the return will be:
-  ogg_page_packets(page)   ==1, 
-  ogg_page_continued(page) !=0
-
-If a page happens to be a single packet that was begun on a
-previous page, and spans to the next page (in the case of a three or
-more page packet), the return will be: 
-  ogg_page_packets(page)   ==0, 
-  ogg_page_continued(page) !=0
-*/
-
-int ogg_page_packets(ogg_page *og){
-  int i,n=og->header[26],count=0;
-  for(i=0;i<n;i++)
-    if(og->header[27+i]<255)count++;
-  return(count);
-}
-
-
-#if 0
-/* helper to initialize lookup for direct-table CRC (illustrative; we
-   use the static init below) */
-
-static ogg_uint32_t _ogg_crc_entry(unsigned long index){
-  int           i;
-  unsigned long r;
-
-  r = index << 24;
-  for (i=0; i<8; i++)
-    if (r & 0x80000000UL)
-      r = (r << 1) ^ 0x04c11db7; /* The same as the ethernet generator
-				    polynomial, although we use an
-				    unreflected alg and an init/final
-				    of 0, not 0xffffffff */
-    else
-       r<<=1;
- return (r & 0xffffffffUL);
-}
-#endif
 
 static ogg_uint32_t crc_lookup[256]={
   0x00000000,0x04c11db7,0x09823b6e,0x0d4326d9,
@@ -185,32 +99,6 @@ static ogg_uint32_t crc_lookup[256]={
 
 
 
-/* checksum the page */
-/* Direct table CRC; note that this will be faster in the future if we
-   perform the checksum silmultaneously with other copies */
-
-void ogg_page_checksum_set(ogg_page *og){
-  if(og){
-    ogg_uint32_t crc_reg=0;
-    int i;
-
-    /* safety; needed for API behavior, but not framing code */
-    og->header[22]=0;
-    og->header[23]=0;
-    og->header[24]=0;
-    og->header[25]=0;
-    
-    for(i=0;i<og->header_len;i++)
-      crc_reg=(crc_reg<<8)^crc_lookup[((crc_reg >> 24)&0xff)^og->header[i]];
-    for(i=0;i<og->body_len;i++)
-      crc_reg=(crc_reg<<8)^crc_lookup[((crc_reg >> 24)&0xff)^og->body[i]];
-    
-    og->header[22]=crc_reg&0xff;
-    og->header[23]=(crc_reg>>8)&0xff;
-    og->header[24]=(crc_reg>>16)&0xff;
-    og->header[25]=(crc_reg>>24)&0xff;
-  }
-}
 
 
 /* DECODING PRIMITIVES: packet streaming layer **********************/
