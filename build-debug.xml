@@ -21,7 +21,7 @@
     <!-- Here, the compilation is separated into parts due to an obscure problem. Memory shortage? -->
     <ajc srcdir="${src}"
 	   destdir="${build}"
-	   includes="javax/sound/,org/tritonus/core/,org/tritonus/share/" />
+	   includes="javax/sound/,org/tritonus/core/,org/tritonus/share/,org/tritonus/debug/AJDebug.java" />
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/"

@@ -50,16 +50,21 @@
   </target>
 
 
-  <target name="dist-common"
-	  depends="compile" >
+<target name="dist-common"
+	depends="compile" >
 
-    <!-- CORE: contains public classes and SPI instantiation support -->
-    <jar jarfile="${dist}/tritonus_core.jar">
-      <fileset dir="${build}">
-	<include name="javax/sound/" />
-	<include name="org/tritonus/core/" />
-      </fileset>
-    </jar>
+  <!-- CORE: contains public classes and SPI instantiation support -->
+  <jar jarfile="${dist}/tritonus_core.jar">
+    <fileset dir="${build}">
+      <include name="javax/sound/" />
+      <include name="org/tritonus/core/" />
+      <!-- This is a hack needed for the debug build. Files in this
+      directory aren't needed for the release build. However, it
+      should do no harm if files laying around are included.
+      -->
+      <include name="org/tritonus/debug/" />
+    </fileset>
+  </jar>
 
     <!-- SHARE: contains base and auxiliary classes for all other jars -->
     <jar jarfile="${dist}/tritonus_share.jar">

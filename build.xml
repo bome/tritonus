@@ -17,7 +17,7 @@
     <javac srcdir="${src}"
 	   destdir="${build}"
 	   includes="javax/sound/,org/tritonus/"
-	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/,org/tritonus/sampled/cdda/" />
+	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/,org/tritonus/sampled/cdda/,org/tritonus/debug/" />
     <javac srcdir="${src.classes}"
 	   debug="on"
 	   destdir="${build}"
