@@ -98,7 +98,6 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 	int		nParanoiaMode;
 
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): begin\n"); }
-
 	nParanoiaMode = getParanoiaMode();
 	cdrom = cdda_identify(cd_dev, 0, NULL);
 	if (cdrom == NULL)
@@ -110,6 +109,8 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 	{
 		return -1;
 	}
+
+	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): drive endianess: %d\n", cdrom->bigendianp); }
 
 	pHandle = (handle_t*) malloc(sizeof(handle_t));
 	if (pHandle == NULL)
