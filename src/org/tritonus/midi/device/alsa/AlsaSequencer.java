@@ -82,6 +82,7 @@ public class AlsaSequencer
 	private AlsaMidiOut		m_alsaMidiOut;
 	private Thread			m_loaderThread;
 	private Thread			m_syncThread;
+	private AlsaSeq.Event		m_queueControlEvent;
 
 
 
@@ -196,6 +197,7 @@ public class AlsaSequencer
 		// start the receiving thread
 		m_alsaMidiIn.start();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): end"); }
+		m_queueControlEvent = new AlsaSeq.Event();
 	}
 
 
@@ -216,6 +218,8 @@ public class AlsaSequencer
 		m_controlAlsaSeq = null;
 		getDataAlsaSeq().close();
 		m_dataAlsaSeq = null;
+		m_queueControlEvent.free();
+		m_queueControlEvent = null;
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): end"); }
 	}
 
@@ -225,7 +229,7 @@ public class AlsaSequencer
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): begin"); }
 		setTempoInMPQ(500000);
-		startSeq();
+		startQueue();
 // 		m_syncThread = new MasterSynchronizer();
 // 		m_syncThread.start();
 		m_loaderThread = new LoaderThread();
@@ -238,7 +242,7 @@ public class AlsaSequencer
 	protected void stopImpl()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): begin"); }
-		stopSeq();
+		stopQueue();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): end"); }
 	}
 
@@ -340,7 +344,14 @@ public class AlsaSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): begin"); }
 		if (isOpen())
 		{
-			getControlAlsaSeq().setQueuePositionTick(getControlPort(), getQueue(), lTick);
+			int	nSourcePort = getControlPort();
+			int	nQueue = getQueue();
+			long	lTime = lTick;
+			sendQueueControlEvent(
+				AlsaSeq.SND_SEQ_EVENT_SETPOS_TICK,
+				AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL, 0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
+				nSourcePort, AlsaSeq.SND_SEQ_CLIENT_SYSTEM, AlsaSeq.SND_SEQ_PORT_SYSTEM_TIMER,
+				nQueue, 0, lTime);
 		}
 		else
 		{
@@ -378,7 +389,14 @@ public class AlsaSequencer
 		if (isOpen())
 		{
 			long	lNanoSeconds = lMicroseconds * 1000;
-			getControlAlsaSeq().setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
+			int	nSourcePort = getControlPort();
+			int	nQueue = getQueue();
+			long	lTime = lNanoSeconds;
+			sendQueueControlEvent(
+				AlsaSeq.SND_SEQ_EVENT_SETPOS_TIME,
+				AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL, 0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
+				nSourcePort, AlsaSeq.SND_SEQ_CLIENT_SYSTEM, AlsaSeq.SND_SEQ_PORT_SYSTEM_TIMER,
+				nQueue, 0, lTime);
 		}
 		else
 		{
@@ -538,17 +556,44 @@ public class AlsaSequencer
 
 
 
-	private void startSeq()
+	private void startQueue()
 	{
-		getControlAlsaSeq().startQueue(getQueue(), getControlPort());
+		controlQueue(AlsaSeq.SND_SEQ_EVENT_START);
 	}
 
 
 
-	private void stopSeq()
+	private void stopQueue()
 	{
-		getControlAlsaSeq().stopQueue(getQueue(), getControlPort());
+		controlQueue(AlsaSeq.SND_SEQ_EVENT_STOP);
 	}
+
+
+
+	private void controlQueue(int nType)
+	{
+		int	nSourcePort = getControlPort();
+		int	nQueue = getQueue();
+		sendQueueControlEvent(
+			nType, AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL, 0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
+			nSourcePort, AlsaSeq.SND_SEQ_CLIENT_SYSTEM, AlsaSeq.SND_SEQ_PORT_SYSTEM_TIMER,
+			nQueue, 0, 0);
+	}
+
+
+	// NOTE: also used for setting position
+	public void sendQueueControlEvent(
+		int nType, int nFlags, int nTag, int nQueue, long lTime,
+		int nSourcePort, int nDestClient, int nDestPort,
+		int nControlQueue, int nControlValue, long lControlTime)
+	{
+		m_queueControlEvent.setCommon(nType, nFlags, nTag, nQueue, lTime,
+		0, nSourcePort, nDestClient, nDestPort);
+		m_queueControlEvent.setQueueControl(nControlQueue, nControlValue, lControlTime);
+		getControlAlsaSeq().eventOutputDirect(m_queueControlEvent);
+	}
+
+
 
 	///////////////////////////////////////////////////
 
