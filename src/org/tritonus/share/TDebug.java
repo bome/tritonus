@@ -131,7 +131,7 @@ public class TDebug
 
 
 
-	public static void assert(boolean bAssertion)
+	public static void assertion(boolean bAssertion)
 	{
 		if (!bAssertion)
 		{
