@@ -11,89 +11,89 @@ public interface PlayerListener
 {
 	/**	TODO:
 	*/
-	public static final int	STARTED = 0;
+	public static final String	STARTED = "started";
 
 
 	/**	TODO:
 	*/
-	public static final int	STOPPED = 1;
+	public static final String	STOPPED = "stopped";
 
 
 	/**	TODO:
 	*/
-	public static final int	STOPPED_AT_TIME = 2;
+	public static final String	STOPPED_AT_TIME = "stoppedAtTime";
 
 
 	/**	TODO:
 	*/
-	public static final int	END_OF_MEDIA = 3;
+	public static final String	END_OF_MEDIA = "endOfMedia";
 
 
 	/**	TODO:
 	*/
-	public static final int	DURATION_UPDATED = 4;
+	public static final String	DURATION_UPDATED = "durationUpdated";
 
 
 	/**	TODO:
 	*/
-	public static final int	DEVICE_UNAVAILABLE = 5;
+	public static final String	DEVICE_UNAVAILABLE = "deviceUnavailable";
 
 
 	/**	TODO:
 	*/
-	public static final int	DEVICE_AVAILABLE = 6;
+	public static final String	DEVICE_AVAILABLE = "deviceAvailable";
 
 
 	/**	TODO:
 	*/
-	public static final int	VOLUME_CHANGED = 7;
+	public static final String	VOLUME_CHANGED = "volumeChanged";
 
 
 	/**	TODO:
 	*/
-	public static final int	SIZE_CHANGED = 8;
+	public static final String	SIZE_CHANGED = "sizeChanged";
 
 
 	/**	TODO:
 	*/
-	public static final int	ERROR = 9;
+	public static final String	ERROR = "error";
 
 
 	/**	TODO:
 	*/
-	public static final int	CLOSED = 10;
+	public static final String	CLOSED = "closed";
 
 
 	/**	TODO:
 	*/
-	public static final int	RECORD_STARTED = 11;
+	public static final String	RECORD_STARTED = "recordStarted";
 
 
 	/**	TODO:
 	*/
-	public static final int	RECORD_STOPPED = 12;
+	public static final String	RECORD_STOPPED = "recordStopped";
 
 
 	/**	TODO:
 	*/
-	public static final int	RECORD_ERROR = 13;
+	public static final String	RECORD_ERROR = "ercordError";
 
 
 	/**	TODO:
 	*/
-	public static final int	BUFFERING_STARTED = 14;
+	public static final String	BUFFERING_STARTED = "bufferingStarted";
 
 
 	/**	TODO:
 	*/
-	public static final int	BUFFERING_STOPPED = 15;
+	public static final String	BUFFERING_STOPPED = "bufferingStopped";
 
 
 
 
 	/**	TODO:
 	*/
-	public void playerUpdate(Player player, int nEvent, Object eventData);
+	public void playerUpdate(Player player, String event, Object eventData);
 }
 
 
