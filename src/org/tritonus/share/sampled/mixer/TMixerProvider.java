@@ -53,12 +53,25 @@ public abstract class TMixerProvider
 
 	public TMixerProvider()
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.<init>(): begin");
+		}
+		// currently does nothing
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.<init>(): end");
+		}
 	}
 
 
 
 	private MixerProviderStruct getMixerProviderStruct()
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.getMixerProviderStruct(): begin");
+		}
 		Class			cls = this.getClass();
 		if (TDebug.TraceMixerProvider)
 		{
@@ -77,6 +90,10 @@ public abstract class TMixerProvider
 				struct = new MixerProviderStruct();
 				sm_mixerProviderStructs.put(cls, struct);
 			}
+			if (TDebug.TraceMixerProvider)
+			{
+				TDebug.out("TMixerProvider.getMixerProviderStruct(): end");
+			}
 			return struct;
 		}
 	}
@@ -85,6 +102,10 @@ public abstract class TMixerProvider
 
 	protected void addMixer(Mixer mixer)
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.addMixer(): begin");
+		}
 		MixerProviderStruct	struct = getMixerProviderStruct();
 		synchronized (struct)
 		{
@@ -94,12 +115,20 @@ public abstract class TMixerProvider
 				struct.m_defaultMixer = mixer;
 			}
 		}
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.addMixer(): end");
+		}
 	}
 
 
 
 	protected void removeMixer(Mixer mixer)
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.removeMixer(): begin");
+		}
 		MixerProviderStruct	struct = getMixerProviderStruct();
 		synchronized (struct)
 		{
@@ -110,21 +139,35 @@ public abstract class TMixerProvider
 				struct.m_defaultMixer = null;
 			}
 		}
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.removeMixer(): end");
+		}
 	}
 
 
 
 	public boolean isMixerSupported(Mixer.Info info)
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.isMixerSupported(): begin");
+		}
+		boolean	bIsSupported = false;
 		Mixer.Info[]	infos = getMixerInfo();
 		for (int i = 0; i < infos.length; i++)
 		{
 			if (infos[i].equals(info))
 			{
-				return true;
+				bIsSupported = true;
+				break;
 			}
 		}
-		return false;
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.isMixerSupported(): end");
+		}
+		return bIsSupported;
 	}
 
 
@@ -133,16 +176,17 @@ public abstract class TMixerProvider
 	 */
 	public Mixer getMixer(Mixer.Info info)
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.getMixer(): begin");
+		}
 		MixerProviderStruct	struct = getMixerProviderStruct();
+		Mixer	mixerResult = null;
 		synchronized (struct)
 		{
 			if (info == null)
 			{
-				if (struct.m_defaultMixer == null)
-				{
-					throw new IllegalArgumentException("no mixer available for " + info);
-				}
-				return struct.m_defaultMixer;
+				mixerResult = struct.m_defaultMixer;
 			}
 			else
 			{
@@ -152,18 +196,31 @@ public abstract class TMixerProvider
 					Mixer	mixer = (Mixer) mixers.next();
 					if (mixer.getMixerInfo().equals(info))
 					{
-						return mixer;
+						mixerResult = mixer;
+						break;
 					}
 				}
 			}
 		}
-		throw new IllegalArgumentException("no mixer available for " + info);
+		if (mixerResult == null)
+		{
+			throw new IllegalArgumentException("no mixer available for " + info);
+		}
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.getMixer(): end");
+		}
+		return mixerResult;
 	}
 
 
 
 	public Mixer.Info[] getMixerInfo()
 	{
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.getMixerInfo(): begin");
+		}
 		Set	mixerInfos = new HashSet();
 		MixerProviderStruct	struct = getMixerProviderStruct();
 		synchronized (struct)
@@ -174,6 +231,10 @@ public abstract class TMixerProvider
 				Mixer	mixer = (Mixer) mixers.next();
 				mixerInfos.add(mixer.getMixerInfo());
 			}
+		}
+		if (TDebug.TraceMixerProvider)
+		{
+			TDebug.out("TMixerProvider.getMixerInfo(): end");
 		}
 		return (Mixer.Info[]) mixerInfos.toArray(EMPTY_MIXER_INFO_ARRAY);
 	}
