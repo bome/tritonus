@@ -6,7 +6,6 @@
  *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -20,33 +19,35 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
+/*
+|<---            this code is formatted to fit into 80 columns             --->|
+*/
 
 package	org.tritonus.sampled.convert.vorbis;
 
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.InputStream;
+import java.io.IOException;
 
-import	java.io.DataInputStream;
-import	java.io.InputStream;
-import	java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import	java.util.ArrayList;
-import	java.util.Arrays;
-import	java.util.Iterator;
-import	java.util.List;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
-
-import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.TConversionTool;
-import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
-import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
-import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
-import	org.tritonus.share.sampled.AudioFormats;
-import	org.tritonus.share.sampled.Encodings;
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.TConversionTool;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
+import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.sampled.Encodings;
 
 import com.jcraft.jogg.SyncState;
 import com.jcraft.jogg.StreamState;
@@ -159,8 +160,8 @@ public class JorbisFormatConversionProvider
 	// TODO: recheck !!
 	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat)
 	{
-	    TDebug.out("getDefaultTargetFormat(): target format: " + targetFormat);
-	    TDebug.out("getDefaultTargetFormat(): source format: " + sourceFormat);
+		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getDefaultTargetFormat(): target format: " + targetFormat); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getDefaultTargetFormat(): source format: " + sourceFormat); }
 		AudioFormat	newTargetFormat = null;
 		// return first of the matching formats
 		// pre-condition: the predefined target formats (FORMATS2) must be well-defined !
@@ -177,17 +178,17 @@ public class JorbisFormatConversionProvider
 		{
 			throw new IllegalArgumentException("conversion not supported");
 		}
-	    TDebug.out("getDefaultTargetFormat(): new target format: " + newTargetFormat);
-	    // hacked together...
-	    // ... only works for PCM target encoding ...
-	    newTargetFormat = new AudioFormat(targetFormat.getEncoding(),
-					      sourceFormat.getSampleRate(),
-					      newTargetFormat.getSampleSizeInBits(),
-					      newTargetFormat.getChannels(),
-					      newTargetFormat.getFrameSize(),
-					      sourceFormat.getSampleRate(),
-					      /*newTargetFormat.isBigEndian()*/false);
-	    TDebug.out("getDefaultTargetFormat(): really new target format: " + newTargetFormat);
+		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getDefaultTargetFormat(): new target format: " + newTargetFormat); }
+		// hacked together...
+		// ... only works for PCM target encoding ...
+		newTargetFormat = new AudioFormat(targetFormat.getEncoding(),
+						  sourceFormat.getSampleRate(),
+						  newTargetFormat.getSampleSizeInBits(),
+						  newTargetFormat.getChannels(),
+						  newTargetFormat.getFrameSize(),
+						  sourceFormat.getSampleRate(),
+						  /*newTargetFormat.isBigEndian()*/false);
+		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat); }
 		return newTargetFormat;
 	}
 		
@@ -206,26 +207,26 @@ public class JorbisFormatConversionProvider
 	{
 		public static boolean		DEBUG = false;
 
-		private InputStream		oggBitStream_ = null;
+		private InputStream		m_oggBitStream = null;
 
 		// Ogg structures
-		private SyncState		oggSyncState_ = null;
-  		private StreamState		oggStreamState_ = null;
-  		private Page			oggPage_ = null;
-  		private Packet			oggPacket_ = null;
+		private SyncState		m_oggSyncState = null;
+  		private StreamState		m_oggStreamState = null;
+  		private Page			m_oggPage = null;
+  		private Packet			m_oggPacket = null;
 
 		// Vorbis structures
-  		private Info			vorbisInfo = null;
-  		private Comment			vorbisComment = null;
-  		private DspState		vorbisDspState = null;
-  		private Block			vorbisBlock = null;
+  		private Info			m_vorbisInfo = null;
+  		private Comment			m_vorbisComment = null;
+  		private DspState		m_vorbisDspState = null;
+		// actually is an ogg structure
+  		private Block			m_vorbisBlock = null;
 
   		private int			bufferMultiple_ = 4;
   		private int			bufferSize_ = bufferMultiple_ * 256 * 2;
   		private int			convsize = bufferSize_ * 2;
   		private byte[]			convbuffer = new byte[convsize];
   		private byte[]			buffer = null;
-  		private int			bytes = 0;
   		private int			rate = 0;
  	 	private int			channels = 0;
   		private List			songComments_ = new ArrayList();
@@ -233,7 +234,6 @@ public class JorbisFormatConversionProvider
 		private float[][][]		_pcmf = null;
 		private int[]			_index = null;
 		private int			index = 0;
-		private int			i = 0;
 
 		private int			loopid = 1;
 		private int			eos = 0;
@@ -249,7 +249,7 @@ public class JorbisFormatConversionProvider
 			/*
 			 */
 			super(outputFormat, AudioSystem.NOT_SPECIFIED);
-			this.oggBitStream_ = bitStream;
+			this.m_oggBitStream = bitStream;
 			loopid = 1;
 			init_jorbis();
 			index = 0;
@@ -262,17 +262,19 @@ public class JorbisFormatConversionProvider
 		 */
 		private void init_jorbis()
 		{
-			oggSyncState_ = new SyncState();
-			oggStreamState_ = new StreamState();
-			oggPage_ = new Page();
-			oggPacket_ = new Packet();
-			vorbisInfo = new Info();
-			vorbisComment = new Comment();
-			vorbisDspState = new DspState();
-			vorbisBlock = new Block(vorbisDspState);
+			m_oggSyncState = new SyncState();
+			m_oggStreamState = new StreamState();
+			m_oggPage = new Page();
+			m_oggPacket = new Packet();
+
+			m_vorbisInfo = new Info();
+			m_vorbisComment = new Comment();
+			m_vorbisDspState = new DspState();
+			m_vorbisBlock = new Block(m_vorbisDspState);
+
 			buffer = null;
-			bytes = 0;
-			oggSyncState_.init();
+
+			m_oggSyncState.init();
 		}
 
 
@@ -281,6 +283,7 @@ public class JorbisFormatConversionProvider
 		 */
 		public void execute()
 		{
+			int bytes = 0;
 			// This code was developed by the jCraft group, slightly modifed by jOggPlayer developer
 			// and adapted by E.B from JavaZOOM to suit to JavaSound SPI.
 			// loop 1
@@ -294,7 +297,8 @@ public class JorbisFormatConversionProvider
 					try
 					{
 						readHeaders();
-					}	catch (IOException ioe)
+					}
+					catch (IOException ioe)
 					{
 						streamStillHasData = false;
 						return;
@@ -312,7 +316,7 @@ public class JorbisFormatConversionProvider
 						//while (eos == 0)
 					{
 					case 0:
-						int result = oggSyncState_.pageout(oggPage_);
+						int result = m_oggSyncState.pageout(m_oggPage);
 						if (DEBUG) System.err.println("loop3:"+result);
 						if (result == 0)
 						{
@@ -325,12 +329,12 @@ public class JorbisFormatConversionProvider
 						}
 						else
 						{
-							oggStreamState_.pagein(oggPage_);
+							m_oggStreamState.pagein(m_oggPage);
 							// Decoding !
 							if (DEBUG) System.err.println("Decoding");
 							while (true)
 							{
-								result = oggStreamState_.packetout(oggPacket_);
+								result = m_oggStreamState.packetout(m_oggPacket);
 								if (result == 0)
 								{
 									break;
@@ -343,11 +347,11 @@ public class JorbisFormatConversionProvider
 								{
 									// we have a packet.  Decode it
 									int samples;
-									if (vorbisBlock.synthesis(oggPacket_) == 0)
+									if (m_vorbisBlock.synthesis(m_oggPacket) == 0)
 									{ // test for success!
-										vorbisDspState.synthesis_blockin(vorbisBlock);
+										m_vorbisDspState.synthesis_blockin(m_vorbisBlock);
 									}
-									while ((samples = vorbisDspState.synthesis_pcmout(_pcmf, _index)) > 0)
+									while ((samples = m_vorbisDspState.synthesis_pcmout(_pcmf, _index)) > 0)
 									{
 										double[][] pcm = _pcm[0];
 										float[][] pcmf = _pcmf[0];
@@ -356,7 +360,7 @@ public class JorbisFormatConversionProvider
 										double fVal = 0.0;
 										// convert doubles to 16 bit signed ints (host order) and
 										// interleave
-										for (i = 0; i < vorbisInfo.channels; i++)
+										for (int i = 0; i < m_vorbisInfo.channels; i++)
 										{
 											int pointer = i * 2;
 											//int ptr=i;
@@ -381,16 +385,16 @@ public class JorbisFormatConversionProvider
 												}
 												convbuffer[pointer] = (byte) (val);
 												convbuffer[pointer + 1] = (byte) (val >>> 8);
-												pointer += 2 * (vorbisInfo.channels);
+												pointer += 2 * (m_vorbisInfo.channels);
 											}
 										}
-										m_circularBuffer.write(convbuffer, 0, 2 * vorbisInfo.channels * bout);
-										//outputLine.write(convbuffer, 0, 2 * vorbisInfo.channels * bout);
-										vorbisDspState.synthesis_read(bout);
+										m_circularBuffer.write(convbuffer, 0, 2 * m_vorbisInfo.channels * bout);
+										//outputLine.write(convbuffer, 0, 2 * m_vorbisInfo.channels * bout);
+										m_vorbisDspState.synthesis_read(bout);
 									}
 								}
 							}
-							if (oggPage_.eos() != 0)
+							if (m_oggPage.eos() != 0)
 							{
 								eos = 1;
 							}
@@ -405,8 +409,8 @@ public class JorbisFormatConversionProvider
 
 					if (eos == 0)
 					{
-						index = oggSyncState_.buffer(bufferSize_);
-						buffer = oggSyncState_.data;
+						index = m_oggSyncState.buffer(bufferSize_);
+						buffer = m_oggSyncState.data;
 						bytes = readFromStream(buffer, index, bufferSize_);
 						if (DEBUG) System.err.println("More data : "+bytes);
 						if (bytes == -1)
@@ -418,7 +422,7 @@ public class JorbisFormatConversionProvider
 						}
 						else
 						{
-							oggSyncState_.wrote(bytes);
+							m_oggSyncState.wrote(bytes);
 							if (bytes == 0)
 							{
 								eos = 1;
@@ -433,20 +437,20 @@ public class JorbisFormatConversionProvider
 				} // end loop 2 // end switch(eos)
 				if (loopid == 2) return;
 
-				oggStreamState_.clear();
-				vorbisBlock.clear();
-				vorbisDspState.clear();
-				vorbisInfo.clear();
+				m_oggStreamState.clear();
+				m_vorbisBlock.clear();
+				m_vorbisDspState.clear();
+				m_vorbisInfo.clear();
 			} // end loop 1
 			else // no more data
 			{
-				oggSyncState_.clear();
+				m_oggSyncState.clear();
 				if (DEBUG) System.out.println("Done Song.");
 				try
 				{
-					if (oggBitStream_ != null)
+					if (m_oggBitStream != null)
 					{
-						oggBitStream_.close();
+						m_oggBitStream.close();
 					}
 					m_circularBuffer.close();
 				}
@@ -457,98 +461,76 @@ public class JorbisFormatConversionProvider
 			}
 		}
 
-		/**
-		 * Reads headers and comments.
+
+
+		/** Read all three vorbis headers.
 		 */
-		private void readHeaders() throws IOException
+		private void readHeaders()
+			throws IOException
 		{
-			if (DEBUG) System.err.println("readHeaders()");
-			index = oggSyncState_.buffer(bufferSize_);
-			buffer = oggSyncState_.data;
-			bytes = readFromStream(buffer, index, bufferSize_);
-			if (bytes == -1)
+			readIdentificationHeader();
+			readCommentAndCodebookHeaders();
+			processComments();
+			setupVorbisStructures();
+		}
+
+
+
+		private void readIdentificationHeader()
+			throws IOException
+		{
+			int nIndex = m_oggSyncState.buffer(bufferSize_);
+			int nBytes = readFromStream(m_oggSyncState.data, nIndex, bufferSize_);
+			if (nBytes == -1)
 			{
-				if (DEBUG) System.err.println("Cannot get any data from selected Ogg bitstream.");
 				throw new IOException("Cannot get any data from selected Ogg bitstream.");
 			}
-			oggSyncState_.wrote(bytes);
-			if (oggSyncState_.pageout(oggPage_) != 1)
+			m_oggSyncState.wrote(nBytes);
+			if (m_oggSyncState.pageout(m_oggPage) != 1)
 			{
-				if (bytes < bufferSize_)
+				if (nBytes < bufferSize_)
 				{
 					throw new IOException("EOF");
 				}
-				if (DEBUG) System.err.println("Input does not appear to be an Ogg bitstream.");
 				throw new IOException("Input does not appear to be an Ogg bitstream.");
 			}
-			oggStreamState_.init(oggPage_.serialno());
-			vorbisInfo.init();
-			vorbisComment.init();
-			if (oggStreamState_.pagein(oggPage_) < 0)
+			m_oggStreamState.init(m_oggPage.serialno());
+			m_vorbisInfo.init();
+			m_vorbisComment.init();
+			if (m_oggStreamState.pagein(m_oggPage) < 0)
 			{
 				// error; stream version mismatch perhaps
-				if (DEBUG) System.err.println("Error reading first page of Ogg bitstream data.");
 				throw new IOException("Error reading first page of Ogg bitstream data.");
 			}
-			if (oggStreamState_.packetout(oggPacket_) != 1)
+			if (m_oggStreamState.packetout(m_oggPacket) != 1)
 			{
 				// no page? must not be vorbis
-				if (DEBUG) System.err.println("Error reading initial header packet.");
 				throw new IOException("Error reading initial header packet.");
 			}
-			if (vorbisInfo.synthesis_headerin(vorbisComment, oggPacket_) < 0)
+			if (m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket) < 0)
 			{
 				// error case; not a vorbis header
-				if (DEBUG) System.err.println("This Ogg bitstream does not contain Vorbis audio data.");
 				throw new IOException("This Ogg bitstream does not contain Vorbis audio data.");
 			}
-			//int i = 0;
-			i = 0;
-			while (i < 2)
-			{
-				while (i < 2)
-				{
-					int result = oggSyncState_.pageout(oggPage_);
-					if (result == 0)
-					{
-						break;
-					} // Need more data
-					if (result == 1)
-					{
-						oggStreamState_.pagein(oggPage_);
-						while (i < 2)
-						{
-							result = oggStreamState_.packetout(oggPacket_);
-							if (result == 0)
-							{
-								break;
-							}
-							if (result == -1)
-							{
-								if (DEBUG) System.err.println("Corrupt secondary header.  Exiting.");
-								throw new IOException("Corrupt secondary header.  Exiting.");
-							}
-							vorbisInfo.synthesis_headerin(vorbisComment, oggPacket_);
-							i++;
-						}
-					}
-				}
-				index = oggSyncState_.buffer(bufferSize_);
-				buffer = oggSyncState_.data;
-				bytes = readFromStream(buffer, index, bufferSize_);
-				if (bytes == -1)
-				{
-					break;
-				}
-				if (bytes == 0 && i < 2)
-				{
-					if (DEBUG) System.err.println("End of file before finding all Vorbis  headers!");
-					throw new IOException("End of file before finding all Vorbis  headers!");
-				}
-				oggSyncState_.wrote(bytes);
-			}
+		}
 
-			byte[][] ptr = vorbisComment.user_comments;
+
+
+		private void readCommentAndCodebookHeaders()
+			throws IOException
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				readOggPacket();
+				m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket);
+			}
+		}
+
+
+
+		private void processComments()
+		{
+			byte[][] ptr = m_vorbisComment.user_comments;
 			String currComment = "";
 			songComments_.clear();
 			for (int j = 0; j < ptr.length; j++)
@@ -570,22 +552,100 @@ public class JorbisFormatConversionProvider
 				}
 				if (DEBUG) System.err.println("Comment: " + currComment);
 			}
-			currComment = "Bitstream: " + vorbisInfo.channels + " channel," + vorbisInfo.rate + "Hz";
+			currComment = "Bitstream: " + m_vorbisInfo.channels + " channel," + m_vorbisInfo.rate + "Hz";
 			songComments_.add(currComment);
 			if (DEBUG) System.err.println(currComment);
-			if (DEBUG) currComment = "Encoded by: " + new String(vorbisComment.vendor, 0, vorbisComment.vendor.length - 1);
+			if (DEBUG) currComment = "Encoded by: " + new String(m_vorbisComment.vendor, 0, m_vorbisComment.vendor.length - 1);
 			songComments_.add(currComment);
 			if (DEBUG) System.err.println(currComment);
-			convsize = bufferSize_ / vorbisInfo.channels;
-			vorbisDspState.synthesis_init(vorbisInfo);
-			vorbisBlock.init(vorbisDspState);
-			_pcm = new double[1][][];
-			_pcmf = new float[1][][];
-			_index = new int[vorbisInfo.channels];
 		}
 
+
+
+		/** Setup structures needed for vorbis decoding.
+		    Precondition: m_vorbisInfo has to be initialized completely
+		    (i.e. all three headers are read).
+		*/
+		private void setupVorbisStructures()
+		{
+			convsize = bufferSize_ / m_vorbisInfo.channels;
+			m_vorbisDspState.synthesis_init(m_vorbisInfo);
+			m_vorbisBlock.init(m_vorbisDspState);
+			_pcm = new double[1][][];
+			_pcmf = new float[1][][];
+			_index = new int[m_vorbisInfo.channels];
+		}
+
+
+
+		/** Read an ogg packet.
+		    This method does everything necessary to read an ogg
+		    packet. If needed, it calls
+		    {@link #readOggPage readOggPage()}, which, in turn, may
+		    read more data from the stream. The resulting packet is
+		    placed in {@link #m_oggPacket m_oggPacket} (for which the
+		    reference is not altered; is has to be initialized before).
+		 */
+		private void readOggPacket()
+			throws IOException
+		{
+			while (true)
+			{
+				int result = m_oggStreamState.packetout(m_oggPacket);
+				if (result == 1)
+				{
+					return;
+				}
+				if (result == -1)
+				{
+					throw new IOException("Corrupt secondary header.  Exiting.");
+				}
+				readOggPage();
+				m_oggStreamState.pagein(m_oggPage);
+			}
+		}
+
+
+
+		/** Read an ogg page.
+		    This method does everything necessary to read an ogg
+		    page. If needed, it reads more data from the stream.
+		    The resulting page is
+		    placed in {@link #m_oggPage m_oggPage} (for which the
+		    reference is not altered; is has to be initialized before).
+
+		    Note: this method doesn't deliver the page read to a
+		    StreamState object (which assembles pages to packets).
+		    This has to be done by the caller.
+		*/
+		private void readOggPage()
+			throws IOException
+		{
+			while (true)
+			{
+				int result = m_oggSyncState.pageout(m_oggPage);
+				if (result == 1)
+				{
+					return;
+				}
+				// we need more data from the stream
+				int nIndex = m_oggSyncState.buffer(bufferSize_);
+				// TODO: call stream.read() directly
+				int nBytes = readFromStream(m_oggSyncState.data, nIndex, bufferSize_);
+				// TODO: This clause should become obsolete; readFromStream() should
+				// propagate exceptions directly.
+				if (nBytes == -1)
+				{
+					throw new EOFException();
+				}
+				m_oggSyncState.wrote(nBytes);
+			}
+		}
+
+
+
 		/**
-		 * Reads from the oggBitStream_ a specified number of Bytes(bufferSize_) worth
+		 * Reads from the m_oggBitStream a specified number of Bytes(bufferSize_) worth
 		 * starting at index and puts them in the specified buffer[].
 		 *
 		 * @param buffer
@@ -593,12 +653,14 @@ public class JorbisFormatConversionProvider
 		 * @param bufferSize_
 		 * @return             the number of bytes read or -1 if error.
 		 */
+		// TODO: should not return -1 on exception, but propagate
+		// the exception
 		private int readFromStream(byte[] buffer, int index, int bufferSize_)
 		{
 			int bytes = 0;
 			try
 			{
-				bytes = oggBitStream_.read(buffer, index, bufferSize_);
+				bytes = m_oggBitStream.read(buffer, index, bufferSize_);
 			}
 			catch (Exception e)
 			{
@@ -608,9 +670,11 @@ public class JorbisFormatConversionProvider
 			return bytes;
 		}
 
-		/**
-		 *
-		 */
+
+
+		/** Returns if this stream (the decoded one) is big endian.
+		    @return true if this stream is big endian.
+		*/
 		private boolean isBigEndian()
 		{
 			return getFormat().isBigEndian();
@@ -622,7 +686,7 @@ public class JorbisFormatConversionProvider
 		public void close() throws IOException
 		{
 			super.close();
-			oggBitStream_.close();
+			m_oggBitStream.close();
 		}
 
 	}
