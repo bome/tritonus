@@ -50,9 +50,22 @@ public abstract class TSequencer
 	extends		TMidiDevice
 	implements	Sequencer
 {
+	/**	The Sequence to play or to record to.
+	 */
 	private Sequence	m_sequence;
+
+	/**	The listeners that want to be notified of MetaMessages.
+	 */
 	private Set		m_metaListeners;
-	private Set		m_controllerListeners;
+
+	/**	The listeners that want to be notified of control change events.
+	 *	They are organized as follows: this array is indexed with
+	 *	the number of the controller change events listeners are
+	 *	interested in. If there is any interest, the array element
+	 *	contains a reference to a Set containing the listeners.
+	 *	These sets are allocated on demand.
+	 */
+	private Set[]		m_aControllerListeners;
 
 
 
@@ -61,7 +74,7 @@ public abstract class TSequencer
 		super(info);
 		m_sequence = null;
 		m_metaListeners = new ArraySet();
-		m_controllerListeners = new ArraySet();	
+		m_aControllerListeners = new Set[128];	
 	}
 
 
@@ -137,40 +150,108 @@ public abstract class TSequencer
 
 	public int[] addControllerEventListener(ControllerEventListener listener, int[] anControllers)
 	{
-		synchronized (m_controllerListeners)
+		synchronized (m_aControllerListeners)
 		{
-			m_controllerListeners.add(listener);
-			// TODO:
-			return null;
+			if (anControllers == null)
+			{
+				/*
+				 *	Add to all controllers. NOTE: this
+				 *	is an implementation-specific
+				 *	semantic!
+				 */
+				for (int i = 0; i < 128; i++)
+				{
+					addControllerListener(i, listener);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < anControllers.length; i++)
+				{
+					addControllerListener(anControllers[i], listener);
+				}
+			}
 		}
+		return getListenedControllers(listener);
+	}
+
+
+
+	private void addControllerListener(int i,
+					   ControllerEventListener listener)
+	{
+		if (m_aControllerListeners[i] == null)
+		{
+			m_aControllerListeners[i] = new ArraySet();
+		}
+		m_aControllerListeners[i].add(listener);
 	}
 
 
 
 	public int[] removeControllerEventListener(ControllerEventListener listener, int[] anControllers)
 	{
-		synchronized (m_controllerListeners)
+		synchronized (m_aControllerListeners)
 		{
-			m_controllerListeners.remove(listener);
-			// TODO:
-			return null;
+			if (anControllers == null)
+			{
+				/*
+				 *	Remove from all controllers. Unlike
+				 *	above, this is specified semantics.
+				 */
+				for (int i = 0; i < 128; i++)
+				{
+					removeControllerListener(i, listener);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < anControllers.length; i++)
+				{
+					removeControllerListener(anControllers[i], listener);
+				}
+			}
+		}
+		return getListenedControllers(listener);
+	}
+
+
+
+	private void removeControllerListener(int i,
+					   ControllerEventListener listener)
+	{
+		if (m_aControllerListeners[i] != null)
+		{
+			m_aControllerListeners[i].add(listener);
 		}
 	}
 
 
-	protected Iterator getControllerEventListeners()
+
+	private int[] getListenedControllers(ControllerEventListener listener)
 	{
-		synchronized (m_controllerListeners)
+		int[]	anControllers = new int[128];
+		int	nIndex = 0;	// points to the next position to use.
+		for (int nController = 0; nController < 128; nController++)
 		{
-			return m_controllerListeners.iterator();
+			if (m_aControllerListeners[nController] != null &&
+			    m_aControllerListeners[nController].contains(listener))
+			{
+				anControllers[nIndex] = nController;
+				nIndex++;
+			}
 		}
+		int[]	anResultControllers = new int[nIndex];
+		System.arraycopy(anControllers, 0, anResultControllers, 0, nIndex);
+		return anResultControllers;
 	}
 
 
 
 	protected void sendControllerEvent(ShortMessage message)
 	{
-		Iterator	iterator = getControllerEventListeners();
+		int	nController = message.getData1();
+		Iterator	iterator = m_aControllerListeners[nController].iterator();
 		while (iterator.hasNext())
 		{
 			ControllerEventListener	controllerEventListener = (ControllerEventListener) iterator.next();

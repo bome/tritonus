@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import	javax.sound.midi.Track;
 import	javax.sound.midi.MidiEvent;
 import	javax.sound.midi.MidiMessage;
 import	javax.sound.midi.MetaMessage;
+import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.Transmitter;
 import	javax.sound.midi.Receiver;
 import	javax.sound.midi.MidiUnavailableException;
@@ -480,9 +481,9 @@ public class AlsaSequencer
 			// TODO: use extra thread for event delivery
 			sendMetaMessage((MetaMessage) message);
 		}
-		else if (false/*message instanceof ...*/)
+		else if (message instanceof ShortMessage && ((ShortMessage) message).getCommand() == ShortMessage.CONTROL_CHANGE)
 		{
-			// TODO: send controller events to listeners
+			sendControllerEvent((ShortMessage) message);
 		}
 	}
 
