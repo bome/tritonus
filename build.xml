@@ -173,6 +173,14 @@
       <fileset
 	       dir="${src}/packaging/tritonus_javasequencer" />
     </jar>
+
+    <jar	jarfile="${dist}/tritonus_audiooutputstream.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/sampled/file/*AudioOutputStream.class/" />
+	<include name="org/tritonus/sampled/file/*Tool.class/" />
+      </fileset>
+    </jar>
+
   </target>
 
   <!--
