@@ -45,11 +45,12 @@
 	  depends="compile">
     <junit fork="no" printsummary="yes">
       <classpath refid="run.classpath"/>
-      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
+      <sysproperty key="tritonus.TraceAudioFileReader" value="true"/>
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
       <test name="org.tritonus.test.AiffAudioFileReaderTestCase" />
+      <test name="org.tritonus.test.Aiff12bitAudioFileReaderTestCase" />
       <test name="org.tritonus.test.AuAudioFileReaderTestCase" />
       <test name="org.tritonus.test.AuZeroDataLengthAudioFileReaderTestCase" />
       <test name="org.tritonus.test.WaveAudioFileReaderTestCase" />
