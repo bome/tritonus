@@ -159,13 +159,14 @@ public abstract class TSequencer
 
 
 
-	public void start()
+	public synchronized void start()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.start(): begin"); }
+		checkOpen();
 		if (! isRunning())
 		{
 			m_bRunning = true;
-			// TODO: check open status, perhaps sequence present
+			// TODO: perhaps check if sequence present
 			startImpl();
 		}
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.start(): end"); }
@@ -184,9 +185,10 @@ public abstract class TSequencer
 
 
 
-	public void stop()
+	public synchronized void stop()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.stop(): begin"); }
+		checkOpen();
 		if (isRunning())
 		{
 			stopImpl();
@@ -209,9 +211,28 @@ public abstract class TSequencer
 
 
 
-	public boolean isRunning()
+	public synchronized boolean isRunning()
 	{
 		return m_bRunning;
+	}
+
+
+
+	/** Checks if the Sequencer is open.
+		This method is intended to be called by
+		{@link javax.sound.midi.Sequencer#start start},
+		{@link javax.sound.midi.Sequencer#stop stop},
+		{@link javax.sound.midi.Sequencer#startRecording startRecording}
+		and {@link javax.sound.midi.Sequencer#stop stopRecording}.
+
+		@throw IllegalStateException if the <code>Sequencer</code> is not open
+	 */
+	protected void checkOpen()
+	{
+		if (! isOpen())
+		{
+			throw new IllegalStateException("Sequencer is not open");
+		}
 	}
 
 
