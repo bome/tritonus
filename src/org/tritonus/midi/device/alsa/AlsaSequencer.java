@@ -525,13 +525,33 @@ public class AlsaSequencer
 
 
 
-	private void enqueueMessage(MidiMessage message, long lTick)
+	/*
+	  This method has to be synchronized because it is called
+	  from sendMessageTick() as well as from loadSequenceToNative().
+	 */
+	private synchronized void enqueueMessage(MidiMessage message, long lTick)
 	{
 		m_playbackAlsaMidiOut.enqueueMessage(message, lTick);
 	}
 
 
 
+	/**	Put a message into the queue.
+		This is Claus-Dieter's special method: it puts the message to
+		the ALSA queue for delivery at the specified time.
+		The time has to be given in ticks according to the resolution
+		of the currently active Sequence. For this method to work,
+		the Sequencer has to be started. The message is delivered
+		the same way as messages from a Sequence, i.e. to all
+		registered Transmitters. If the current queue position (as
+		returned by getTickPosition()) is
+		already behind the desired schedule time, the message is
+		ignored.
+
+		@param message the MidiMessage to put into the queue.
+
+		@param lTick the desired schedule time in ticks.
+	 */
 	public void sendMessageTick(MidiMessage message, long lTick)
 	{
 		enqueueMessage(message, lTick);
