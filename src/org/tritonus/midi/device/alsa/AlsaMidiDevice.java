@@ -60,7 +60,7 @@ public class AlsaMidiDevice
 
 	/**	The object interfacing to the ALSA sequencer.
 	 */
-	private AlsaSeq	m_alsaSeq;
+	private AlsaSeq		m_alsaSeq;
 
 	/**	The object used for getting timestamps.
 	 */
@@ -83,6 +83,9 @@ public class AlsaMidiDevice
 	 */
 	private int		m_nTimestampingQueue;
 
+	/**	The event used for starting and stopping the queue.
+	 */
+	private AlsaSeq.Event		m_event = new AlsaSeq.Event();
 
 
 
@@ -144,7 +147,8 @@ public class AlsaMidiDevice
 			 */
 			m_nTimestampingQueue = getAlsaSeq().allocQueue();
 			m_queueStatus = new AlsaSeq.QueueStatus();
-			getAlsaSeq().startQueue(m_nOwnPort, getTimestampingQueue());
+			// TODO: stop queue
+			startQueue();
 			m_alsaMidiIn = new AlsaMidiIn(
 				getAlsaSeq(), m_nOwnPort,
 				getClient(), getPort(),
@@ -170,7 +174,8 @@ public class AlsaMidiDevice
 		{
 			m_alsaMidiIn.interrupt();
 			m_alsaMidiIn = null;
-			// release timestamping queue
+			stopQueue();
+			// TODO: release timestamping queue
 			m_queueStatus.free();
 			m_queueStatus = null;
 		}
@@ -195,6 +200,33 @@ public class AlsaMidiDevice
 		}
 		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.getMicroSecondPosition(): end"); }
 		return lPosition;
+	}
+
+
+
+	private void startQueue()
+	{
+		controlQueue(AlsaSeq.SND_SEQ_EVENT_START);
+	}
+
+
+
+	private void stopQueue()
+	{
+		controlQueue(AlsaSeq.SND_SEQ_EVENT_STOP);
+	}
+
+
+
+	private void controlQueue(int nType)
+	{
+		m_event.setCommon(nType,
+				  AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL,
+				  0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
+				  0, m_nOwnPort,
+				  AlsaSeq.SND_SEQ_CLIENT_SYSTEM, AlsaSeq.SND_SEQ_PORT_SYSTEM_TIMER);
+		m_event.setQueueControl(getTimestampingQueue(), 0, 0);
+		getAlsaSeq().eventOutputDirect(m_event);
 	}
 
 
