@@ -43,8 +43,8 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TAudioFileWriter;
 import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.NonSeekableTDOS;
-import	org.tritonus.share.sampled.file.SeekableTDOS;
+import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
+import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
 
 
 /**
@@ -102,7 +102,7 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 	throws	IOException {
 		// TODO: (generalized) check if either seek is possible
 		//       or length is not required in header
-		TDataOutputStream	dataOutputStream = new SeekableTDOS(file);
+		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
 		return new AuAudioOutputStream(audioFormat,
 		                               lLengthInBytes,
 		                               dataOutputStream);
@@ -116,7 +116,7 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 	throws	IOException {
 		// it should be thrown an exception if it is tried to write
 		// to a stream but lLengthInFrames is AudioSystem.NOT_SPECIFIED
-		TDataOutputStream	dataOutputStream = new NonSeekableTDOS(outputStream);
+		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
 		return new AuAudioOutputStream(audioFormat,
 		                               lLengthInBytes,
 		                               dataOutputStream);

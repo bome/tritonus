@@ -1,5 +1,5 @@
 /*
- *	NonSeekableTDOS.java
+ *	TSeekableDataOutputStream.java
  */
 
 /*
@@ -27,56 +27,33 @@
 package	org.tritonus.share.sampled.file;
 
 
+import	java.io.File;
+import	java.io.RandomAccessFile;
 import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.io.DataOutputStream;
+
 
 /**
- * A TDataOutputStream that does not allow seeking.
+ * A TDataOutputStream that allows seeking.
  *
  * @author Florian Bomers
  * @author Matthias Pfisterer
  */
-
 	
-public class NonSeekableTDOS
-	extends DataOutputStream
+public class TSeekableDataOutputStream
+	extends RandomAccessFile
 	implements TDataOutputStream
 {
-	public NonSeekableTDOS(OutputStream outputStream)
+	public TSeekableDataOutputStream(File file)
+		throws IOException
 	{
-		super(outputStream);
+		super(file, "rw");
 	}
 
 
 
 	public boolean supportsSeek()
 	{
-		return false;
-	}
-
-
-
-	public void seek(long position)
-		throws IOException
-	{
-		throw new IllegalArgumentException("NonSeekableTDOS: Call to seek not allowed.");
-	}
-
-
-
-	public long getFilePointer()
-		throws IOException
-	{
-		throw new IllegalArgumentException("NonSeekableTDOS: Call to getFilePointer not allowed.");
-	}
-
-
-
-	public long length()
-		throws IOException
-	{
-		throw new IllegalArgumentException("NonSeekableTDOS: Call to length not allowed.");
+		return true;
 	}
 
 
@@ -87,7 +64,7 @@ public class NonSeekableTDOS
 		writeByte(value & 0xFF);
     		writeByte((value >> 8) & 0xFF);
     		writeByte((value >> 16) & 0xFF);
-    		writeByte((value >> 24) & 0xFF);
+	    	writeByte((value >> 24) & 0xFF);
 	}
 
 
@@ -102,4 +79,4 @@ public class NonSeekableTDOS
 
 
 
-/*** NonSeekableTDOS.java ***/
+/*** TSeekableDataOutputStream.java ***/

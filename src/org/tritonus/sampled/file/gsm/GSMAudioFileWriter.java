@@ -42,9 +42,9 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TAudioFileWriter;
 import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.HeaderLessAudioOutputStream;
-import	org.tritonus.share.sampled.file.SeekableTDOS;
-import	org.tritonus.share.sampled.file.NonSeekableTDOS;
+import	org.tritonus.share.sampled.file.HeaderlessAudioOutputStream;
+import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
+import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 
@@ -86,8 +86,8 @@ public class GSMAudioFileWriter
 		File file)
 		throws	IOException
 	{
-		TDataOutputStream	dataOutputStream = new SeekableTDOS(file);
-		return new HeaderLessAudioOutputStream(audioFormat,
+		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
+		return new HeaderlessAudioOutputStream(audioFormat,
 					       lLengthInBytes,
 					       dataOutputStream);
 	}
@@ -99,8 +99,8 @@ public class GSMAudioFileWriter
 		OutputStream outputStream)
 		throws	IOException
 	{
-		TDataOutputStream	dataOutputStream = new NonSeekableTDOS(outputStream);
-		return new HeaderLessAudioOutputStream(audioFormat,
+		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
+		return new HeaderlessAudioOutputStream(audioFormat,
 					       lLengthInBytes,
 					       dataOutputStream);
 	}

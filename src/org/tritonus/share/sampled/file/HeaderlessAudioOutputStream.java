@@ -1,5 +1,5 @@
 /*
- *	HeaderLessAudioOutputStream.java
+ *	HeaderlessAudioOutputStream.java
  */
 
 /*
@@ -36,15 +36,17 @@ import	javax.sound.sampled.AudioFormat;
 
 // todo: implement directly AudioOutputStream without using TAudioOutputStream
 
-public class HeaderLessAudioOutputStream extends TAudioOutputStream {
+public class HeaderlessAudioOutputStream extends TAudioOutputStream {
 
-	public HeaderLessAudioOutputStream(AudioFormat audioFormat,
+	public HeaderlessAudioOutputStream(AudioFormat audioFormat,
 				   long lLength,
 				   TDataOutputStream dataOutputStream) {
 		super(audioFormat, lLength, dataOutputStream, false);
 	}
 
-	protected void writeHeader() throws IOException {}
+	protected void writeHeader() throws IOException
+	{
+	}
 }
 
-/*** HeaderLessAudioOutputStream.java ***/
+/*** HeaderlessAudioOutputStream.java ***/

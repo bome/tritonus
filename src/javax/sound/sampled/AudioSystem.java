@@ -185,6 +185,8 @@ public class AudioSystem
 		if (info == null)
 		{
 			// TODO: this currently always yields null!!!
+			// but default mixers are handled by some magic in
+			// TMixerProvider
 			info = TAudioConfig.getDefaultMixerInfo();
 		}
 		GetMixerMixerProviderAction	action = new GetMixerMixerProviderAction(info);
