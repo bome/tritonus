@@ -85,7 +85,16 @@ public class MpegAudioFileReader
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		return getAudioFileFormat(inputStream, null);
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream): begin");
+		}
+		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, null);
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream): end");
+		}
+		return audioFileFormat;
 	}
 
 
@@ -93,6 +102,10 @@ public class MpegAudioFileReader
 	private AudioFileFormat getAudioFileFormat(InputStream inputStream, byte[] abHeader)
 		throws	UnsupportedAudioFileException, IOException
 	{
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream, byte[]): begin");
+		}
 		int	b0 = inputStream.read();
 		int	b1 = inputStream.read();
 		int	b2 = inputStream.read();
@@ -152,21 +165,41 @@ public class MpegAudioFileReader
 		if (encoding.equals(Encodings.getEncoding("MPEG1L3"))) {
 			type=AudioFileTypes.getType("MP3", "mp3");
 		}
-		return new TAudioFileFormat(type, 
-					    format, 
-					    AudioSystem.NOT_SPECIFIED, 
-					    AudioSystem.NOT_SPECIFIED);
+		AudioFileFormat	audioFileFormat =
+			new TAudioFileFormat(
+				type, 
+				format, 
+				AudioSystem.NOT_SPECIFIED, 
+				AudioSystem.NOT_SPECIFIED);
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream, byte[]): end");
+		}
+		return audioFileFormat;
 	}
+
 
 
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		// TDebug.out("MpegAudioFileReader.getAudioInputStream()");
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("MpegAudioFileReader.getAudioInputStream(): begin");
+		}
 		byte[]	abHeader = new byte[4];
 		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, abHeader);
 		SequenceInputStream	sequenceInputStream = new SequenceInputStream(new ByteArrayInputStream(abHeader), inputStream);
-		return new AudioInputStream(sequenceInputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+		AudioInputStream	audioInputStream =
+			new AudioInputStream(
+				sequenceInputStream,
+				audioFileFormat.getFormat(),
+				audioFileFormat.getFrameLength());
+		if (TDebug.TraceAudioFileReader)
+		{
+			TDebug.out("MpegAudioFileReader.getAudioInputStream(): end");
+		}
+		return audioInputStream;
 	}
 
 
