@@ -14,7 +14,7 @@ import	javax.sound.midi.MidiSystem;
 
 import	org.tritonus.midi.device.midishare.MshMidiDevice;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 
@@ -22,7 +22,6 @@ public class MshMidiInTest
 {
 	public static void main(String[] args)
 	{
-		org.tritonus.TDebug.TraceInit = false;
 		MidiDevice.Info[]	infos = MidiSystem.getMidiDeviceInfo();
 		TDebug.out("after MidiSystem.getMidiDeviceInfo()");
 	

@@ -5,7 +5,7 @@
 import	java.util.Iterator;
 
 import	org.tritonus.lowlevel.alsa.ASequencer;
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

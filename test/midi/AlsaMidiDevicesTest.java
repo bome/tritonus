@@ -17,7 +17,7 @@ import	javax.sound.midi.MidiSystem;
 
 import	org.tritonus.midi.device.alsa.AlsaMidiDevice;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 
@@ -25,9 +25,6 @@ public class AlsaMidiDevicesTest
 {
 	public static void main(String[] args)
 	{
-		org.tritonus.TDebug.TraceASequencer = false;
-		org.tritonus.TDebug.TraceInit = false;
-
 		MidiDevice.Info[]	infos = MidiSystem.getMidiDeviceInfo();
 		TDebug.out("after MidiSystem.getMidiDeviceInfo()");
 		for (int i = 0; i < infos.length; i++)
