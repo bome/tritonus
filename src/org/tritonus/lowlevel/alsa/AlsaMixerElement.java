@@ -31,10 +31,32 @@ import	org.tritonus.share.TDebug;
 
 public class AlsaMixerElement
 {
-	AlsaMixer		m_mixer;
-	private int		m_nIndex;
-	private String		m_strName;
-	/*private*/ long		m_nativeHandle;
+	/*	Channel type constants.
+		They mirror the values of snd_mixer_selem_channel_id_t.
+	 */
+
+	/** Unknown */
+	public static final int SND_MIXER_SCHN_UNKNOWN = -1;
+	/** Front left */
+	public static final int SND_MIXER_SCHN_FRONT_LEFT = 0;
+	/** Front right */
+	public static final int SND_MIXER_SCHN_FRONT_RIGHT = 1;
+	/** Front center */
+	public static final int SND_MIXER_SCHN_FRONT_CENTER = 2;
+	/** Rear left */
+	public static final int SND_MIXER_SCHN_REAR_LEFT = 3;
+	/** Rear right */
+	public static final int SND_MIXER_SCHN_REAR_RIGHT = 4;
+	/** Woofer */
+	public static final int SND_MIXER_SCHN_WOOFER = 5;
+	public static final int SND_MIXER_SCHN_LAST = 31;
+	/** Mono (Front left alias) */
+	public static final int SND_MIXER_SCHN_MONO = SND_MIXER_SCHN_FRONT_LEFT;
+
+
+
+	private AlsaMixer	m_mixer;
+	private long		m_lNativeHandle;
 
 
 
@@ -54,10 +76,20 @@ public class AlsaMixerElement
 				String strName)
 	{
 		m_mixer = mixer;
-		m_nIndex = nIndex;
-		m_strName = strName;
+		int	nReturn;
+		nReturn = open(getMixer(), nIndex, strName);
+		{
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("cannot open");
+			}
+		}
 	}
 
+
+	private native int open(AlsaMixer mixer,
+			       int nIndex,
+			       String strName);
 
 
 	private AlsaMixer getMixer()
@@ -65,18 +97,6 @@ public class AlsaMixerElement
 		return m_mixer;
 	}
 
-/*
-	public int getIndex()
-	{
-		return m_nIndex;
-	}
-
-
-	public String getName()
-	{
-		return m_strName;
-	}
-*/
 
 
 	public native String getName();
@@ -92,6 +112,7 @@ public class AlsaMixerElement
 	public native boolean hasPlaybackVolumeJoined();
 	public native boolean hasCaptureVolume();
 	public native boolean hasCaptureVolumeJoined();
+
 	public native boolean hasCommonSwitch();
 	public native boolean hasPlaybackSwitch();
 	public native boolean hasPlaybackSwitchJoined();
@@ -99,7 +120,25 @@ public class AlsaMixerElement
 	public native boolean hasCaptureSwitchJoinded();
 	public native boolean hasCaptureSwitchExclusive();
 
-	public native int getPlaybackVolume(int nChannel);
+	public native int getPlaybackVolume(int nChannelType);
+	public native int getCaptureVolume(int nChannelType);
+	public native int getPlaybackSwitch(int nChannelType);
+	public native int getCaptureSwitch(int nChannelType);
+
+	public native void setPlaybackVolume(int nChannelType, int nValue);
+	public native void setCaptureVolume(int nChannelType, int nValue);
+	public native void setPlaybackVolumeAll(int nValue);
+	public native void setCaptureVolumeAll(int nValue);
+
+	public native void setPlaybackSwitch(int nChannelType, int nValue);
+	public native void setCaptureSwitch(int nChannelType, int nValue);
+	public native void setPlaybackSwitchAll(int nValue);
+	public native void setCaptureSwitchAll(int nValue);
+
+	public native void getPlaybackVolumeRange(int[] anValues);
+	public native void getCaptureVolumeRange(int[] anValues);
+	public native void setPlaybackVolumeRange(int nMin, int nMax);
+	public native void setCaptureVolumeRange(int nMin, int nMax);
 
 	public static native String getChannelName(int nChannelType);
 
