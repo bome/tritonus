@@ -205,7 +205,10 @@ public class JorbisFormatConversionProvider
 	/*private*/public static class DecodedJorbisAudioInputStream
 	extends TAsynchronousFilteredAudioInputStream
 	{
+		// TODO: remove
 		public static boolean		DEBUG = false;
+  		private static final int	BUFFER_MULTIPLE = 4;
+  		private static final int	BUFFER_SIZE = BUFFER_MULTIPLE * 256 * 2;
 
 		private InputStream		m_oggBitStream = null;
 
@@ -222,9 +225,8 @@ public class JorbisFormatConversionProvider
 		// actually is an ogg structure
   		private Block			m_vorbisBlock = null;
 
-  		private int			bufferMultiple_ = 4;
-  		private int			bufferSize_ = bufferMultiple_ * 256 * 2;
-  		private int			convsize = bufferSize_ * 2;
+		// TODO: further checking
+  		private int			convsize = BUFFER_SIZE * 2;
   		private byte[]			convbuffer = new byte[convsize];
   		private byte[]			buffer = null;
   		private int			rate = 0;
@@ -409,9 +411,9 @@ public class JorbisFormatConversionProvider
 
 					if (eos == 0)
 					{
-						index = m_oggSyncState.buffer(bufferSize_);
+						index = m_oggSyncState.buffer(BUFFER_SIZE);
 						buffer = m_oggSyncState.data;
-						bytes = readFromStream(buffer, index, bufferSize_);
+						bytes = readFromStream(buffer, index, BUFFER_SIZE);
 						if (DEBUG) System.err.println("More data : "+bytes);
 						if (bytes == -1)
 						{
@@ -479,8 +481,8 @@ public class JorbisFormatConversionProvider
 		private void readIdentificationHeader()
 			throws IOException
 		{
-			int nIndex = m_oggSyncState.buffer(bufferSize_);
-			int nBytes = readFromStream(m_oggSyncState.data, nIndex, bufferSize_);
+			int nIndex = m_oggSyncState.buffer(BUFFER_SIZE);
+			int nBytes = readFromStream(m_oggSyncState.data, nIndex, BUFFER_SIZE);
 			if (nBytes == -1)
 			{
 				throw new IOException("Cannot get any data from selected Ogg bitstream.");
@@ -488,7 +490,7 @@ public class JorbisFormatConversionProvider
 			m_oggSyncState.wrote(nBytes);
 			if (m_oggSyncState.pageout(m_oggPage) != 1)
 			{
-				if (nBytes < bufferSize_)
+				if (nBytes < BUFFER_SIZE)
 				{
 					throw new IOException("EOF");
 				}
@@ -568,7 +570,7 @@ public class JorbisFormatConversionProvider
 		*/
 		private void setupVorbisStructures()
 		{
-			convsize = bufferSize_ / m_vorbisInfo.channels;
+			convsize = BUFFER_SIZE / m_vorbisInfo.channels;
 			m_vorbisDspState.synthesis_init(m_vorbisInfo);
 			m_vorbisBlock.init(m_vorbisDspState);
 			_pcm = new double[1][][];
@@ -629,9 +631,9 @@ public class JorbisFormatConversionProvider
 					return;
 				}
 				// we need more data from the stream
-				int nIndex = m_oggSyncState.buffer(bufferSize_);
+				int nIndex = m_oggSyncState.buffer(BUFFER_SIZE);
 				// TODO: call stream.read() directly
-				int nBytes = readFromStream(m_oggSyncState.data, nIndex, bufferSize_);
+				int nBytes = readFromStream(m_oggSyncState.data, nIndex, BUFFER_SIZE);
 				// TODO: This clause should become obsolete; readFromStream() should
 				// propagate exceptions directly.
 				if (nBytes == -1)
@@ -645,7 +647,7 @@ public class JorbisFormatConversionProvider
 
 
 		/**
-		 * Reads from the m_oggBitStream a specified number of Bytes(bufferSize_) worth
+		 * Reads from the m_oggBitStream a specified number of Bytes(buffersize_) worth
 		 * starting at index and puts them in the specified buffer[].
 		 *
 		 * @param buffer
