@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.convert;
+package	org.tritonus.share.sampled.convert;
 
 
 import	java.util.Collection;
@@ -38,8 +38,8 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
-import	org.tritonus.sampled.AudioFormats;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.sampled.AudioFormats;
+import	org.tritonus.share.ArraySet;
 
 /**
  * Base class for arbitrary formatConversionProviders.

@@ -42,9 +42,9 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.Encodings;
-import	org.tritonus.sampled.AudioFileTypes;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.sampled.file.TAudioFileFormat;
 
 
@@ -146,7 +146,7 @@ public class MpegAudioFileReader
 			AudioSystem.NOT_SPECIFIED /*????*/,
 			true);
 		//$$fb 2000-08-15: workaround for the fixed extension problem in AudioFileFormat.Type
-		// see org.tritonus.sampled.AudioFileTypes.java
+		// see org.tritonus.share.sampled.AudioFileTypes.java
 		AudioFileFormat.Type type=AudioFileTypes.getType("MPEG", "mpeg");
 		if (encoding.equals(Encodings.getEncoding("MPEG1L3"))) {
 			type=AudioFileTypes.getType("MP3", "mp3");

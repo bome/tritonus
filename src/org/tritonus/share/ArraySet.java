@@ -1,9 +1,9 @@
 /*
- *	AlsaMixerProvider.java
+ *	ArraySet.java
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,38 +23,48 @@
  */
 
 
-package	org.tritonus.sampled.mixer.alsa;
+package	org.tritonus.share;
 
 
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
-
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.share.sampled.mixer.TMixerProvider;
+import	java.util.ArrayList;
+import	java.util.Collection;
+import	java.util.Set;
 
 
 
-public class AlsaMixerProvider
-	extends	TMixerProvider
+public class ArraySet
+	extends		ArrayList
+	implements	Set
 {
-	public AlsaMixerProvider()
+	public ArraySet()
 	{
 		super();
-		int	nNumCards = Alsa.getCards();
-		if (TDebug.TraceMixerProvider)
+	}
+
+
+
+	public ArraySet(Collection c)
+	{
+		this();
+		addAll(c);
+	}
+
+
+
+	public boolean add(Object element)
+	{
+		if (!contains(element))
 		{
-			System.out.println("AlsaMixerProvider.<init>(): num cards: " + nNumCards);
+			super.add(element);
+			return true;
 		}
-		for (int i = 0; i < nNumCards; i++)
+		else
 		{
-			Alsa.loadCard(i);
-			AlsaMixer	mixer = new AlsaMixer(i);
-			super.addMixer(mixer);
+			return false;
 		}
 	}
 }
 
 
 
-/*** AlsaMixerProvider.java ***/
+/*** ArraySet.java ***/

@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.convert;
+package	org.tritonus.share.sampled.convert;
 
 
 import	java.util.Collection;
@@ -32,8 +32,8 @@ import	java.util.Iterator;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.sampled.AudioFormats;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.sampled.AudioFormats;
+import	org.tritonus.share.ArraySet;
 
 
 /**

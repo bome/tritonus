@@ -23,12 +23,12 @@
  */
 
 
-package	org.tritonus.sampled.mixer;
+package	org.tritonus.share.sampled.mixer;
 
 
 import	javax.sound.sampled.Mixer;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

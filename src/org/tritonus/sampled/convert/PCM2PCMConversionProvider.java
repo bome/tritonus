@@ -31,12 +31,14 @@ import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioFormats;
-import	org.tritonus.sampled.TConversionTool;
-import	org.tritonus.sampled.FloatSampleBuffer;
-import	org.tritonus.sampled.Encodings;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioFormats;
+import	org.tritonus.share.sampled.TConversionTool;
+import	org.tritonus.share.sampled.FloatSampleBuffer;
+import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import	org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
+import	org.tritonus.share.ArraySet;
 
 /**
  * This provider supports these PCM conversions (<--> meaning both directions):

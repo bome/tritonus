@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.mixer;
+package	org.tritonus.share.sampled.mixer;
 
 
 import	java.util.ArrayList;
@@ -37,7 +37,7 @@ import	java.util.Set;
 import	javax.sound.sampled.Mixer;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

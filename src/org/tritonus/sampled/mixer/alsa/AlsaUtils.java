@@ -31,8 +31,8 @@ import	java.io.IOException;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioFormats;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
 
 

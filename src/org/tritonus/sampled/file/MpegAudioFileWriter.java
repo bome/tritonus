@@ -38,9 +38,9 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.sampled.Encodings;
-import	org.tritonus.sampled.AudioFileTypes;
-import	org.tritonus.TDebug;
+import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.sampled.AudioFileTypes;
+import	org.tritonus.share.TDebug;
 
 /**
  * Class for writing mpeg files
@@ -52,7 +52,7 @@ public class MpegAudioFileWriter extends TAudioFileWriter {
 	private static final AudioFileFormat.Type[]	FILE_TYPES = {
 		//AudioFileTypes.getType("MPEG", "mpeg"),
 		// workaround for the fixed extension problem in AudioFileFormat.Type
-		// see org.tritonus.sampled.AudioFileTypes.java
+		// see org.tritonus.share.sampled.AudioFileTypes.java
 		AudioFileTypes.getType("MP3", "mp3")
 	};
 

@@ -23,10 +23,10 @@
  */
 
 
-package	org.tritonus.util;
+package	org.tritonus.share;
 
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

@@ -39,12 +39,12 @@ import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.AudioFileWriter;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioFormats;
-import	org.tritonus.sampled.AudioUtils;
-import	org.tritonus.sampled.TConversionTool;
-import	org.tritonus.sampled.Encodings;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioFormats;
+import	org.tritonus.share.sampled.AudioUtils;
+import	org.tritonus.share.sampled.TConversionTool;
+import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.ArraySet;
 
 /**
  * Common base class for implementing classes of AudioFileWriter.

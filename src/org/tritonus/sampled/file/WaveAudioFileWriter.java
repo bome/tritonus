@@ -38,7 +38,7 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 /**
  * Class for writing Microsoft(tm) WAVE files

@@ -35,12 +35,12 @@ import	javax.sound.sampled.LineUnavailableException;
 import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.Mixer;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaPcm;
-import	org.tritonus.sampled.TConversionTool;
-import	org.tritonus.sampled.mixer.TMixer;
-import	org.tritonus.sampled.mixer.TSourceTargetDataLine;
+import	org.tritonus.share.sampled.TConversionTool;
+import	org.tritonus.share.sampled.mixer.TMixer;
+import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
 
 
 

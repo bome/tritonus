@@ -30,7 +30,7 @@ import	java.io.IOException;
 
 import	javax.sound.sampled.AudioFormat;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 // import	org.tritonus.lowlevel.esd.JEsd;
 import	com.jcraft.jesd.JEsd;
 

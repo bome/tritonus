@@ -1,9 +1,9 @@
 /*
- *	ArraySet.java
+ *	GlobalInfo.java
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,46 +23,34 @@
  */
 
 
-package	org.tritonus.util;
-
-import	java.util.ArrayList;
-import	java.util.Collection;
-import	java.util.Set;
+package	org.tritonus.share;
 
 
-public class ArraySet
-	extends		ArrayList
-	implements	Set
+import	org.tritonus.share.TDebug;
+
+
+
+public class GlobalInfo
 {
-	public ArraySet()
+	private static final String	VENDOR = "Tritonus is free software. See http://tritonus.sourceforge.net/";
+	private static final String	VERSION = "0.3.0";
+
+
+
+	public static String getVendor()
 	{
-		super();
+		return VENDOR;
 	}
 
 
 
-	public ArraySet(Collection c)
+	public static String getVersion()
 	{
-		this();
-		addAll(c);
-	}
-
-
-
-	public boolean add(Object element)
-	{
-		if (!contains(element))
-		{
-			super.add(element);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return VERSION;
 	}
 }
 
 
 
-/*** ArraySet.java ***/
+/*** GlobalInfo.java ***/
+

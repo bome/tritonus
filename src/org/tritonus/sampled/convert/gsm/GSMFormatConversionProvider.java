@@ -35,16 +35,16 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.gsm.InvalidGSMFrameException;
 import	org.tritonus.lowlevel.gsm.GSMDecoder;
 import	org.tritonus.lowlevel.gsm.Encoder;
-import	org.tritonus.sampled.TConversionTool;
-import	org.tritonus.sampled.convert.TAsynchronousFilteredAudioInputStream;
-import	org.tritonus.sampled.convert.TEncodingFormatConversionProvider;
-import	org.tritonus.sampled.convert.TSimpleFormatConversionProvider;
-import	org.tritonus.sampled.Encodings;
-//import	org.tritonus.util.TCircularBuffer;
+import	org.tritonus.share.sampled.TConversionTool;
+import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
+import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
+import	org.tritonus.share.sampled.Encodings;
+//import	org.tritonus.share.TCircularBuffer;
 
 
 

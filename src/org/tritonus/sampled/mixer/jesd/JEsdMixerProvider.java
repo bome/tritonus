@@ -29,7 +29,7 @@ package	org.tritonus.sampled.mixer.jesd;
 import	javax.sound.sampled.Mixer;
 import	javax.sound.sampled.spi.MixerProvider;
 
-import	org.tritonus.sampled.mixer.TMixerProvider;
+import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 

@@ -28,8 +28,11 @@ package	org.tritonus.util;
 import	java.util.ArrayList;
 import	java.util.Collection;
 import	java.util.Iterator;
+
 import	javax.sound.sampled.AudioFormat;
-import	org.tritonus.sampled.AudioFormats;
+
+import	org.tritonus.share.ArraySet;
+import	org.tritonus.share.sampled.AudioFormats;
 
 /**
  * A set where the elements are uniquely referenced by

@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.convert;
+package	org.tritonus.share.sampled.convert;
 
 
 import java.io.IOException;
@@ -33,8 +33,8 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioUtils;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioUtils;
 
 
 

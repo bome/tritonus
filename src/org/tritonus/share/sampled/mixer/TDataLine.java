@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.mixer;
+package	org.tritonus.share.sampled.mixer;
 
 
 import	java.util.Collection;
@@ -38,7 +38,7 @@ import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.LineEvent;
 import	javax.sound.sampled.Line;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 

@@ -1,9 +1,9 @@
 /*
- *	AlsaMixerProvider.java
+ *	TVolumeUtils.java
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,38 +23,30 @@
  */
 
 
-package	org.tritonus.sampled.mixer.alsa;
-
-
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
-
-import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.share.sampled.mixer.TMixerProvider;
+package	org.tritonus.share.sampled;
 
 
 
-public class AlsaMixerProvider
-	extends	TMixerProvider
+public class TVolumeUtils
 {
-	public AlsaMixerProvider()
+	private static final double		FACTOR1 = 20.0 / Math.log(10.0);
+	private static final double		FACTOR2 = 1 / 20.0;
+
+
+
+	public static double lin2log(double dLinear)
 	{
-		super();
-		int	nNumCards = Alsa.getCards();
-		if (TDebug.TraceMixerProvider)
-		{
-			System.out.println("AlsaMixerProvider.<init>(): num cards: " + nNumCards);
-		}
-		for (int i = 0; i < nNumCards; i++)
-		{
-			Alsa.loadCard(i);
-			AlsaMixer	mixer = new AlsaMixer(i);
-			super.addMixer(mixer);
-		}
+		return FACTOR1 * Math.log(dLinear);
+	}
+
+
+
+	public static double log2lin(double dLogarithmic)
+	{
+		return Math.pow(10.0, dLogarithmic * FACTOR2);
 	}
 }
 
 
 
-/*** AlsaMixerProvider.java ***/
+/*** TVolumeUtils.java ***/

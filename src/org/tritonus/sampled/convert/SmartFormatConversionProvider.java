@@ -34,6 +34,9 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
+import	org.tritonus.share.sampled.convert.TFormatConversionProvider;
+
+
 
 /**	"Smart" formatConversionProvider.
  *	This FormatConversionProvider tries to find combinations of other

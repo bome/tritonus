@@ -1,9 +1,9 @@
 /*
- *	GlobalInfo.java
+ *	TMidiDeviceInfo.java
  */
 
 /*
- *  Copyright (c) 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,34 +23,30 @@
  */
 
 
-package	org.tritonus.util;
+package	org.tritonus.share.midi;
 
 
-import	org.tritonus.TDebug;
+import	javax.sound.midi.MidiDevice;
+
+import	org.tritonus.share.TDebug;
 
 
 
-public class GlobalInfo
+
+/*
+ *	This is needed only because MidiDevice.Info's constructor
+ *	is protected (in the Sun jdk1.3).
+ */
+public class TMidiDeviceInfo
+	extends MidiDevice.Info
 {
-	private static final String	VENDOR = "Tritonus is free software. See http://tritonus.sourceforge.net/";
-	private static final String	VERSION = "0.3.0";
-
-
-
-	public static String getVendor()
+	public TMidiDeviceInfo(String a, String b, String c, String d)
 	{
-		return VENDOR;
-	}
-
-
-
-	public static String getVersion()
-	{
-		return VERSION;
+		super(a, b, c, d);
 	}
 }
 
 
 
-/*** GlobalInfo.java ***/
+/*** TMidiDeviceInfo.java ***/
 

@@ -1,9 +1,9 @@
 /*
- *	AlsaMixerProvider.java
+ *	MidiUtils.java
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -23,38 +23,37 @@
  */
 
 
-package	org.tritonus.sampled.mixer.alsa;
+package	org.tritonus.share.midi;
 
-
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
-import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
 
-public class AlsaMixerProvider
-	extends	TMixerProvider
+public class MidiUtils
 {
-	public AlsaMixerProvider()
+	public static int get14bitValue(int nLSB, int nMSB)
 	{
-		super();
-		int	nNumCards = Alsa.getCards();
-		if (TDebug.TraceMixerProvider)
-		{
-			System.out.println("AlsaMixerProvider.<init>(): num cards: " + nNumCards);
-		}
-		for (int i = 0; i < nNumCards; i++)
-		{
-			Alsa.loadCard(i);
-			AlsaMixer	mixer = new AlsaMixer(i);
-			super.addMixer(mixer);
-		}
+		return (nLSB & 0x7F) | ((nMSB & 0x7F) << 7);
 	}
+
+
+
+	public static int get14bitMSB(int nValue)
+	{
+		return (nValue >> 7) & 0x7F;
+	}
+
+
+
+	public static int get14bitLSB(int nValue)
+	{
+		return nValue & 0x7F;
+	}
+
+
 }
 
 
 
-/*** AlsaMixerProvider.java ***/
+/*** MidiUtils.java ***/

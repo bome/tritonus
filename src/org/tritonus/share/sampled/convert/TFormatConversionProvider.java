@@ -23,14 +23,14 @@
  */
 
 
-package	org.tritonus.sampled.convert;
+package	org.tritonus.share.sampled.convert;
 
 
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioFormats;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioFormats;
 
 
 /**
@@ -68,7 +68,7 @@ public abstract class TFormatConversionProvider
 	 * WARNING: this method uses <code>getTargetFormats(AudioFormat.Encoding, AudioFormat)</code>
 	 * which may create infinite loops if the latter is overwritten.
 	 * <p>
-	 * This method is overwritten here to make use of org.tritonus.sampled.AudioFormats.matches
+	 * This method is overwritten here to make use of org.tritonus.share.sampled.AudioFormats.matches
 	 * and is considered temporary until AudioFormat.matches is corrected in the JavaSound API.
 	 */
 	public boolean isConversionSupported(

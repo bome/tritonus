@@ -23,7 +23,7 @@
  */
 
 
-package	org.tritonus.sampled.mixer;
+package	org.tritonus.share.sampled.mixer;
 
 
 import	java.util.Collection;
@@ -36,9 +36,9 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.TargetDataLine;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.AudioFormats;
-import	org.tritonus.util.ArraySet;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.AudioFormats;
+import	org.tritonus.share.ArraySet;
 
 
 // TODO: global controls (that use the system mixer)

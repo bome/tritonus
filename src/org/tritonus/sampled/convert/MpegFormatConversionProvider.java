@@ -39,9 +39,11 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.sampled.Encodings;
-//import	org.tritonus.util.TCircularBuffer;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.sampled.convert.TMatrixFormatConversionProvider;
+import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+//import	org.tritonus.share.TCircularBuffer;
 
 import	javazoom.jl.decoder.Bitstream;
 import	javazoom.jl.decoder.BitstreamException;

@@ -26,7 +26,7 @@
  */
 
 
-package	org.tritonus.sampled.mixer;
+package	org.tritonus.share.sampled.mixer;
 
 
 import	java.util.Collection;
@@ -43,8 +43,8 @@ import	javax.sound.sampled.LineEvent;
 import	javax.sound.sampled.LineListener;
 import	javax.sound.sampled.LineUnavailableException;
 
-import	org.tritonus.TDebug;
-import	org.tritonus.TNotifier;
+import	org.tritonus.share.TDebug;
+import	org.tritonus.share.TNotifier;
 
 
 

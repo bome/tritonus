@@ -39,7 +39,7 @@ import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 /**
