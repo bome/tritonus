@@ -27,101 +27,21 @@
 static HandleFieldHandler<snd_ctl_t*>	handler;
 
 
+snd_ctl_card_info_t*
+getAlsaCtlCardInfoNativeHandle(JNIEnv *env, jobject obj);
+
 
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    close
- * Signature: ()I
+ * Method:    loadCard
+ * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_close
-(JNIEnv *env, jobject obj)
-{
-	snd_ctl_t*	handle = NULL;
-	int		nResult;
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): begin\n"); }
-	handle = handler.getHandle(env, obj);
-	nResult = snd_ctl_close(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): end\n"); }
-	return nResult;
-}
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getCardIndex
- * Signature: (Ljava/lang/String;)I
- */
-JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardIndex
-(JNIEnv *env, jclass cls, jstring strCardName)
-{
-	int	nCard;
-	const char*	name = NULL;
-	name = env->GetStringUTFChars(strCardName, NULL);
-	if (name == NULL)
-	{
-		throwRuntimeException(env, "cannot get characters from string argument");
-	}
-	nCard = snd_card_get_index(name);
-	env->ReleaseStringUTFChars(strCardName, name);
-	return nCard;
-}
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getCardLongName
- * Signature: (I)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardLongName
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_loadCard
 (JNIEnv *env, jclass cls, jint nCard)
 {
-	int	nReturn;
-	jstring	strName;
-	char*	name;
-	nReturn = snd_card_get_longname(nCard, &name);
-	if (nReturn < 0)
-	{
-		throwRuntimeException(env, "snd_card_get_longname() failed");
-	}
-	strName = env->NewStringUTF(name);
-	if (strName == NULL)
-	{
-		throwRuntimeException(env, "NewStringUTF() failed");
-	}
-	return strName;
-}
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getCardName
- * Signature: (I)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardName
-(JNIEnv *env, jclass cls, jint nCard)
-{
-	int	nReturn;
-	jstring	strName;
-	char*	name;
-	nReturn = snd_card_get_name(nCard, &name);
-	if (nReturn < 0)
-	{
-		throwRuntimeException(env, "snd_card_get_name() failed");
-	}
-	strName = env->NewStringUTF(name);
-	if (strName == NULL)
-	{
-		throwRuntimeException(env, "NewStringUTF() failed");
-	}
-	return strName;
+	return snd_card_load(nCard);
 }
 
 
@@ -161,154 +81,77 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCards
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getDefaultCard
- * Signature: ()I
- */
-// no longer present in the ALSA API
-/* JNIEXPORT jint JNICALL */
-/* Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultCard */
-/* (JNIEnv *env, jclass cls) */
-/* { */
-/* 	return snd_defaults_card(); */
-/* } */
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getDefaultMixerCard
- * Signature: ()I
- */
-// no longer present in the ALSA API
-/* JNIEXPORT jint JNICALL */
-/* Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultMixerCard */
-/* (JNIEnv *env, jclass cls) */
-/* { */
-/* 	return snd_defaults_mixer_card(); */
-/* } */
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getDefaultPcmCard
- * Signature: ()I
- */
-// no longer present in the ALSA API
-/* JNIEXPORT jint JNICALL */
-/* Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultPcmCard */
-/* (JNIEnv *env, jclass cls) */
-/* { */
-/* 	return snd_defaults_pcm_card(); */
-/* } */
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getDefaultPcmDevice
- * Signature: ()I
- */
-// no longer present in the ALSA API
-/* JNIEXPORT jint JNICALL */
-/* Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultPcmDevice */
-/* (JNIEnv *env, jclass cls) */
-/* { */
-/* 	return snd_defaults_pcm_device(); */
-/* } */
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getDefaultRawmidiCard
- * Signature: ()I
- */
-// no longer present in the ALSA API
-/* JNIEXPORT jint JNICALL */
-/* Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultRawmidiCard */
-/* (JNIEnv *env, jclass cls) */
-/* { */
-/* 	return snd_defaults_rawmidi_card(); */
-/* } */
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getDefaultRawmidiDevice
- * Signature: ()I
- */
-// no longer present in the ALSA API
-/* JNIEXPORT jint JNICALL */
-/* Java_org_tritonus_lowlevel_alsa_AlsaCtl_getDefaultRawmidiDevice */
-/* (JNIEnv *env, jclass cls) */
-/* { */
-/* 	return snd_defaults_rawmidi_device(); */
-/* } */
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    getCardInfo
- * Signature: ([I[Ljava/lang/String;)I
+ * Method:    getCardIndex
+ * Signature: (Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardInfo
-(JNIEnv *env, jobject obj, jintArray anValues, jobjectArray astrValues)
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardIndex
+(JNIEnv *env, jclass cls, jstring strCardName)
 {
-	snd_ctl_t*	handle;
-	int		nReturn;
-	jint*		pnValues;
-	snd_ctl_card_info_t*	card_info;
-
-	handle = handler.getHandle(env, obj);
-	snd_ctl_card_info_alloca(&card_info);
-	nReturn = snd_ctl_card_info(handle, card_info);
-	if (nReturn < 0)
+	int	nCard;
+	const char*	name = NULL;
+	name = env->GetStringUTFChars(strCardName, NULL);
+	if (name == NULL)
 	{
-		throwRuntimeException(env, "snd_ctl_card_info failed");
+		throwRuntimeException(env, "cannot get characters from string argument");
 	}
-	// printf("4a\n");
-	checkArrayLength(env, anValues, 2);
-	// printf("4b\n");
-	pnValues = env->GetIntArrayElements(anValues, NULL);
-	if (pnValues == NULL)
-	{
-		throwRuntimeException(env, "GetIntArrayElements failed");
-	}
-	// printf("4c\n");
-	pnValues[0] = snd_ctl_card_info_get_card(card_info);
-	pnValues[1] = -1;	// snd_ctl_card_info_get_type(card_info);
-	// printf("4d\n");
-	env->ReleaseIntArrayElements(anValues, pnValues, 0);
-
-	// printf("4e\n");
-	checkArrayLength(env, astrValues, 6);
-	// printf("4f\n");
-	setStringArrayElement(env, astrValues, 0, snd_ctl_card_info_get_id(card_info));
-	setStringArrayElement(env, astrValues, 1, snd_ctl_card_info_get_driver(card_info));
-	setStringArrayElement(env, astrValues, 2, snd_ctl_card_info_get_name(card_info));
-	setStringArrayElement(env, astrValues, 3, snd_ctl_card_info_get_longname(card_info));
-	setStringArrayElement(env, astrValues, 4, snd_ctl_card_info_get_mixername(card_info));
-	setStringArrayElement(env, astrValues, 5, snd_ctl_card_info_get_components(card_info));
-	// TODO: does this make sense?
-	return 0;
+	nCard = snd_card_get_index(name);
+	env->ReleaseStringUTFChars(strCardName, name);
+	return nCard;
 }
 
 
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
- * Method:    loadCard
- * Signature: (I)I
+ * Method:    getCardName
+ * Signature: (I)Ljava/lang/String;
  */
-JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaCtl_loadCard
+JNIEXPORT jstring JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardName
 (JNIEnv *env, jclass cls, jint nCard)
 {
-	return snd_card_load(nCard);
+	int	nReturn;
+	jstring	strName;
+	char*	name;
+	nReturn = snd_card_get_name(nCard, &name);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_card_get_name() failed");
+	}
+	strName = env->NewStringUTF(name);
+	if (strName == NULL)
+	{
+		throwRuntimeException(env, "NewStringUTF() failed");
+	}
+	return strName;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
+ * Method:    getCardLongName
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardLongName
+(JNIEnv *env, jclass cls, jint nCard)
+{
+	int	nReturn;
+	jstring	strName;
+	char*	name;
+	nReturn = snd_card_get_longname(nCard, &name);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_card_get_longname() failed");
+	}
+	strName = env->NewStringUTF(name);
+	if (strName == NULL)
+	{
+		throwRuntimeException(env, "NewStringUTF() failed");
+	}
+	return strName;
 }
 
 
@@ -345,6 +188,48 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_open
 		handler.setHandle(env, obj, handle);
 	}
 	return nResult;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
+ * Method:    close
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_close
+(JNIEnv *env, jobject obj)
+{
+	snd_ctl_t*	handle;
+	int		nResult;
+
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): begin\n"); }
+	handle = handler.getHandle(env, obj);
+	nResult = snd_ctl_close(handle);
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): end\n"); }
+	return nResult;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
+ * Method:    getCardInfo
+ * Signature: (Lorg/tritonus/lowlevel/alsa/AlsaCtlCardInfo;)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_getCardInfo
+(JNIEnv* env, jobject obj, jobject cardInfoObj)
+{
+	snd_ctl_t*		handle;
+	snd_ctl_card_info_t*	cardInfo;
+	int			nReturn;
+
+	handle = handler.getHandle(env, obj);
+	cardInfo = getAlsaCtlCardInfoNativeHandle(env, cardInfoObj);
+	nReturn = snd_ctl_card_info(handle, cardInfo);
+	return (jint) nReturn;
 }
 
 
@@ -396,5 +281,19 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_getPcmInfo
 	return -1;
 }
 
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaCtl
+ * Method:    setTrace
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaCtl_setTrace
+(JNIEnv* env, jclass cls, jboolean bTrace)
+{
+	DEBUG = bTrace;
+	debug_file = stderr;
+}
 
 /*** org_tritonus_lowlevel_alsa_AlsaCtl.cc ***/

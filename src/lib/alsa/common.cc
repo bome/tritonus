@@ -23,8 +23,6 @@
 
 #include	"common.h"
 
-static bool DEBUG = false;
-
 
 
 void
@@ -40,7 +38,7 @@ throwRuntimeException(JNIEnv *env, const char* pStrMessage)
 	if (runtimeExceptionClass == NULL)
 	{
 		runtimeExceptionClass = env->FindClass("java/lang/RuntimeException");
-		if (DEBUG) { printf("RTE: %p\n", runtimeExceptionClass); }
+		if (DEBUG) { fprintf(debug_file, "RTE: %p\n", runtimeExceptionClass); }
 		if (runtimeExceptionClass == NULL)
 		{
 			env->FatalError("cannot get class object for java.lang.RuntimeException");

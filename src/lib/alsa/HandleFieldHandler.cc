@@ -21,10 +21,7 @@
  */
 
 
-#include	"HandleFieldHandler.hh"
 #include	"common.h"
-#include	<alsa/asoundlib.h>
-
 
 
 
@@ -34,6 +31,8 @@ HandleFieldHandler(string strHandleFieldName)
 {
 	m_strHandleFieldName = strHandleFieldName;
 	m_nFieldID = NULL;
+	DEBUG = false;
+	debug_file = NULL;
 }
 
 
@@ -106,6 +105,7 @@ getDebug()
 
 
 template class HandleFieldHandler<snd_ctl_t*>;
+template class HandleFieldHandler<snd_ctl_card_info_t*>;
 template class HandleFieldHandler<snd_mixer_t*>;
 template class HandleFieldHandler<snd_mixer_elem_t*>;
 template class HandleFieldHandler<snd_pcm_t*>;

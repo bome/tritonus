@@ -56,9 +56,10 @@ public class Alsa
 			System.loadLibrary("tritonusalsa");
 			sm_bIsLibraryAvailable = true;
 		}
-		catch (Throwable t)
+		catch (Error e)
 		{
-			if (TDebug.TraceAlsaNative) { TDebug.out(t); }
+			if (TDebug.TraceAlsaNative) { TDebug.out(e); }
+			throw e;
 		}
 		if (TDebug.TraceAlsaNative) { TDebug.out("Alsa.loadNativeLibrary(): loaded"); }
 	}

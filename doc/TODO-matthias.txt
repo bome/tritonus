@@ -2,6 +2,8 @@ doc/TODO-matthias.txt
 ---------------------
 
 - review cdda distribution README
+- change library building to using libtool
+- re-check ALSA seq constants (constants_check.h)
 
 saol
 ----

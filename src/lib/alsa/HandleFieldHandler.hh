@@ -20,6 +20,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef _HANDLE_FIELD_HANDLER_HH
+#define _HANDLE_FIELD_HANDLER_HH
 
 #include	<string>
 #include	<jni.h>
@@ -47,6 +49,7 @@ public:
 	bool		getDebug();
 };
 
+#endif /* _HANDLE_FIELD_HANDLER_HH */
 
 
 /*** HandleFieldHandler.hh ***/

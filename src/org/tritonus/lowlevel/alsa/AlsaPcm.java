@@ -623,7 +623,7 @@ public class AlsaPcm
 		public native int getSilenceThreshold();
 		public native int getSilenceSize();
 	}
-	}
+}
 
 
 
