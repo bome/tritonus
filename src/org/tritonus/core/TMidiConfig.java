@@ -48,9 +48,11 @@ import	javax.sound.midi.spi.SoundbankReader;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.ArraySet;
+import	org.tritonus.core.TInit.ProviderRegistrationAction;
 
 
-
+/** TODO:
+ */
 public class TMidiConfig
 {
 	private static Set		sm_midiDeviceProviders = null;
@@ -64,17 +66,95 @@ public class TMidiConfig
 
 
 
+	/** Constructor to prevent instantiation.
+	 */
+	private TMidiConfig()
+	{
+	}
+
+
+
+	private static void registerMidiDeviceProviders()
+	{
+		ProviderRegistrationAction	action = null;
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
+						TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
+					}
+			};
+		TInit.registerClasses(MidiDeviceProvider.class, action);
+	}
+
+
+	
+	private static void registerMidiFileReaders()
+	{
+		ProviderRegistrationAction	action = null;
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MidiFileReader	provider = (MidiFileReader) obj;
+						TMidiConfig.addMidiFileReader(provider);
+					}
+			};
+		TInit.registerClasses(MidiFileReader.class, action);
+	}
+
+
+
+	private static void registerMidiFileWriters()
+	{
+		ProviderRegistrationAction	action = null;
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						MidiFileWriter	provider = (MidiFileWriter) obj;
+						TMidiConfig.addMidiFileWriter(provider);
+					}
+			};
+		TInit.registerClasses(MidiFileWriter.class, action);
+	}
+
+
+
+	private static void registerSoundbankReaders()
+	{
+		ProviderRegistrationAction	action = null;
+		action = new ProviderRegistrationAction()
+			{
+				public void register(Object obj)
+					throws	Exception
+					{
+						SoundbankReader	provider = (SoundbankReader) obj;
+						TMidiConfig.addSoundbankReader(provider);
+					}
+			};
+		TInit.registerClasses(SoundbankReader.class, action);
+	}
+
+
+	//////////////////////////////////////////////////////////////////
+
+
 	public static synchronized void addMidiDeviceProvider(MidiDeviceProvider provider)
 	{
-		TDebug.out("MidiDeviceProvider: " + provider);
+		// TDebug.out("MidiDeviceProvider: " + provider);
 		getMidiDeviceProvidersImpl().add(provider);
 		if (getDefaultMidiDeviceInfo() == null ||
 		    getDefaultSynthesizerInfo() == null ||
 		    getDefaultSequencerInfo() == null)
 		{
-			TDebug.out("hello");
+			// TDebug.out("hello");
 			MidiDevice.Info[]	infos = provider.getDeviceInfo();
-			TDebug.out("#infos: " + infos.length);
+			// TDebug.out("#infos: " + infos.length);
 			for (int i = 0; i < infos.length; i++)
 			{
 				MidiDevice	device = null;
@@ -137,7 +217,7 @@ public class TMidiConfig
 		if (sm_midiDeviceProviders == null)
 		{
 			sm_midiDeviceProviders = new ArraySet();
-			TInit.registerMidiDeviceProviders();
+			registerMidiDeviceProviders();
 		}
 		return sm_midiDeviceProviders;
 	}
@@ -169,10 +249,6 @@ public class TMidiConfig
 
 	public static synchronized Iterator getMidiFileReaders()
 	{
-		if (TDebug.TraceMidiConfig)
-		{
-			TDebug.out("TMidiConfig.getMidiFileReaders(): called");
-		}
 		return getMidiFileReadersImpl().iterator();
 	}
 
@@ -183,7 +259,7 @@ public class TMidiConfig
 		if (sm_midiFileReaders == null)
 		{
 			sm_midiFileReaders = new ArraySet();
-			TInit.registerMidiFileReaders();
+			registerMidiFileReaders();
 		}
 		return sm_midiFileReaders;
 	}
@@ -215,7 +291,7 @@ public class TMidiConfig
 		if (sm_midiFileWriters == null)
 		{
 			sm_midiFileWriters = new ArraySet();
-			TInit.registerMidiFileWriters();
+			registerMidiFileWriters();
 		}
 		return sm_midiFileWriters;
 	}
@@ -248,7 +324,7 @@ public class TMidiConfig
 		if (sm_soundbankReaders == null)
 		{
 			sm_soundbankReaders = new ArraySet();
-			TInit.registerSoundbankReaders();
+			registerSoundbankReaders();
 		}
 		return sm_soundbankReaders;
 	}
@@ -258,6 +334,11 @@ public class TMidiConfig
 
 	public static MidiDevice.Info getDefaultMidiDeviceInfo()
 	{
+		/* The following call is necessary to make the providers
+		   are registered. Otherwise, it may be that the default
+		   devices are not yet set.
+		*/
+		getMidiDeviceProvidersImpl();
 		return sm_defaultMidiDeviceInfo;
 	}
 
@@ -265,6 +346,11 @@ public class TMidiConfig
 
 	public static MidiDevice.Info getDefaultSynthesizerInfo()
 	{
+		/* The following call is necessary to make the providers
+		   are registered. Otherwise, it may be that the default
+		   devices are not yet set.
+		*/
+		getMidiDeviceProvidersImpl();
 		return sm_defaultSynthesizerInfo;
 	}
 
@@ -272,12 +358,13 @@ public class TMidiConfig
 
 	public static MidiDevice.Info getDefaultSequencerInfo()
 	{
+		/* The following call is necessary to make the providers
+		   are registered. Otherwise, it may be that the default
+		   devices are not yet set.
+		*/
+		getMidiDeviceProvidersImpl();
 		return sm_defaultSequencerInfo;
 	}
-
-
-
-
 }
 
 
