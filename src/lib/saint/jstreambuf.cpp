@@ -18,13 +18,13 @@ jstreambuf::jstreambuf(JNIEnv* env, jobject obj)
 	jclass	inputStreamClass = env->FindClass("java/io/InputStream");
 	if (inputStreamClass == NULL)
 	{
-		cerr << "cannot get clas id for InputStream" << endl;
+		cerr << "cannot get class id for InputStream" << endl;
 		// throwRuntimeException(env, "cannot get class object for org.tritonus.lowlevel.saint.Saint");
 	}
 	jclass	outputStreamClass = env->FindClass("java/io/OutputStream");
 	if (outputStreamClass == NULL)
 	{
-		cerr << "cannot get clas id for InputStream" << endl;
+		cerr << "cannot get class id for InputStream" << endl;
 		// throwRuntimeException(env, "cannot get class object for org.tritonus.lowlevel.saint.Saint");
 	}
 	if (m_pJNIEnv->IsInstanceOf(m_object, outputStreamClass) == JNI_TRUE)
@@ -79,6 +79,7 @@ jstreambuf::xsputn(const char* text, streamsize n)
 	}
 	m_pJNIEnv->SetByteArrayRegion(byteArray, 0, n, (jbyte*) text);
 	m_pJNIEnv->CallVoidMethod(m_object, m_writeMethodID, byteArray, 0, n);
+	m_pJNIEnv->DeleteLocalRef(byteArray);
 	// TODO: check for exceptions; return error values
 	return n;
 }
