@@ -23,7 +23,7 @@ JAVAEXTLIBPATH=$(JAVAEXTPATH)/$(ARCHNAME)
 OBJDIR=../../../@BUILD_DIR@
 vpath %.class $(OBJDIR)/org/tritonus/lowlevel/esd
 
-LIBBASENAME=libesdtritonus
+LIBBASENAME=libtritonusesd
 LIBDEST=$(LIBBASENAME).so.1.0
 LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/esd/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
