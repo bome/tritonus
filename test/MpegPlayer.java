@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -84,25 +84,11 @@ public class MpegPlayer
 			sourceFormat.getChannels() * 2,
 			sourceFormat.getSampleRate(),
 			false);
-		FormatConversionProvider	mpegCodec = new org.tritonus.sampled.convert.MpegFormatConversionProvider();
 		if (DEBUG)
 		{
 			System.out.println("MpegPlayer.<init>(): target format: " + targetFormat);
-			AudioFormat.Encoding[]	encodings = mpegCodec.getTargetEncodings();
-			for (int i = 0; i < encodings.length; i++)
-			{
-				System.out.println("enc: " + encodings[i]);
-			}
-			AudioFormat[]	formats = mpegCodec.getTargetFormats(AudioFormat.Encoding.PCM_SIGNED, sourceFormat);
-			for (int i = 0; i < formats.length; i++)
-			{
-				System.out.println("format: " + formats[i]);
-			}
 		}
-
-		m_audioStream = mpegCodec.getAudioInputStream(targetFormat, m_audioStream);
-
-		// m_audioStream = AudioSystem.getAudioInputStream(targetFormat, m_audioStream);
+		m_audioStream = AudioSystem.getAudioInputStream(targetFormat, m_audioStream);
 		m_format = m_audioStream.getFormat();
 		if (DEBUG)
 		{
