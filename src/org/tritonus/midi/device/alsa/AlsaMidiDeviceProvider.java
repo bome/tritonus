@@ -100,6 +100,10 @@ public class AlsaMidiDeviceProvider
 
 	private void scanPorts()
 	{
+		if (TDebug.TraceMidiDeviceProvider)
+		{
+			TDebug.out("AlsaMidiDeviceProvider.scanPorts(): begin");
+		}
 		Iterator	clients = m_aSequencer.getClientInfos();
 		// TDebug.out("" + clients);
 		while (clients.hasNext())
