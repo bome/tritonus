@@ -45,6 +45,7 @@ public class Util
 		return S;
 	}
 
+
 	/**	Compute an inverse discrete fourier transform (IDFT).
 		This implementation works fully complex. It is not
 		optimized for speed. I.e., it does not use a 'fast'
@@ -74,6 +75,7 @@ public class Util
 		}
 		return aTimeDomain;
 	}
+
 
 	/**	Multiplication of two arrays.
 	 */
@@ -120,6 +122,19 @@ public class Util
 	{
 		double	dOmega = dRelative * 2.0 * Math.PI;
 		return dOmega;
+	}
+
+
+	/**	Quantize constants from double to float.
+	 */
+	public static float[] quantizeToFloat(double[] adConstants)
+	{
+		float[]	afConstants = new float[adConstants.length];
+		for (int i = 0; i < adConstants.length; i++)
+		{
+			afConstants[i] = (float) adConstants[i];
+		}
+		return afConstants;
 	}
 } 
 
