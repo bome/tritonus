@@ -20,7 +20,7 @@ concrete driver.  Enabling kernel symbol versioning helps if you
 recompile kernels frequently.
 
 Download and install the ALSA drivers/lib/utils version 0.5.x.
-You cannot use 4.1 versions of ALSA due to incompatible
+You cannot use earlier versions of ALSA due to incompatible
 changes.  Be sure to configure '--with-sequencer=yes' in the driver
 part.  Install the modules and load the new versions.  Load the
 sequencer modules. For help on installing ALSA, see the alsa-user
@@ -52,7 +52,7 @@ MIDI client module:
 
 	modprobe snd-seq-midi
 
-If the internal synthesizer of your card is supported (very few
+If the internal synthesizer of your card is supported (not all
 cards), you can load the synth support, too:
 
 	modprobe snd-seq-synth
@@ -75,63 +75,7 @@ Connect a synthesizer to the MIDI out of your computer.  Call 'pmidi
 column of the output from 'pmidi -l'. The MIDI file should be played
 on your synth.
 
+(Hopefully) finished!
+---------------------
 
-Now the test
-------------
-
-Install Tritonus. Follow the instructions in the file INSTALL.
-
-Go to the directory test/midi. Compile all java files. Note that this
-only works after installation is done.
-
-
-MIDI IN test
-------------
-
-Connect a keyboard to the MIDI IN port of the soundcard. Start AlsaMidiInTest. Play on your keyboard. There should be output like this:
-ASequencer.getEvent(): before getEvent(int[], long[])
-ASequencer.getEvent(): note event
-Note On Key: [Channel 0] A# 1 Velocity: 104
-ASequencer.getEvent(): before getEvent(int[], long[])
-ASequencer.getEvent(): note event
-Note On Key: [Channel 11] D# 4 Velocity: 34
-ASequencer.getEvent(): before getEvent(int[], long[])
-ASequencer.getEvent(): controller event
-Controller No.: [Channel 10] 7 Value: 127
-ASequencer.getEvent(): before getEvent(int[], long[])
-ASequencer.getEvent(): controller event
-Controller No.: [Channel 10] 10 Value: 127
-ASequencer.getEvent(): before getEvent(int[], long[])
-ASequencer.getEvent(): controller event
-Controller No.: [Channel 10] 91 Value: 42
-
-(This was generated from a MIDI file)
-
-
-MIDI OUT test
--------------
-
-*WARNING* Do not try this. It can crash your system. *WARNING*
-
-Connect a synthesizer to the MIDI OUT port of your soundcard. Start
-AlsaMidiOutTest. You should hear a single note with a duration of 1
-second.
-
-
-Sequencer test
---------------
-
-Call
-	java AlsaSequencerTest <midifile>
-or
-	java AlsaSequencerTest <sequencer client> <sequencer port> <midifile>
-
-The first version outputs to port 64:0, i.e. to the first external
-MIDI port of the first soundcard. The second version allows you to
-specify the destination. If the internal synthesizer of your soundcard
-is supported, you can direct output to it. For instance, use '73 0'
-for the first synthesizer of the second soundcard.
-
-Please report results (positive and negative) to matthias.pfisterer@gmx.de.
-Thanks for your support.
-
+Now you should be able to use Tritonus with the ALSA sequencer.

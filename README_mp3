@@ -4,16 +4,24 @@ README.mp3
 MP3 DECODING
 ------------
 This version of Tritonus includes mp3 decoding support.  This is due to
-integration of javalayer 0.0.7, a pure-java mp3 decoder developed by
+using javalayer 0.0.8, a pure-java mp3 decoder developed by
 the javalayer project.  The big credit for this goes to Eric B. who
 wrote the decoder.
 
-The decoder is now fully integrated into Tritonus.
-For a runnable program, see AudioPlayer.java from the Java Sound Examples.
+The javalayer code is no longer duplicated in Tritonus. To compile
+from scratch, you need to check out javalayer from its own cvs (see
+http://sourceforge.net/projects/javalayer/).  Make sure javalayer is
+in a directory 'javalayer' that is in the same directory as
+'tritonus'. In this case, if you issue ant int Tritonus, it will build
+javalayer, too. Alternatively, if you want a different location,
+change the path to javalayer in build.xml.
+
+For a runnable program, see DecodingAudioPlayer.java or
+AudioPlayer.java from the Java Sound Examples.
 
 The decoder can also be used as plug-in for any Java Sound
-implementation (like the Sun jdk1.3). Have a look at
-http://www.tritonus.org/plugins.html for more info.
+implementation (like the Sun jdk1.3). Precompiled jar files are at
+http://www.tritonus.org/plugins.html
 
 JavaLayer project:
 http://www.javazoom.net/javalayer/javalayer.html
