@@ -55,11 +55,16 @@ implements Runnable
 	private static final SyncMode[]	SLAVE_SYNC_MODES = {SyncMode.NO_SYNC};
 
 	// internal states
+	/** not running */
 	private static final int	STATE_STOPPED = 0;
+	/** starting, awake thread */
 	private static final int	STATE_STARTING = 1;
+	/** running */
 	private static final int	STATE_STARTED = 2;
+	/** stopping */
 	private static final int	STATE_STOPPING = 3;
-	private static final int	STATE_CLOSING = 5;
+	/** closing, terminate thread */
+	private static final int	STATE_CLOSING = 4;
 
 	private Thread		m_thread;
 	private long		m_lMicroSecondsPerTick;
@@ -69,12 +74,8 @@ implements Runnable
 	private long		m_lStartTime;
 
 	/** Internal state of the sequencer.
-		0: not running
-		1: starting, awake thread
-		2: running
-		3: stopping
-		4: ??
-		5: closing, terminate thread
+		As values, the symbolic constants STATE_*
+		are used.
 	*/
 	private int			m_nPhase;
 	private boolean		m_bTempoChanged;
@@ -84,6 +85,12 @@ implements Runnable
 		but can also be set with {@link #setClock}.
 	 */
 	private Clock		m_clock;
+
+	/** How long to sleep in the main loop.
+		The value is initialized in the constructor by reading a
+		system property.
+	 */
+	private long m_lSleepInterval;
 
 
 
@@ -101,6 +108,15 @@ implements Runnable
 		else
 		{
 			setClock(new SystemCurrentTimeMillisClock());
+		}
+		String strOS = System.getProperty("os.name");
+		if (strOS.equals("Linux"))
+		{
+			m_lSleepInterval = 0;
+		}
+		else
+		{
+			m_lSleepInterval = 1;
 		}
 		if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.<init>(): end"); }
 	}
@@ -338,7 +354,7 @@ implements Runnable
 			}
 			try
 			{
-				Thread.sleep(0);
+				Thread.sleep(m_lSleepInterval);
 			}
 			catch (InterruptedException e)
 			{
@@ -376,14 +392,14 @@ implements Runnable
 
 	protected void setMasterSyncModeImpl(SyncMode syncMode)
 	{
-		// TODO:
+		// DO NOTHING
 	}
 
 
 
 	protected void setSlaveSyncModeImpl(SyncMode syncMode)
 	{
-		// TODO:
+		// DO NOTHING
 	}
 
 
