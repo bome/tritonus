@@ -26,8 +26,8 @@ import org.aspectj.lang.JoinPoint;
 
 import org.tritonus.share.TDebug;
 
-import org.tritonus.sampled.convert.vorbis.JorbisFormatConversionProvider;
-import org.tritonus.sampled.convert.vorbis.JorbisFormatConversionProvider.DecodedJorbisAudioInputStream;
+import org.tritonus.sampled.convert.vorbis.VorbisFormatConversionProvider;
+import org.tritonus.sampled.convert.vorbis.VorbisFormatConversionProvider.DecodedVorbisAudioInputStream;
 
 
 

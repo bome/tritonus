@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -54,15 +54,22 @@ public class Utils
 
 	public static void outEnteringJoinPoint(JoinPoint joinPoint)
 	{
-		outSteppingIn("-> " + joinPoint.getStaticPart().getSignature());
+		outSteppingIn("-> " + getSignature(joinPoint));
 	}
 
 
 
 	public static void outLeavingJoinPoint(JoinPoint joinPoint)
 	{
-		outSteppingOut("<- " + joinPoint.getStaticPart().getSignature());
+		outSteppingOut("<- " + getSignature(joinPoint));
 	}
+
+
+	private static String getSignature(JoinPoint joinPoint)
+	{
+		return joinPoint.getStaticPart().getSignature().toShortString();
+	}
+
 
 
 	/** Print message, increasing the indentation.
