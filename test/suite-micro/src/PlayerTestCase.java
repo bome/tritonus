@@ -33,6 +33,12 @@ import	javax.microedition.media.PlayerListener;
 public class PlayerTestCase
 extends TestCase
 {
+	/** Time to sleep() between return from a transition method and
+	    the test if the event has been delivered.
+	*/
+	private static final int	SLEEP = 200;
+
+
 	public PlayerTestCase(String strName)
 	{
 		super(strName);
@@ -353,13 +359,15 @@ extends TestCase
 		player.prefetch();
 		player.addPlayerListener(listener);
 		player.start();
+		sleep();
 		assertTrue("basic callback", listener.isCalled());
 		assertEquals("player callback parameter", player, listener.getPlayer());
 		player.stop();
 		player.removePlayerListener(listener);
 		listener.reset();
 		player.start();
-		assertTrue("removing of PlayerListener", listener.isCalled());
+		sleep();
+		assertTrue("removing of PlayerListener", ! listener.isCalled());
 	}
 
 
@@ -378,7 +386,30 @@ extends TestCase
 
 
 	////////////////////////////////////////////////////////////////////
+	//	helper methods
+
+
+	private static void sleep()
+	{
+		sleep(SLEEP);
+	}
+
+
+	private static void sleep(int nMilliseconds)
+	{
+		try
+		{
+			Thread.sleep(nMilliseconds);
+		}
+		catch (InterruptedException e)
+		{
+			// IGNORED
+		}
+	}
+
+
 	////////////////////////////////////////////////////////////////////
+	//	inner classes
 
 
 
