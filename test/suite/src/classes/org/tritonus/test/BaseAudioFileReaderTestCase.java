@@ -29,16 +29,11 @@ import	java.io.InputStream;
 
 import	java.net.URL;
 
-import	java.util.MissingResourceException;
-import	java.util.ResourceBundle;
-
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.spi.AudioFileReader;
-
-import	junit.framework.TestCase;
 
 import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.Encodings;
@@ -46,35 +41,22 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 public class BaseAudioFileReaderTestCase
-extends TestCase
+extends BaseProviderTestCase
 {
 	private static final boolean	DEBUG = true;
 	private static final String	RESOURCE_BASENAME = "audiofilereader";
 
-	/**	Precision for float comparisons.
-	 */
-	private static final float	DELTA = 0.1F;
 
 
-	private ResourceBundle		m_resourceBundle;
-	private String			m_strResourcePrefix;
-	private AudioFileReader		m_audioFileReader;
 	private boolean			m_bCheckRealLengths;
 
 
 
 	public BaseAudioFileReaderTestCase(String strName)
 	{
-		super(strName);
-		m_resourceBundle = loadResourceBundle(RESOURCE_BASENAME);
+		super(strName,
+		      RESOURCE_BASENAME);
 		setCheckRealLengths(true);
-	}
-
-
-
-	protected void setResourcePrefix(String strResourcePrefix)
-	{
-		m_strResourcePrefix = strResourcePrefix;
 	}
 
 
@@ -93,36 +75,9 @@ extends TestCase
 
 
 
-	protected void setUp()
-		throws Exception
-	{
-		if (getTestAudioFileReader())
-		{
-			String	strClassName = getClassName();
-			Class	cls = Class.forName(strClassName);
-			m_audioFileReader = (AudioFileReader) cls.newInstance();
-		}
-	}
-
-
-
 	protected AudioFileReader getAudioFileReader()
 	{
-		return m_audioFileReader;
-	}
-
-
-
-	private boolean getTestAudioFileReader()
-	{
-		return true;
-	}
-
-
-
-	private boolean getTestAudioSystem()
-	{
-		return true;
+		return (AudioFileReader) getProvider();
 	}
 
 
@@ -132,7 +87,7 @@ extends TestCase
 	{
 		File	file = new File(getFilename());
 		AudioFileFormat	audioFileFormat = null;
-		if (getTestAudioFileReader())
+		if (getTestProvider())
 		{
 			audioFileFormat = getAudioFileReader().getAudioFileFormat(file);
 			checkAudioFileFormat(audioFileFormat, true);
@@ -151,7 +106,7 @@ extends TestCase
 	{
 		URL	url = new URL("file:" + getFilename());
 		AudioFileFormat	audioFileFormat = null;
-		if (getTestAudioFileReader())
+		if (getTestProvider())
 		{
 			audioFileFormat = getAudioFileReader().getAudioFileFormat(url);
 			checkAudioFileFormat(audioFileFormat, false);
@@ -171,7 +126,7 @@ extends TestCase
 		InputStream	inputStream = new FileInputStream(getFilename());
 		BufferedInputStream	bufferedInputStream = new BufferedInputStream(inputStream);
 		AudioFileFormat	audioFileFormat = null;
-		if (getTestAudioFileReader())
+		if (getTestProvider())
 		{
 			audioFileFormat = getAudioFileReader().getAudioFileFormat(bufferedInputStream);
 			checkAudioFileFormat(audioFileFormat, false);
@@ -216,7 +171,7 @@ extends TestCase
 	{
 		File	file = new File(getFilename());
 		AudioInputStream	audioInputStream = null;
-		if (getTestAudioFileReader())
+		if (getTestProvider())
 		{
 			audioInputStream = getAudioFileReader().getAudioInputStream(file);
 			checkAudioInputStream(audioInputStream, true);
@@ -235,7 +190,7 @@ extends TestCase
 	{
 		URL	url = new URL("file:" + getFilename());
 		AudioInputStream	audioInputStream = null;
-		if (getTestAudioFileReader())
+		if (getTestProvider())
 		{
 			audioInputStream = getAudioFileReader().getAudioInputStream(url);
 			checkAudioInputStream(audioInputStream, false);
@@ -255,7 +210,7 @@ extends TestCase
 		InputStream	inputStream = new FileInputStream(getFilename());
 		BufferedInputStream	bufferedInputStream = new BufferedInputStream(inputStream);
 		AudioInputStream	audioInputStream = null;
-		if (getTestAudioFileReader())
+		if (getTestProvider())
 		{
 			audioInputStream = getAudioFileReader().getAudioInputStream(bufferedInputStream);
 			checkAudioInputStream(audioInputStream, false);
@@ -330,46 +285,6 @@ extends TestCase
 		assertEquals("big endian",
 			     getBigEndian(),
 			     audioFormat.isBigEndian());
-	}
-
-
-
-	private ResourceBundle loadResourceBundle(String sResourceBasename)
-	{
-		ResourceBundle	resourceBundle = null;
-		try
-		{
-			resourceBundle = ResourceBundle.getBundle(sResourceBasename);
-		}
-		catch (MissingResourceException e)
-		{
-			e.printStackTrace();
-/*			System.err.println("ActionManager.loadResourceBundle(): cannot find property file!");
-			System.exit(1);
-*/		}
-		return resourceBundle;
-	}
-
-
-
-	private String getResourcePrefix()
-	{
-		return m_strResourcePrefix;
-	}
-
-
-
-	private String getResourceString(String strKey)
-	{
-		return m_resourceBundle.getString(strKey);
-	}
-
-
-
-	private String getClassName()
-	{
-		String	strClassName = getResourceString(getResourcePrefix() + ".class");
-		return strClassName;
 	}
 
 

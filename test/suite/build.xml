@@ -9,11 +9,14 @@
   <target name="init">
     <property name="src.dir" value="src/classes" />
     <property name="build.dir" value=".build" />
-    <path id="classpath">
-      <pathelement location="${basedir}"/>
-      <fileset dir="${basedir}/../../dist">
+    <path id="compile.classpath">
+     <fileset dir="${basedir}/../../dist">
         <include name="*.jar"/>
       </fileset>
+      <pathelement path="${java.class.path}"/>
+    </path>
+    <path id="run.classpath">
+      <pathelement location="${basedir}"/>
       <pathelement location="${build.dir}"/>
       <pathelement path="${java.class.path}"/>
     </path>
@@ -29,7 +32,7 @@
     <javac srcdir="${src.dir}"
 	   destdir="${build.dir}"
 	   debug="on">
-      <classpath refid="classpath"/>
+      <classpath refid="compile.classpath"/>
     </javac>
   </target>
 
@@ -41,7 +44,7 @@
   <target name="test-audiofilereader"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
-      <classpath refid="classpath"/>
+      <classpath refid="run.classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
@@ -59,7 +62,7 @@
   <target name="test-audiooutputstream"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
-      <classpath refid="classpath"/>
+      <classpath refid="run.classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
@@ -72,7 +75,7 @@
   <target name="test-dataoutputstream"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
-      <classpath refid="classpath"/>
+      <classpath refid="run.classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
@@ -82,13 +85,26 @@
   </target>
 
 
+  <target name="test-converter"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.AlawFormatConversionProviderTestCase" />
+      <test name="org.tritonus.test.UlawFormatConversionProviderTestCase" />
+      <test name="org.tritonus.test.PCM2PCMConversionProviderTestCase" />
+      <test name="org.tritonus.test.SampleRateConversionProviderTestCase" />
+      <test name="org.tritonus.test.GSMFormatConversionProviderTestCase" />
+      <test name="org.tritonus.test.JorbisFormatConversionProviderTestCase" />
+      <test name="org.tritonus.test.VorbisFormatConversionProviderTestCase" />
+    </junit>
+  </target>
+
+
   <target name="test-midi"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
-      <classpath refid="classpath"/>
-      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
-      <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
-      <!--sysproperty key="tritonus.TraceService" value="true" /-->
+      <classpath refid="run.classpath"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.MidiMessageTestCase" />
     </junit>
@@ -97,7 +113,7 @@
 
   <target name="test-control" depends="compile">
     <junit fork="no" printsummary="yes">
-      <classpath refid="classpath"/>
+      <classpath refid="run.classpath"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.ControlTestCase" />
     </junit>
@@ -106,7 +122,7 @@
 
   <target name="test-circularbuffer" depends="compile">
     <junit fork="no" printsummary="yes">
-      <classpath refid="classpath"/>
+      <classpath refid="run.classpath"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.TCircularBufferTestCase" />
     </junit>

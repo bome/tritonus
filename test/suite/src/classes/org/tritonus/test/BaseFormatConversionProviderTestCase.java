@@ -27,101 +27,42 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.spi.FormatConversionProvider;
-
-import junit.framework.TestCase;
 
 import org.tritonus.share.sampled.Encodings;
 
 
 
 public class BaseFormatConversionProviderTestCase
-extends TestCase
+extends BaseProviderTestCase
 {
+	private static final AudioFormat.Encoding[]	EMPTY_ENCODING_ARRAY = new AudioFormat.Encoding[0];
+
 	private static final boolean	DEBUG = true;
-	private static final String	RESOURCE_BASENAME = "formatconoversionprovider";
-
-	/**	Precision for float comparisons.
-	 */
-	private static final float	DELTA = 0.1F;
-
-
-	private ResourceBundle			m_resourceBundle;
-	private String				m_strResourcePrefix;
-	private FormatConversionProvider	m_formatConversionProvider;
-	private boolean				m_bCheckRealLengths;
+	private static final String	RESOURCE_BASENAME = "formatconversionprovider";
 
 
 
 	public BaseFormatConversionProviderTestCase(String strName)
 	{
-		super(strName);
-		m_resourceBundle = loadResourceBundle(RESOURCE_BASENAME);
-		setCheckRealLengths(true);
-	}
-
-
-
-	protected void setResourcePrefix(String strResourcePrefix)
-	{
-		m_strResourcePrefix = strResourcePrefix;
-	}
-
-
-
-	protected void setCheckRealLengths(boolean bCheckRealLengths)
-	{
-		m_bCheckRealLengths = bCheckRealLengths;
-	}
-
-
-
-	private boolean getCheckRealLengths()
-	{
-		return m_bCheckRealLengths;
-	}
-
-
-
-	protected void setUp()
-		throws Exception
-	{
-		if (getTestFormatConversionProvider())
-		{
-			String	strClassName = getClassName();
-			Class	cls = Class.forName(strClassName);
-			m_formatConversionProvider = (FormatConversionProvider) cls.newInstance();
-		}
+		super(strName,
+		      RESOURCE_BASENAME);
 	}
 
 
 
 	protected FormatConversionProvider getFormatConversionProvider()
 	{
-		return m_formatConversionProvider;
-	}
-
-
-
-	private boolean getTestFormatConversionProvider()
-	{
-		return true;
-	}
-
-
-
-	private boolean getTestAudioSystem()
-	{
-		return true;
+		return (FormatConversionProvider) getProvider();
 	}
 
 
@@ -129,139 +70,87 @@ extends TestCase
 	public void testGetSourceEncodings()
 	{
 		AudioFormat.Encoding[]	aEncodings = null;
-		if (getTestFormatConversionProvider())
+		if (getTestProvider())
 		{
 			aEncodings = getFormatConversionProvider().getSourceEncodings();
-			checkSourceEncodings(aEncodings);
+			checkEncodings(aEncodings, true);
 		}
 	}
 
 
 
-	private void checkSourceEncodings(AudioFormat.Encoding[] aEncodings)
+	public void testGetTargetEncodings()
 	{
-
+		AudioFormat.Encoding[]	aEncodings = null;
+		if (getTestProvider())
+		{
+			aEncodings = getFormatConversionProvider().getTargetEncodings();
+			checkEncodings(aEncodings, false);
+		}
 	}
 
 
 
-	public void testAudioFileFormatFile()
-		throws Exception
+	private void checkEncodings(AudioFormat.Encoding[] aEncodings,
+				    boolean bSource)
 	{
-// 		File	file = new File(getFilename());
-// 		AudioFileFormat	audioFileFormat = null;
-// 		if (getTestFormatConversionProvider())
-// 		{
-// 			audioFileFormat = getFormatConversionProvider().getAudioFileFormat(file);
-// 			checkAudioFileFormat(audioFileFormat, true);
-// 		}
-// 		if (getTestAudioSystem())
-// 		{
-// 			audioFileFormat = AudioSystem.getAudioFileFormat(file);
-// 			checkAudioFileFormat(audioFileFormat, true);
-// 		}
+		AudioFormat.Encoding[] aExpectedEncodings = getEncodings(bSource);
+		Iterator	iter;
+		List	encodings = Arrays.asList(aEncodings);
+		List	expectedEncodings = Arrays.asList(aExpectedEncodings);
+		iter = encodings.iterator();
+		while (iter.hasNext())
+		{
+			Object encoding = iter.next();
+			assertTrue("returned encoding in expected encodings",
+				   expectedEncodings.contains(encoding));
+		}
+		iter = expectedEncodings.iterator();
+		while (iter.hasNext())
+		{
+			Object encoding = iter.next();
+			assertTrue("expected encoding in returned encodings",
+				   encodings.contains(encoding));
+		}
 	}
 
 
 
-// 	public void testAudioFileFormatURL()
-// 		throws Exception
-// 	{
-// 		URL	url = new URL("file:" + getFilename());
-// 		AudioFileFormat	audioFileFormat = null;
-// 		if (getTestFormatConversionProvider())
-// 		{
-// 			audioFileFormat = getFormatConversionProvider().getAudioFileFormat(url);
-// 			checkAudioFileFormat(audioFileFormat, false);
-// 		}
-// 		if (getTestAudioSystem())
-// 		{
-// 			audioFileFormat = AudioSystem.getAudioFileFormat(url);
-// 			checkAudioFileFormat(audioFileFormat, false);
-// 		}
-// 	}
+	public void testIsSourceEncodingsSupported()
+	{
+		implTestIsEncodingSupported(true);
+	}
 
 
 
-// 	public void testAudioFileFormatInputStream()
-// 		throws Exception
-// 	{
-// 		InputStream	inputStream = new FileInputStream(getFilename());
-// 		BufferedInputStream	bufferedInputStream = new BufferedInputStream(inputStream);
-// 		AudioFileFormat	audioFileFormat = null;
-// 		if (getTestFormatConversionProvider())
-// 		{
-// 			audioFileFormat = getFormatConversionProvider().getAudioFileFormat(bufferedInputStream);
-// 			checkAudioFileFormat(audioFileFormat, false);
-// 		}
-// 		inputStream = new FileInputStream(getFilename());
-// 		bufferedInputStream = new BufferedInputStream(inputStream);
-// 		if (getTestAudioSystem())
-// 		{
-// 			audioFileFormat = AudioSystem.getAudioFileFormat(bufferedInputStream);
-// 			checkAudioFileFormat(audioFileFormat, false);
-// 		}
-// 	}
+	public void testIsTargetEncodingsSupported()
+	{
+		implTestIsEncodingSupported(false);
+	}
 
 
 
-// 	public void testAudioInputStreamFile()
-// 		throws Exception
-// 	{
-// 		File	file = new File(getFilename());
-// 		AudioInputStream	audioInputStream = null;
-// 		if (getTestFormatConversionProvider())
-// 		{
-// 			audioInputStream = getFormatConversionProvider().getAudioInputStream(file);
-// 			checkAudioInputStream(audioInputStream, true);
-// 		}
-// 		if (getTestAudioSystem())
-// 		{
-// 			audioInputStream = AudioSystem.getAudioInputStream(file);
-// 			checkAudioInputStream(audioInputStream, true);
-// 		}
-// 	}
-
-
-
-// 	public void testAudioInputStreamURL()
-// 		throws Exception
-// 	{
-// 		URL	url = new URL("file:" + getFilename());
-// 		AudioInputStream	audioInputStream = null;
-// 		if (getTestFormatConversionProvider())
-// 		{
-// 			audioInputStream = getFormatConversionProvider().getAudioInputStream(url);
-// 			checkAudioInputStream(audioInputStream, false);
-// 		}
-// 		if (getTestAudioSystem())
-// 		{
-// 			audioInputStream = AudioSystem.getAudioInputStream(url);
-// 			checkAudioInputStream(audioInputStream, false);
-// 		}
-// 	}
-
-
-
-// 	public void testAudioInputStreamInputStream()
-// 		throws Exception
-// 	{
-// 		InputStream	inputStream = new FileInputStream(getFilename());
-// 		BufferedInputStream	bufferedInputStream = new BufferedInputStream(inputStream);
-// 		AudioInputStream	audioInputStream = null;
-// 		if (getTestFormatConversionProvider())
-// 		{
-// 			audioInputStream = getFormatConversionProvider().getAudioInputStream(bufferedInputStream);
-// 			checkAudioInputStream(audioInputStream, false);
-// 		}
-// 		inputStream = new FileInputStream(getFilename());
-// 		bufferedInputStream = new BufferedInputStream(inputStream);
-// 		if (getTestAudioSystem())
-// 		{
-// 			audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
-// 			checkAudioInputStream(audioInputStream, false);
-// 		}
-// 	}
+	private void implTestIsEncodingSupported(boolean bSource)
+	{
+		if (getTestProvider())
+		{
+			AudioFormat.Encoding[] aExpectedEncodings = getEncodings(bSource);
+			for (int i = 0; i < aExpectedEncodings.length; i++)
+			{
+				boolean	bSupported;
+				if (bSource)
+				{
+					bSupported = getFormatConversionProvider().isSourceEncodingSupported(aExpectedEncodings[i]);
+				}
+				else
+				{
+					bSupported = getFormatConversionProvider().isTargetEncodingSupported(aExpectedEncodings[i]);
+				}
+				assertTrue("expected encoding supported",
+					   bSupported);
+			}
+		}
+	}
 
 
 
@@ -270,14 +159,14 @@ extends TestCase
 	{
 		checkAudioFormat(audioInputStream.getFormat());
 		long	lExpectedFrameLength = AudioSystem.NOT_SPECIFIED;
-		if (getCheckRealLengths() || bRealLengthExpected)
+		if (/*getCheckRealLengths() ||*/ bRealLengthExpected)
 		{
 			lExpectedFrameLength = getFrameLength();
 		}
 		assertEquals("frame length",
 			     lExpectedFrameLength,
 			     audioInputStream.getFrameLength());
-		if (getCheckRealLengths() || bRealLengthExpected)
+		if (/*getCheckRealLengths() ||*/ bRealLengthExpected)
 		{
 			int	nExpectedDataLength = (int) (lExpectedFrameLength * getFrameSize());
 			byte[]	abRetrievedData = new byte[nExpectedDataLength];
@@ -324,46 +213,6 @@ extends TestCase
 		assertEquals("big endian",
 			     getBigEndian(),
 			     audioFormat.isBigEndian());
-	}
-
-
-
-	private ResourceBundle loadResourceBundle(String sResourceBasename)
-	{
-		ResourceBundle	resourceBundle = null;
-		try
-		{
-			resourceBundle = ResourceBundle.getBundle(sResourceBasename);
-		}
-		catch (MissingResourceException e)
-		{
-			e.printStackTrace();
-/*			System.err.println("ActionManager.loadResourceBundle(): cannot find property file!");
-			System.exit(1);
-*/		}
-		return resourceBundle;
-	}
-
-
-
-	private String getResourcePrefix()
-	{
-		return m_strResourcePrefix;
-	}
-
-
-
-	private String getResourceString(String strKey)
-	{
-		return m_resourceBundle.getString(strKey);
-	}
-
-
-
-	private String getClassName()
-	{
-		String	strClassName = getResourceString(getResourcePrefix() + ".class");
-		return strClassName;
 	}
 
 
@@ -453,6 +302,50 @@ extends TestCase
 		String	strFrameLength = getResourceString(getResourcePrefix() + ".frameLength");
 		long	lFrameLength = Long.parseLong(strFrameLength);
 		return lFrameLength;
+	}
+
+
+
+// 	private AudioFormat.Encoding[] getSourceEncodings()
+// 	{
+// 		return getEncodings("sourceEncodings");
+// 	}
+
+
+
+// 	private AudioFormat.Encoding[] getTargetEncodings()
+// 	{
+// 		return getEncodings("targetEncodings");
+// 	}
+
+
+
+	private AudioFormat.Encoding[] getEncodings(boolean bSource)
+	{
+		if (bSource)
+		{
+			return getEncodings("sourceEncodings");
+		}
+		else
+		{
+			return getEncodings("targetEncodings");
+		}
+	}
+
+
+
+	private AudioFormat.Encoding[] getEncodings(String strKey)
+	{
+		String	strEncodings = getResourceString(getResourcePrefix() + "." + strKey);
+		List		encodingsList = new ArrayList();
+		StringTokenizer	tokenizer = new StringTokenizer(strEncodings);
+		while (tokenizer.hasMoreTokens())
+		{
+			String	strEncodingName = tokenizer.nextToken();
+			AudioFormat.Encoding	encoding = Encodings.getEncoding(strEncodingName);
+			encodingsList.add(encoding);
+		}
+		return (AudioFormat.Encoding[]) encodingsList.toArray(EMPTY_ENCODING_ARRAY);
 	}
 }
 
