@@ -92,20 +92,28 @@ implements Cloneable
 
 
 
-	/**	Constructs a MidiMessage.
-		The passed array is used to initialize {@link #data data}.
-		{@link #length length} is initialized to the length of the passed
-		array. Note that a copy of the passed array is made.<p>
+	/** Constructs a MidiMessage.
 
-		This constructor does not use
-		{@link #setMessage(byte[], int) setMessage()}. So it is
-		unaffected by overriding setMessage().
+	The passed array is used to initialize {@link #data data}.
+	{@link #length length} is initialized to the length of the
+	passed array. Note that a copy of the passed array is made.<p>
 
-		@param abData The data to use to construct the MIDI message.
+	This constructor does not use {@link #setMessage(byte[], int)
+	setMessage()}. So it is unaffected by overriding setMessage().<p>
+
+	It is unclear if the argument is allowed to be null. This
+	implementation allows it, resulting in {@link #data data}
+	being null, too.
+
+	@param abData The data to use to construct the MIDI message.
+
 	 */
 	protected MidiMessage(byte[] abData)
 	{
-		copyToData(abData, abData.length);
+		if (abData != null)
+		{
+			copyToData(abData, abData.length);
+		}
 	}
 
 

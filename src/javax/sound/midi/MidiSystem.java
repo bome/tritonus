@@ -52,6 +52,8 @@ import	org.tritonus.share.ArraySet;
 public class MidiSystem
 {
 	private static final MidiDevice.Info[]	EMPTY_MIDIDEVICE_INFO_ARRAY = new MidiDevice.Info[0];
+
+
 	public static MidiDevice.Info[] getMidiDeviceInfo()
 	{
 		List	deviceInfos = new ArrayList();
@@ -71,6 +73,7 @@ public class MidiSystem
 		throws	MidiUnavailableException
 	{
 		Iterator	providers = TMidiConfig.getMidiDeviceProviders();
+		MidiDevice	device = null;
 		while (providers.hasNext())
 		{
 			MidiDeviceProvider	provider = (MidiDeviceProvider) providers.next();
@@ -99,7 +102,8 @@ public class MidiSystem
 			device.open();
 		}
 		// end of block to comment out
-		return device.getReceiver();
+		Receiver	receiver = device.getReceiver();
+		return receiver;
 	}
 
 
@@ -115,7 +119,8 @@ public class MidiSystem
 			device.open();
 		}
 		// end of block to comment out
-		return device.getTransmitter();
+		Transmitter	transmitter = device.getTransmitter();
+		return transmitter;
 	}
 
 
@@ -125,7 +130,8 @@ public class MidiSystem
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSynthesizerInfo();
 		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSynthesizer(): using default synthesizer info: " + info); }
-		return (Synthesizer) getMidiDevice(info);
+		Synthesizer	synthesizer = (Synthesizer) getMidiDevice(info);
+		return synthesizer;
 	}
 
 
@@ -135,7 +141,8 @@ public class MidiSystem
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSequencerInfo();
 		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequencer(): using: " + info); }
-		return (Sequencer) getMidiDevice(info);
+		Sequencer	sequencer = (Sequencer) getMidiDevice(info);
+		return sequencer;
 	}
 
 
