@@ -422,21 +422,18 @@ public class AlsaMidiOut
 
 	private void enqueueSysexMessage(SysexMessage message, long lTick)
 	{
-		// data returned by getData() never contain a status byte
-		byte[]	abData = message.getData();
-		// TDebug.out("data length: " + abData.length);
-		byte[]	abTransferData = null;
-		if (message.getStatus() == 0xF0)
+		byte[]	abData = message.getMessage();
+		int	nLength = message.getLength();
+		if (abData[0] == SysexMessage.SYSTEM_EXCLUSIVE)
 		{
-			abTransferData = new byte[abData.length + 1];
-			abTransferData[0] = (byte) 0xF0;
-			System.arraycopy(abData, 0, abTransferData, 1, abData.length);
+			sendVarEvent(AlsaSeq.SND_SEQ_EVENT_SYSEX, lTick,
+				     abData, 0, nLength);
 		}
-		else
+		else // SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE
 		{
-			abTransferData = abData;
+			sendVarEvent(AlsaSeq.SND_SEQ_EVENT_SYSEX, lTick,
+				     abData, 1, nLength - 1);
 		}
-		sendVarEvent(AlsaSeq.SND_SEQ_EVENT_SYSEX, lTick, abTransferData, abTransferData.length);
 	}
 
 
@@ -452,12 +449,12 @@ public class AlsaMidiOut
 		System.arraycopy(abData, 0, abTransferData, 1, abData.length);
 		// TDebug.out("message data length: " + abTransferData.length);
 		// TDebug.out("message length: " + message.getLength());
-		sendVarEvent(AlsaSeq.SND_SEQ_EVENT_USR_VAR4, lTick, abTransferData, abTransferData.length);
+		sendVarEvent(AlsaSeq.SND_SEQ_EVENT_USR_VAR4, lTick, abTransferData, 0, abTransferData.length);
 	}
 
 
 
-	private void sendVarEvent(int nType, long lTime, byte[] abData, int nLength)
+	private void sendVarEvent(int nType, long lTime, byte[] abData, int nOffset, int nLength)
 	{
 		setCommon(nType, AlsaSeq.SND_SEQ_EVENT_LENGTH_VARIABLE, lTime);
 		m_event.setVar(abData, 0, nLength);

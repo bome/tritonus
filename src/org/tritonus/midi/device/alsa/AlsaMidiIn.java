@@ -411,23 +411,10 @@ public class AlsaMidiIn
 		{
 			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): sysex event"); }
 			SysexMessage	sysexMessage = new SysexMessage();
-			byte[]	abCompleteData = m_event.getVar();
-			int	nStatus = 0;
-			int	nDataStart = 0;
-			if (abCompleteData[0] == SysexMessage.SYSTEM_EXCLUSIVE)
-			{
-				nStatus = SysexMessage.SYSTEM_EXCLUSIVE;
-				nDataStart = 1;
-			}
-			else
-			{
-				nStatus = SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
-			}
-			byte[]	abData = new byte[abCompleteData.length - nDataStart];
-			System.arraycopy(abCompleteData, nDataStart, abData, 0, abCompleteData.length - 1);
+			byte[]	abData = m_event.getVar();
 			try
 			{
-				sysexMessage.setMessage(nStatus, abData, abData.length);
+				sysexMessage.setMessage(abData, abData.length);
 			}
 			catch (InvalidMidiDataException e)
 			{
