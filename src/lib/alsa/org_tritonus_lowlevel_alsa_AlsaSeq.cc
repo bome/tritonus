@@ -32,8 +32,6 @@ snd_seq_client_info_t*
 getClientInfoNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_event_t*
 getEventNativeHandle(JNIEnv* env, jobject obj);
-void
-setEventNativeHandle(JNIEnv* env, jobject obj, snd_seq_event_t* handle);
 snd_seq_port_info_t*
 getPortInfoNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_port_subscribe_t*
@@ -66,16 +64,16 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_open
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): begin\n"); }
 	check_constants();
 	nReturn = snd_seq_open(&seq, "hw", SND_SEQ_OPEN_DUPLEX, 0);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): snd_seq_open() returns: %d\n", nReturn); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): snd_seq_open() returns: %d\n", nReturn); }
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_open() failed");
 	}
 	handler.setHandle(env, obj, seq);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -93,14 +91,16 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_close
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_close(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_close(): begin\n"); }
 	seq = handler.getHandle(env, obj);
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_close(): now closing ALSA seq (client %d)\n", snd_seq_client_id(seq)); }
 	nReturn = snd_seq_close(seq);
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_close(): closed\n"); }
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_close() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_close(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_close(): end\n"); }
 }
 
 
@@ -118,7 +118,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getName
 	const char*	pName;
 	jstring		strName;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getName(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getName(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	pName = snd_seq_name(seq);
 	if (pName == NULL)
@@ -127,7 +127,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getName
 	}
 	strName = env->NewStringUTF(pName);
 	// TODO: check return value
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getName(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getName(): end\n"); }
 	return strName;
 }
 
@@ -145,14 +145,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getType
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getType(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getType(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_type(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_type() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getType(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getType(): end\n"); }
 	return nReturn;
 }
 
@@ -170,14 +170,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setNonblock
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setNonblock(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setNonblock(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_nonblock(seq, bNonblock);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_nonblock() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setNonblock(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setNonblock(): end\n"); }
 	return nReturn;
 }
 
@@ -195,10 +195,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientId
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientId(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientId(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_client_id(seq);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientId(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientId(): end\n"); }
 	return nReturn;
 }
 
@@ -216,10 +216,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getOutputBufferSize
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getOutputBufferSize(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getOutputBufferSize(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_get_output_buffer_size(seq);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getOutputBufferSize(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getOutputBufferSize(): end\n"); }
 	return nReturn;
 }
 
@@ -237,10 +237,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getInputBufferSize
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getInputBufferSize(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getInputBufferSize(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_get_input_buffer_size(seq);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getInputBufferSize(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getInputBufferSize(): end\n"); }
 	return nReturn;
 }
 
@@ -258,10 +258,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setOutputBufferSize
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setOutputBufferSize(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setOutputBufferSize(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_set_output_buffer_size(seq, nBufferSize);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setOutputBufferSize(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setOutputBufferSize(): end\n"); }
 	return nReturn;
 }
 
@@ -279,10 +279,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setInputBufferSize
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setInputBufferSize(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setInputBufferSize(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_set_input_buffer_size(seq, nBufferSize);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setInputBufferSize(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setInputBufferSize(): end\n"); }
 	return nReturn;
 }
 
@@ -301,7 +301,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getSystemInfo
 	snd_seq_system_info_t*	systemInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getSystemInfo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getSystemInfo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	systemInfo = getSystemInfoNativeHandle(env, systemInfoObj);
 	nReturn = snd_seq_system_info(seq, systemInfo);
@@ -309,7 +309,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getSystemInfo
 	{
 		throwRuntimeException(env, "snd_seq_system_info() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getSystemInfo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getSystemInfo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -327,7 +327,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientInfo
 	snd_seq_client_info_t*	clientInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientInfo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientInfo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	clientInfo = getClientInfoNativeHandle(env, clientInfoObj);
 	if (nClient >= 0)
@@ -342,7 +342,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientInfo
 	{
 		throwRuntimeException(env, "snd_seq_get_client_info() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientInfo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getClientInfo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -361,7 +361,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setClientInfo
 	snd_seq_client_info_t*	clientInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setClientInfo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setClientInfo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	clientInfo = getClientInfoNativeHandle(env, clientInfoObj);
 	nReturn = snd_seq_set_client_info(seq, clientInfo);
@@ -369,7 +369,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setClientInfo
 	{
 		throwRuntimeException(env, "snd_seq_set_client_info() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setClientInfo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setClientInfo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -388,13 +388,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient
 	snd_seq_client_info_t*	clientInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): begin\n"); }
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): passed client: %d\n", (int) nClient); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): passed client: %d\n", (int) nClient); }
 	seq = handler.getHandle(env, obj);
 	snd_seq_client_info_alloca(&clientInfo);
 	snd_seq_client_info_set_client(clientInfo, nClient);
 	nReturn = snd_seq_query_next_client(seq, clientInfo);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): return value from snd_seq_query_next_client(): %d\n", nReturn); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): return value from snd_seq_query_next_client(): %d\n", nReturn); }
 	if (nReturn < 0)
 	{
 		// -2 (no such file or directory): returned when no more client is available
@@ -409,7 +409,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient
 		jint	nThisClient = snd_seq_client_info_get_client(clientInfo);
 		env->SetIntArrayRegion(anValues, 0, 1, &nThisClient);
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextClient(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -428,7 +428,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortInfo
 	snd_seq_port_info_t*	portInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortInfo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortInfo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	portInfo = getPortInfoNativeHandle(env, portInfoObj);
 	if (nClient >= 0)
@@ -443,7 +443,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortInfo
 	{
 		throwRuntimeException(env, "snd_seq_get_[any]_port_info() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortInfo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortInfo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -462,13 +462,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort
 	snd_seq_port_info_t*	portInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	snd_seq_port_info_alloca(&portInfo);
 	snd_seq_port_info_set_client(portInfo, nClient);
 	snd_seq_port_info_set_port(portInfo, nPort);
 	nReturn = snd_seq_query_next_port(seq, portInfo);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort(): snd_seq_query_next_port() returns: %d\n", nReturn); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort(): snd_seq_query_next_port() returns: %d\n", nReturn); }
 	if (nReturn < 0)
 	{
 		// -2 (no such file or directory): returned when no more port is available
@@ -485,7 +485,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort
 		pnValues[1] = snd_seq_port_info_get_port(portInfo);
 		env->SetIntArrayRegion(anValues, 0, 2, pnValues);
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getNextPort(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -506,7 +506,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_createPort
 	int			nReturn;
 	int			nPort;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_createPort(): begin\n");	}
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_createPort(): begin\n");	}
 	snd_seq_port_info_alloca(&portInfo);
 	seq = handler.getHandle(env, obj);
 	// TODO: check if another action is required instead
@@ -534,7 +534,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_createPort
 		throwRuntimeException(env, "snd_seq_create_port() failed");
 	}
 	nPort = snd_seq_port_info_get_port(portInfo);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_createPort(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_createPort(): end\n"); }
 	return (jint) nPort;
 }
 
@@ -552,7 +552,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue
 	snd_seq_t*	seq;
 	int		nQueue;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nQueue = snd_seq_alloc_queue(seq);
 	if (nQueue < 0)
@@ -564,8 +564,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue
 // 	snd_seq_queue_timer_alloca(&timer);
 // 	snd_seq_get_queue_timer(seq, nQueue, timer);
 // 	id = snd_seq_queue_timer_get_id(timer);
-// 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): timer resolution: %d\n", snd_seq_queue_timer_get_resolution(timer)); }
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): end\n"); }
+// 	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): timer resolution: %d\n", snd_seq_queue_timer_get_resolution(timer)); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_allocQueue(): end\n"); }
 	return (jint) nQueue;
 }
 
@@ -583,14 +583,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_freeQueue
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_freeQueue(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_freeQueue(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_free_queue(seq, nQueue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_free_queue() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_freeQueue(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_freeQueue(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -608,14 +608,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueUsage
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueUsage(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueUsage(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_get_queue_usage(seq, nQueue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_usage() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueUsage(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueUsage(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -633,14 +633,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueUsage
 	snd_seq_t*	seq;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueUsage(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueUsage(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_set_queue_usage(seq, nQueue, bUsageAllowed);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_set_queue_usage() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueUsage(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueUsage(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -659,7 +659,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueInfo
 	snd_seq_queue_info_t*	queueInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueInfo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueInfo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	queueInfo = getQueueInfoNativeHandle(env, queueInfoObj);
 	nReturn = snd_seq_get_queue_info(seq, nQueue, queueInfo);
@@ -667,7 +667,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueInfo
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_info() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueInfo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueInfo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -686,7 +686,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueInfo
 	snd_seq_queue_info_t*	queueInfo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueInfo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueInfo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	queueInfo = getQueueInfoNativeHandle(env, queueInfoObj);
 	nReturn = snd_seq_set_queue_info(seq, nQueue, queueInfo);
@@ -694,7 +694,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueInfo
 	{
 		throwRuntimeException(env, "snd_seq_set_queue_info() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueInfo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueInfo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -713,7 +713,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueStatus
 	snd_seq_queue_status_t*	queueStatus;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueStatus(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueStatus(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	queueStatus = getQueueStatusNativeHandle(env, queueStatusObj);
 	nReturn = snd_seq_get_queue_status(seq, nQueue, queueStatus);
@@ -721,7 +721,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueStatus
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_status() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueStatus(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueStatus(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -740,7 +740,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTempo
 	snd_seq_queue_tempo_t*	pQueueTempo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTempo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTempo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	pQueueTempo = getQueueTempoNativeHandle(env, queueTempoObj);
 	nReturn = snd_seq_get_queue_tempo(seq, nQueue, pQueueTempo);
@@ -748,7 +748,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTempo
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_tempo() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTempo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTempo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -767,7 +767,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTempo
 	snd_seq_queue_tempo_t*	pQueueTempo;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTempo(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTempo(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	pQueueTempo = getQueueTempoNativeHandle(env, queueTempoObj);
 	nReturn = snd_seq_set_queue_tempo(seq, nQueue, pQueueTempo);
@@ -775,7 +775,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTempo
 	{
 		throwRuntimeException(env, "snd_seq_set_queue_tempo() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTempo(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTempo(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -794,7 +794,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer
 	snd_seq_queue_timer_t*	pQueueTimer;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	// TODO: implement timer API, then re-enable
 	pQueueTimer = NULL;	// getQueueTimerNativeHandle(env, queueTimerObj);
@@ -803,7 +803,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer
 	{
 		throwRuntimeException(env, "snd_seq_get_queue_timer() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getQueueTimer(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -822,7 +822,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer
 	snd_seq_queue_timer_t*	pQueueTimer;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	// TODO:
 	pQueueTimer = NULL;	// getQueueTimerNativeHandle(env, queueTimerObj);
@@ -831,7 +831,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer
 	{
 		throwRuntimeException(env, "snd_seq_set_queue_timer() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -850,7 +850,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription
 	snd_seq_port_subscribe_t*	pPortSubscribe;
 	int				nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	pPortSubscribe = getPortSubscribeNativeHandle(env, portSubscribeObj);
 	nReturn = snd_seq_get_port_subscription(seq, pPortSubscribe);
@@ -858,7 +858,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription
 	{
 		throwRuntimeException(env, "snd_seq_get_port_subscription() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -877,7 +877,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort
 	snd_seq_port_subscribe_t*	pPortSubscribe;
 	int				nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	pPortSubscribe = getPortSubscribeNativeHandle(env, portSubscribeObj);
 	nReturn = snd_seq_subscribe_port(seq, pPortSubscribe);
@@ -885,7 +885,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort
 	{
 		throwRuntimeException(env, "snd_seq_subscribe_port() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -904,7 +904,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort
 	snd_seq_port_subscribe_t*	pPortSubscribe;
 	int				nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	pPortSubscribe = getPortSubscribeNativeHandle(env, portSubscribeObj);
 	nReturn = snd_seq_unsubscribe_port(seq, pPortSubscribe);
@@ -912,7 +912,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort
 	{
 		throwRuntimeException(env, "snd_seq_unsubscribe_port() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -927,7 +927,7 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaSeq_setTrace
 (JNIEnv* env, jclass cls, jboolean bTrace)
 {
-	DEBUG = bTrace;
+	debug_flag = bTrace;
 	debug_file = stderr;
 }
 
@@ -946,17 +946,17 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput
 	snd_seq_event_t*	event;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	event = getEventNativeHandle(env, eventObj);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): length of event: %d\n", snd_seq_event_length(event)); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): length of event: %d\n", snd_seq_event_length(event)); }
 	nReturn = snd_seq_event_output(seq, event);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): snd_seq_event_output() returns %d\n", nReturn); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): snd_seq_event_output() returns %d\n", nReturn); }
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_event_output() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutput(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -975,7 +975,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputBuffer
 	snd_seq_event_t*	event;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputBuffer(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputBuffer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	event = getEventNativeHandle(env, eventObj);
 	nReturn = snd_seq_event_output_buffer(seq, event);
@@ -983,7 +983,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputBuffer
 	{
 		throwRuntimeException(env, "snd_seq_event_output_buffer() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputBuffer(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputBuffer(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1002,7 +1002,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputDirect
 	snd_seq_event_t*	event;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputDirect(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputDirect(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	event = getEventNativeHandle(env, eventObj);
 	nReturn = snd_seq_event_output_direct(seq, event);
@@ -1010,7 +1010,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputDirect
 	{
 		throwRuntimeException(env, "snd_seq_event_output_direct() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputDirect(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputDirect(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1027,9 +1027,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput
 {
 	snd_seq_t*		seq;
 	snd_seq_event_t*	event;
+	snd_seq_event_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	/*
 	 *	snd_seq_event_input() results in a blocking read on a
@@ -1060,9 +1061,30 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput
 // 	}
 	if (event != NULL)
 	{
-		setEventNativeHandle(env, eventObj, event);
+		/*
+		  - get snd_seq_event_t handle of Event instance
+		  - if varlength, free associated mem
+		  - copy event to handle's memory
+		  - if varlength, allocate new memory for var part
+		  - copy data to new memory
+		  - set new var pointer
+		  TODO: make thread-safe (should acquire a lock)
+		  or: document behaviour
+		 */
+		handle = getEventNativeHandle(env, eventObj);
+		if (snd_seq_ev_is_variable(handle))
+		{
+			free(handle->data.ext.ptr);
+		}
+		*handle = *event;
+		if (snd_seq_ev_is_variable(handle))
+		{
+			char*	ptr = (char*) malloc(handle->data.ext.len);
+			memcpy(ptr, handle->data.ext.ptr, handle->data.ext.len);
+			handle->data.ext.ptr = ptr;
+		}
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1080,14 +1102,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInputPending
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInputPending(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInputPending(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_event_input_pending(seq, nFetchSequencer);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_event_input_pending() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInputPending(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInputPending(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1105,15 +1127,15 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_drain_output(seq);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput(): snd_seq_drain_output() returned %d\n", nReturn); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput(): snd_seq_drain_output() returned %d\n", nReturn); }
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_drain_output() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_drainOutput(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1131,14 +1153,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputPending
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputPending(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputPending(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_event_output_pending(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_event_output_direct() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputPending(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventOutputPending(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1155,17 +1177,29 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_extractOutput
 {
 	snd_seq_t*		seq;
 	snd_seq_event_t*	event;
+	snd_seq_event_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_extractOutput(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_extractOutput(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_extract_output(seq, &event);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_extrct_output() failed");
 	}
-	setEventNativeHandle(env, eventObj, event);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_extractOutput(): end\n"); }
+	handle = getEventNativeHandle(env, eventObj);
+	if (snd_seq_ev_is_variable(handle))
+	{
+		free(handle->data.ext.ptr);
+	}
+	*handle = *event;
+	if (snd_seq_ev_is_variable(handle))
+	{
+		char*	ptr = (char*) malloc(handle->data.ext.len);
+		memcpy(ptr, handle->data.ext.ptr, handle->data.ext.len);
+		handle->data.ext.ptr = ptr;
+	}
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_extractOutput(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1183,14 +1217,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutput
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutput(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutput(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_drop_output(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_drop_output() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutput(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutput(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1208,14 +1242,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutputBuffer
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutputBuffer(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutputBuffer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_drop_output_buffer(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_drop_output_buffer() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutputBuffer(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropOutputBuffer(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1233,14 +1267,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInput
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInput(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInput(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_drop_input(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_drop_input() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInput(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInput(): end\n"); }
 	return (jint) nReturn;
 }
 
@@ -1258,14 +1292,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInputBuffer
 	snd_seq_t*		seq;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInputBuffer(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInputBuffer(): begin\n"); }
 	seq = handler.getHandle(env, obj);
 	nReturn = snd_seq_drop_input_buffer(seq);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_drop_input_buffer() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInputBuffer(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_dropInputBuffer(): end\n"); }
 	return (jint) nReturn;
 }
 

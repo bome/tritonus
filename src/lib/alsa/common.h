@@ -26,7 +26,7 @@
 #include	<alsa/asoundlib.h>
 #include	"HandleFieldHandler.hh"
 
-static bool	DEBUG = false;
+static bool	debug_flag = false;
 static FILE*	debug_file = NULL;
 
 /* end CONVENIENCE section */

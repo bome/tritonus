@@ -204,10 +204,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtl_close
 	snd_ctl_t*	handle;
 	int		nResult;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nResult = snd_ctl_close(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtl_close(): end\n"); }
 	return nResult;
 }
 
@@ -292,7 +292,7 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaCtl_setTrace
 (JNIEnv* env, jclass cls, jboolean bTrace)
 {
-	DEBUG = bTrace;
+	debug_flag = bTrace;
 	debug_file = stderr;
 }
 

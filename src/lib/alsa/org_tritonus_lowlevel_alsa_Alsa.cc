@@ -37,7 +37,7 @@ Java_org_tritonus_lowlevel_alsa_Alsa_getStringError
 	jstring	strError;
 	const char*	err;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_Alsa_getStringError(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_Alsa_getStringError(): begin\n"); }
 	err = snd_strerror(nErrnum);
 	if (err == NULL)
 	{
@@ -48,7 +48,7 @@ Java_org_tritonus_lowlevel_alsa_Alsa_getStringError
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_Alsa_getStringError(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_Alsa_getStringError(): end\n"); }
 	return strError;
 }
 

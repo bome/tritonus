@@ -31,7 +31,7 @@ HandleFieldHandler(string strHandleFieldName)
 {
 	m_strHandleFieldName = strHandleFieldName;
 	m_nFieldID = NULL;
-	DEBUG = false;
+	debug_flag = false;
 	debug_file = NULL;
 }
 

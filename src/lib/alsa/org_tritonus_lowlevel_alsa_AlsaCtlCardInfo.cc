@@ -50,11 +50,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc
 	// extremely hacky
 	debug_file = stderr;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): begin\n"); }
 	nReturn = snd_ctl_card_info_malloc(&handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): handle: %p\n", handle); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): handle: %p\n", handle); }
 	handler.setHandle(env, obj, handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_malloc(): end\n"); }
 	return nReturn;
 }
 
@@ -70,10 +70,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free
 {
 	snd_ctl_card_info_t*	handle;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_ctl_card_info_free(handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaCtlCardInfo_free(): end\n"); }
 }
 
 

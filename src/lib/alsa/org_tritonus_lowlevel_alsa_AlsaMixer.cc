@@ -50,10 +50,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_open
 	snd_mixer_t*	handle;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_open(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_open(): begin\n"); }
 	nReturn = snd_mixer_open(&handle, nMode);
 	handler.setHandle(env, obj, handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_open(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_open(): end\n"); }
 	return nReturn;
 }
 
@@ -72,7 +72,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_attach
 	int		nReturn;
 	const char*	cardName;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_attach(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_attach(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	cardName = env->GetStringUTFChars(strCardName, NULL);
 	if (cardName == NULL)
@@ -82,7 +82,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_attach
 	}
 	nReturn = snd_mixer_attach(handle, cardName);
 	env->ReleaseStringUTFChars(strCardName, cardName);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_attach(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_attach(): end\n"); }
 	return nReturn;
 }
 
@@ -100,10 +100,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_register
 	snd_mixer_t*	handle;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_register(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_register(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_register(handle, NULL, NULL);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_register(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_register(): end\n"); }
 	return nReturn;
 }
 
@@ -121,10 +121,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_load
 	snd_mixer_t*	handle;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_load(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_load(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_load(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_load(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_load(): end\n"); }
 	return nReturn;
 }
 
@@ -142,10 +142,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_close
 	snd_mixer_t*	handle;
 	int		nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_close(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_close(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_close(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_close(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_close(): end\n"); }
 	return nReturn;
 }
 
@@ -167,7 +167,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_findElement
 	jmethodID		constructorID;
 	jfieldID		handleFieldID;
 
-	if (DEBUG)
+	if (debug_flag)
 	{
 		(void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_findElement(): begin\n");
 	}
@@ -210,7 +210,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_findElement
 		throwRuntimeException(env, "cannot get field ID for m_lNativeHandle");
 	}
 	env->SetLongField(element, handleFieldID, (jlong) (long) elem);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_findElement(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_findElement(): end\n"); }
 	return element;
 }
 
@@ -231,9 +231,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList
 	snd_mixer_elem_t*	element;
 	jint*			indices = NULL;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): begin\n"); }
 	handle = handler.getHandle(env, obj);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): handle: %p\n", handle); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): handle: %p\n", handle); }
 	indices = env->GetIntArrayElements(anIndices, NULL);
 	if (indices == NULL)
 	{
@@ -242,7 +242,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList
 	}
 	nIndex = 0;
 	element = snd_mixer_first_elem(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): first element: %p\n", element); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): first element: %p\n", element); }
 	// printf("before loop");
 	while (element != NULL)
 	{
@@ -265,12 +265,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList
 		// printf("8");
 		element = snd_mixer_elem_next(element);
 		// printf("9\n");
-		if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): next element: %p\n", element); }
+		if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): next element: %p\n", element); }
 	}
 	// printf("after loop\n");
 	nReturn = nIndex;
 	env->ReleaseIntArrayElements(anIndices, indices, 0);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): end\n"); }
 	return nReturn;
 }
 
@@ -285,7 +285,7 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaMixer_setTrace
 (JNIEnv *env, jclass cls, jboolean bTrace)
 {
-	DEBUG = bTrace;
+	debug_flag = bTrace;
 	debug_file = stderr;
 }
 

@@ -50,11 +50,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc
 	// extremely hacky
 	debug_file = stderr;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc(): begin\n"); }
 	nReturn = snd_seq_port_subscribe_malloc(&handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc(): handle: %p\n", handle); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc(): handle: %p\n", handle); }
 	handler.setHandle(env, obj, handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_malloc(): end\n"); }
 	return nReturn;
 }
 
@@ -71,10 +71,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_free
 {
 	snd_seq_port_subscribe_t*	handle;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_free(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_free(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_seq_port_subscribe_free(handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_free(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_free(): end\n"); }
 }
 
 
@@ -92,11 +92,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderClient
 	const snd_seq_addr_t*		address;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderClient(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderClient(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	address = snd_seq_port_subscribe_get_sender(handle);
 	nReturn = address->client;
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderClient(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderClient(): end\n"); }
 	return nReturn;
 }
 
@@ -115,11 +115,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderPort
 	const snd_seq_addr_t*		address;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderPort(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderPort(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	address = snd_seq_port_subscribe_get_sender(handle);
 	nReturn = address->port;
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderPort(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getSenderPort(): end\n"); }
 	return nReturn;
 }
 
@@ -138,11 +138,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestClient
 	const snd_seq_addr_t*		address;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestClient(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestClient(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	address = snd_seq_port_subscribe_get_dest(handle);
 	nReturn = address->client;
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestClient(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestClient(): end\n"); }
 	return nReturn;
 }
 
@@ -161,11 +161,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestPort
 	const snd_seq_addr_t*		address;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestPort(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestPort(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	address = snd_seq_port_subscribe_get_dest(handle);
 	nReturn = address->port;
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestPort(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getDestPort(): end\n"); }
 	return nReturn;
 }
 
@@ -183,10 +183,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getQueue
 	snd_seq_port_subscribe_t*	handle;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getQueue(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getQueue(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_seq_port_subscribe_get_queue(handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getQueue(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getQueue(): end\n"); }
 	return nReturn;
 }
 
@@ -204,10 +204,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getExclusive
 	snd_seq_port_subscribe_t*	handle;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getExclusive(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getExclusive(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_seq_port_subscribe_get_exclusive(handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getExclusive(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getExclusive(): end\n"); }
 	return nReturn;
 }
 
@@ -225,10 +225,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeUpdate
 	snd_seq_port_subscribe_t*	handle;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeUpdate(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeUpdate(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_seq_port_subscribe_get_time_update(handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeUpdate(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeUpdate(): end\n"); }
 	return nReturn;
 }
 
@@ -246,10 +246,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeReal
 	snd_seq_port_subscribe_t*	handle;
 	int				nReturn;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeReal(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeReal(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_seq_port_subscribe_get_time_real(handle);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeReal(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_getTimeReal(): end\n"); }
 	return nReturn;
 }
 
@@ -267,12 +267,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setSender
 	snd_seq_port_subscribe_t*	handle;
 	snd_seq_addr_t			newAddress;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setSender(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setSender(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	newAddress.client = nClient;
 	newAddress.port = nPort;
 	snd_seq_port_subscribe_set_sender(handle, &newAddress);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setSender(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setSender(): end\n"); }
 }
 
 
@@ -289,12 +289,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setDest
 	snd_seq_port_subscribe_t*	handle;
 	snd_seq_addr_t			newAddress;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setDest(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setDest(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	newAddress.client = nClient;
 	newAddress.port = nPort;
 	snd_seq_port_subscribe_set_dest(handle, &newAddress);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setDest(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setDest(): end\n"); }
 }
 
 
@@ -310,10 +310,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setQueue
 {
 	snd_seq_port_subscribe_t*	handle;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setQueue(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setQueue(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_seq_port_subscribe_set_queue(handle, nQueue);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setQueue(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setQueue(): end\n"); }
 }
 
 
@@ -329,10 +329,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setExclusive
 {
 	snd_seq_port_subscribe_t*	handle;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setExclusive(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setExclusive(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_seq_port_subscribe_set_exclusive(handle, bExclusive);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setExclusive(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setExclusive(): end\n"); }
 }
 
 
@@ -348,10 +348,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeUpdate
 {
 	snd_seq_port_subscribe_t*	handle;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeUpdate(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeUpdate(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_seq_port_subscribe_set_time_update(handle, bUpdate);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeUpdate(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeUpdate(): end\n"); }
 }
 
 
@@ -367,10 +367,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeReal
 {
 	snd_seq_port_subscribe_t*	handle;
 
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeReal(): begin\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeReal(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_seq_port_subscribe_set_time_real(handle, bReal);
-	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeReal(): end\n"); }
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_00024PortSubscribe_setTimeReal(): end\n"); }
 }
 
 

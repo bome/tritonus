@@ -32,13 +32,13 @@ throwRuntimeException(JNIEnv *env, const char* pStrMessage)
 
 	if (env->ExceptionOccurred() != NULL)
 	{
-		if (DEBUG) { env->ExceptionDescribe(); }
+		if (debug_flag) { env->ExceptionDescribe(); }
 		env->ExceptionClear();
 	}
 	if (runtimeExceptionClass == NULL)
 	{
 		runtimeExceptionClass = env->FindClass("java/lang/RuntimeException");
-		if (DEBUG) { fprintf(debug_file, "RTE: %p\n", runtimeExceptionClass); }
+		if (debug_flag) { fprintf(debug_file, "RTE: %p\n", runtimeExceptionClass); }
 		if (runtimeExceptionClass == NULL)
 		{
 			env->FatalError("cannot get class object for java.lang.RuntimeException");

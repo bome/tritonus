@@ -47,7 +47,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_open
 	int			nReturn;
 	const char*		name;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_open(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_open(): begin\n"); }
 	mixerHandle = getMixerNativeHandle(env, mixer);
 	snd_mixer_selem_id_alloca(&id);
 	snd_mixer_selem_id_set_index(id, nIndex);
@@ -70,7 +70,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_open
 		handler.setHandle(env, obj, handle);
 		nReturn = 0;
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_open(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_open(): end\n"); }
 	return nReturn;
 }
 
@@ -88,10 +88,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getName
 	snd_mixer_elem_t*	handle;
 	jstring			name;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getName(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getName(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	name = env->NewStringUTF(snd_mixer_selem_get_name(handle));
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getName(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getName(): end\n"); }
 	return name;
 }
 
@@ -109,10 +109,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getIndex
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getIndex(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getIndex(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_get_index(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getIndex(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getIndex(): end\n"); }
 	return nReturn;
 }
 
@@ -129,10 +129,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isActive
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isActive(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isActive(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_is_active(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isActive(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isActive(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -149,10 +149,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isPlaybackMono
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isPlaybackMono(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isPlaybackMono(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_is_playback_mono(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isPlaybackMono(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isPlaybackMono(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -169,10 +169,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackChannel
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackChannel(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackChannel(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_playback_channel(handle, (snd_mixer_selem_channel_id_t) nChannelType);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackChannel(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackChannel(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -190,10 +190,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isCaptureMono
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isCaptureMono(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isCaptureMono(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_is_capture_mono(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isCaptureMono(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_isCaptureMono(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -211,10 +211,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureChannel
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureChannel(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureChannel(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_capture_channel(handle, (snd_mixer_selem_channel_id_t) nChannelType);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureChannel(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureChannel(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -232,10 +232,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureGroup
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureGroup(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureGroup(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_get_capture_group(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureGroup(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureGroup(): end\n"); }
 	return nReturn;
 }
 
@@ -253,10 +253,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonVolume
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_common_volume(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonVolume(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -274,10 +274,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolume
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_playback_volume(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolume(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -295,10 +295,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolumeJoined
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolumeJoined(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolumeJoined(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_playback_volume_joined(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolumeJoined(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackVolumeJoined(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -316,10 +316,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolume
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_capture_volume(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolume(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -337,10 +337,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolumeJoined
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolumeJoined(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolumeJoined(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_capture_volume_joined(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolumeJoined(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureVolumeJoined(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -358,10 +358,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonSwitch
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_common_switch(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCommonSwitch(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -379,10 +379,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitch
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_playback_switch(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitch(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -400,10 +400,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitchJoined
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitchJoined(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitchJoined(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_playback_switch_joined(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitchJoined(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasPlaybackSwitchJoined(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -421,10 +421,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitch
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_capture_switch(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitch(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -442,10 +442,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchJoinded
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchJoinded(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchJoinded(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_capture_switch_joined(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchJoinded(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchJoinded(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -463,10 +463,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchExclusive
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchExclusive(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchExclusive(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_has_capture_switch_exclusive(handle);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchExclusive(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_hasCaptureSwitchExclusive(): end\n"); }
 	return (jboolean) nReturn;
 }
 
@@ -485,14 +485,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolume
 	int			nReturn;
 	long			lValue;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_get_playback_volume(handle, (snd_mixer_selem_channel_id_t) nChannelType, &lValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolume(): end\n"); }
 	return lValue;
 }
 
@@ -509,14 +509,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolume
 	int			nReturn;
 	long			lValue;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_get_capture_volume(handle, (snd_mixer_selem_channel_id_t) nChannelType, &lValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolume(): end\n"); }
 	return lValue;
 }
 
@@ -535,14 +535,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackSwitch
 	int			nReturn;
 	int			nValue;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_get_playback_switch(handle, (snd_mixer_selem_channel_id_t) nChannelType, &nValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackSwitch(): end\n"); }
 	return (jboolean) nValue;
 }
 
@@ -561,14 +561,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureSwitch
 	int			nReturn;
 	int			nValue;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_get_capture_switch(handle, (snd_mixer_selem_channel_id_t) nChannelType, &nValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureSwitch(): end\n"); }
 	return (jboolean) nValue;
 }
 
@@ -586,14 +586,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolume
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_playback_volume(handle, (snd_mixer_selem_channel_id_t) nChannelType, nValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolume(): end\n"); }
 }
 
 
@@ -610,14 +610,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolume
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolume(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolume(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_capture_volume(handle, (snd_mixer_selem_channel_id_t) nChannelType, nValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolume(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolume(): end\n"); }
 }
 
 
@@ -634,14 +634,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeAll
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeAll(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeAll(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_playback_volume_all(handle, nValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeAll(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeAll(): end\n"); }
 }
 
 
@@ -658,14 +658,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeAll
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeAll(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeAll(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_capture_volume_all(handle, nValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeAll(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeAll(): end\n"); }
 }
 
 
@@ -682,14 +682,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitch
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_playback_switch(handle, (snd_mixer_selem_channel_id_t) nChannelType, bValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitch(): end\n"); }
 }
 
 
@@ -706,14 +706,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitch
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitch(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitch(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_capture_switch(handle, (snd_mixer_selem_channel_id_t) nChannelType, bValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitch(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitch(): end\n"); }
 }
 
 
@@ -730,14 +730,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitchAll
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitchAll(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitchAll(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_playback_switch_all(handle, bValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitchAll(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackSwitchAll(): end\n"); }
 }
 
 
@@ -754,14 +754,14 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitchAll
 	snd_mixer_elem_t*	handle;
 	int			nReturn;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitchAll(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitchAll(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	nReturn = snd_mixer_selem_set_capture_switch_all(handle, bValue);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, snd_strerror(nReturn));
 	}
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitchAll(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureSwitchAll(): end\n"); }
 }
 
 
@@ -778,12 +778,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange
 	snd_mixer_elem_t*	handle;
 	jint			values[2];
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_mixer_selem_get_playback_volume_range(handle, (long*) values, (long*) values + 1);
 	checkArrayLength(env, anValues, 2);
 	env->SetIntArrayRegion(anValues, 0, 2, values);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getPlaybackVolumeRange(): end\n"); }
 }
 
 
@@ -800,12 +800,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange
 	snd_mixer_elem_t*	handle;
 	jint			values[2];
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_mixer_selem_get_capture_volume_range(handle, (long*) values, (long*) values + 1);
 	checkArrayLength(env, anValues, 2);
 	env->SetIntArrayRegion(anValues, 0, 2, values);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getCaptureVolumeRange(): end\n"); }
 }
 
 
@@ -821,10 +821,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeRange
 {
 	snd_mixer_elem_t*	handle;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeRange(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeRange(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_mixer_selem_set_playback_volume_range(handle, nMin, nMax);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeRange(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setPlaybackVolumeRange(): end\n"); }
 }
 
 
@@ -840,10 +840,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeRange
 {
 	snd_mixer_elem_t*	handle;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeRange(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeRange(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	snd_mixer_selem_set_capture_volume_range(handle, nMin, nMax);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeRange(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setCaptureVolumeRange(): end\n"); }
 }
 
 
@@ -860,10 +860,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getChannelName
 	const char*		channelName;
 	jstring			channelNameObj;
 
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getChannelName(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getChannelName(): begin\n"); }
 	channelName = snd_mixer_selem_channel_name((snd_mixer_selem_channel_id_t) nChannelType);
 	channelNameObj = env->NewStringUTF(channelName);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getChannelName(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_getChannelName(): end\n"); }
 	return channelNameObj;
 }
 
@@ -878,7 +878,7 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_alsa_AlsaMixerElement_setTrace
 (JNIEnv* env, jclass cls, jboolean bTrace)
 {
-	DEBUG = bTrace;
+	debug_flag = bTrace;
 	debug_file = stderr;
 }
 
