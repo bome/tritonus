@@ -1,5 +1,5 @@
 Makefile
 *.so*
 *.o
-*.h
+org_tritonus_lowlevel_lame_Lame.h
 *.dll

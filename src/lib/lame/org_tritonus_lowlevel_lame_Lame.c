@@ -25,103 +25,16 @@
 
 
 #include	<stdlib.h>
+#include	<string.h>
 
-#include	<lame/lame.h>
 #include	"org_tritonus_lowlevel_lame_Lame.h"
 
-static int debug=0;
-
-
-////////////////////////////// lame specific //////////////////////////////////////////////
-
-typedef struct tagLameConf {
-	int channels;
-	int sampleRate;
-	int bitrate;
-	int mode;
-	int quality;
-	int VBR;
-	int mpegVersion;
-	int swapbytes;
-	lame_global_flags* gf;
-} LameConf;
-
-int doInit(LameConf* conf) {
-	int result;
-
-	conf->gf=lame_init();
-	if (conf->gf==NULL) {
-		//throwRuntimeException(env, "out of memory");
-		return org_tritonus_lowlevel_lame_Lame_OUT_OF_MEMORY;
-	}
-	
-	lame_set_num_channels(conf->gf, conf->channels);
-	lame_set_in_samplerate(conf->gf, conf->sampleRate);
-	/*if (conf->mode!=org_tritonus_lowlevel_lame_Lame_CHANNEL_MODE_AUTO) {
-		lame_set_mode(conf->gf, conf->mode);
-	}*/
-	if (conf->VBR) {
-		// not implemented yet
-		//lame_set_VBR(conf->gf, vbr_default);
-		//lame_set_VBR_q(conf->gf, conf->quality);
-		conf->gf->VBR=vbr_default;
-		conf->gf->VBR_q=conf->quality;
-	} else {
-		// not implemented yet
-		//lame_set_brate(conf->gf, conf->bitrate);
-		conf->gf->brate=conf->bitrate;
-	}
-	lame_set_quality(conf->gf, conf->quality);
-	result=lame_init_params(conf->gf);
-
-	// return effective values
-	conf->sampleRate=lame_get_out_samplerate(conf->gf);
-	//conf->bitrate=lame_get_brate(conf->gf);
-	conf->bitrate=conf->gf->brate;
-	//conf->mode=lame_get_mode(conf->gf);
-	conf->mode=conf->gf->mode;
-	//conf->VBR=lame_get_VBR(conf->gf);
-	conf->VBR=conf->gf->VBR;
-	conf->quality=conf->VBR?conf->gf->VBR_q:lame_get_quality(conf->gf);
-	//conf->quality=conf->VBR??lame_get_VBR_q(conf->gf):lame_get_quality(conf->gf);
-	conf->mpegVersion=lame_get_version(conf->gf);
-
-	return result;
-}
-
-int doGetPCMBufferSize(LameConf* conf, int wishedBufferSize) {
-	// lame supports all buffer sizes
-	return wishedBufferSize;
-}
-
-int doEncode(LameConf* conf, short* pcmSamples, int pcmLengthInFrames, char* encodedBytes, int encodedArrayByteSize) {
-	if (conf->gf==NULL) {
-		//throwRuntimeException(env, "not initialized");
-		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
-	}
-	if (conf->channels==1) {
-		return lame_encode_buffer(conf->gf, pcmSamples, pcmSamples, pcmLengthInFrames, 
-					      encodedBytes, encodedArrayByteSize);
-	} else {
-		return lame_encode_buffer_interleaved(conf->gf, pcmSamples, pcmLengthInFrames, 
-					      encodedBytes, encodedArrayByteSize);
-	}
-}
-
-int doEncodeFinish(LameConf* conf, char* encodedBytes, int encodedArrayByteSize) {
-	if (conf->gf==NULL) {
-		//throwRuntimeException(env, "not initialized");
-		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
-	}
-	return lame_encode_flush(conf->gf, encodedBytes, encodedArrayByteSize);
-}
-
-void doClose(LameConf* conf) {
-	if (conf->gf!=NULL) {
-		lame_close(conf->gf);
-		conf->gf=NULL;
-	}
-}
+#ifdef USE_LAME_API
+#include "lameapi.h"
+#endif
+#ifdef USE_BLADENC_API
+#include "bladenc.h"
+#endif
 
 
 ////////////////////////////// JNI //////////////////////////////////////////////
@@ -186,7 +99,7 @@ static void setIntField(JNIEnv *env, jobject obj, char* name, int value) {
 
 static int platformEndianness=LA_ENDIAN_NOT_TESTED;
 
-inline void CheckEndianness() {
+void CheckEndianness(void) {
 	if (platformEndianness==LA_ENDIAN_NOT_TESTED) {
 		int dummy=1;
 		char* pDummy=(char*) (&dummy);
@@ -212,12 +125,13 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
    jint bitrate, jint mode, jint quality, jboolean VBR, jboolean bigEndian) {
 	int result;
 	LameConf* conf;
-	if (debug) {
-		printf("Java_org_tritonus_lowlevel_lame_Lame_initParams: \n");
-		printf("   %d channels, %d Hz, %d KBit/s, mode %d, quality=%d VBR=%d bigEndian=%d\n",
-		       (int) channels, (int) sampleRate, (int) bitrate, 
-		       (int) mode, (int) quality, (int) VBR, (int) bigEndian);
-	}
+#ifdef _DEBUG
+	printf("Java_org_tritonus_lowlevel_lame_Lame_initParams: \n");
+	printf("   %d channels, %d Hz, %d KBit/s, mode %d, quality=%d VBR=%d bigEndian=%d\n",
+	       (int) channels, (int) sampleRate, (int) bitrate, 
+	       (int) mode, (int) quality, (int) VBR, (int) bigEndian);
+	fflush(stdout);
+#endif
 	nativeGlobalFlagsFieldID = NULL;
 	conf=(LameConf*) calloc(sizeof(LameConf),1);
 	setNativeGlobalFlags(env, obj, conf);
@@ -277,10 +191,13 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nGetPCMBufferSize
 }
 
 
-typedef struct tagTwoChar {
-    char a,b;
-} twoChar;
-
+void swapSamples(unsigned short* samples, int count) {
+	while (count>0) {
+		*samples=(unsigned short) ((((*samples) & 0xFF)<<8) | (((*samples) >>8) & 0xFF00));
+		count--;
+		samples++;
+	}
+}
 
 /*
  * Class:     org_tritonus_lowlevel_lame_Lame
@@ -300,8 +217,6 @@ typedef struct tagTwoChar {
 JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 (JNIEnv *env, jobject obj, jbyteArray pcm, jint offset, jint length, jbyteArray encoded) {
 	LameConf* conf;
-	int i;
-	twoChar* s;
 	int result;
 	char* encodedBytes, *pcmSamplesOrig;
 	short* pcmSamples;
@@ -325,18 +240,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 		pcmSamples=(short*) pcmSamplesOrig;
 		pcmSamples+=(offset/2); // 16bit
 		if (conf->swapbytes) {
-			// swap bytes
-			i=length/2;
-			s=(twoChar*) pcmSamples;
-#ifdef _DEBUG
-			printf("Swapping samples.\n");
-			fflush(stdout);
-#endif
-			for (; i>0; i--, s++) {
-				char help=s->a;
-				s->a=s->b;
-				s->b=help;
-			}
+			swapSamples((unsigned short*) pcmSamples, length/2);
 		}
 		encodedBytes=(*env)->GetByteArrayElements(env, encoded, NULL);
 		
@@ -376,11 +280,11 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeFinish
 (JNIEnv *env, jobject obj, jbyteArray buffer) {
 	int result=0;
 	LameConf* conf;
-	if (debug) {
+#ifdef _DEBUG
 		//jsize length=(*env)->GetArrayLength(env, buffer);
 		printf("Java_org_tritonus_lowlevel_lame_Lame_encodeFinish: \n");
 		//printf("   %d bytes in the array\n", (int) length);
-	}
+#endif
 	conf=getNativeGlobalFlags(env, obj);
 	if (conf!=NULL) {
 		jsize charBufferSize=(*env)->GetArrayLength(env, buffer);
@@ -390,17 +294,19 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeFinish
 		}
 		result=doEncodeFinish(conf, charBuffer, charBufferSize);
 		doClose(conf);
-		if (debug) {
-			printf("   %d bytes returned\n", (int) result);
-		}
+#ifdef _DEBUG
+		printf("   %d bytes returned\n", (int) result);
+#endif
 		(*env)->ReleaseByteArrayElements(env, buffer, charBuffer, 0);
 		setNativeGlobalFlags(env, obj, 0);
 		free(conf);
 	}
-	else if (debug) {
+#ifdef _DEBUG
+	else {
 		printf("Java_org_tritonus_lowlevel_lame_Lame_encodeFinish: \n");
 		printf("   no global flags !\n");
 	}
+#endif
 	return (jint) result;
 }
 
@@ -412,13 +318,50 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeFinish
 JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_nClose(JNIEnv * env, jobject obj) {
 	LameConf* conf;
 
-	if (debug) {
-		printf("Java_org_tritonus_lowlevel_lame_Lame_close. \n");
-	}
+#ifdef _DEBUG
+	printf("Java_org_tritonus_lowlevel_lame_Lame_nClose. \n");
+#endif
 	conf=getNativeGlobalFlags(env, obj);
 	if (conf!=NULL) {
 		doClose(conf);
 		setNativeGlobalFlags(env, obj, 0);
 		free(conf);
 	}
+#ifdef _DEBUG
+	else {
+		printf("   no global flags !\n");
+	}
+#endif
 }
+
+/*
+ * Class:     org_tritonus_lowlevel_lame_Lame
+ * Method:    nGetEncoderVersion
+ * Signature: ([B)I
+ */
+JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nGetEncoderVersion
+  (JNIEnv * env, jobject obj, jbyteArray string) {
+	LameConf* conf;
+	int res;
+	jsize charBufferSize;
+	char* charBuffer=NULL;
+
+#ifdef _DEBUG
+	printf("Java_org_tritonus_lowlevel_lame_Lame_nGetEncoderVersion\n");
+#endif
+	conf=getNativeGlobalFlags(env, obj);
+	charBufferSize=(*env)->GetArrayLength(env, string);
+	charBuffer=NULL;
+	if (charBufferSize>0) {
+		charBuffer=(*env)->GetByteArrayElements(env, string, NULL);
+	}
+	if (charBuffer==NULL) {
+#ifdef _DEBUG
+		printf("  passed array is NULL or zero-length !\n");
+		return -1;
+#endif
+	}
+	res=doGetEncoderVersion(conf, charBuffer, charBufferSize);
+	(*env)->ReleaseByteArrayElements(env, string, charBuffer, 0);
+	return res;
+}  	

@@ -10,7 +10,8 @@ JAVAEXTLIBPATH=$(JAVADIR)/$(REL_JAVAEXTLIBPATH)
 OSNAME=@OSNAME@
 ARCHNAME=@ARCHNAME@
 CC=@CC@
-CPPFLAGS=-Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT
+DEFINES=-DUSE_LAME_API
+CPPFLAGS=-Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT $(DEFINES)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -19,6 +20,8 @@ LN_S=@LN_S@
 RM_F=@RM_F@
 MKDIR_P=@MKDIR_P@
 
+# to enable debugging of the JNI code:
+#DEFINES = $(DEFINES) _DEBUG
 
 OBJDIR=../../../@BUILD_DIR@
 vpath %.class $(OBJDIR)/org/tritonus/lowlevel/lame
@@ -32,13 +35,15 @@ LIBS=-lmp3lame
 
 JAVAH = @JAVAH@
 
-OBJ=\
+JNIOBJ=\
 	org_tritonus_lowlevel_lame_Lame.o
+
+OBJECTS=$(JNIOBJ) lameapi.o
 
 JNICLASSFILES=\
 	Lame.class
 
-JNIHEADERS:=$(OBJ:.o=.h)
+JNIHEADERS:=$(JNIOBJ:.o=.h)
 
 JNICLASSES=\
 	org.tritonus.lowlevel.lame.Lame
@@ -49,17 +54,17 @@ JNICLASSES=\
 .PHONY: all
 all: $(LIBDEST)
 
-$(LIBDEST):	$(OBJ)
+$(LIBDEST):	$(OBJECTS)
 # dynamic linking of liblame.so
-	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) $(LIBS)
+	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJECTS) $(LIBS)
 # static linking of liblame.a
-#	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L. $(LIBS)
+#	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJECTS) -L. $(LIBS)
 	@$(RM_F) $(LIBBASENAME).so.1
 	@$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	@$(RM_F) $(LIBBASENAME).so
 	@$(LN_S) $(LIBBASENAME).so.1 $(LIBBASENAME).so
 
-$(OBJ): $(JNIHEADERS)
+$(JNIOBJ): $(JNIHEADERS)
 
 $(JNIHEADERS): $(JNICLASSFILES)
 	@$(RM_F) $(JNIHEADERS)

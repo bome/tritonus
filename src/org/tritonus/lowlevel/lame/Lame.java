@@ -25,13 +25,36 @@
 
 package	org.tritonus.lowlevel.lame;
 
-import	java.io.IOException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import javax.sound.sampled.AudioFormat;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.Encodings;
 
 public class Lame {
+	
+	// constants from lame.h
+	private static final int MPEG_VERSION_2 = 0; // MPEG-2
+	private static final int MPEG_VERSION_1 = 1; // MPEG-1
+	private static final int MPEG_VERSION_2DOT5 = 2; // MPEG-2.5
+
+	public static final int QUALITY_LOWEST = 9; // low mean bitrate in VBR mode
+	public static final int QUALITY_LOW = 7;    
+	public static final int QUALITY_MIDDLE = 5;
+	public static final int QUALITY_HIGH = 2;
+	// quality==0 not yet coded in LAME (3.83alpha)
+	public static final int QUALITY_HIGHEST = 1; // high mean bitrate in VBR mode
+
+	public static final int CHANNEL_MODE_STEREO = 0;
+	public static final int CHANNEL_MODE_JOINT_STEREO = 1;
+	public static final int CHANNEL_MODE_DUAL_CHANNEL = 2;
+	public static final int CHANNEL_MODE_MONO = 3;
+
+	// channel mode has no influence on mono files.
+	public static final int CHANNEL_MODE_AUTO = -1;
+	public static final int BITRATE_AUTO = -1;
 
 	// suggested maximum buffer size for an mpeg frame
 	private static final int DEFAULT_PCM_BUFFER_SIZE=2048*16;
@@ -41,22 +64,9 @@ public class Lame {
 	private static boolean libAvailable=false;
 	private static String linkError="";
 
-	public static final int QUALITY_LOWEST = 9; // low mean bitrate in VBR mode
-	public static final int QUALITY_LOW = 7;    
-	public static final int QUALITY_MIDDLE = 5;
-	public static final int QUALITY_HIGH = 2;
-	// quality==0 not yet coded in LAME (3.83alpha)
-	public static final int QUALITY_HIGHEST = 1; // high mean bitrate in VBR mode
-
-	// channel mode has no influence on mono files.
-	public static final int CHANNEL_MODE_STEREO = 0;
-	public static final int CHANNEL_MODE_JOINT_STEREO = 1;
-	public static final int CHANNEL_MODE_DUAL_CHANNEL = 2;
-	public static final int CHANNEL_MODE_MONO = 3;
-	public static final int CHANNEL_MODE_AUTO = -1;
 
 	private static int DEFAULT_QUALITY = QUALITY_MIDDLE;
-	private static int DEFAULT_BIT_RATE = 128;
+	private static int DEFAULT_BITRATE = BITRATE_AUTO;
 	private static int DEFAULT_CHANNEL_MODE = CHANNEL_MODE_AUTO;
 	// in VBR mode, bitrate is ignored.
 	private static boolean DEFAULT_VBR = false;
@@ -117,7 +127,7 @@ public class Lame {
 
 	/**
 	 * Initializes the decoder with 
-	 * DEFAULT_BIT_RATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, and DEFAULT_VBR
+	 * DEFAULT_BITRATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, and DEFAULT_VBR
 	 * Throws IllegalArgumentException when parameters are not supported
 	 * by LAME.
 	 */
@@ -136,7 +146,7 @@ public class Lame {
 
 	private void initParams(AudioFormat sourceFormat) {
 		readParameters();
-		initParams(sourceFormat, DEFAULT_BIT_RATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, DEFAULT_VBR);
+		initParams(sourceFormat, DEFAULT_BITRATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, DEFAULT_VBR);
 	}
 		
 	private void initParams(AudioFormat sourceFormat, int bitRate, int channelMode, int quality, boolean VBR) {
@@ -175,6 +185,8 @@ public class Lame {
 					   String.valueOf(getEffectiveSampleRate()));
 			System.setProperty(PROPERTY_PREFIX + "effective.encoding", 
 					   getEffectiveEncoding().toString());
+			System.setProperty(PROPERTY_PREFIX + "encoder.version", 
+					   getEncoderVersion());
 		}
 		catch (Throwable t)
 		{
@@ -195,6 +207,38 @@ public class Lame {
 				       boolean VBR, boolean bigEndian);
 
 	/**
+	 * returns -1 if string is too short
+	 * or returns one of the exception constants
+	 * if everything OK, returns the length of the string
+	 */
+	private native int nGetEncoderVersion(byte[] string);
+	
+	public String getEncoderVersion() {
+		byte[] string=new byte[300];
+		int res=nGetEncoderVersion(string);
+		if (res<0) {
+			if (res==-1) {
+				throw new RuntimeException("Unexpected error in Lame.getEncoderVersion()");
+			}
+			handleNativeException(res);
+		}
+		String sRes="";
+		if (res>0) {
+			try {
+				sRes=new String(string, 0, res, "ISO-8859-1");
+			} catch (UnsupportedEncodingException uee) {
+				if (TDebug.TraceAllExceptions) {
+					TDebug.out(uee);
+				}
+				sRes=new String(string, 0, res);
+			}
+		}
+		return sRes;
+	}
+	
+	private native int nGetPCMBufferSize(int suggested);
+
+	/**
 	 * Returns the buffer needed pcm buffer size.
 	 * The passed parameter is a wished buffer size.
 	 * The implementation of the encoder may return
@@ -202,8 +246,6 @@ public class Lame {
 	 * The encoder must be initalized (i.e. not closed) at this point.
 	 * A return value of <0 denotes an error.
 	 */
-	private native int nGetPCMBufferSize(int suggested);
-
 	public int getPCMBufferSize() {
 		int ret=nGetPCMBufferSize(DEFAULT_PCM_BUFFER_SIZE);
 		if (ret<0) {
@@ -215,9 +257,9 @@ public class Lame {
 
 	public int getMP3BufferSize() {
 		// bad estimate :)
-		return getPCMBufferSize()/2;
+		return getPCMBufferSize()/2+1024;
 	}
-		
+
 
 	private native int nEncodeBuffer(byte[] pcm, int offset, 
 					int length, byte[] encoded);
@@ -311,11 +353,14 @@ public class Lame {
 	}
 	
 	public AudioFormat.Encoding getEffectiveEncoding() {
-		if (effEncoding==0) {
+		if (effEncoding==MPEG_VERSION_2) {
 			if (getEffectiveSampleRate()<16000) {
 				return Encodings.getEncoding("MPEG2DOT5L3");
 			}
 			return Encodings.getEncoding("MPEG2L3");
+		} 
+		else if (effEncoding==MPEG_VERSION_2DOT5) {
+			return Encodings.getEncoding("MPEG2DOT5L3");
 		}
 		return Encodings.getEncoding("MPEG1L3");
 	}
@@ -327,14 +372,14 @@ public class Lame {
 	private void readParameters() {
 		String v=getStringProperty("quality", quality2string(DEFAULT_QUALITY));
 		DEFAULT_QUALITY=string2quality(v.toLowerCase(), DEFAULT_QUALITY);
-		DEFAULT_BIT_RATE=getIntProperty("bitrate", DEFAULT_BIT_RATE);
+		DEFAULT_BITRATE=getIntProperty("bitrate", DEFAULT_BITRATE);
 		v=getStringProperty("chmode", chmode2string(DEFAULT_CHANNEL_MODE));
 		DEFAULT_CHANNEL_MODE=string2chmode(v.toLowerCase(), DEFAULT_CHANNEL_MODE);
 		DEFAULT_VBR = getBooleanProperty("vbr", DEFAULT_VBR);
 		// set the parameters back so that user program can verify them
 		try {
 			System.setProperty(PROPERTY_PREFIX + "quality", quality2string(DEFAULT_QUALITY));
-			System.setProperty(PROPERTY_PREFIX + "bitrate", String.valueOf(DEFAULT_BIT_RATE));
+			System.setProperty(PROPERTY_PREFIX + "bitrate", String.valueOf(DEFAULT_BITRATE));
 			System.setProperty(PROPERTY_PREFIX + "chmode", chmode2string(DEFAULT_CHANNEL_MODE));
 			System.setProperty(PROPERTY_PREFIX + "vbr", String.valueOf(DEFAULT_VBR));
 		}
