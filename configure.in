@@ -2,8 +2,6 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/javax/sound/sampled/AudioSystem.java)
 AC_CONFIG_AUX_DIR(util)
 
-#AC_ARG_WITH(jdk11,--with-jdk11=version	use this option if you want to compile Tritonus with jdk1.1.x,[JAVA_VERSION="$withval"],[JAVA_VERSION="12"])
-
 case "$JAVA_VERSION" in
 yes) JAVA_VERSION=118;;
 esac
@@ -117,5 +115,5 @@ AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
+	src/lib/saint/Makefile
 	test/Makefile)
-dnl	src/lib/saint/Makefile

@@ -20,7 +20,7 @@ MKDIR_P=@MKDIR_P@
 JAVAEXTPATH=$(JAVADIR)/jre/lib/ext
 JAVAEXTLIBPATH=$(JAVAEXTPATH)/$(ARCHNAME)
 
-OBJDIR=../../..
+OBJDIR=../../../build
 vpath %.class $(OBJDIR)/org/tritonus/lowlevel/lame
 
 LIBBASENAME=liblametritonus

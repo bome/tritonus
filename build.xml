@@ -45,8 +45,20 @@
 		depends="prepare" >
 		<exec
 			dir="."
+			command="make -C src/lib/alsa"
+			output="native0.log" />
+		<exec
+			dir="."
 			command="make -C src/lib/esd"
-			output="native.log" />
+			output="native1.log" />
+		<exec
+			dir="."
+			command="make -C src/lib/lame"
+			output="native2.log" />
+		<exec
+			dir="."
+			command="make -C src/lib/saint"
+			output="native3.log" />
 	</target>
 
 	<target name="dist"

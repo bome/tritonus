@@ -5,7 +5,6 @@ SHELL = /bin/sh
 
 prefix=@prefix@
 
-#LIBNAME=tritonus
 
 JAVADIR=$(prefix)
 JAVAEXTPATH=$(JAVADIR)/jre/lib/ext
