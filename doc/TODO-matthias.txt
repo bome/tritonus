@@ -12,6 +12,7 @@ IDEAS
 TODO
 ----
 
+- cleanup web pages: contemporary doctype, weblint, ...
 - binary dists: esd, alsa
 - use aspectj!!!
 - add "formatted for 80 cols" header to all files
