@@ -9,6 +9,8 @@
 #include	"HandleFieldHandler.hh"
 
 
+#define checkExceptionSpecial()	if (env->ExceptionOccurred()) { env->ExceptionClear(); return -1; }
+
 static int	DEBUG = 0;
 static FILE*	debug_file = NULL;
 
@@ -218,23 +220,29 @@ Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): begin\n"); }
 	handle = handler.getHandle(env, obj);
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): handle: %p\n", handle); }
 	indices = env->GetIntArrayElements(anIndices, NULL);
 	if (indices == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements() failed");
+		return -999;
 	}
 	nIndex = 0;
 	element = snd_mixer_first_elem(handle);
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): first element: %p\n", element); }
 	while (element != NULL)
 	{
 		// TODO: should not throw exception, but return -1 (and clean the array)
 		checkArrayLength(env, anIndices, nIndex + 1);
+		checkExceptionSpecial();
 		checkArrayLength(env, astrNames, nIndex + 1);
+		checkExceptionSpecial();
 		indices[nIndex] = snd_mixer_selem_get_index(element);
 		setStringArrayElement(env, astrNames, nIndex,
 				      snd_mixer_selem_get_name(element));
 		nIndex++;
 		element = snd_mixer_elem_next(element);
+		if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaMixer_readControlList(): next element: %p\n", element); }
 	}
 	nReturn = nIndex;
 	env->ReleaseIntArrayElements(anIndices, indices, 0);
