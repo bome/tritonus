@@ -1,3 +1,25 @@
+/*
+ *	AlsaCtlTestCase.java
+ */
+
+/*
+ *  Copyright (c) 2001 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as published
+ *   by the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Library General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 import	junit.framework.TestCase;
 
 import	org.tritonus.lowlevel.alsa.AlsaCtl;
@@ -22,9 +44,9 @@ extends TestCase
 	public void testGetCards()
 	{
 		int[]	anCards = AlsaCtl.getCards();
-		assert(anCards != null);
-		assert(anCards.length == 1);
-		assert(anCards[0] >= 0);
+		assertTrue(anCards != null);
+		assertTrue(anCards.length == 1);
+		assertTrue(anCards[0] >= 0);
 	}
 
 
@@ -35,7 +57,7 @@ extends TestCase
 		for (int i = 0; i < anCards.length; i++)
 		{
 			int	nError = AlsaCtl.loadCard(anCards[i]);
-			assert(nError >= 0);
+			assertTrue(nError >= 0);
 		}
 	}
 
@@ -48,13 +70,13 @@ extends TestCase
 		{
 			System.out.println("card index: " + nIndex);
 		}
-		assert(nIndex >= 0);
+		assertTrue(nIndex >= 0);
 		int[]	anCards = AlsaCtl.getCards();
 		if (DEBUG)
 		{
 			System.out.println("card index: " + anCards[0]);
 		}
-		assert(nIndex == anCards[0]);
+		assertTrue(nIndex == anCards[0]);
 	}
 
 
@@ -63,10 +85,10 @@ extends TestCase
 	{
 		int[]	anCards = AlsaCtl.getCards();
 		String	strName = AlsaCtl.getCardName(anCards[0]);
-		assert(strName != null && !strName.equals(""));
+		assertTrue(strName != null && !strName.equals(""));
 		String	strLongName = AlsaCtl.getCardLongName(anCards[0]);
-		assert(strLongName != null && !strLongName.equals(""));
-		assert(!strName.equals(strLongName));
+		assertTrue(strLongName != null && !strLongName.equals(""));
+		assertTrue(!strName.equals(strLongName));
 		if (DEBUG)
 		{
 			System.out.println("card name: " + strName);
@@ -80,17 +102,20 @@ extends TestCase
 	{
 		int	nDefault;
 		nDefault = AlsaCtl.getDefaultCard();
-		assert(nDefault >= 0);
+		assertTrue(nDefault >= 0);
 		nDefault = AlsaCtl.getDefaultMixerCard();
-		assert(nDefault >= 0);
+		assertTrue(nDefault >= 0);
 		nDefault = AlsaCtl.getDefaultPcmCard();
-		assert(nDefault >= 0);
+		assertTrue(nDefault >= 0);
 		nDefault = AlsaCtl.getDefaultPcmDevice();
-		assert(nDefault >= 0);
+		assertTrue(nDefault >= 0);
 		nDefault = AlsaCtl.getDefaultRawmidiCard();
-		assert(nDefault >= 0);
+		assertTrue(nDefault >= 0);
 		nDefault = AlsaCtl.getDefaultRawmidiDevice();
-		assert(nDefault >= 0);
+		assertTrue(nDefault >= 0);
 	}
 }
 
+
+
+/*** AlsaCtlTestCase.java ***/
