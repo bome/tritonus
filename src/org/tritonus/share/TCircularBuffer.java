@@ -104,11 +104,15 @@ public class TCircularBuffer
 	{
 		if (!m_bOpen)
 		{
-			if (TDebug.TraceCircularBuffer)
+			if (availableRead() > 0)
 			{
-				TDebug.out("< not open. returning -1.");
+				nLength = Math.min(nLength, availableRead());
 			}
-			return -1;
+			else
+			{
+				if (TDebug.TraceCircularBuffer) { TDebug.out("< not open. returning -1."); }
+				return -1;
+			}
 		}
 		if (TDebug.TraceCircularBuffer)
 		{
