@@ -1,5 +1,5 @@
 /*
- *	common.cc
+ *	common.c
  */
 
 /*
@@ -21,9 +21,8 @@
  */
 
 
-#include	"common.h"
-
-static bool DEBUG = false;
+#include "common.h"
+#include "debug.h"
 
 
 
@@ -32,21 +31,21 @@ throwRuntimeException(JNIEnv *env, const char* pStrMessage)
 {
 	static  jclass	runtimeExceptionClass = NULL;
 
-	if (env->ExceptionOccurred() != NULL)
+	if ((*env)->ExceptionOccurred(env) != NULL)
 	{
-		if (DEBUG) { env->ExceptionDescribe(); }
-		env->ExceptionClear();
+		if (debug_flag) { (*env)->ExceptionDescribe(env); }
+		(*env)->ExceptionClear(env);
 	}
 	if (runtimeExceptionClass == NULL)
 	{
-		runtimeExceptionClass = env->FindClass("java/lang/RuntimeException");
-		if (DEBUG) { printf("RTE: %p\n", runtimeExceptionClass); }
+		runtimeExceptionClass = (*env)->FindClass(env, "java/lang/RuntimeException");
+		if (debug_flag) { fprintf(debug_file, "RTE: %p\n", runtimeExceptionClass); }
 		if (runtimeExceptionClass == NULL)
 		{
-			env->FatalError("cannot get class object for java.lang.RuntimeException");
+			(*env)->FatalError(env, "cannot get class object for java.lang.RuntimeException");
 		}
 	}
-	env->ThrowNew(runtimeExceptionClass, pStrMessage);
+	(*env)->ThrowNew(env, runtimeExceptionClass, pStrMessage);
 }
 
 
@@ -56,7 +55,7 @@ checkArrayLength(JNIEnv *env, jarray array, int nRequiredLength)
 {
 	int	nLength;
 
-	nLength = env->GetArrayLength(array);
+	nLength = (*env)->GetArrayLength(env, array);
 	if (nLength < nRequiredLength)
 	{
 		throwRuntimeException(env, "array does not have enough elements");
@@ -70,14 +69,14 @@ setStringArrayElement(JNIEnv *env, jobjectArray array, int nIndex, const char* s
 {
 	jstring		string2;
 
-	string2 = env->NewStringUTF(string1);
+	string2 = (*env)->NewStringUTF(env, string1);
 	if (string1 == NULL)
 	{
 		throwRuntimeException(env, "NewStringUTF() failed");
 	}
-	env->SetObjectArrayElement(array, nIndex, string2);
+	(*env)->SetObjectArrayElement(env, array, nIndex, string2);
 }
 
 
 
-/*** common.cc ***/
+/*** common.c ***/
