@@ -3,7 +3,7 @@
 
 org.tritonus.sampled.mixer.alsa.AlsaDataLineMixerProvider
 org.tritonus.sampled.mixer.alsa.AlsaPortMixerProvider
-#org.tritonus.sampled.mixer.esd.EsdMixerProvider
+org.tritonus.sampled.mixer.esd.EsdMixerProvider
 
 # end
 #
