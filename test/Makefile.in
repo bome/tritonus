@@ -17,7 +17,7 @@ JAVAC=javac
 %.class: %.java
 	$(JAVAC) -d $(DESTDIR) $<
 
-JAVAFLAGS=-Djava.compiler=NONE
+#JAVAFLAGS=-Djava.compiler=NONE
 PATHSETTINGS=export CLASSPATH=.:../tritonus.jar:$(CLASSPATH); export LD_LIBRARY_PATH=../src/lib/nas:../src/lib/esd
 
 SRCDIR=.
@@ -44,9 +44,14 @@ all: $(OBJ)
 test:	all
 	$(PATHSETTINGS); java $(JAVAFLAGS) Sine
 
-.PHONY: testserver
-testserver:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) ServerInfo
+.PHONY: testsaint
+testsaint:	saint.class
+	java $(JAVAFLAGS) saint -c ../../../sounds/sa/equalizer.saol -s ../../../sounds/sa/eq.sasl -o test.out
+	cksum *.out
+
+.PHONY: testsaint2
+testsaint2:	saint.class SourceDataLineOutputStream.class
+	java $(JAVAFLAGS) saint -c ../../../sounds/sa/equalizer.saol -s ../../../sounds/sa/eq.sasl -f s16l -o +
 
 .PHONY: testnas
 testnas:	all
