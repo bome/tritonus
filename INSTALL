@@ -31,7 +31,7 @@ files for libesd.
 - Or: ALSA 0.9.0rc2 or later or the corresponding cvs state. Get it
 from http://www.alsa-project.org/. It is recommended to use ALSA if
 you want to get high-performance, low-latency operation, or reliable
-full-duplex.
+full-duplex. It is a necessity if you want professional-grade MIDI support.
 
   STILL ANOTHER NOTE: currently, Tritonus' ALSA handling does not do
   software mixing. This means that for normal JS operation (multiple
@@ -120,6 +120,97 @@ should be in your CLASSPATH
 this contains the native 
 code and should be in your LD_LIBRARY_PATH
 
+USING TRITONUS WITH SUN/IBM/BLACKDOWN JDK 1.3/1.4
+
+If you are using Tritonus with a jdk/jre that already has an
+implementation of the Java Sound API, you have two choices:
+
+1. Use only the components of Tritonus that are not available/not
+working correctely in the native Java Sound implementation.
+
+2. Completely replace the Java Sound implementation by Tritonus.
+
+Since 1.3 and 1.4 behave sligtly different w.r.t. this issue, there
+are even more pitfalls.
+
+If you just want to use one of Tritonus' FormatconversionProviders,
+MixerProviders or MidiDeviceProviders (these are the most common
+cases), put the respective tritonus_xxx.jar into either the user class
+path or the extension class path. Using the user class path can be
+convenient for quick tests. However, for permanent installation it is
+not recommanded. The reason is that executing a VM with 'java -jar
+...' overrides the user class path with the location of the jar. So
+.jar put into the user class path become unavailable. Manipulating the
+boot class path is generally highly discouraged (see below for a
+useful, but still critical use of the boot class path). The remaining
+(and recommanded) way is to use the extension class path.
+
+Additionally, put native libs of .jar that need one into a generally
+system-accessible location (for instance /usr/lib/, /usr/local/lib,
+...). To install native libs in a custom location, you typically need
+to change the value of the environment variable LD_LIBRARY_PATH.
+
+This done, the components should be available to Java
+Sound. MixerProviders contribute to the list of Mixers
+(AudioSystem.getMixerInfo()). MidiDeviceProviders contribute to the
+list of MidiDevices
+(MidiSystem.getMidiDeviceInfo()). FormatConversionProviders are
+considered implicitely (by AudioSystem.getTargetEncodings(),
+AudioSystem.getTargetFormats(), AudioSystem.isConversionSupported(),
+AudioSystem.getAudioInputStream()).
+
+With jdk 1.3.X, the pitfal is that making the providers available does
+NOT automatically change the default devices (as returned/used by
+AudioSystem.getLine(), MidiSystem.getSynthesizer(),
+MidiSystem.getReceiver(), MidiSystem.getTransmitter(),
+MidiSystem.getSequencer(), MidiSystem.getSynthesizer()). The jdk
+searches the class paths for available providers in this order: boot
+class path, extension class path, user class path. Since the
+'built-in' providers appear in rt.jar, which appears in the boot class
+path, its devices de facto act as default. Devices provided by
+additionally installed providers are available on explicit request
+(AudioSystem.getMixer(), MidiSystem.getMidiDevice()).
+
+With jdk 1.4, the defaults change without asking you, and exactely
+this can be a pitfal, too. This is due to the fact the the search
+order for provider is reversed. Here, it is: user class path,
+extension class path, boot class path. So devices provided by
+additional providers can act as default devices.
+
+So with jdk1.4, yor job is easy, while with jdk1.3 you have to
+explicitely name alternative Mixers and MidiDevices. Note that it is
+not a good idea to hard-code Tritonus' Mixer/MidiDevice names. The
+recommanded practice is to give the user a list of available
+Mixers/MidiDevices and let her/him select an appropriate one. These
+choices may be stored as preferences. If the user doesn't explicitely
+select devices, default devices (as provided by the Java Sound
+implementation, not hard-coded ones) should be used.
+
+
+
+[table: which provider in which .jar]
+
+    <sect2><title>I installed Tritonus on a Sun jdk1.3.0 and I still
+    get the behaviour of Sun's Java Sound implementation.</title>
+
+      <para>Using Tritonus under jdk1.3.0 is a bit tricky. The point
+      is that installing Tritonus you are just adding Tritonus'
+      mixers, converters and other service providers to ones of Sun's
+      Java Sound implementation. Especially, Sun's mixing engine is
+      still the default mixer. To use Tritonus' mixers, you have to
+      select the mixer in your program manually: get the respective
+      Mixer object from AudioSystem, and allocate the lines from this
+      Mixer object. The same is true for MidiDevices. It's possible
+      to use Tritonus' javax.sound.* classes by putting them into the
+      boot classpath *before* rt.jar. But this still leaves you with
+      Sun's service providers. Getting rid of them required to change
+      the service provider configuration files inside rt.jar or other,
+      even more fancy measures. The alternative way out of the hell is
+      to use a jdk1.2.X, where Tritonus is the only Java Sound
+      implementation.  (Matthias)</para>
+
+
+
 MISCELLANEOUS
 
 If you found bugs, have suggestions, want to contribute or whatever,
@@ -133,3 +224,90 @@ You may also have a look at the Tritonus developer page:
 http://tritonus.sourceforge.net/developer.html
 
 Have fun!!
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Material not yet integrated (may be out of date)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+README.midi
+-----------
+
+ALSA
+----
+
+The MIDI stuff of tritonus makes heavy use of the ALSA sequencer.
+ALSA is the Advanced Linux Sound Architecture
+(http://www.alsa-project.org), a new soundcard driver system intended
+to replace the OSS/Free driver in future kernels.
+
+
+HOW TO MAKE IT WORK
+-------------------
+
+Use a recent 2.2 kernel. The developer of this stuff uses 2.2.10 and
+2.2.14 kernels; every kernel newer than 2.2.3 should work. In the
+kernel configuration, enable sound support, but do not include any
+concrete driver.  Enabling kernel symbol versioning helps if you
+recompile kernels frequently.
+
+Download and install the ALSA drivers/lib/utils version 0.5.x.
+You cannot use earlier versions of ALSA due to incompatible
+changes.  Be sure to configure '--with-sequencer=yes' in the driver
+part.  Install the modules and load the new versions.  Load the
+sequencer modules. For help on installing ALSA, see the alsa-user
+mailing list (visit the ALSA web site).
+
+
+Installation check
+------------------
+
+> cat /proc/asound/seq/clients
+The result should be similar to this:
+Client info
+  cur  clients : 2
+  peak clients : 2
+  max  clients : 192
+
+Client   0 : "System" [Kernel]
+  Port   0 : "Timer" (system:Rwe:Rwe)
+  Port   1 : "Announce" (system:R-e:R-e)
+Client  64 : "0: MIDI Synth" [Kernel]
+  Port   0 : "MIDI 0-0" (device:RWe:RWe)
+
+If the file doesn't exist at all, load the sequencer module:
+
+	modprobe snd-seq
+
+If the file exists, but the "MIDI Synth" doesn't show up, load the
+MIDI client module:
+
+	modprobe snd-seq-midi
+
+If the internal synthesizer of your card is supported (not all
+cards), you can load the synth support, too:
+
+	modprobe snd-seq-synth
+
+There may be additional lines if you have more than one soundcard,
+your soundcard has more than one MIDI port or the internal synth of
+the soundcard is supported.
+
+Second install check
+--------------------
+
+Install pmidi (http://www.parabola.demon.co.uk/alsa/pmidi.html).
+You need version 1.4.0 or later.
+Call 'pmidi -l'. The output should be similar to this:
+ Port     Client name                       Port name
+ 64:0     0: MIDI Synth                     MIDI 0-0
+
+Connect a synthesizer to the MIDI out of your computer.  Call 'pmidi
+-p 64:0 <midifile>'.  '64:0' should be the number shown in the first
+column of the output from 'pmidi -l'. The MIDI file should be played
+on your synth.
+
+(Hopefully) finished!
+---------------------
+
+Now you should be able to use Tritonus with the ALSA sequencer.
