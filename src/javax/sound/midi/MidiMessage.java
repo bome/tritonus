@@ -114,7 +114,13 @@ implements Cloneable
 		<code>nLength</code> bytes of <code>abData</code> are copied to
 		a newly created array, which is set as {@link #data data}.
 		{@link #length length} is initialized to the value of
-		<code>nLength</code>.
+		<code>nLength</code>.<p>
+
+		Open points: should we specify that this class'
+		version of setMessage() (not the ones of derived
+		classes) never throws an exception? Otherwise, we have
+		to specify the cases where exceptions are thrown. For
+		instance: abData == null, abData.length < nLength, ...
 
 		@param abData The bytes to use as MIDI message. This array may
 		contain trailing invalid bytes. <code>nLength</code> gives the
