@@ -110,6 +110,7 @@ SUBDIRS=
 AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"]; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
 AC_CHECK_LIB(esd,esd_open_sound,[SUBDIRS="$SUBDIRS src/lib/esd"; AC_MSG_RESULT(Information: will build stuff for Enlightened Sound Daemon)],[AC_MSG_RESULT(Information: will not build stuff for Enlightened Sound Daemon)],-laudiofile)
 AC_CHECK_LIB(mp3lame,lame_init_params,[SUBDIRS="$SUBDIRS src/lib/lame"; AC_MSG_RESULT(Information: will build stuff for LAME mp3 encoder)],[AC_MSG_RESULT(Information: will not build stuff for LAME mp3 encoder)])
+AC_CHECK_HEADER(linux/cdrom.h,[SUBDIRS="$SUBDIRS src/lib/cdda"; AC_MSG_RESULT(Information: will build stuff for simple cdda)],[AC_MSG_RESULT(Information: will not build stuff for simple cdda)])
 
 dnl AC_MSG_RESULT(hallo x${SUBDIRS}x)
 
@@ -204,6 +205,7 @@ fi
 
 AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
+	src/lib/cdda/Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
 	src/lib/saint/Makefile
