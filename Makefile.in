@@ -42,6 +42,7 @@ LIBDEST=tritonus.jar
 LIBDEST_JL=javalayer.jar
 LIBDEST_MP3SP=mp3sp.jar
 LIBDEST_GSM=tritonus_gsm.jar
+PLUGINS=$(LIBDEST_JL) $(LIBDEST_MP3SP) $(LIBDEST_GSM)
 LIBDEST_ABSOLUTE_PREFIX=@SRC_ABSOLUTE_PATH@
 # or LIBDEST_ABSOLUTE_PREFIX=$(CURDIR)
 
@@ -219,7 +220,7 @@ compileinitialimpl: $(SRC)
 convert:
 	@if [ ! -f .converted ]; then ./ConvertJDK117; echo "" > .converted; fi
 
-$(LIBDEST):	$(OBJ) #$(CONFIGFILE2)
+$(LIBDEST):	$(OBJ)
 	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN) -C src/packaging/tritonus_core/ META-INF/services/
 
 
@@ -319,3 +320,6 @@ devdist-upload: devdist
 	echo tritonus-`date +%Y-%m-%d.tar.gz` >.fname
 	scp `cat .fname` pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
 	-rm -f .fname
+
+plugins-upload:	$(PLUGINS)
+	scp $(PLUGINS) pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/
