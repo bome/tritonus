@@ -10,7 +10,7 @@ JAVAEXTLIBPATH=$(JAVADIR)/$(REL_JAVAEXTLIBPATH)
 OSNAME=@OSNAME@
 ARCHNAME=@ARCHNAME@
 CC=@CC@
-CPPFLAGS=-Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
+CPPFLAGS=-Wall -I../common -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -27,7 +27,7 @@ LIBDEST=$(LIBBASENAME).so.1.0
 LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/cdparanoia/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
-LIBS=-lcdda_interface -lcdda_paranoia
+LIBS=-lcdda_interface -lcdda_paranoia -L../common -ltritonuscommon
 
 JAVAH = @JAVAH@
 
@@ -36,7 +36,7 @@ JNIOBJ=\
 	org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.o
 
 OBJ=$(JNIOBJ) \
-	common.o
+	handlers.o
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
@@ -53,7 +53,7 @@ JNICLASSES=\
 all: $(LIBDEST)
 
 $(LIBDEST):	$(OBJ)
-	$(CC) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) $(LIBS)
+	$(CXX) -shared -Wl,-soname,$(LIBBASENAME).so.1 -Wl,-rpath,/home/matthias/java/tritonus/src/lib/common -o $(LIBDEST) $(OBJ) $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
