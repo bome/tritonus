@@ -80,6 +80,7 @@ public class AlsaSequencer
 	private boolean			m_bRecording;
 	private Track			m_track;
 	private AlsaSeq.Event		m_allNotesOffEvent;
+	private Sequencer.SyncMode	m_oldSlaveSyncMode;
 
 
 	public AlsaSequencer(MidiDevice.Info info)
@@ -209,6 +210,7 @@ public class AlsaSequencer
 			AlsaSeq.SND_SEQ_ADDRESS_SUBSCRIBERS,	// dest client
 			AlsaSeq.SND_SEQ_ADDRESS_UNKNOWN);	// dest port
 		m_allNotesOffEvent = new AlsaSeq.Event();
+		m_oldSlaveSyncMode = getSlaveSyncMode();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
 		m_syncThread = new MasterSynchronizer();
@@ -260,10 +262,15 @@ public class AlsaSequencer
 			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): notifying loader thread"); }
 			m_loaderThread.notify();
 		}
+		// TODO: should depend on sync mode
 		synchronized (m_syncThread)
 		{
 			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): notifying synchronizer thread"); }
 			m_syncThread.notify();
+		}
+		if (! getSlaveSyncMode(). equals(Sequencer.SyncMode.NO_SYNC))
+		{
+			sendStartEvent();
 		}
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): end"); }
 	}
@@ -277,6 +284,10 @@ public class AlsaSequencer
 		sendAllNotesOff();
 		// should be in base class?
 		stopRecording();
+		if (! getSlaveSyncMode(). equals(Sequencer.SyncMode.NO_SYNC))
+		{
+			sendStopEvent();
+		}
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): end"); }
 	}
 
@@ -452,7 +463,19 @@ public class AlsaSequencer
 
 	protected void setSlaveSyncModeImpl(SyncMode syncMode)
 	{
-		// TODO:
+		if (isRunning())
+		{
+			if (m_oldSlaveSyncMode.equals(Sequencer.SyncMode.NO_SYNC) && (syncMode.equals(Sequencer.SyncMode.MIDI_SYNC) || syncMode.equals(Sequencer.SyncMode.MIDI_TIME_CODE)) )
+			{
+				sendStartEvent();
+				// TODO: notify sync thread 
+			}
+			else if ((m_oldSlaveSyncMode.equals(Sequencer.SyncMode.MIDI_SYNC) || m_oldSlaveSyncMode.equals(Sequencer.SyncMode.MIDI_TIME_CODE)) && syncMode.equals(Sequencer.SyncMode.NO_SYNC) )
+			{
+				sendStopEvent();
+				// TODO: remove enqueued messages from queue (and buffer). perhaps do this by putting the code to do so after the main loop of the sync thread.
+			}
+		}
 	}
 
 
@@ -538,14 +561,54 @@ public class AlsaSequencer
 		int	nSourcePort = getPlaybackPort();
 		int	nQueue = getQueue();
 		sendQueueControlEvent(
-			nType, AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL, 0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
-			nSourcePort, AlsaSeq.SND_SEQ_CLIENT_SYSTEM, AlsaSeq.SND_SEQ_PORT_SYSTEM_TIMER,
+			nType,
+			AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL,
+			0,
+			AlsaSeq.SND_SEQ_QUEUE_DIRECT,
+			0L,
+			nSourcePort,
+			AlsaSeq.SND_SEQ_CLIENT_SYSTEM,
+			AlsaSeq.SND_SEQ_PORT_SYSTEM_TIMER,
 			nQueue, 0, 0);
 	}
 
 
 
-	// NOTE: also used for setting position
+	/**	Send a real time START  event to the subscribers immediately.
+	 */
+	private void sendStartEvent()
+	{
+		sendRealtimeEvent(AlsaSeq.SND_SEQ_EVENT_START);
+	}
+
+
+
+	/**	Send a real time STOP  event to the subscribers immediately.
+	 */
+	private void sendStopEvent()
+	{
+		sendRealtimeEvent(AlsaSeq.SND_SEQ_EVENT_STOP);
+	}
+
+
+
+	private void sendRealtimeEvent(int nType)
+	{
+		sendQueueControlEvent(
+			nType,
+			AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL,
+			0,				// tag
+			AlsaSeq.SND_SEQ_QUEUE_DIRECT,	// queue
+			0L,				// time
+			getPlaybackPort(),			// source
+			AlsaSeq.SND_SEQ_ADDRESS_SUBSCRIBERS,	// dest client
+			AlsaSeq.SND_SEQ_ADDRESS_UNKNOWN,	// dest port
+			0, 0, 0);
+	}
+
+
+
+	// NOTE: also used for setting position and start/stop RT
 	private void sendQueueControlEvent(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
@@ -930,6 +993,7 @@ public class AlsaSequencer
 				double	dTickMin = getTickPosition();
 				double	dTickMax = getSequence().getTickLength();
 				double	dTickStep = getSequence().getResolution() / 24.0;
+				if (TDebug.TraceSequencer) { TDebug.out("MasterSynchronizer.run(): tick step: " + dTickStep); }
 				double	dTick = dTickMin;
 				// TODO: ... && getS.Mode().equals(...)
 				while (dTick < dTickMax && isRunning())
