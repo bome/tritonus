@@ -116,7 +116,8 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	}
 
 
-
+	/** Returns the circular buffer.
+	 */
 	protected TCircularBuffer getCircularBuffer()
 	{
 		return m_circularBuffer;
@@ -124,6 +125,17 @@ public abstract class TAsynchronousFilteredAudioInputStream
 
 
 
+	/** Check if writing more data to the circular buffer is recommanded.
+	    This checks the available write space in the circular buffer
+	    against the minimum available property. If the available write
+	    space is greater than th minimum available property, more
+	    writing is encouraged, so this method returns true.
+	    Note that this is only a  hint to subclasses. However,
+	    it is an important hint.
+
+	    @return true if more writing to the circular buffer is
+	    recommanden. Otherwise, false is returned.
+	*/
 	protected boolean writeMore()
 	{
 		return getCircularBuffer().availableWrite() > m_nMinAvailable;
