@@ -237,22 +237,6 @@ public class EsdMixer
 
 
 
-	public Line[] getSourceLines()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
-	public Line[] getTargetLines()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
 	//////////////// private //////////////////////////////////////
 
 

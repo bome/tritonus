@@ -54,14 +54,15 @@ public class TClip
 	private static final int	BUFFER_FRAMES = 16384;
 
 
-	private Mixer			m_mixer;
-	private SourceDataLine		m_line;
+	// private Mixer			m_mixer;
+	// private SourceDataLine		m_line;
 
 
 
 	public TClip(DataLine.Info info)
 	{
-		super(info);
+		super(null,	// TMixer
+		      info);
 	}
 
 

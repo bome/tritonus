@@ -27,7 +27,7 @@
 #include	"org_tritonus_lowlevel_alsa_AlsaPcm.h"
 
 
-static int	DEBUG = 0;
+static int	DEBUG = 1;
 
 
 static void
@@ -505,6 +505,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_open__III
 	{
 		setNativeHandle(env, obj, handle);
 	}
+	// printf("org_tritonus_lowlevel_alsa_AlsaPcm.open(): returns %d\n", nReturn);
 	return nReturn;
 }
 
@@ -590,6 +591,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_read
 	snd_pcm_t*	handle = getNativeHandle(env, obj);
 	int		nBytesRead;
 	jbyte		buffer[nLength];
+	printf("handle: %p\n", handle);
+	printf("buffer: %p\n", buffer);
+	printf("length: %d\n", (int) nLength);
+	// printf("fd: %d\n", ((struct snd_pcm*)handle)->fd[SND_PCM_CHANNEL_CAPTURE]);
 	nBytesRead = snd_pcm_read(handle, buffer, nLength);
 	if (nBytesRead > 0)
 	{

@@ -48,9 +48,11 @@ import	org.tritonus.TDebug;
 public abstract class TSourceTargetDataLine
 	extends	TDataLine
 {
-	public TSourceTargetDataLine(DataLine.Info info)
+	public TSourceTargetDataLine(TMixer mixer,
+				     DataLine.Info info)
 	{
-		super(info);
+		super(mixer,
+		      info);
 	}
 
 
@@ -67,7 +69,10 @@ public abstract class TSourceTargetDataLine
 	public void open(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
-		// TDebug.out("TSourceTargetDataLine.open(AudioFormat, int): buffer size: " + nBufferSize);
+		if (TDebug.TraceDataLine)
+		{
+			TDebug.out("TSourceTargetDataLine.open(AudioFormat, int): called with buffer size: " + nBufferSize);
+		}
 		setBufferSize(nBufferSize);
 		open(format);
 	}
@@ -77,8 +82,22 @@ public abstract class TSourceTargetDataLine
 	public void open(AudioFormat format)
 		throws	LineUnavailableException
 	{
+		if (TDebug.TraceDataLine)
+		{
+			TDebug.out("TSourceTargetDataLine.open(AudioFormat): called");
+		}
 		setFormat(format);
 		open();
+	}
+
+
+	// IDEA: move to TDataLine or TLine?
+	protected void finalize()
+	{
+		if (isOpen())
+		{
+			close();
+		}
 	}
 }
 

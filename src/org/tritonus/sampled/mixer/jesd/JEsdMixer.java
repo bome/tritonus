@@ -135,32 +135,6 @@ public class JEsdMixer
 	}
 
 
-	// TODO: should do this to be able to report open/active lines
-	// with getSourceLines() and getTargetLines()
-	/*
-	  public void registerChannel(JEsdChannel channel)
-	  {
-	  int	nFlowID = channel.getFlowID();
-	  synchronized (m_channels)
-	  {
-	  m_channels.put(new Integer(nFlowID), channel);
-	  }
-	  }
-
-
-
-	  public void unregisterChannel(JEsdChannel channel)
-	  {
-	  int	nFlowID = channel.getFlowID();
-	  synchronized (m_channels)
-	  {
-	  m_channels.remove(new Integer(nFlowID));
-	  }
-	  }
-	*/
-
-
-
 	//////////////// Mixer //////////////////////////////////////
 
 
@@ -193,6 +167,7 @@ public class JEsdMixer
 	}
 
 
+
 	private AudioFormat getSupportedSourceFormat(AudioFormat[] aFormats)
 	{
 		for (int i = 0; i < aFormats.length; i++)
@@ -220,14 +195,6 @@ public class JEsdMixer
 	}
 
 
-/*
-	public Line.Info getLineInfo(Line.Info info)
-	{
-		// TODO:
-		return null;
-	}
-*/
-
 
 	public int getMaxLines(Line.Info info)
 	{
@@ -237,23 +204,8 @@ public class JEsdMixer
 
 
 
-	public Line[] getSourceLines()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
-	public Line[] getTargetLines()
-	{
-		// TODO:
-		return null;
-	}
-
-
-
 	//////////////// private //////////////////////////////////////
+
 
 
 	// nBufferSize is in bytes!

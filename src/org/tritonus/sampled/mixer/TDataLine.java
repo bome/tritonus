@@ -56,9 +56,10 @@ public abstract class TDataLine
 
 
 
-	public TDataLine(DataLine.Info info)
+	public TDataLine(TMixer mixer,
+			 DataLine.Info info)
 	{
-		super(info);
+		super(mixer, info);
 		init(info);
 	}
 

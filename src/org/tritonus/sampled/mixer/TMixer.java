@@ -28,6 +28,7 @@ package	org.tritonus.sampled.mixer;
 
 import	java.util.Collection;
 import	java.util.Iterator;
+import	java.util.Set;
 
 import	javax.sound.sampled.Line;
 import	javax.sound.sampled.Mixer;
@@ -36,6 +37,7 @@ import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.TargetDataLine;
 
 import	org.tritonus.TDebug;
+import	org.tritonus.util.ArraySet;
 
 
 
@@ -44,12 +46,15 @@ public abstract class TMixer
 	implements	Mixer
 {
 	private static Line.Info[]	EMPTY_LINE_INFO_ARRAY = new Line.Info[0];
+	private static Line[]		EMPTY_LINE_ARRAY = new Line[0];
 
 	private Mixer.Info	m_mixerInfo;
 	private Collection	m_supportedSourceFormats;
 	private Collection	m_supportedTargetFormats;
 	private Collection	m_supportedSourceLineInfos;
 	private Collection	m_supportedTargetLineInfos;
+	private Set		m_openSourceDataLines;
+	private Set		m_openTargetDataLines;
 
 
 
@@ -60,12 +65,15 @@ public abstract class TMixer
 		      Collection supportedSourceLineInfos,
 		      Collection supportedTargetLineInfos)
 	{
-		super(lineInfo);
+		super(null,	// TMixer
+		      lineInfo);
 		m_mixerInfo = mixerInfo;
 		m_supportedSourceFormats = supportedSourceFormats;
 		m_supportedTargetFormats = supportedTargetFormats;
 		m_supportedSourceLineInfos = supportedSourceLineInfos;
 		m_supportedTargetLineInfos = supportedTargetLineInfos;
+		m_openSourceDataLines = new ArraySet();
+		m_openTargetDataLines = new ArraySet();
 	}
 
 
@@ -145,6 +153,20 @@ public abstract class TMixer
 
 
 
+	public Line[] getSourceLines()
+	{
+		return (Line[]) m_openSourceDataLines.toArray(EMPTY_LINE_ARRAY);
+	}
+
+
+
+	public Line[] getTargetLines()
+	{
+		return (Line[]) m_openTargetDataLines.toArray(EMPTY_LINE_ARRAY);
+	}
+
+
+
 	public void synchronize(Line[] aLines,
 				boolean bMaintainSync)
 	{
@@ -194,6 +216,46 @@ public abstract class TMixer
 			}
 		}
 		return false;
+	}
+
+
+
+	/*package*/ void registerOpenLine(Line line)
+	{
+		if (line instanceof SourceDataLine)
+		{
+			synchronized (m_openSourceDataLines)
+			{
+				m_openSourceDataLines.add(line);
+			}
+		}
+		else if (line instanceof TargetDataLine)
+		{
+			synchronized (m_openSourceDataLines)
+			{
+				m_openTargetDataLines.add(line);
+			}
+		}
+	}
+
+
+
+	/*package*/ void unregisterOpenLine(Line line)
+	{
+		if (line instanceof SourceDataLine)
+		{
+			synchronized (m_openSourceDataLines)
+			{
+				m_openSourceDataLines.remove(line);
+			}
+		}
+		else if (line instanceof TargetDataLine)
+		{
+			synchronized (m_openTargetDataLines)
+			{
+				m_openTargetDataLines.remove(line);
+			}
+		}
 	}
 }
 

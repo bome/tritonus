@@ -57,15 +57,17 @@ public abstract class TLine
 	private boolean		m_bOpen;
 	private List		m_controls;
 	private Set		m_lineListeners;
+	private TMixer		m_mixer;
 
 
 
-	protected TLine(Line.Info info)
+	protected TLine(TMixer mixer, Line.Info info)
 	{
 		setLineInfo(info);
 		setOpen(false);
 		m_controls = new ArrayList();
 		m_lineListeners = new HashSet();
+		m_mixer = mixer;
 	}
 
 
@@ -73,7 +75,7 @@ public abstract class TLine
 	protected TLine(Line.Info info,
 			Collection controls)
 	{
-		this (info);
+		this (null, info);
 		m_controls.addAll(controls);
 	}
 
@@ -114,6 +116,10 @@ public abstract class TLine
 				TDebug.out("TLine.open(): opening");
 			}
 			openImpl();
+			if (m_mixer != null)
+			{
+				m_mixer.registerOpenLine(this);
+			}
 			setOpen(true);
 		}
 		else
@@ -156,6 +162,10 @@ public abstract class TLine
 			if (TDebug.TraceLine)
 			{
 				TDebug.out("TLine.close(): closing");
+			}
+			if (m_mixer != null)
+			{
+				m_mixer.unregisterOpenLine(this);
 			}
 			closeImpl();
 			setOpen(false);

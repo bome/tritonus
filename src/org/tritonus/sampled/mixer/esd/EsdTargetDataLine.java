@@ -40,6 +40,7 @@ import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.esd.Esd;
 import	org.tritonus.lowlevel.esd.EsdRecordingStream;
 import	org.tritonus.sampled.TConversionTool;
+import	org.tritonus.sampled.mixer.TMixer;
 import	org.tritonus.sampled.mixer.TSourceTargetDataLine;
 
 
@@ -61,11 +62,12 @@ public class EsdTargetDataLine
 	private int			m_nBytesPerSample;
 
 
-	public EsdTargetDataLine(Mixer mixer, AudioFormat format, int nBufferSize)
+	public EsdTargetDataLine(TMixer mixer, AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		// TODO: use an info object that represents the mixer's capabilities (all possible formats for the line)
-		super(new DataLine.Info(TargetDataLine.class,
+		super(mixer,
+		      new DataLine.Info(TargetDataLine.class,
 					format,
 					nBufferSize)/*,
 						      // TODO: has info object to change if format or buffer size are changed later?

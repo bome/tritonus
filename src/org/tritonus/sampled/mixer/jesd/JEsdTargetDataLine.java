@@ -38,6 +38,7 @@ import	javax.sound.sampled.Mixer;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.TConversionTool;
+import	org.tritonus.sampled.mixer.TMixer;
 import	org.tritonus.sampled.mixer.TSourceTargetDataLine;
 
 import	com.jcraft.jesd.JEsd;
@@ -52,7 +53,6 @@ public class JEsdTargetDataLine
 	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
 
 
-	// private JEsdRecordingStream	m_esdStream;
 	private JEsd			m_esdStream;
 	private boolean			m_bSwapBytes;
 	private byte[]			m_abSwapBuffer;
@@ -63,11 +63,12 @@ public class JEsdTargetDataLine
 	private int			m_nBytesPerSample;
 
 
-	public JEsdTargetDataLine(Mixer mixer, AudioFormat format, int nBufferSize)
+	public JEsdTargetDataLine(TMixer mixer, AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		// TODO: use an info object that represents the mixer's capabilities (all possible formats for the line)
-		super(new DataLine.Info(TargetDataLine.class,
+		super(mixer,
+		      new DataLine.Info(TargetDataLine.class,
 					format,
 					nBufferSize)/*,
 						      // TODO: has info object to change if format or buffer size are changed later?

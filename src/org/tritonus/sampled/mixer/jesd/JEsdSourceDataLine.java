@@ -36,9 +36,8 @@ import	javax.sound.sampled.SourceDataLine;
 import	javax.sound.sampled.Mixer;
 
 import	org.tritonus.TDebug;
-// import	org.tritonus.lowlevel.esd.JEsd;
-// import	org.tritonus.lowlevel.esd.JEsdStream;
 import	org.tritonus.sampled.TConversionTool;
+import	org.tritonus.sampled.mixer.TMixer;
 import	org.tritonus.sampled.mixer.TSourceTargetDataLine;
 
 import	com.jcraft.jesd.JEsd;
@@ -53,7 +52,6 @@ public class JEsdSourceDataLine
 	// private static final Class[]	CONTROL_CLASSES = {GainControl.class};
 
 
-	// private JEsdStream		m_esdStream;
 	private JEsd			m_esdStream;
 	private boolean			m_bSwapBytes;
 	private byte[]			m_abSwapBuffer;
@@ -69,10 +67,11 @@ public class JEsdSourceDataLine
 
 	// TODO: has info object to change if format or buffer size are changed later?
 	// no, but it has to represent the mixer's capabilities. So a fixed info per mixer.
-	public JEsdSourceDataLine(Mixer mixer, AudioFormat format, int nBufferSize)
+	public JEsdSourceDataLine(TMixer mixer, AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
-		super(new DataLine.Info(SourceDataLine.class,
+		super(mixer,
+		      new DataLine.Info(SourceDataLine.class,
 					format,
 					nBufferSize));
 /*

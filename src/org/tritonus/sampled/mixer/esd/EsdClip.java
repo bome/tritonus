@@ -40,6 +40,7 @@ import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.esd.EsdSample;
 import	org.tritonus.lowlevel.esd.Esd;
 import	org.tritonus.sampled.mixer.TDataLine;
+import	org.tritonus.sampled.mixer.TMixer;
 
 
 
@@ -56,9 +57,9 @@ public class EsdClip
 
 
 
-	public EsdClip(Mixer mixer)
+	public EsdClip(TMixer mixer)
 	{
-		super(null);
+		super(mixer, null);
 		m_mixer = mixer;
 		m_esdSample = new EsdSample();
 	}
