@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ public class AlsaMidiIn
 		     nDestPort,
 		     nSourceClient,
 		     nSourcePort,
-		     -1,		// signals: do not do timestamping
+		     -1, false,		// signals: do not do timestamping
 		     listener);
 	}
 
@@ -73,7 +73,13 @@ public class AlsaMidiIn
 	   Does establish a subscription where events are routed through
 	   a queue to get a timestamp.
 	 */
-	public AlsaMidiIn(ASequencer aSequencer, int nDestPort, int nSourceClient, int nSourcePort, int nTimestampingQueue, AlsaMidiInListener listener)
+	public AlsaMidiIn(ASequencer aSequencer,
+			  int nDestPort,
+			  int nSourceClient,
+			  int nSourcePort,
+			  int nTimestampingQueue,
+			  boolean bRealtime,
+			  AlsaMidiInListener listener)
 	{
 		m_nSourceClient = nSourceClient;
 		m_nSourcePort = nSourcePort;
@@ -87,7 +93,7 @@ public class AlsaMidiIn
 				m_aSequencer.getClientId(), nDestPort,
 				nTimestampingQueue,
 				false,		// exclusive
-				false,		// realtime
+				bRealtime,	// realtime
 				true);		// convert time
 		}
 		else
@@ -100,7 +106,11 @@ public class AlsaMidiIn
 	}
 
 
-
+	/**	The working part of the class.
+		Here, the thread repeats in blocking in a call to
+		ASequencer.getEvent() and calling the listener's
+		dequeueEvent() method.
+	 */
 	public void run()
 	{
 		// TODO: recheck interupt mechanism
@@ -121,6 +131,8 @@ public class AlsaMidiIn
 
 
 
+	/**
+	 */
 	public static interface AlsaMidiInListener
 	{
 		public void dequeueEvent(MidiEvent event);
