@@ -22,25 +22,6 @@
 
 package org.tritonus.test;
 
-import	java.io.File;
-import	java.io.FileInputStream;
-import	java.io.InputStream;
-
-import	java.net.URL;
-
-import	java.util.MissingResourceException;
-import	java.util.ResourceBundle;
-
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.spi.AudioFileReader;
-
-import	junit.framework.TestCase;
-
-import	org.tritonus.share.sampled.AudioFileTypes;
-import	org.tritonus.share.sampled.Encodings;
-
 
 
 public class WaveAudioFileReaderTestCase
