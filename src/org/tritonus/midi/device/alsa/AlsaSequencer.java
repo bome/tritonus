@@ -213,8 +213,9 @@ public class AlsaSequencer
 		m_oldSlaveSyncMode = getSlaveSyncMode();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
-		m_syncThread = new MasterSynchronizer();
-		m_syncThread.start();
+		// this is for sending clock events
+		// m_syncThread = new MasterSynchronizer();
+		// m_syncThread.start();
 	}
 
 
@@ -263,11 +264,11 @@ public class AlsaSequencer
 			m_loaderThread.notify();
 		}
 		// TODO: should depend on sync mode
-		synchronized (m_syncThread)
-		{
-			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): notifying synchronizer thread"); }
-			m_syncThread.notify();
-		}
+// 		synchronized (m_syncThread)
+// 		{
+// 			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): notifying synchronizer thread"); }
+// 			m_syncThread.notify();
+// 		}
 		if (! getSlaveSyncMode(). equals(Sequencer.SyncMode.NO_SYNC))
 		{
 			sendStartEvent();
