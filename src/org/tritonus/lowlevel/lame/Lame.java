@@ -83,7 +83,7 @@ public class Lame
 
 
 	/**
-	 * Holds lame_global_flags.
+	 * Holds LameConf
 	 * This field is long because on 64 bit architectures, the native
 	 * size of ints may be 64 bit.
 	 */
@@ -198,7 +198,9 @@ public class Lame
 		if (length<0 || (offset+length)>pcm.length) {
 			throw new IllegalArgumentException("inconsistent parameters");
 		}
+//encoded[0]=0; encoded[1]=0;	   
 		int result=nEncodeBuffer(pcm, offset, length, encoded);
+//System.out.println("result="+result+" encoded bytes.  pcm="+pcm[0]+","+pcm[1]+"  mp3="+encoded[0]+","+encoded[1]);
 		if (result<0) {
 			if (result==OUT_OF_MEMORY) {
 				throw new OutOfMemoryError("out of memory");

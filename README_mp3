@@ -57,13 +57,16 @@ cvs -d:pserver:anonymous@cvs.lame.sourceforge.net:/cvsroot/lame login
 cvs -z3 -d:pserver:anonymous@cvs.lame.sourceforge.net:/cvsroot/lame co lame
 
 Installation of LAME:
-In the main directory of lame, issue "./configure" and "make". 
-As root, invoke "make install". This copies the library to /usr/lib.
+In the main directory of lame, issue "./configure --enable-shared" 
+and "make". 
+As root, invoke "make install". This copies the library to /usr/local/lib.
+You may need to include /usr/local/lib to /etc/ld.so.conf and then 
+run "ldconfig"
 
 Integration in Tritonus:
-You must re-run configure after installation of LAME. Be sure to
-remove "config.cache". configure outputs a line like "Will build
-stuff for LAME encoder" when everything is fine.
+You must re-run "configure" after installation of LAME. Be sure to
+remove "config.cache" before. "configure" outputs a line like 
+"Will build stuff for LAME encoder" when everything is fine.
 Call "make" and as root "make install" (or make install-link).
 
 Testing:

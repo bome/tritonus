@@ -17,7 +17,9 @@ LN_S=@LN_S@
 RM_F=@RM_F@
 MKDIR_P=@MKDIR_P@
 
-JAVAEXTPATH=$(JAVADIR)/jre/lib/ext
+#JAVAEXTPATH=$(JAVADIR)/jre/lib/ext
+#jdk1.3/linux needs this path:
+JAVAEXTPATH=$(JAVADIR)/jre/lib
 JAVAEXTLIBPATH=$(JAVAEXTPATH)/$(ARCHNAME)
 
 OBJDIR=../../../@BUILD_DIR@
