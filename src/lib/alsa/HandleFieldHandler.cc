@@ -94,13 +94,15 @@ template class HandleFieldHandler<snd_pcm_hw_params_t*>;
 template class HandleFieldHandler<snd_pcm_format_mask_t*>;
 template class HandleFieldHandler<snd_pcm_sw_params_t*>;
 template class HandleFieldHandler<snd_seq_t*>;
-template class HandleFieldHandler<snd_seq_event_t*>;
 template class HandleFieldHandler<snd_seq_client_info_t*>;
+template class HandleFieldHandler<snd_seq_event_t*>;
 template class HandleFieldHandler<snd_seq_port_info_t*>;
+template class HandleFieldHandler<snd_seq_port_subscribe_t*>;
 template class HandleFieldHandler<snd_seq_queue_info_t*>;
 template class HandleFieldHandler<snd_seq_queue_status_t*>;
 template class HandleFieldHandler<snd_seq_queue_tempo_t*>;
 template class HandleFieldHandler<snd_seq_queue_timer_t*>;
+template class HandleFieldHandler<snd_seq_remove_events_t*>;
 template class HandleFieldHandler<snd_seq_system_info_t*>;
 
 
