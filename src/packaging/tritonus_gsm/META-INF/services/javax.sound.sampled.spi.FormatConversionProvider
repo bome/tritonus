@@ -1,2 +1,2 @@
-# for the javalayer mp3 decoder
-org.tritonus.sampled.convert.MpegFormatConversionProvider
+# for the gsm codec
+org.tritonus.sampled.convert.gsm.GSMFormatConversionProvider
