@@ -174,6 +174,13 @@ public class AlsaUtils
 
 
 
+	public static AudioFormat getAlsaFormat(int nAudioFormat)
+	{
+		return sm_aFormatTable[nAudioFormat];
+	}
+
+
+
 	public static int getAlsaFormat(AudioFormat audioFormat)
 	{
 		int	nChannels = audioFormat.getChannels();
