@@ -17,7 +17,7 @@ import	javax.sound.midi.MidiSystem;
 
 import	org.tritonus.midi.device.alsa.AlsaMidiDevice;
 
-import	org.tritonus.TDebug;
+import	org.tritonus.share.TDebug;
 
 
 
@@ -25,8 +25,6 @@ public class AlsaMidiInTest
 {
 	public static void main(String[] args)
 	{
-		org.tritonus.TDebug.TraceASequencer = false;
-		org.tritonus.TDebug.TraceInit = false;
 		MidiDevice.Info[]	infos = MidiSystem.getMidiDeviceInfo();
 		TDebug.out("after MidiSystem.getMidiDeviceInfo()");
 		int	nChannel = 64;
@@ -37,7 +35,14 @@ public class AlsaMidiInTest
 			nPort = Integer.parseInt(args[1]);
 		}
 		AlsaMidiDevice	device = new AlsaMidiDevice(nChannel, nPort);
-		device.open();
+		try
+		{
+			device.open();
+		}
+		catch (MidiUnavailableException e)
+		{
+			e.printStackTrace();
+		}
 		Receiver	r = new DumpReceiver(System.out);
 		try
 		{
@@ -46,6 +51,7 @@ public class AlsaMidiInTest
 		}
 		catch (MidiUnavailableException e)
 		{
+			e.printStackTrace();
 		}
 		while (true)
 		{
@@ -55,6 +61,7 @@ public class AlsaMidiInTest
 			}
 			catch (InterruptedException e)
 			{
+				e.printStackTrace();
 			}
 			// System.out.println("in endless loop");
 		}

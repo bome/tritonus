@@ -122,7 +122,7 @@ public class DumpReceiver
 			}
 			else
 			{
-				strTimeStamp = "timestamp " + lTimeStamp + "ms: ";
+				strTimeStamp = "timestamp " + lTimeStamp + " µs: ";
 			}
 		}
 		m_printStream.println(strTimeStamp + strMessage);

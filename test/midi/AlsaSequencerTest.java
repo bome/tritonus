@@ -21,7 +21,7 @@ import	javax.sound.midi.MidiSystem;
 import	org.tritonus.midi.device.alsa.AlsaSequencer;
 import	org.tritonus.midi.device.alsa.AlsaMidiDevice;
 
-
+import	org.tritonus.share.TDebug;
 
 public class AlsaSequencerTest
 {
@@ -37,7 +37,14 @@ public class AlsaSequencerTest
 			nPort = Integer.parseInt(args[1]);
 		}
 		AlsaMidiDevice	device = new AlsaMidiDevice(nChannel, nPort, false, true);
-		device.open();
+		try
+		{
+			device.open();
+		}
+		catch (MidiUnavailableException e)
+		{
+			e.printStackTrace();
+		}
 		Receiver	midir = null;
 		try
 		{
@@ -46,17 +53,19 @@ public class AlsaSequencerTest
 		}
 		catch (MidiUnavailableException e)
 		{
+			e.printStackTrace();
 		}
 		Sequencer	seq = null;
 		try
 		{
 			seq = MidiSystem.getSequencer();
-			org.tritonus.TDebug.out("Sequencer: " + seq);
+			TDebug.out("Sequencer: " + seq);
 			seq.open();
 		}
 		catch (MidiUnavailableException e)
 		{
-			org.tritonus.TDebug.out("no Sequencer");
+			TDebug.out("no Sequencer");
+			e.printStackTrace();
 		}
 		Sequence	sequence = null;
 		String	strFilename = (args.length == 1) ? args[0] : args[2];
@@ -68,9 +77,11 @@ public class AlsaSequencerTest
 		}
 		catch (InvalidMidiDataException e)
 		{
+			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
 		}
 		Receiver	r = new DumpReceiver(System.out);
 		try
@@ -82,6 +93,7 @@ public class AlsaSequencerTest
 		}
 		catch (MidiUnavailableException e)
 		{
+			e.printStackTrace();
 		}
 
 		try
@@ -90,12 +102,13 @@ public class AlsaSequencerTest
 		}
 		catch (InterruptedException e)
 		{
+			e.printStackTrace();
 		}
 
 		System.out.println("starting...");
 		seq.start();
 /*
-*/
+ */
 		while (true)
 		{
 			try
@@ -104,12 +117,13 @@ public class AlsaSequencerTest
 			}
 			catch (InterruptedException e)
 			{
+				e.printStackTrace();
 			}
 			// System.out.println("in endless loop");
 		}
 /*
-		seq.stop();
-		seq.close();
+  seq.stop();
+  seq.close();
 */
 	}
 }

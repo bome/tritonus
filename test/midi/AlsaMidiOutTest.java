@@ -10,17 +10,13 @@ import	javax.sound.midi.MidiUnavailableException;
 
 import	org.tritonus.midi.device.alsa.AlsaMidiDevice;
 
+import	org.tritonus.share.TDebug;
 
 
 public class AlsaMidiOutTest
 {
 	public static void main(String[] args)
 	{
-		org.tritonus.TDebug.TraceASequencer = true;
-		org.tritonus.TDebug.TraceASequencerDetails = true;
-		org.tritonus.TDebug.TraceAlsaMidiOut = true;
-		org.tritonus.TDebug.TraceTMidiDevice = true;
-
 		int	nChannel = 64;
 		int	nPort = 0;
 		if (args.length == 2)
@@ -29,7 +25,14 @@ public class AlsaMidiOutTest
 			nPort = Integer.parseInt(args[1]);
 		}
 		AlsaMidiDevice	device = new AlsaMidiDevice(nChannel, nPort, false, true);
-		device.open();
+		try
+		{
+			device.open();
+		}
+		catch (MidiUnavailableException e)
+		{
+			e.printStackTrace();
+		}
 		Receiver	r = null;
 		try
 		{
@@ -38,6 +41,7 @@ public class AlsaMidiOutTest
 		}
 		catch (MidiUnavailableException e)
 		{
+			e.printStackTrace();
 		}
 		System.out.println("Receiver: " + r);
 		try
@@ -51,6 +55,7 @@ public class AlsaMidiOutTest
 			}
 			catch (InterruptedException e)
 			{
+				e.printStackTrace();
 			}
 			ShortMessage	m1 = new ShortMessage();
 			m1.setMessage(0x80, 0, 61, 0);
@@ -58,6 +63,7 @@ public class AlsaMidiOutTest
 		}
 		catch (InvalidMidiDataException e)
 		{
+			e.printStackTrace();
 		}
 
 		r.close();
