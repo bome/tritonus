@@ -141,11 +141,12 @@ final public class MshEventConverter {
 				return  makeTimeSignEvent(lTick,abMessageData);
 			case 0x59:
 				return  makeKeySignEvent(lTick,abMessageData);
+			case 0x7F:
+				return  makeSpecificEvent(lTick,abMessageData);
 					
 			default:
 				TDebug.out("MshEventConverter.decodeMetaMessage(): UNKNOWN EVENT TYPE!");
-				System.out.println("Length " + message.getLength());
-				return 0;
+				return  0;
 		}
 	}
 
@@ -164,7 +165,7 @@ final public class MshEventConverter {
 	}
 
 	
-	static public MidiMessage encodeMessage(int event) throws	InvalidMidiDataException
+	static public MidiMessage encodeMessage(int event) throws InvalidMidiDataException
 	{
 		switch (Midi.GetType(event)) {
 		
@@ -213,6 +214,8 @@ final public class MshEventConverter {
 					return makeTimeSignMessage(event);
 			case Midi.typeKeySign:
 					return makeKeySignMessage(event);
+			case Midi.typeSpecific:
+					return makeTextMessageAux(event, 0x7F);
 			case Midi.typeSysEx:
 					return makeSysexMessage(event);
 		
@@ -664,6 +667,12 @@ final public class MshEventConverter {
 		metaMessage.setMessage(0x59, data, 2);
 		return metaMessage;
 	}
+	
+	static private int makeSpecificEvent(long lTick,byte[] abMessageData)
+	{
+		return makeTextEventAux(Midi.NewEv(Midi.typeSpecific),lTick,abMessageData);
+	}
+	
 	
 	private static int signedByteToUnsigned(byte b){return (b >= 0) ? (int) b :  256 + (int) b;}
 	
