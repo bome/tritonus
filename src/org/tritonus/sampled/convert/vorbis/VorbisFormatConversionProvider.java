@@ -51,10 +51,9 @@ import	org.tritonus.share.sampled.Encodings;
 
 
 
-/** ConversionProvider for GSM files.
- *
- * @author Matthias Pfisterer
- */
+/**	ConversionProvider for ogg/vorbis files.
+	@author Matthias Pfisterer
+*/
 public class VorbisFormatConversionProvider
 	extends		TSimpleFormatConversionProvider
 {
