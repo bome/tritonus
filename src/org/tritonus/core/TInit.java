@@ -43,7 +43,21 @@ public class TInit
 
 
 
+	/** Register all service providers of a certain type.
+	    This method retrieves instances of all service providers of
+	    the type given as providerClass. It registers them by
+	    calling action with the provider instance as actual parameter.
 
+	    @param providerClass Type of the service providers that should
+	    be registered. For instance, this could be the class object for
+	    javax.sound.sampled.spi.MixerProvider. However, the mechanism
+	    is not restricted to the Java Sound types of service providers.
+
+	    @param action A ProviderRegistrationAction that should to be
+	    called to register the service providers. Typically, this is
+	    something like adding the provider to a collection, but in
+	    theorie, could be anything.
+	*/
 	public static void registerClasses(Class providerClass,
 					    ProviderRegistrationAction action)
 	{
@@ -79,6 +93,7 @@ public class TInit
 			throws Exception;
 	}
 }
+
 
 
 /*** TInit.java ***/
