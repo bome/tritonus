@@ -8,7 +8,7 @@
 			Remove the next line if you don't have jikes.
 			In this case, javac will be used for compiling.
 		-->
-		<property name="build.compiler"  value="jikes" />
+		<property name="build.compiler" value="jikes" />
 		<filter token="version" value="0.3.1" />
 		<filter token="year" value="2000" />
 
@@ -119,7 +119,7 @@
 		<jar	jarfile="${dist}/tritonus_mp3.jar" >
 			<fileset
 				dir="${build}" >
-				<include name="org/tritonus/sampled/convert/Mpeg*" />
+				<include name="org/tritonus/sampled/convert/javalayer/" />
 				<include name="org/tritonus/sampled/file/Mpeg*" />
 			</fileset>
 			<fileset
