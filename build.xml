@@ -41,8 +41,16 @@
 			filtering="on"/>
 	</target>
 
+	<target name="compile-libs"
+		depends="prepare" >
+		<exec
+			dir="."
+			command="make -C src/lib/esd"
+			output="native.log" />
+	</target>
+
 	<target name="dist"
-		depends="compile,compile-midishare">
+		depends="compile,compile-midishare,compile-libs">
 		<mkdir dir="${dist}" />
 		<jar jarfile="${dist}/tritonus_core.jar"
 			basedir="${build}"
