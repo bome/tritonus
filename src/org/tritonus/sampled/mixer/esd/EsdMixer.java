@@ -53,7 +53,7 @@ import	org.tritonus.share.GlobalInfo;
 
 
 public class EsdMixer
-	extends		TMixer
+extends TMixer
 {
 	// default buffer size in bytes.
 	private static final int	DEFAULT_BUFFER_SIZE = 32768;
@@ -166,18 +166,32 @@ public class EsdMixer
 
 	public int getMaxLines(Line.Info info)
 	{
-		if (TDebug.TraceMixer)
+		if (TDebug.TraceMixer) { TDebug.out("EsdMixer.getMaxLines(): begin"); }
+
+		int	nMaxLines = 0;
+		if (info instanceof DataLine.Info)
 		{
-			TDebug.out("EsdMixer.getMaxLines(): begin");
+			Class	lineClass = info.getLineClass();
+			if (lineClass == SourceDataLine.class)
+			{
+				nMaxLines = 32;
+			}
+			else if (lineClass == TargetDataLine.class)
+			{
+				nMaxLines = 1;
+			}
+			else
+			{
+				/* DO NOTHING; only source and target lines are supported. */
+			}
+		}
+		else
+		{
+			/* DO NOTHING; only data lines are supported. */
 		}
 
-		// TODO:
-
-		if (TDebug.TraceMixer)
-		{
-			TDebug.out("EsdMixer.getMaxLines(): end");
-		}
-		return 0;
+		if (TDebug.TraceMixer) { TDebug.out("EsdMixer.getMaxLines(): end"); }
+		return nMaxLines;
 	}
 
 
