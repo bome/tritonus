@@ -36,39 +36,61 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.TCircularBuffer;
 
 
-/**
- * Base class for asynchronus converters.
- *
- * @author Matthias Pfisterer
- */
+/** Base class for asynchronus converters.
+    This class serves as base class for
+    converters that do not have a fixed
+    ratio between the size of a block of input
+    data and the size of a block of output data.
+    These types of converters therefore need an
+    internal buffer, which is realized in this
+    class.
 
+    @author Matthias Pfisterer
+*/
 public abstract class TAsynchronousFilteredAudioInputStream
-	extends		AudioInputStream
-	implements	TCircularBuffer.Trigger
+	extends AudioInputStream
+	implements TCircularBuffer.Trigger
 {
-	private static int		DEFAULT_BUFFER_SIZE = 3276700;
+	private static final int	DEFAULT_BUFFER_SIZE = 327670;
+	private static final int	DEFAULT_MIN_AVAILABLE = 4096;
 	private static final byte[]	EMPTY_BYTE_ARRAY = new byte[0];
 
-	// ausnahmsweise ;-)
-	protected TCircularBuffer	m_circularBuffer;
+
+	private TCircularBuffer		m_circularBuffer;
+	private int			m_nMinAvailable;
 	private byte[]			m_abSingleByte;
 
 
-	/**
-	 * @param lLength length of this stream in frames
-	 */
+
+	/** Constructor.
+	    This constructor uses the default buffer size and the default
+	    min available amount.
+
+	    @param lLength length of this stream in frames. May be
+	    AudioSystem.NOT_SPECIFIED.
+	*/
 	public TAsynchronousFilteredAudioInputStream(AudioFormat outputFormat, long lLength)
 	{
-		this(outputFormat, lLength, DEFAULT_BUFFER_SIZE);
+		this(outputFormat, lLength,
+		     DEFAULT_BUFFER_SIZE,
+		     DEFAULT_MIN_AVAILABLE);
 	}
 
 
 
-	/**
-	 * @param lLength length of this stream in frames
-	 * @param nBufferSize size of the circular buffer in bytes
+	/** Constructor.
+	    With this constructor, the buffer size and the minimum
+	    available amount can be specified as parameters.
+
+	    @param lLength length of this stream in frames. May be
+	    AudioSystem.NOT_SPECIFIED.
+
+	    @param nBufferSize size of the circular buffer in bytes.
 	 */
-	public TAsynchronousFilteredAudioInputStream(AudioFormat outputFormat, long lLength, int nBufferSize)
+	public TAsynchronousFilteredAudioInputStream(
+		AudioFormat outputFormat, long lLength,
+		int nBufferSize,
+		int nMinAvailable)
 	{
 		/*	The usage of a ByteArrayInputStream is a hack.
 		 *	(the infamous "JavaOne hack", because I did it on June
@@ -89,7 +111,22 @@ public abstract class TAsynchronousFilteredAudioInputStream
 			false,	// blocking read
 			true,	// blocking write
 			this);	// trigger
+		m_nMinAvailable = nMinAvailable;
 		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): end"); }
+	}
+
+
+
+	protected TCircularBuffer getCircularBuffer()
+	{
+		return m_circularBuffer;
+	}
+
+
+
+	protected boolean writeMore()
+	{
+		return getCircularBuffer().availableWrite() > m_nMinAvailable;
 	}
 
 
