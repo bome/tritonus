@@ -176,10 +176,10 @@ public class PCM2PCMConversionProvider
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
 	                                      AudioFormat sourceFormat) {
 		if (TDebug.TraceAudioConverter) {
-			TDebug.out("PCM2PCMFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
-			TDebug.out("  checking out possible target formats");
-			TDebug.out("  from: " + sourceFormat);
-			TDebug.out("  to  : " + targetEncoding);
+			TDebug.out(">PCM2PCMFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
+			TDebug.out("checking out possible target formats");
+			TDebug.out("from: " + sourceFormat);
+			TDebug.out("to  : " + targetEncoding);
 		}
 		if (isConversionSupported(targetEncoding, sourceFormat)) {
 			// TODO: check that no duplicates may occur...
@@ -188,12 +188,18 @@ public class PCM2PCMConversionProvider
 			while (iterator.hasNext()) {
 				AudioFormat targetFormat = (AudioFormat) iterator.next();
 				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
-				if (isConversionSupported(sourceFormat, targetFormat)) {
+				if (isConversionSupported(targetFormat, sourceFormat)) {
 					result.add(targetFormat);
 				}
 			}
+			if (TDebug.TraceAudioConverter) {
+				TDebug.out("<found "+result.size()+" matching formats.");
+			}
 			return (AudioFormat[]) result.toArray(EMPTY_FORMAT_ARRAY);
 		} else {
+			if (TDebug.TraceAudioConverter) {
+				TDebug.out("<returning empty array.");
+			}
 			return EMPTY_FORMAT_ARRAY;
 		}
 	}
@@ -216,11 +222,11 @@ public class PCM2PCMConversionProvider
 		                                     targetFormat.getChannels())!=CONVERT_NOT_POSSIBLE);
 
 		if (TDebug.TraceAudioConverter) {
-			TDebug.out("PCM2PCM: isConversionSupported(AudioFormat, AudioFormat):");
-			TDebug.out("  checking if conversion possible");
-			TDebug.out("  from: " + sourceFormat);
-			TDebug.out("  to  : " + targetFormat);
-			TDebug.out("  result : " + res);
+			TDebug.out(">PCM2PCM: isConversionSupported(AudioFormat, AudioFormat):");
+			TDebug.out("checking if conversion possible");
+			TDebug.out("from: " + sourceFormat);
+			TDebug.out("to  : " + targetFormat);
+			TDebug.out("< result : " + res);
 		}
 
 		return res;
