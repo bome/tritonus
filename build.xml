@@ -18,6 +18,17 @@
 		<available
 			classname="javazoom.jl.decoder.Decoder"
 			property="javalayer-present" />
+
+		<!--
+			This assumes that the javalayer code is in a directory
+			'javalayer' that is parallel to 'tritonus'. If not, change
+			the value of the property.
+		-->
+		<property name="javalayer-path" value="../javalayer" />
+		<available
+			file="${javalayer-path}/build.xml"
+			property="javalayer-source-present" />
+
 		<property
 			name="java_ext_path"
 			value="${java.home}/lib/ext" />
@@ -27,22 +38,28 @@
 		<mkdir dir="${build}" />
 	</target>
 
-	<!--
-		This target assumes that the javalayer code is in a directory
-		'javalayer' that is parallel to 'tritonus'.
-	-->
-	<target name="build-javalayer" depends="init">
-		<ant dir="../javalayer" />
+	<target name="build-javalayer"
+		depends="init"
+		if="javalayer-source-present">
+		<ant dir="${javalayer-path}" />
 	</target>
 
 	<target name="compile" depends="prepare">
 		<javac srcdir="${src}"
 			destdir="${build}"
 			includes="javax/sound/**,org/tritonus/**"
-			excludes="org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**" />
+			excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/midi/device/midishare/**,org/tritonus/midi/old/**" />
 	</target>
 
-	<target name="compile-midishare"
+	<target name="compile-javalayer-dependent"
+		depends="prepare"
+		if="javalayer-source-present">
+		<javac srcdir="${src}"
+			destdir="${build}"
+			includes="org/tritonus/sampled/convert/javalayer/**" />
+	</target>
+
+	<target name="compile-midishare-dependent"
 		depends="prepare"
 		if="midishare-present">
 		<javac srcdir="${src}"
@@ -79,7 +96,7 @@
 	</target>
 
 	<target name="dist"
-		depends="build-javalayer,compile,compile-midishare,compile-libs" >
+		depends="build-javalayer,compile,compile-javalayer-dependent,compile-midishare-dependent,compile-libs" >
 		<mkdir dir="${dist}" />
 
 		<jar jarfile="${dist}/tritonus_core.jar"
@@ -183,9 +200,19 @@
 		<delete file="${java_ext_path}/tritonus*.jar" />
 	</target>
 
-	<target name="clean" depends="init">
+	<target name="clean"
+		depends="tritonus-clean,javalayer-clean">
+	</target>
+
+	<target name="tritonus-clean"
+		depends="init">
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
-		<ant dir="../javalayer" target="clean" />
+	</target>
+
+	<target name="javalayer-clean"
+		depends="init"
+		if="javalayer-source-present">
+		<ant dir="${javalayer-path}" target="clean" />
 	</target>
 </project>
