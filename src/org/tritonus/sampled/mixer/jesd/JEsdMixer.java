@@ -211,7 +211,7 @@ public class JEsdMixer
 
 
 	// nBufferSize is in bytes!
-	private SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
+	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		if (TDebug.TraceMixer)
@@ -236,7 +236,7 @@ public class JEsdMixer
 
 
 	// nBufferSize is in bytes!
-	private TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
+	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
@@ -252,7 +252,7 @@ public class JEsdMixer
 
 
 
-	private Clip getClip(AudioFormat format)
+	protected Clip getClip(AudioFormat format)
 		throws	LineUnavailableException
 	{
 		// return new JEsdClip(this);
