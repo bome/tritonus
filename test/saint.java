@@ -27,13 +27,23 @@ public class saint
 {
 	private static class SupportedFormat
 	{
-		private String	m_strName;
-		private int	m_nNumber;
+		private String			m_strName;
+		private int			m_nNumber;
+		private AudioFormat.Encoding	m_encoding;
+		private int			m_nSampleSize;
+		private boolean			m_bBigEndian;
 
-		public SupportedFormat(String strName, int nNumber)
+		// sample size is in bits
+		public SupportedFormat(String strName,
+				       int nNumber,
+				       AudioFormat.Encoding encoding,
+				       int nSampleSize,
+				       boolean bBigEndian)
 		{
 			m_strName = strName;
 			m_nNumber = nNumber;
+			m_encoding = encoding;
+			m_nSampleSize = nSampleSize;
 		}
 
 		public String getName()
@@ -45,29 +55,60 @@ public class saint
 		{
 			return m_nNumber;
 		}
+
+		public AudioFormat.Encoding getEncoding()
+		{
+			return m_encoding;
+		}
+
+		public int getSampleSize()
+		{
+			return m_nSampleSize;
+		}
+
+		public boolean getBigEndian()
+		{
+			return m_bBigEndian;
+		}
 	}
 
 	private static final SupportedFormat[]	SUPPORTED_FORMATS =
 	{
-		new SupportedFormat("s8", Saint.SND_PCM_SFMT_S8),
-		new SupportedFormat("u8", Saint.SND_PCM_SFMT_U8),
-		new SupportedFormat("s16l", Saint.SND_PCM_SFMT_S16_LE),
-		new SupportedFormat("s16b", Saint.SND_PCM_SFMT_S16_BE),
-		new SupportedFormat("u16l", Saint.SND_PCM_SFMT_U16_LE),
-		new SupportedFormat("u16b", Saint.SND_PCM_SFMT_U16_BE),
-		new SupportedFormat("s24l", Saint.SND_PCM_SFMT_S24_LE),
-		new SupportedFormat("s24b", Saint.SND_PCM_SFMT_S24_BE),
-		new SupportedFormat("u24l", Saint.SND_PCM_SFMT_U24_LE),
-		new SupportedFormat("u24b", Saint.SND_PCM_SFMT_U24_BE),
-		new SupportedFormat("s32l", Saint.SND_PCM_SFMT_S32_LE),
-		new SupportedFormat("s32b", Saint.SND_PCM_SFMT_S32_BE),
-		new SupportedFormat("u32l", Saint.SND_PCM_SFMT_U32_LE),
-		new SupportedFormat("u32b", Saint.SND_PCM_SFMT_U32_BE),
-		new SupportedFormat("f32l", Saint.SND_PCM_SFMT_S32_LE),
-		new SupportedFormat("f32b", Saint.SND_PCM_SFMT_S32_BE),
+		new SupportedFormat("s8", Saint.SND_PCM_SFMT_S8,
+				    AudioFormat.Encoding.PCM_SIGNED, 8, true),
+		new SupportedFormat("u8", Saint.SND_PCM_SFMT_U8,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 8, true),
+		new SupportedFormat("s16l", Saint.SND_PCM_SFMT_S16_LE,
+				    AudioFormat.Encoding.PCM_SIGNED, 16, false),
+		new SupportedFormat("s16b", Saint.SND_PCM_SFMT_S16_BE,
+				    AudioFormat.Encoding.PCM_SIGNED, 16, true),
+		new SupportedFormat("u16l", Saint.SND_PCM_SFMT_U16_LE,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 16, false),
+		new SupportedFormat("u16b", Saint.SND_PCM_SFMT_U16_BE,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 16, true),
+		new SupportedFormat("s24l", Saint.SND_PCM_SFMT_S24_LE,
+				    AudioFormat.Encoding.PCM_SIGNED, 24, false),
+		new SupportedFormat("s24b", Saint.SND_PCM_SFMT_S24_BE,
+				    AudioFormat.Encoding.PCM_SIGNED, 24, true),
+		new SupportedFormat("u24l", Saint.SND_PCM_SFMT_U24_LE,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 24, false),
+		new SupportedFormat("u24b", Saint.SND_PCM_SFMT_U24_BE,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 24, true),
+		new SupportedFormat("s32l", Saint.SND_PCM_SFMT_S32_LE,
+				    AudioFormat.Encoding.PCM_SIGNED, 32, false),
+		new SupportedFormat("s32b", Saint.SND_PCM_SFMT_S32_BE,
+				    AudioFormat.Encoding.PCM_SIGNED, 32, true),
+		new SupportedFormat("u32l", Saint.SND_PCM_SFMT_U32_LE,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 32, false),
+		new SupportedFormat("u32b", Saint.SND_PCM_SFMT_U32_BE,
+				    AudioFormat.Encoding.PCM_UNSIGNED, 32, true),
+		new SupportedFormat("f32l", Saint.SND_PCM_SFMT_S32_LE,
+				    AudioFormat.Encoding.PCM_SIGNED /* obviously wrong */, 32, false),
+		new SupportedFormat("f32b", Saint.SND_PCM_SFMT_S32_BE,
+				    AudioFormat.Encoding.PCM_SIGNED /* obviously wrong */, 32, true),
 	};
 
-	private static final int	DEFAULT_FORMAT = Saint.SND_PCM_SFMT_S32_LE;
+	private static final int	DEFAULT_FORMAT = 2;
 
 
 	public static void main(String[] args)
@@ -77,7 +118,7 @@ public class saint
 		InputStream	orchestra = null;
 		InputStream	score = null;
 		OutputStream	output = null;
-		int		nOutputFormat = DEFAULT_FORMAT;
+		int		nOutputFormatIndex = DEFAULT_FORMAT;
 		boolean		bLineOutput = false;
 		int	c;
 
@@ -120,17 +161,18 @@ public class saint
 				break;
 
 			case 'f':
-				int	nNewOutputFormat = -1;
+				int	nNewOutputFormatIndex = -1;
 				for (int i = 0; i < SUPPORTED_FORMATS.length; i++)
 				{
 					if (SUPPORTED_FORMATS[i].getName().equals(g.getOptarg()))
 					{
-						nNewOutputFormat = SUPPORTED_FORMATS[i].getNumber();
+						nNewOutputFormatIndex = i;
+						// nNewOutputFormat = SUPPORTED_FORMATS[i].getNumber();
 					}
 				}
-				if (nNewOutputFormat != -1)
+				if (nNewOutputFormatIndex != -1)
 				{
-					nOutputFormat = nNewOutputFormat;
+					nOutputFormatIndex = nNewOutputFormatIndex;
 				}
 				else
 				{
@@ -171,26 +213,30 @@ public class saint
 		if (bLineOutput)
 		{
 			AudioFormat	format = new AudioFormat(
-				AudioFormat.Encoding.PCM_SIGNED,
+				SUPPORTED_FORMATS[nOutputFormatIndex].getEncoding(),
 				saint.getSamplingRate(),
-				16,
+				SUPPORTED_FORMATS[nOutputFormatIndex].getSampleSize(),
 				saint.getChannelCount(),
-				saint.getChannelCount() * 2,
+				// TODO: 24 bit is not handled correctely!!!
+				saint.getChannelCount() * SUPPORTED_FORMATS[nOutputFormatIndex].getSampleSize() / 8,
 				saint.getSamplingRate(),
-				false);
+				SUPPORTED_FORMATS[nOutputFormatIndex].getBigEndian());
 			DataLine.Info	info = new DataLine.Info(
 				SourceDataLine.class, format);
 			SourceDataLine	line = null;
 			try
 			{
 				line = (SourceDataLine) AudioSystem.getLine(info);
+				// TODO: (Tritonus) check if calling without arguments should work
+				line.open(format);
+				line.start();
 			}
 			catch (LineUnavailableException e)
 			{
 			}
 			output = new SourceDataLineOutputStream(line);
 		}
-		saint.setOutput(output, nOutputFormat);
+		saint.setOutput(output, SUPPORTED_FORMATS[nOutputFormatIndex].getNumber());
 		saint.run();
 		try
 		{
