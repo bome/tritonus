@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.cc
+ *	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.c
  */
 
 /*
@@ -20,18 +20,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include	"common.h"
-#include	"org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.h"
+#include "common.h"
+#include "org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.h"
 
 
-static HandleFieldHandler<snd_pcm_format_mask_t*>	handler;
+HandleFieldHandler(snd_pcm_format_mask_t*)
 
 
 
 snd_pcm_format_mask_t*
 getFormatMaskNativeHandle(JNIEnv *env, jobject obj)
 {
-	return handler.getHandle(env, obj);
+	return getHandle(env, obj);
 }
 
 
@@ -51,7 +51,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_malloc(): begin\n"); }
 	nReturn = snd_pcm_format_mask_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_malloc(): handle: %p\n", handle); }
-	handler.setHandle(env, obj, handle);
+	setHandle(env, obj, handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_malloc(): end\n"); }
 	return nReturn;
 }
@@ -70,7 +70,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_free
 	snd_pcm_format_mask_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_free(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_format_mask_free(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask_free(): end\n"); }
 }
@@ -89,7 +89,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_none
 	snd_pcm_format_mask_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_none(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_format_mask_none(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_none(): end\n"); }
 }
@@ -108,7 +108,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_any
 	snd_pcm_format_mask_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_any(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_format_mask_any(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_any(): end\n"); }
 }
@@ -128,7 +128,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_test
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_test(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_format_mask_test(handle, (snd_pcm_format_t) nFormat);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_test(): end\n"); }
 	return (jboolean) nReturn;
@@ -148,7 +148,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_set
 	snd_pcm_format_mask_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_set(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_format_mask_set(handle, (snd_pcm_format_t) nFormat);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_set(): end\n"); }
 }
@@ -167,11 +167,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_reset
 	snd_pcm_format_mask_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_reset(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_format_mask_reset(handle, (snd_pcm_format_t) nFormat);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_00024FormatMask_reset(): end\n"); }
 }
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_FormatMask.c ***/

@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaPcm.cc
+ *	org_tritonus_lowlevel_alsa_AlsaPcm.c
  */
 
 /*
@@ -22,8 +22,8 @@
  *
  */
 
-#include	"common.h"
-#include	"org_tritonus_lowlevel_alsa_AlsaPcm.h"
+#include "common.h"
+#include "org_tritonus_lowlevel_alsa_AlsaPcm.h"
 
 
 // referring to methods in ..AlsaPcm_*.cc
@@ -35,7 +35,7 @@ snd_pcm_sw_params_t*
 getSWParamsNativeHandle(JNIEnv *env, jobject obj);
 
 
-static HandleFieldHandler<snd_pcm_t*>	handler;
+HandleFieldHandler(snd_pcm_t*)
 
 
 
@@ -53,7 +53,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_open
 	int		nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_open(): begin\n"); }
-	name = env->GetStringUTFChars(strPcmName, NULL);
+	name = (*env)->GetStringUTFChars(env, strPcmName, NULL);
 	if (name == NULL)
 	{
 		throwRuntimeException(env, "cannot get characters from string argument");
@@ -65,11 +65,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_open
 	fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_open(): mode: %d\n", (int) nMode);
 	}
 	nReturn = snd_pcm_open(&handle, name, (snd_pcm_stream_t) nDirection, nMode);
-	env->ReleaseStringUTFChars(strPcmName, name);
+	(*env)->ReleaseStringUTFChars(env, strPcmName, name);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_open(): handle: %p\n", handle); }
 	if (nReturn >= 0)
 	{
-		handler.setHandle(env, obj, handle);
+		setHandle(env, obj, handle);
 	}
 	else
 	{
@@ -94,7 +94,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_close
 	int		nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_close(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_close(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_close(): end\n"); }
 	return nReturn;
@@ -116,7 +116,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getAnyHWParams
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_getAnyHWParams(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_getAnyHWParams(): hwparams handle: %p\n", hwParams); }
 	nReturn = snd_pcm_hw_params_any(handle, hwParams);
@@ -141,7 +141,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsAccess
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsAccess(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_access(handle, hwParams, (snd_pcm_access_t) nAccess);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsAccess(): end\n"); }
@@ -164,7 +164,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormat
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormat(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_format(handle, hwParams, (snd_pcm_format_t) nFormat);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormat(): end\n"); }
@@ -186,7 +186,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormatMask
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsFormatMask(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	formatMask = getFormatMaskNativeHandle(env, objFormatMask);
 	nReturn = snd_pcm_hw_params_set_format_mask(handle, hwParams, formatMask);
@@ -210,7 +210,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsChannels
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsChannels(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_channels(handle, hwParams, nChannels);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsChannels(): end\n"); }
@@ -233,7 +233,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsRateNear
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsRateNear(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_rate_near(handle, hwParams, nRate, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsRateNear(): end\n"); }
@@ -256,7 +256,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsBufferTimeNear
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsBufferTimeNear(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, nBufferTime, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsBufferTimeNear(): end\n"); }
@@ -279,7 +279,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsPeriodTimeNear
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsPeriodTimeNear(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params_set_period_time_near(handle, hwParams, nPeriodTime, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParamsPeriodTimeNear(): end\n"); }
@@ -302,7 +302,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParams
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParams(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	hwParams = getHWParamsNativeHandle(env, objHwParams);
 	nReturn = snd_pcm_hw_params(handle, hwParams);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParams(): end\n"); }
@@ -324,7 +324,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParams
 /* 	snd_pcm_hw_params_t*	hwParams; */
 /* 	int			nReturn; */
 
-/* 	handle = handler.getHandle(env, obj); */
+/* 	handle = getHandle(env, obj); */
 /* 	hwParams = getHWParamsNativeHandle(env, objHwParams); */
 /* 	nReturn = snd_pcm_hw_params_get_period_size(handle, hwParams, NULL); */
 /* 	return nReturn; */
@@ -345,7 +345,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setHWParams
 /* 	snd_pcm_hw_params_t*	hwParams; */
 /* 	int			nReturn; */
 
-/* 	handle = handler.getHandle(env, obj); */
+/* 	handle = getHandle(env, obj); */
 /* 	hwParams = getHWParamsNativeHandle(env, objHwParams); */
 /* 	nReturn = snd_pcm_hw_params_get_buffer_size(handle, hwParams); */
 /* 	return nReturn; */
@@ -366,7 +366,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_getSWParams
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_getSWParams(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_getSWParams(): swparams handle: %p\n", swParams); }
 	nReturn = snd_pcm_sw_params_current(handle, swParams);
@@ -391,7 +391,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStartMode
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStartMode(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_start_mode(handle, swParams, (snd_pcm_start_t) nStartMode);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStartMode(): end\n"); }
@@ -414,7 +414,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsXrunMode
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsXrunMode(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_xrun_mode(handle, swParams, (snd_pcm_xrun_t) nXrunMode);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsXrunMode(): end\n"); }
@@ -437,7 +437,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsTStampMode
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsTStampMode(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_tstamp_mode(handle, swParams, (snd_pcm_tstamp_t) nTStampMode);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsTStampMode(): end\n"); }
@@ -460,7 +460,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSleepMin
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSleepMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_sleep_min(handle, swParams, nSleepMin);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSleepMin(): end\n"); }
@@ -483,7 +483,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsAvailMin
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsAvailMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_avail_min(handle, swParams, nAvailMin);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsAvailMin(): end\n"); }
@@ -506,7 +506,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsXferAlign
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsXferAlign(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_xfer_align(handle, swParams, nXferAlign);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsXferAlign(): end\n"); }
@@ -529,7 +529,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStartThreshold
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStartThreshold(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_start_threshold(handle, swParams, nStartThreshold);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStartThreshold(): end\n"); }
@@ -552,7 +552,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStopThreshold
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStopThreshold(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_stop_threshold(handle, swParams, nStopThreshold);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsStopThreshold(): end\n"); }
@@ -575,7 +575,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSilenceThreshold
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSilenceThreshold(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_silence_threshold(handle, swParams, nSilenceThreshold);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSilenceThreshold(): end\n"); }
@@ -598,7 +598,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSilenceSize
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSilenceSize(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params_set_silence_size(handle, swParams, nSilenceSize);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParamsSilenceSize(): end\n"); }
@@ -621,7 +621,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParams
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParams(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	swParams = getSWParamsNativeHandle(env, objSwParams);
 	nReturn = snd_pcm_sw_params(handle, swParams);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_setSWParams(): end\n"); }
@@ -648,8 +648,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei
 	snd_pcm_sframes_t	lWritten;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei(): begin\n"); }
-	handle = handler.getHandle(env, obj);
-	data = env->GetByteArrayElements(abData, NULL);
+	handle = getHandle(env, obj);
+	data = (*env)->GetByteArrayElements(env, abData, NULL);
 	if (data == NULL)
 	{
  		throwRuntimeException(env, "GetByteArrayElements() failed");
@@ -659,7 +659,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei
 	if (debug_flag) { printf("Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei(): Written: %ld\n", lWritten); }
 	// we can do a JNI_ABORT because we know the data wasn't altered.
 	// This may improve performance (no copying back).
-	env->ReleaseByteArrayElements(abData, data, JNI_ABORT);
+	(*env)->ReleaseByteArrayElements(env, abData, data, JNI_ABORT);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei(): end\n"); }
 	return lWritten;
 }
@@ -680,8 +680,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi
 	snd_pcm_sframes_t	lRead;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): begin\n"); }
-	handle = handler.getHandle(env, obj);
-	data = env->GetByteArrayElements(abData, NULL);
+	handle = getHandle(env, obj);
+	data = (*env)->GetByteArrayElements(env, abData, NULL);
 	printf("native array: %p\n", data);
 	if (data == NULL)
 	{
@@ -693,7 +693,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi
 	lRead = snd_pcm_readi(handle, data + lOffset, lFrameCount);
 	if (debug_flag) { printf("Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): Read: %ld\n", lRead); }
 	// printf("1\n");
-	env->ReleaseByteArrayElements(abData, data, 0);
+	(*env)->ReleaseByteArrayElements(env, abData, data, 0);
 	// printf("2\n");
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): end\n"); }
 	return lRead;
@@ -716,4 +716,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_setTrace
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaPcm.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaPcm.c ***/

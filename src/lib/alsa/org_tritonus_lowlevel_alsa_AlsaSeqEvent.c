@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaSeqEvent.cc
+ *	org_tritonus_lowlevel_alsa_AlsaSeqEvent.c
  */
 
 /*
@@ -24,14 +24,16 @@
 #include "org_tritonus_lowlevel_alsa_AlsaSeqEvent.h"
 
 
-static HandleFieldHandler<snd_seq_event_t*>	handler;
+HandleFieldHandler(snd_seq_event_t*)
+
+
 
 
 
 snd_seq_event_t*
 getEventNativeHandle(JNIEnv* env, jobject obj)
 {
-	return handler.getHandle(env, obj);
+	return getHandle(env, obj);
 }
 
 
@@ -51,7 +53,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_malloc(): begin\n"); }
 	handle = (snd_seq_event_t*) calloc(1, sizeof(snd_seq_event_t));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_malloc(): handle: %p\n", handle); }
-	handler.setHandle(env, obj, handle);
+	setHandle(env, obj, handle);
 	if (handle != NULL)
 	{
 		nReturn = 0;
@@ -78,13 +80,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_free
 	snd_seq_event_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_free(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if (snd_seq_ev_is_variable(handle))
 	{
 		free(handle->data.ext.ptr);
 	}
 	free(handle);
-	handler.setHandle(env, obj, NULL);
+	setHandle(env, obj, NULL);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_free(): end\n"); }
 }
 
@@ -103,7 +105,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getType
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getType(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->type;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getType(): end\n"); }
 	return nReturn;
@@ -124,7 +126,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getFlags
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getFlags(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->flags;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getFlags(): end\n"); }
 	return nReturn;
@@ -145,7 +147,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getTag
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getTag(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->tag;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getTag(): end\n"); }
 	return nReturn;
@@ -166,7 +168,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueue
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueue(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->type;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueue(): end\n"); }
 	return nReturn;
@@ -187,7 +189,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getTimestamp
 	jlong			lTimestamp;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getTimestamp(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if ((handle->flags & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
 	{
 		lTimestamp = handle->time.tick;
@@ -215,7 +217,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getSourceClient
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getSourceClient(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->source.client;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getSourceClient(): end\n"); }
 	return nReturn;
@@ -236,7 +238,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getSourcePort
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getSourcePort(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->source.port;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getSourcePort(): end\n"); }
 	return nReturn;
@@ -257,7 +259,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getDestClient
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getDestClient(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->dest.client;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getDestClient(): end\n"); }
 	return nReturn;
@@ -278,7 +280,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getDestPort
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getDestPort(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = handle->dest.port;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getDestPort(): end\n"); }
 	return nReturn;
@@ -299,9 +301,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getNote
 	jint*			panValues;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getNote(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	checkArrayLength(env, anValues, 5);
-	panValues = env->GetIntArrayElements(anValues, NULL);
+	panValues = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (panValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements() failed");
@@ -311,7 +313,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getNote
 	panValues[2] = handle->data.note.velocity;
 	panValues[3] = handle->data.note.off_velocity;
 	panValues[4] = handle->data.note.duration;
-	env->ReleaseIntArrayElements(anValues, panValues, 0);
+	(*env)->ReleaseIntArrayElements(env, anValues, panValues, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getNote(): end\n"); }
 }
 
@@ -330,9 +332,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getControl
 	jint*			panValues;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getControl(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	checkArrayLength(env, anValues, 3);
-	panValues = env->GetIntArrayElements(anValues, NULL);
+	panValues = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (panValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements() failed");
@@ -340,7 +342,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getControl
 	panValues[0] = handle->data.control.channel;
 	panValues[1] = handle->data.control.param;
 	panValues[2] = handle->data.control.value;
-	env->ReleaseIntArrayElements(anValues, panValues, 0);
+	(*env)->ReleaseIntArrayElements(env, anValues, panValues, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getControl(): end\n"); }
 }
 
@@ -358,23 +360,24 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueueControl
 	snd_seq_event_t*	handle;
 	jint*			panValues;
 	jlong*			palValues;
+	int			nType;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueueControl(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	checkArrayLength(env, anValues, 2);
 	checkArrayLength(env, alValues, 1);
-	panValues = env->GetIntArrayElements(anValues, NULL);
+	panValues = (*env)->GetIntArrayElements(env, anValues, NULL);
 	if (panValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements() failed");
 	}
-	palValues = env->GetLongArrayElements(alValues, NULL);
+	palValues = (*env)->GetLongArrayElements(env, alValues, NULL);
 	if (palValues == NULL)
 	{
 		throwRuntimeException(env, "GetLongArrayElements() failed");
 	}
 	panValues[0] = handle->data.queue.queue;
-	int	nType = handle->type;
+	nType = handle->type;
 
 	if (nType == SND_SEQ_EVENT_TEMPO)
 	{
@@ -388,8 +391,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueueControl
 	{
 		palValues[0] = (jlong) handle->data.queue.param.time.time.tv_sec * (jlong) 1000000000 + (jlong) handle->data.queue.param.time.time.tv_nsec;
 	}
-	env->ReleaseIntArrayElements(anValues, panValues, 0);
-	env->ReleaseLongArrayElements(alValues, palValues, 0);
+	(*env)->ReleaseIntArrayElements(env, anValues, panValues, 0);
+	(*env)->ReleaseLongArrayElements(env, alValues, palValues, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getQueueControl(): end\n"); }
 }
 
@@ -408,13 +411,13 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getVar
 	jbyteArray		abData;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getVar(): begin\n"); }
-	handle = handler.getHandle(env, obj);
-	abData = env->NewByteArray(handle->data.ext.len);
+	handle = getHandle(env, obj);
+	abData = (*env)->NewByteArray(env, handle->data.ext.len);
 	if (abData == NULL)
 	{
 		throwRuntimeException(env, "NewByteArray() failed");
 	}
-	env->SetByteArrayRegion(abData, (jsize) 0, (jsize) handle->data.ext.len, (jbyte*) handle->data.ext.ptr);
+	(*env)->SetByteArrayRegion(env, abData, (jsize) 0, (jsize) handle->data.ext.len, (jbyte*) handle->data.ext.ptr);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_getVar(): end\n"); }
 	return abData;
 }
@@ -434,7 +437,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setCommon
 	int			nLengthFlags;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setCommon(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	handle->type = nType;
 	// preserve the length flags
 	nLengthFlags = handle->flags & SND_SEQ_EVENT_LENGTH_MASK;
@@ -472,7 +475,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setTimestamp
 	snd_seq_event_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setTimestamp(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if ((handle->flags & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
 	{
 		handle->time.tick = lTimestamp;
@@ -499,7 +502,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setNote
 	snd_seq_event_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setNote(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_seq_ev_set_fixed(handle);
 	handle->data.note.channel = nChannel;
 	handle->data.note.note = nNote;
@@ -523,7 +526,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setControl
 	snd_seq_event_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setControl(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if (snd_seq_ev_is_variable(handle))
 	{
 		printf("var data   free: %p\n", handle->data.ext.ptr);
@@ -551,7 +554,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setQueueControl
 	int			nType;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setQueueControl(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if (snd_seq_ev_is_variable(handle))
 	{
 		printf("var data   free: %p\n", handle->data.ext.ptr);
@@ -591,7 +594,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setVar
 	jbyte*			pData;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setVar(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	if (snd_seq_ev_is_variable(handle))
 	{
 		printf("var data   free: %p\n", handle->data.ext.ptr);
@@ -605,7 +608,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setVar
 		throwRuntimeException(env, "malloc() failed");
 		return;
 	}
-	env->GetByteArrayRegion(abData, nOffset, nLength, pData);
+	(*env)->GetByteArrayRegion(env, abData, nOffset, nLength, pData);
 	snd_seq_ev_set_variable(handle, nLength, pData);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setVar(): end\n"); }
 }
@@ -627,4 +630,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqEvent_setTrace
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaSeqEvent.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaSeqEvent.c ***/

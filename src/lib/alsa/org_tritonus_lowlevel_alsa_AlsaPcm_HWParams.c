@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.cc
+ *	org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.c
  */
 
 /*
@@ -20,15 +20,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include	"org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.h"
-#include	"common.h"
+#include "org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.h"
+#include "common.h"
 
 
 snd_pcm_format_mask_t*
 getFormatMaskNativeHandle(JNIEnv* env, jobject obj);
 
 
-static HandleFieldHandler<snd_pcm_hw_params_t*>	handler;
+HandleFieldHandler(snd_pcm_hw_params_t*)
 
 
 
@@ -40,7 +40,7 @@ setDirection(JNIEnv* env, jint nDirection, jintArray anDirection)
 	if (anDirection != NULL)
 	{
 		checkArrayLength(env, anDirection, 1);
-		env->SetIntArrayRegion(anDirection, 0, 1, &nDirection);
+		(*env)->SetIntArrayRegion(env, anDirection, 0, 1, &nDirection);
 	}
 }
 
@@ -50,7 +50,7 @@ setDirection(JNIEnv* env, jint nDirection, jintArray anDirection)
 snd_pcm_hw_params_t*
 getHWParamsNativeHandle(JNIEnv* env, jobject obj)
 {
-	return handler.getHandle(env, obj);
+	return getHandle(env, obj);
 }
 
 
@@ -70,7 +70,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_malloc(): begin\n"); }
 	nReturn = snd_pcm_hw_params_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_malloc(): handle: %p\n", handle); }
-	handler.setHandle(env, obj, handle);
+	setHandle(env, obj, handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_malloc(): end\n"); }
 	return nReturn;
 }
@@ -89,7 +89,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_free
 	snd_pcm_hw_params_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_free(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_hw_params_free(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_free(): end\n"); }
 }
@@ -112,12 +112,12 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRate___3J
 	jlong			values[2];
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRate(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_rate_numden(handle, &nNumerator, &nDenominator);
 	checkArrayLength(env, alValues, 2);
 	values[0] = nNumerator;
 	values[1] = nDenominator;
-	env->SetLongArrayRegion(alValues, 0, 2, values);
+	(*env)->SetLongArrayRegion(env, alValues, 0, 2, values);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRate(): end\n"); }
 	return nReturn;
 }
@@ -135,7 +135,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getSBits
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getSBits(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_sbits(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getSBits(): end\n"); }
 	return nReturn;
@@ -156,7 +156,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFifoSize
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getFifoSize(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_fifo_size(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getFifoSize(): end\n"); }
 	return nReturn;
@@ -177,7 +177,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getAccess
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getAccess(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_access(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getAccess(): end\n"); }
 	return nReturn;
@@ -198,7 +198,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormat
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getFormat(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_format(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getFormat(): end\n"); }
 	return nReturn;
@@ -218,7 +218,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormatMask
 	snd_pcm_format_mask_t*	formatMask;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormatMask(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	formatMask = getFormatMaskNativeHandle(env, objFormatMask);
 	snd_pcm_hw_params_get_format_mask(handle, formatMask);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getFormatMask(): end\n"); }
@@ -239,7 +239,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getSubformat
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getSubformat(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_subformat(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getSubformat(): end\n"); }
 	return nReturn;
@@ -260,7 +260,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannels
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getChannels(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_channels(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getChannels(): end\n"); }
 	return nReturn;
@@ -281,7 +281,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannelsMin
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getChannelsMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_channels_min(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getChannelsMin(): end\n"); }
 	return nReturn;
@@ -302,7 +302,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getChannelsMax
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getChannelsMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_channels_max(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getChannelsMax(): end\n"); }
 	return nReturn;
@@ -324,7 +324,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRate___3I
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRate(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_rate(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRate(): end\n"); }
@@ -345,7 +345,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRateMin
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRateMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_rate_min(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRateMin(): end\n"); }
@@ -368,7 +368,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getRateMax
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRateMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_rate_max(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getRateMax(): end\n"); }
@@ -391,7 +391,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTime
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodTime(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_period_time(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodTime(): end\n"); }
@@ -414,7 +414,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTimeMin
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodTimeMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_period_time_min(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodTimeMin(): end\n"); }
@@ -437,7 +437,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodTimeMax
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodTimeMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_period_time_max(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodTimeMax(): end\n"); }
@@ -460,7 +460,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSize
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodSize(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_period_size(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodSize(): end\n"); }
@@ -483,7 +483,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSizeMin
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodSizeMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_period_size_min(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodSizeMin(): end\n"); }
@@ -506,7 +506,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodSizeMax
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodSizeMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_period_size_max(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodSizeMax(): end\n"); }
@@ -529,7 +529,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriods
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriods(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_periods(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriods(): end\n"); }
@@ -552,7 +552,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodsMin
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodsMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_periods_min(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodsMin(): end\n"); }
@@ -575,7 +575,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getPeriodsMax
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodsMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_periods_max(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getPeriodsMax(): end\n"); }
@@ -598,7 +598,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTime
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferTime(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_buffer_time(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferTime(): end\n"); }
@@ -621,7 +621,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTimeMin
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferTimeMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_buffer_time_min(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferTimeMin(): end\n"); }
@@ -644,7 +644,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferTimeMax
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferTimeMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_buffer_time_max(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferTimeMax(): end\n"); }
@@ -666,7 +666,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSize
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferSize(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_buffer_size(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferSize(): end\n"); }
 	return nReturn;
@@ -687,7 +687,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSizeMin
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferSizeMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_buffer_size_min(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferSizeMin(): end\n"); }
 	return nReturn;
@@ -708,7 +708,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getBufferSizeMax
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferSizeMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_buffer_size_max(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getBufferSizeMax(): end\n"); }
 	return nReturn;
@@ -730,7 +730,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTime
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getTickTime(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_tick_time(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getTickTime(): end\n"); }
@@ -753,7 +753,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTimeMin
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getTickTimeMin(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_tick_time_min(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getTickTimeMin(): end\n"); }
@@ -776,7 +776,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTimeMax
 	int			nDirection;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getTickTimeMax(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_hw_params_get_tick_time_max(handle, &nDirection);
 	setDirection(env, nDirection, anDirection);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_HWParams_getTickTimeMax(): end\n"); }
@@ -785,4 +785,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024HWParams_getTickTimeMax
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaPcm_HWParams.c ***/

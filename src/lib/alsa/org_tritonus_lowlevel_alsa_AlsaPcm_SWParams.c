@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.cc
+ *	org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.c
  */
 
 /*
@@ -20,18 +20,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include	"common.h"
-#include	"org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.h"
+#include "common.h"
+#include "org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.h"
 
 
-static HandleFieldHandler<snd_pcm_sw_params_t*>	handler;
+HandleFieldHandler(snd_pcm_sw_params_t*)
 
 
 
 snd_pcm_sw_params_t*
 getSWParamsNativeHandle(JNIEnv *env, jobject obj)
 {
-	return handler.getHandle(env, obj);
+	return getHandle(env, obj);
 }
 
 
@@ -51,7 +51,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_malloc(): begin\n"); }
 	nReturn = snd_pcm_sw_params_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_malloc(): handle: %p\n", handle); }
-	handler.setHandle(env, obj, handle);
+	setHandle(env, obj, handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_malloc(): end\n"); }
 	return nReturn;
 }
@@ -70,7 +70,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_free
 	snd_pcm_sw_params_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_free(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_pcm_sw_params_free(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_SWParams_free(): end\n"); }
 }
@@ -89,7 +89,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStartMode
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_start_mode(handle);
 	return nReturn;
 }
@@ -108,7 +108,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getXrunMode
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_xrun_mode(handle);
 	return nReturn;
 }
@@ -127,7 +127,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getTStampMode
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_tstamp_mode(handle);
 	return nReturn;
 }
@@ -146,7 +146,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSleepMin
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_sleep_min(handle);
 	return nReturn;
 }
@@ -165,7 +165,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getAvailMin
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_avail_min(handle);
 	return nReturn;
 }
@@ -184,7 +184,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getXferAlign
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_xfer_align(handle);
 	return nReturn;
 }
@@ -204,7 +204,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStartThreshold
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_start_threshold(handle);
 	return nReturn;
 }
@@ -223,7 +223,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getStopThreshold
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_stop_threshold(handle);
 	return nReturn;
 }
@@ -241,7 +241,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSilenceThreshold
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_silence_threshold(handle);
 	return nReturn;
 }
@@ -260,11 +260,11 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_00024SWParams_getSilenceSize
 	snd_pcm_sw_params_t*	handle;
 	int			nReturn;
 
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_pcm_sw_params_get_silence_size(handle);
 	return nReturn;
 }
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaPcm_SWParams.c ***/

@@ -22,9 +22,9 @@
 
 #include <stdio.h>
 #include <dlfcn.h>
+#include "../common/debug.h"
 
 
-static bool debug_flag = false;
 static void*	asound_dl_handle = NULL;
 
 
@@ -38,23 +38,23 @@ static void*	asound_dl_handle = NULL;
  */
 void _init(void)
 {
-	if (debug_flag) { (void) printf("_init(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "_init(): begin\n"); }
 	asound_dl_handle = dlopen("libasound.so", RTLD_LAZY | RTLD_GLOBAL);
-	if (debug_flag) { (void) printf("_init(): result: %p\n", asound_dl_handle); }
-	if (debug_flag) { (void) printf("_init(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "_init(): result: %p\n", asound_dl_handle); }
+	if (debug_flag) { (void) fprintf(debug_file, "_init(): end\n"); }
 }
 
 
 
 void _fini(void)
 {
-	if (debug_flag) { (void) printf("_fini(): begin\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "_fini(): begin\n"); }
 	if (asound_dl_handle != NULL)
 	{
-		if (debug_flag) { (void) printf("_fini(): closeing handle\n"); }
+		if (debug_flag) { (void) fprintf(debug_file, "_fini(): closeing handle\n"); }
 		(void) dlclose(asound_dl_handle);
 	}
-	if (debug_flag) { (void) printf("_fini(): end\n"); }
+	if (debug_flag) { (void) fprintf(debug_file, "_fini(): end\n"); }
 }
 
 

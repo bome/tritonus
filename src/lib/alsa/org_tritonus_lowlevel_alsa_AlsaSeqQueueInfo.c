@@ -1,5 +1,5 @@
 /*
- *	org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.cc
+ *	org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.c
  */
 
 /*
@@ -24,14 +24,14 @@
 #include "org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.h"
 
 
-static HandleFieldHandler<snd_seq_queue_info_t*>	handler;
+HandleFieldHandler(snd_seq_queue_info_t*)
 
 
 // TODO: used in ...
 snd_seq_queue_info_t*
 getQueueInfoNativeHandle(JNIEnv *env, jobject obj)
 {
-	return handler.getHandle(env, obj);
+	return getHandle(env, obj);
 }
 
 
@@ -51,7 +51,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_malloc(): begin\n"); }
 	nReturn = snd_seq_queue_info_malloc(&handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_malloc(): handle: %p\n", handle); }
-	handler.setHandle(env, obj, handle);
+	setHandle(env, obj, handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_malloc(): end\n"); }
 	return nReturn;
 }
@@ -70,7 +70,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_free
 	snd_seq_queue_info_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_free(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_seq_queue_info_free(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_free(): end\n"); }
 }
@@ -90,7 +90,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getQueue
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getQueue(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_seq_queue_info_get_queue(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getQueue(): end\n"); }
 	return nReturn;
@@ -112,9 +112,9 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getName
 	jstring			strName;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getName(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	pName = snd_seq_queue_info_get_name(handle);
-	strName = env->NewStringUTF(pName);
+	strName = (*env)->NewStringUTF(env, pName);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getName(): end\n"); }
 	return strName;
 }
@@ -134,7 +134,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getOwner
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getOwner(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_seq_queue_info_get_owner(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getOwner(): end\n"); }
 	return nReturn;
@@ -155,7 +155,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getLocked
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getLocked(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_seq_queue_info_get_locked(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getLocked(): end\n"); }
 	return nReturn;
@@ -176,7 +176,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getFlags
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getFlags(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	nReturn = snd_seq_queue_info_get_flags(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_getFlags(): end\n"); }
 	return nReturn;
@@ -197,10 +197,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setName
 	const char*		pName;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setName(): begin\n"); }
-	handle = handler.getHandle(env, obj);
-	pName = env->GetStringUTFChars(strName, NULL);
+	handle = getHandle(env, obj);
+	pName = (*env)->GetStringUTFChars(env, strName, NULL);
 	snd_seq_queue_info_set_name(handle, pName);
-	env->ReleaseStringUTFChars(strName, pName);
+	(*env)->ReleaseStringUTFChars(env, strName, pName);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setName(): end\n"); }
 }
 
@@ -218,7 +218,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setOwner
 	snd_seq_queue_info_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setOwner(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_seq_queue_info_set_owner(handle, nOwner);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setOwner(): end\n"); }
 }
@@ -237,7 +237,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setLocked
 	snd_seq_queue_info_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setLocked(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_seq_queue_info_set_locked(handle, bLocked);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setLocked(): end\n"); }
 }
@@ -256,7 +256,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setFlags
 	snd_seq_queue_info_t*	handle;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setFlags(): begin\n"); }
-	handle = handler.getHandle(env, obj);
+	handle = getHandle(env, obj);
 	snd_seq_queue_info_set_flags(handle, nFlags);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setFlags(): end\n"); }
 }
@@ -278,4 +278,4 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo_setTrace
 
 
 
-/*** org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.cc ***/
+/*** org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.c ***/
