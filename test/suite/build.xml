@@ -57,7 +57,9 @@
       <formatter type="plain" />
       <test name="AiffAudioFileReaderTestCase" />
       <test name="AuAudioFileReaderTestCase" />
+      <test name="AuZeroDataLengthAudioFileReaderTestCase" />
       <test name="WaveAudioFileReaderTestCase" />
+      <test name="GSMAudioFileReaderTestCase" />
     </junit>
   </target>
 </project>
