@@ -42,7 +42,8 @@ import	org.tritonus.TDebug;
  * In a specification request to JavaSoft, these static methods
  * could be integrated into<code>AudioFileFormat.Type</code>. The static 
  * instances of AIFF, AIFC, AU, SND, and WAVE types in class
- * <code>AudioFileFormat.Type</code> should be deprecated.
+ * <code>AudioFileFormat.Type</code> should be retrieved
+ * using this method, too (internally).<br>
  * At best, the protected constructor of that class
  * should also be replaced to be a private constructor.
  * Like this it will be prevented that developers create

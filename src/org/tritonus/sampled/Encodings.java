@@ -46,7 +46,8 @@ import	org.tritonus.TDebug;
  * <code>AudioFormat.Encoding(String name)</code> (possibly 
  * renamed to <code>getInstance(String name)</code>.<br>
  * The static instances of ULAW, ALAW PCM_UNSIGNED and PCM_SIGNED
- * encodings in that class should be deprecated.<br>
+ * encodings in that class should be retrieved using that function, 
+ * too (internally).<br>
  * At best, the protected constructor of that class
  * should also be replaced to be a private constructor.
  * Like this it will be prevented that developers create their own
