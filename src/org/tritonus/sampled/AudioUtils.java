@@ -102,7 +102,24 @@ public class AudioUtils
 		return false;
 	}
 
+    //$$fb 2000-07-18: added these debugging functions
+    public static String NS_or_number(int number) {
+	return (number==AudioSystem.NOT_SPECIFIED)?"NOT_SPECIFIED":String.valueOf(number);
+    }
+    public static String NS_or_number(float number) {
+	return (number==AudioSystem.NOT_SPECIFIED)?"NOT_SPECIFIED":String.valueOf(number);
+    }
 
+    /** 
+     * For debugging purposes.
+     */
+    public static String format2ShortStr(AudioFormat format) {
+	return format.getEncoding() + "-" +
+	    NS_or_number(format.getChannels()) + "ch-" +
+	    NS_or_number(format.getSampleSizeInBits()) + "bit-" +
+	    NS_or_number(((int)format.getSampleRate())) + "Hz-"+
+	    (format.isBigEndian() ? "be" : "le");
+    } 
 
 }
 
