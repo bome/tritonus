@@ -17,7 +17,8 @@ statement once:
 recommended method is to do this in a static initializer.)
 
 
-The URL forms in detail:
+The URL forms
+=============
 
 cdda:
 cdda://
@@ -54,6 +55,12 @@ reads track 4 of the drive /dev/hdc
 cdda:#4
 cdda://#4
 reads track 4 of the default drive
+
+
+Examples
+========
+
+There are two examples in the Java Sound Examples' cvs: CddaPlayer and CddaRipper.
 
 
 Internal architecture
