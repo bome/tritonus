@@ -89,6 +89,8 @@ vpath %.java $(SRCDIR_PRIV)
 vpath %.java $(SRCDIR_PRIV)/core
 vpath %.java $(SRCDIR_PRIV)/lowlevel/alsa
 vpath %.java $(SRCDIR_PRIV)/lowlevel/cdda
+vpath %.java $(SRCDIR_PRIV)/lowlevel/cdda/cdparanoia
+vpath %.java $(SRCDIR_PRIV)/lowlevel/cdda/cooked_ioctl
 vpath %.java $(SRCDIR_PRIV)/lowlevel/esd
 vpath %.java $(SRCDIR_PRIV)/lowlevel/gsm
 vpath %.java $(SRCDIR_PRIV)/lowlevel/saint
@@ -99,6 +101,7 @@ vpath %.java $(SRCDIR_PRIV)/share/sampled/convert
 vpath %.java $(SRCDIR_PRIV)/share/sampled/file
 vpath %.java $(SRCDIR_PRIV)/share/sampled/mixer
 vpath %.java $(SRCDIR_PRIV)/share/midi
+vpath %.java $(SRCDIR_PRIV)/sampled/cdda
 vpath %.java $(SRCDIR_PRIV)/sampled/convert
 vpath %.java $(SRCDIR_PRIV)/sampled/convert/gsm
 vpath %.java $(SRCDIR_PRIV)/sampled/convert/javalayer
@@ -126,6 +129,8 @@ vpath %.class $(OBJDIR_PRIV)
 vpath %.class $(OBJDIR_PRIV)/core
 vpath %.class $(OBJDIR_PRIV)/lowlevel/alsa
 vpath %.class $(OBJDIR_PRIV)/lowlevel/cdda
+vpath %.class $(OBJDIR_PRIV)/lowlevel/cdda/cdparanoia
+vpath %.class $(OBJDIR_PRIV)/lowlevel/cdda/cooked_ioctl
 vpath %.class $(OBJDIR_PRIV)/lowlevel/esd
 vpath %.class $(OBJDIR_PRIV)/lowlevel/gsm
 vpath %.class $(OBJDIR_PRIV)/lowlevel/saint
@@ -136,6 +141,7 @@ vpath %.class $(OBJDIR_PRIV)/share/sampled/convert
 vpath %.class $(OBJDIR_PRIV)/share/sampled/file
 vpath %.class $(OBJDIR_PRIV)/share/sampled/mixer
 vpath %.class $(OBJDIR_PRIV)/share/midi
+vpath %.class $(OBJDIR_PRIV)/sampled/cdda
 vpath %.class $(OBJDIR_PRIV)/sampled/convert
 vpath %.class $(OBJDIR_PRIV)/sampled/convert/gsm
 vpath %.class $(OBJDIR_PRIV)/sampled/convert/javalayer
@@ -170,10 +176,13 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/share/sampled/mixer/*.java \
 	$(SRCDIR_PRIV)/lowlevel/alsa/*.java \
 	$(SRCDIR_PRIV)/lowlevel/cdda/*.java \
+	$(SRCDIR_PRIV)/lowlevel/cdda/cdparanoia/*.java \
+	$(SRCDIR_PRIV)/lowlevel/cdda/cooked_ioctl/*.java \
 	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
 	$(SRCDIR_PRIV)/lowlevel/gsm/*.java \
 	$(SRCDIR_PRIV)/lowlevel/saint/*.java \
 	$(SRCDIR_PRIV)/lowlevel/lame/*.java \
+	$(SRCDIR_PRIV)/sampled/cdda/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/gsm/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/javalayer/*.java \
