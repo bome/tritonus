@@ -2,7 +2,7 @@
      Tritonus build
      common definitions
 
-     This file is included by build.xml and build-aspectj.xml.
+     This file is included by build.xml and build-debug.xml.
 -->
   <!--taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc"/-->
 
