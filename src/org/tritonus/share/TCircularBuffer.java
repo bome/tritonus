@@ -60,6 +60,7 @@ public class TCircularBuffer
 	public void close()
 	{
 		m_bOpen = false;
+		// TODO: call notify() ?
 	}
 
 
