@@ -27,6 +27,9 @@
 package	org.tritonus.lowlevel.gsm;
 
 
+import	org.tritonus.share.sampled.TConversionTool;
+
+
 
 public final class GSMDecoder
 {
@@ -53,10 +56,45 @@ public final class GSMDecoder
 	private int	msr;
 
 
+	// hack used for adapting calling conventions
+	private byte[]	m_abFrame;
+
 
 	public void GSM()
 	{
 		nrp = 40;
+	}
+
+
+
+
+	/*
+	  This is how the method call should look like.
+	  @param abFrame the array that contains the GSM frame (encoded data)
+	  @param nFrameStart that number of the byte that should be used as starting point
+	  for the GSM frame inside abFrame
+	  @param abBuffer the array where the decoded data should be written to. The data are
+	  written as 16 bit linear samples (actually using the lowest 13 bit), either big
+	  or little endian, depending on the value of bBigEndian.
+	  @param nBufferStart the byte number where the data should be written.
+	  @param bBigEndian whether the decoded data should be written big endian or
+	  little endian.
+	 */
+	public void decode(byte[] abFrame, int nFrameStart,
+			   byte[] abBuffer, int nBufferStart, boolean bBigEndian)
+		throws InvalidGSMFrameException
+	{
+		if (m_abFrame == null)
+		{
+			m_abFrame = new byte[33];
+		}
+		System.arraycopy(abFrame, nFrameStart, m_abFrame, 0, 33);
+		int[]	anDecodedData = decode(m_abFrame);
+		for (int i = 0; i < 160; i++)
+		{
+			//$$fb 2000-08-13: adapted to new TConversionTool functions
+			TConversionTool.intToBytes16(anDecodedData[i], abBuffer, i * 2 + nBufferStart, bBigEndian);
+		}
 	}
 
 
