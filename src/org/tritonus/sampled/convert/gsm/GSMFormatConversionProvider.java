@@ -103,10 +103,8 @@ public class GSMFormatConversionProvider
 	{
 		super(Arrays.asList(FORMATS1),
 		      Arrays.asList(FORMATS2));
-		if (TDebug.TraceAudioConverter)
-		{
-			TDebug.out("GSMFormatConversionProvider.<init>(): called");
-		}
+		if (TDebug.TraceAudioConverter) { TDebug.out("GSMFormatConversionProvider.<init>(): begin"); }
+		if (TDebug.TraceAudioConverter) { TDebug.out("GSMFormatConversionProvider.<init>(): end"); }
 	}
 
 
@@ -115,6 +113,7 @@ public class GSMFormatConversionProvider
 	{
 		if (TDebug.TraceAudioConverter)
 		{
+			TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): begin");
 			TDebug.out("GSMFormatConversionProvider.getAudioInputStream():");
 			TDebug.out("checking if conversion supported");
 			TDebug.out("from: " + audioInputStream.getFormat());
@@ -157,7 +156,11 @@ public class GSMFormatConversionProvider
 			}
 			throw new IllegalArgumentException("conversion not supported");
 		}
+		// TODO: this is unreachable
+		// if (TDebug.TraceAudioConverter) { TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): end"); }
 	}
+
+
 
 	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat) {
 		// return first of the matching formats
@@ -201,27 +204,20 @@ public class GSMFormatConversionProvider
 		public DecodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
 		{
 			super(outputFormat,
-			      //$$fb 2001-04-16: FrameLength gives the number of 33-byte blocks !
-			      //inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 33 * 160);
 			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() * 160);
-			if (TDebug.TraceAudioConverter)
-			{
-				TDebug.out("DecodedGSMAudioInputStream.<init>(): called");
-			}
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.<init>(): begin"); }
 			m_encodedStream = new DataInputStream(inputStream);
 			m_decoder = new GSMDecoder();
 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
 			m_abBuffer = new byte[BUFFER_SIZE];
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.<init>(): end"); }
 		}
 
 
 
 		public void execute()
 		{
-			if (TDebug.TraceAudioConverter)
-			{
-				TDebug.out("DecodedGSMAudioInputStream.execute(): begin");
-			}
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): begin"); }
 			try
 			{
 				m_encodedStream.readFully(m_abFrameBuffer);
@@ -231,10 +227,7 @@ public class GSMFormatConversionProvider
 				/*
 				  Not only errors, but also EOF is caught here.
 				 */
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				m_circularBuffer.close();
 				return;
 			}
@@ -259,10 +252,7 @@ public class GSMFormatConversionProvider
 			}
 			catch (InvalidGSMFrameException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				m_circularBuffer.close();
 				return;
 			}
@@ -270,10 +260,8 @@ public class GSMFormatConversionProvider
 /// end new version
 
 			m_circularBuffer.write(m_abBuffer);
-			if (TDebug.TraceAudioConverter)
-			{
-				TDebug.out("DecodedGSMAudioInputStream.execute(): decoded GSM frame written");
-			}
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): decoded GSM frame written"); }
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedGSMAudioInputStream.execute(): end"); }
 		}
 
 
@@ -330,25 +318,20 @@ public class GSMFormatConversionProvider
 			      //$$fb 2001-04-16: FrameLength gives the number of 33-byte blocks !
 			      //inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 160 * 33);
 			      inputStream.getFrameLength() == AudioSystem.NOT_SPECIFIED ? AudioSystem.NOT_SPECIFIED : inputStream.getFrameLength() / 160);
-			if (TDebug.TraceAudioConverter)
-			{
-				TDebug.out("EncodedGSMAudioInputStream.<init>(): called");
-			}
+			if (TDebug.TraceAudioConverter) { TDebug.out("EncodedGSMAudioInputStream.<init>(): begin"); }
 			m_decodedStream = inputStream;
 			m_encoder = new Encoder();
 			m_abBuffer = new byte[BUFFER_SIZE];
 			m_asBuffer = new short[160];
 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
+			if (TDebug.TraceAudioConverter) { TDebug.out("EncodedGSMAudioInputStream.<init>(): end"); }
 		}
 
 
 
 		public void execute()
 		{
-			if (TDebug.TraceAudioConverter)
-			{
-				TDebug.out(">EncodedGSMAudioInputStream.execute(): called");
-			}
+			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedGSMAudioInputStream.execute(): begin"); }
 			try
 			{
 				int	nRead = m_decodedStream.read(m_abBuffer);
@@ -358,38 +341,26 @@ public class GSMFormatConversionProvider
 				 */
 				if (nRead != m_abBuffer.length)
 				{
-					if (TDebug.TraceAudioConverter)
-					{
-						TDebug.out("<EncodedGSMAudioInputStream.execute(): not read whole 160 sample block (" + nRead + ")");
-					}
+					if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedGSMAudioInputStream.execute(): not read whole 160 sample block (" + nRead + ")"); }
 					m_circularBuffer.close();
 					return;
 				}
 			}
 			catch (IOException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				m_circularBuffer.close();
-				if (TDebug.TraceAudioConverter)
-				{
-					TDebug.out("<");
-				}
+				if (TDebug.TraceAudioConverter) { TDebug.out("<"); }
 				return;
 			}
 			for (int i = 0; i < 160; i++)
 			{
-			        //$$fb 2000-08-13: adapted to new TConversionTool functions
 			        m_asBuffer[i] = TConversionTool.bytesToShort16(m_abBuffer, i * 2, isBigEndian());
 			}
 			m_encoder.encode(m_asBuffer, m_abFrameBuffer);
 			m_circularBuffer.write(m_abFrameBuffer);
-			if (TDebug.TraceAudioConverter)
-			{
-				TDebug.out("<EncodedGSMAudioInputStream.execute(): encoded GSM frame written");
-			}
+			if (TDebug.TraceAudioConverter) { TDebug.out("<EncodedGSMAudioInputStream.execute(): encoded GSM frame written"); }
+			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedGSMAudioInputStream.execute(): end"); }
 		}
 
 
