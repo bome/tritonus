@@ -30,8 +30,6 @@ import javax.microedition.media.protocol.SourceStream;
 
 
 /**	TestCase for javax.microedition.media.protocol.DataSource.
-	TODO:
-	- test Controllable methods
 */
 public class DataSourceTestCase
 extends TestCase
@@ -42,7 +40,8 @@ extends TestCase
 	}
 
 
-
+	/**	Checks is the locator property is handled correctely.
+	 */
 	public void testLocator()
 		throws Exception
 	{
@@ -53,7 +52,10 @@ extends TestCase
 	}
 
 
-
+	/**	Our TestDataSource.
+		This class is needed because DataSource
+		is an abstract class.
+	*/
 	private static class TestDataSource
 	extends DataSource
 	{
