@@ -38,13 +38,6 @@ import org.tritonus.share.sampled.AudioFileTypes;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 import org.tritonus.share.sampled.file.TAudioFileReader;
 
-// TODO: should fade
-// import	com.jcraft.jogg.Buffer;
-// import	com.jcraft.jogg.SyncState;
-// import	com.jcraft.jogg.StreamState;
-// import	com.jcraft.jogg.Page;
-// import	com.jcraft.jogg.Packet;
-
 import org.tritonus.lowlevel.ogg.Buffer;
 import org.tritonus.lowlevel.ogg.Page;
 import org.tritonus.lowlevel.ogg.Packet;
@@ -52,7 +45,7 @@ import org.tritonus.lowlevel.ogg.SyncState;
 import org.tritonus.lowlevel.ogg.StreamState;
 
 
-// TODO: use native lib instead of jorbis
+
 /**
  * @author Matthias Pfisterer
  */
@@ -209,7 +202,7 @@ extends TAudioFileReader
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: initial packet not marked as beginning of stream");
 		}
-		int	nVersion = abData[7] + 256 * abData[8] + 65536 * abData[9] + 16777216 * abData[10];
+		int	nVersion = (abData[7] & 0xFF) + 256 * (abData[8] & 0xFF) + 65536 * (abData[9] & 0xFF) + 16777216 * (abData[10] & 0xFF);
 		if (TDebug.TraceAudioFileReader) { TDebug.out("version: " + nVersion); }
 		if (nVersion != 0)
 		{
@@ -221,7 +214,7 @@ extends TAudioFileReader
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: wrong vorbis version");
 		}
-		int	nChannels = abData[11];
+		int	nChannels = (abData[11] & 0xFF);
 		float	fSampleRate = (abData[12] & 0xFF) + 256 * (abData[13] & 0xFF) + 65536 * (abData[14] & 0xFF) + 16777216 * (abData[15] & 0xFF);
 		if (TDebug.TraceAudioFileReader) { TDebug.out("channels: " + nChannels); }
 		if (TDebug.TraceAudioFileReader) { TDebug.out("rate: " + fSampleRate); }
