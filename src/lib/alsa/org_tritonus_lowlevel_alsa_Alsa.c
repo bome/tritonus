@@ -20,8 +20,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include	"common.h"
-#include	"org_tritonus_lowlevel_alsa_Alsa.h"
+#include "common.h"
+#include "org_tritonus_lowlevel_alsa_Alsa.h"
 
 
 
