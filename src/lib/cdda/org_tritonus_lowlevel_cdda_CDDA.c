@@ -75,7 +75,7 @@ Java_org_tritonus_lowlevel_cdda_CDDA_open
 	{
 		fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_CDDA_open(): begin\n");
 	}
-	cdrom_fd=open(cd_dev,O_RDONLY | O_NONBLOCK);
+	cdrom_fd = open(cd_dev, O_RDONLY | O_NONBLOCK);
 	if (cdrom_fd == -1)
 	{
 		return -errno;
