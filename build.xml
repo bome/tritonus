@@ -55,7 +55,7 @@
 	   depend="yes"
 	   destdir="${build}"
 	   includes="javax/sound/,org/tritonus/"
-	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/lame/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" />
+	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" />
   </target>
 
   <target name="compile-javalayer-dependent"
@@ -126,16 +126,18 @@
 
     <jar	jarfile="${dist}/tritonus_remaining.jar" >
       <fileset dir="${build}" >
-	<include name="org/tritonus/lowlevel/" />
-	<include name="org/tritonus/midi/" />
+	<include name="org/tritonus/lowlevel/alsa/" />
+	<include name="org/tritonus/lowlevel/esd/" />
+	<include name="org/tritonus/midi/device/alsa/" />
+	<include name="org/tritonus/midi/file/" />
 	<include name="org/tritonus/sampled/" />
+	<exclude name="org/tritonus/sampled/cdda/" />
       </fileset>
       <fileset dir ="${src}/packaging/tritonus_core" />
     </jar>
 
     <jar	jarfile="${dist}/tritonus_mp3.jar" >
-      <fileset
-	       dir="${build}" >
+      <fileset dir="${build}" >
 	<include name="org/tritonus/lowlevel/lame/" />
 	<include name="org/tritonus/sampled/convert/javalayer/" />
 	<include name="org/tritonus/sampled/convert/lame/" />
@@ -145,9 +147,17 @@
 	       dir="${src}/packaging/tritonus_mp3" />
     </jar>
 
-    <jar jarfile="${dist}/tritonus_gsm.jar" >
+    <jar	jarfile="${dist}/tritonus_midishare.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/midi/device/midishare/" />
+      </fileset>
+      <!-- TODO: -->
       <fileset
-	       dir="${build}" >
+	       dir="${src}/packaging/tritonus_mp3" />
+    </jar>
+
+    <jar jarfile="${dist}/tritonus_gsm.jar" >
+      <fileset dir="${build}" >
 	<include name="org/tritonus/lowlevel/gsm/" />
 	<include name="org/tritonus/sampled/convert/gsm/" />
 	<include name="org/tritonus/sampled/file/gsm/" />
@@ -190,6 +200,14 @@
       </fileset>
     </jar>
 
+    <!-- midishare, SRC -->
+
+    <jar	jarfile="${dist}/tritonus_cdda.jar" >
+      <fileset dir="${build}" >
+	<include name="org/tritonus/lowlevel/cdda/" />
+	<include name="org/tritonus/sampled/cdda/" />
+      </fileset>
+    </jar>
   </target>
 
   <!--
