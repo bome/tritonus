@@ -59,10 +59,12 @@ implements Controllable
 	public abstract void disconnect();
 
 
-	public abstract void start();
+	public abstract void start()
+		throws IOException;
 
 
-	public abstract void stop();
+	public abstract void stop()
+		throws IOException;
 
 
 	public abstract SourceStream[] getStreams();
