@@ -71,7 +71,7 @@ public class AlsaSequencerProvider
 	{
 		// TDebug.out("m_info: " + m_info);
 		// TDebug.out("info: " + info);
-		if (info.equals(m_info))
+		if (info != null && info.equals(m_info))
 		{
 			return new AlsaSequencer(m_info);
 		}

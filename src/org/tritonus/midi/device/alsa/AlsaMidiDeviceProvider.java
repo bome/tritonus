@@ -82,7 +82,7 @@ public class AlsaMidiDeviceProvider
 		{
 			MidiDevice	device = (MidiDevice) iterator.next();
 			MidiDevice.Info	info2 = device.getDeviceInfo();
-			if (info.equals(info2))
+			if (info != null && info.equals(info2))
 			{
 				return device;
 			}
