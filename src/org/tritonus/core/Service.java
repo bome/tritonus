@@ -45,23 +45,37 @@ import	org.tritonus.share.ArraySet;
 
 public class Service
 {
-	private static String	BASE_NAME = "META-INF/services/";
+	private static final String	BASE_NAME = "META-INF/services/";
 
 
 
 	public static Iterator providers(Class cls)
 	{
+		if (TDebug.TraceService)
+		{
+			TDebug.out("Service.providers(): begin");
+		}
 		String	strFullName = BASE_NAME + cls.getName();
 		if (TDebug.TraceService)
 		{
-			System.out.println("Service.providers(): full name: " + strFullName);
+			TDebug.out("Service.providers(): full name: " + strFullName);
 		}
-		return createInstancesList(strFullName).iterator();
+		Iterator	iterator = createInstancesList(strFullName).iterator();
+		if (TDebug.TraceService)
+		{
+			TDebug.out("Service.providers(): end");
+		}
+		return iterator;
 	}
+
 
 
 	private static List createInstancesList(String strFullName)
 	{
+		if (TDebug.TraceService)
+		{
+			TDebug.out("Service.createInstancesList(): begin");
+		}
 		List	providers = new ArrayList();
 		Iterator	classNames = createClassNames(strFullName);
 		if (classNames != null)
@@ -71,14 +85,14 @@ public class Service
 				String	strClassName = (String) classNames.next();
 				if (TDebug.TraceService)
 				{
-					System.out.println("Service.createInstancesList(): Class name: " + strClassName);
+					TDebug.out("Service.createInstancesList(): Class name: " + strClassName);
 				}
 				try
 				{
 					Class	cls = Class.forName(strClassName);
 					if (TDebug.TraceService)
 					{
-						System.out.println("now creating instance of " + cls);
+						TDebug.out("Service.createInstancesList(): now creating instance of " + cls);
 					}
 					Object	instance = cls.newInstance();
 					providers.add(instance);
@@ -113,6 +127,10 @@ public class Service
 				}
 			}
 		}
+		if (TDebug.TraceService)
+		{
+			TDebug.out("Service.createInstancesList(): end");
+		}
 		return providers;
 	}
 
@@ -120,6 +138,10 @@ public class Service
 
 	private static Iterator createClassNames(String strFullName)
 	{
+		if (TDebug.TraceService)
+		{
+			TDebug.out("Service.createClassNames(): begin");
+		}
 		Set	providers = new ArraySet();
 		Enumeration	configs = null;
 		try
@@ -128,7 +150,7 @@ public class Service
 		}
 		catch (IOException e)
 		{
-			if (TDebug.TraceAllExceptions)
+			if (TDebug.TraceService || TDebug.TraceAllExceptions)
 			{
 				TDebug.out(e);
 			}
@@ -140,7 +162,7 @@ public class Service
 				URL	configFileUrl = (URL) configs.nextElement();
 				if (TDebug.TraceService)
 				{
-					System.out.println("config: " + configFileUrl);
+					TDebug.out("config: " + configFileUrl);
 				}
 				InputStream	input = null;
 				try
@@ -149,7 +171,7 @@ public class Service
 				}
 				catch (IOException e)
 				{
-					if (TDebug.TraceAllExceptions || TDebug.TraceAllExceptions)
+					if (TDebug.TraceService || TDebug.TraceAllExceptions)
 					{
 						TDebug.out(e);
 					}
@@ -173,7 +195,7 @@ public class Service
 								providers.add(strLine);
 								if (TDebug.TraceService)
 								{
-									System.out.println("adding class name: " + strLine);
+									TDebug.out("adding class name: " + strLine);
 								}
 							}
 							strLine = reader.readLine();
@@ -181,7 +203,7 @@ public class Service
 					}
 					catch (IOException e)
 					{
-						if (TDebug.TraceAllExceptions)
+						if (TDebug.TraceService || TDebug.TraceAllExceptions)
 						{
 							TDebug.out(e);
 						}
@@ -189,7 +211,12 @@ public class Service
 				}
 			}
 		}
-		return providers.iterator();
+		Iterator	iterator = providers.iterator();
+		if (TDebug.TraceService)
+		{
+			TDebug.out("Service.createClassNames(): end");
+		}
+		return iterator;
 	}
 
 
