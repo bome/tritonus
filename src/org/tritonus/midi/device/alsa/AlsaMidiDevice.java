@@ -100,8 +100,10 @@ public class AlsaMidiDevice
 	protected AlsaMidiDevice(MidiDevice.Info info, int nClient, int nPort, boolean bUseIn, boolean bUseOut)
 	{
 		super(info, bUseIn, bUseOut);
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.<init>(): begin"); }
 		m_nClient = nClient;
 		m_nPort = nPort;
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.<init>(): end"); }
 	}
 
 
@@ -122,7 +124,7 @@ public class AlsaMidiDevice
 
 	protected void openImpl()
 	{
-		if (TDebug.TraceAlsaMidiDevice) { TDebug.out("AlsaMidiDevice.openImpl(): called"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.openImpl(): begin"); }
 		// create an ALSA client...
 		m_alsaSeq = new AlsaSeq("Tritonus Midi port handler");
 		// ...and an ALSA port
@@ -156,13 +158,14 @@ public class AlsaMidiDevice
 			m_alsaMidiOut = new AlsaMidiOut(getAlsaSeq(), m_nOwnPort);
 			m_alsaMidiOut.subscribe(getClient(), getPort());
 		}
-		if (TDebug.TraceAlsaMidiDevice) { TDebug.out("AlsaMidiDevice.openImpl(): completed"); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.openImpl(): end"); }
 	}
 
 
 
 	protected void closeImpl()
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.closeImpl(): begin"); }
 		if (getUseIn())
 		{
 			m_alsaMidiIn.interrupt();
@@ -175,12 +178,14 @@ public class AlsaMidiDevice
 		// getAlsaSeq().destroyPort(m_nOwnPort);
 		getAlsaSeq().close();
 		m_alsaSeq = null;
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.closeImpl(): end"); }
 	}
 
 
 
 	public long getMicroSecondPosition()
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.getMicroSecondPosition(): begin"); }
 		long	lPosition = 0;
 		if (m_queueStatus != null)
 		{
@@ -188,6 +193,7 @@ public class AlsaMidiDevice
 			long	lNanoSeconds = getQueueStatus().getRealTime();
 			lPosition = lNanoSeconds / 1000;
 		}
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.getMicroSecondPosition(): end"); }
 		return lPosition;
 	}
 
@@ -210,11 +216,8 @@ public class AlsaMidiDevice
 	public void dequeueEvent(MidiEvent event)
 	{
 		MidiMessage	message = event.getMessage();
-		if (TDebug.TraceAlsaMidiDevice)
-		{
-			TDebug.out("AlsaMidiDevice.dequeueEvent(): message: " + message);
-		}
-		TDebug.out("dequeueEvent(): tick: " + event.getTick());
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.dequeueEvent(): message: " + message); }
+		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.dequeueEvent(): tick: " + event.getTick()); }
 		// send via superclass method
 		sendImpl(message, event.getTick());
 	}
@@ -303,10 +306,7 @@ public class AlsaMidiDevice
 			}
 			catch (RuntimeException e)
 			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 				return false;
 			}
 		}
