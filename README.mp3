@@ -1,0 +1,15 @@
+README.mp3
+----------
+
+This version of Tritonus includes mp3 support.  This is due to
+integration of javalayer 0.0.7, a pure-java mp3 decoder developed by
+the javalayer project.  The big credit for this goes to Eric B. who
+wrote the decoder.
+
+
+The decoder is now fully integrated into Tritonus.
+
+For a runnable program, see the file test/MpegPlayer.java.
+
+JavaLayer project:
+http://javazoom.hypermart.net/javalayer/javalayer.html

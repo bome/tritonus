@@ -1,0 +1,131 @@
+/*
+ *	FormatConversionProvider.java
+ */
+
+/*
+ *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as published
+ *   by the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Library General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
+
+package	javax.sound.sampled.spi;
+
+
+import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.AudioInputStream;
+
+
+
+public abstract class FormatConversionProvider
+{
+	public abstract AudioFormat.Encoding[] getSourceEncodings();
+
+
+
+	public abstract AudioFormat.Encoding[] getTargetEncodings();
+
+
+
+	public boolean isSourceEncodingSupported(
+		AudioFormat.Encoding sourceEncoding)
+	{
+		AudioFormat.Encoding[]	aSourceEncodings = getSourceEncodings();
+		return arrayContains(aSourceEncodings, sourceEncoding);
+	}
+
+
+
+	public boolean isTargetEncodingSupported(
+		AudioFormat.Encoding targetEncoding)
+	{
+		AudioFormat.Encoding[]	aTargetEncodings = getTargetEncodings();
+		return arrayContains(aTargetEncodings, targetEncoding);
+	}
+
+
+
+	public abstract AudioFormat.Encoding[] getTargetEncodings(
+		AudioFormat sourceFormat);
+
+
+
+	public boolean isConversionSupported(
+		AudioFormat.Encoding targetEncoding,
+		AudioFormat sourceFormat)
+	{
+		AudioFormat.Encoding[]	aTargetEncodings = getTargetEncodings(sourceFormat);
+		return arrayContains(aTargetEncodings,
+				     targetEncoding);
+	}
+
+
+
+	public abstract AudioFormat[] getTargetFormats(
+		AudioFormat.Encoding targetEncoding,
+		AudioFormat sourceFormat);
+
+
+
+	public boolean isConversionSupported(
+		AudioFormat targetFormat,
+		AudioFormat sourceFormat)
+	{
+		AudioFormat[]	aTargetFormats = getTargetFormats(targetFormat.getEncoding(), sourceFormat);
+		for (int i = 0; i <  aTargetFormats.length; i++)
+		{
+			if (aTargetFormats[i] != null && aTargetFormats[i].matches(targetFormat))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
+	public abstract AudioInputStream getAudioInputStream(
+		AudioFormat.Encoding targetEncoding,
+		AudioInputStream audioInputStream);
+
+
+
+	public abstract AudioInputStream getAudioInputStream(
+		AudioFormat targetFormat,
+		AudioInputStream audioInputStream);
+
+
+
+	/*
+	 *	Returns true, if obj is contained in aArray.
+	 */
+	private static boolean arrayContains(Object[] aArray, Object obj)
+	{
+		for (int i = 0; i <  aArray.length; i++)
+		{
+			if (aArray[i] != null && aArray[i].equals(obj))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+
+
+/*** FormatConversionProvider.java ***/

@@ -1,0 +1,267 @@
+/*
+ *	TDataLine.java
+ */
+
+/*
+ *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as published
+ *   by the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Library General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
+
+package	org.tritonus.sampled.mixer;
+
+
+import	java.util.Collection;
+import	java.util.EventListener;
+import	java.util.EventObject;
+import	java.util.HashSet;
+import	java.util.Set;
+
+import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.AudioSystem;
+import	javax.sound.sampled.DataLine;
+import	javax.sound.sampled.LineEvent;
+import	javax.sound.sampled.Line;
+
+import	org.tritonus.TDebug;
+
+
+
+/**	Base class for classes implementing DataLine.
+ */
+public abstract class TDataLine
+	extends	TLine
+	implements	DataLine
+{
+	private AudioFormat		m_format;
+	private int			m_nBufferSize;
+	private boolean			m_bStarted;
+	private boolean			m_bActive;
+
+
+
+
+	public TDataLine(DataLine.Info info)
+	{
+		super(info);
+		init(info);
+	}
+
+
+
+	public TDataLine(DataLine.Info info,
+			 Collection controls)
+	{
+		super(info,
+		      controls);
+		init(info);
+	}
+
+
+
+	// IDEA: extract format and bufsize from info?
+	private void init(DataLine.Info info)
+	{
+		m_format = null;
+		m_nBufferSize = AudioSystem.NOT_SPECIFIED;
+		setStarted(false);
+		setActive(false);
+	}
+
+
+
+	public boolean isRunning()
+	{
+		// TOOD:
+		return false;
+	}
+
+
+
+
+	// not defined here:
+	// public void drain()
+	// public void flush()
+	// public void start()
+	// public void stop()
+
+
+
+	public boolean isStarted()
+	{
+		return m_bStarted;
+	}
+
+
+	// TODO: should only ALLOW engaging in data I/O.
+	// actual START event should only be sent when line really becomes active
+	protected void setStarted(boolean bStarted)
+	{
+		m_bStarted = bStarted;
+		if (!isStarted())
+		{
+			setActive(false);
+		}
+	}
+
+
+
+	public boolean isActive()
+	{
+		return m_bActive;
+	}
+
+
+
+	// TODO: recheck
+	protected void setActive(boolean bActive)
+	{
+		boolean	bOldValue = isActive();
+		m_bActive = bActive;
+		if (bOldValue != isActive())
+		{
+			if (isActive())
+			{
+				notifyLineEvent(LineEvent.Type.START);
+			}
+			else
+			{
+				notifyLineEvent(LineEvent.Type.STOP);
+			}
+		}
+	}
+
+
+
+	public AudioFormat getFormat()
+	{
+		return m_format;
+	}
+
+
+
+	protected void setFormat(AudioFormat format)
+	{
+		if (TDebug.TraceDataLine)
+		{
+			TDebug.out("TDataLine.setFormat(): setting: " + format);
+		}
+		m_format = format;
+	}
+
+
+
+	public int getBufferSize()
+	{
+		return m_nBufferSize;
+	}
+
+
+
+	protected void setBufferSize(int nBufferSize)
+	{
+		if (TDebug.TraceDataLine)
+		{
+			TDebug.out("TDataLine.setBufferSize(): setting: " + nBufferSize);
+		}
+		m_nBufferSize = nBufferSize;
+	}
+
+
+	// not defined here:
+	// public int available()
+
+
+
+	public int getFramePosition()
+	{
+		// TODO:
+		return -1;
+	}
+
+
+
+	public long getMicrosecondPosition()
+	{
+		return (long) (getFramePosition() * getFormat().getFrameRate() * 1000000);
+	}
+
+
+
+	/*
+	 *	Has to be overridden to be useful.
+	 */
+	public float getLevel()
+	{
+		return AudioSystem.NOT_SPECIFIED;
+	}
+
+
+	protected void checkOpen()
+	{
+		if (getFormat() == null)
+		{
+			throw new IllegalStateException("format must be specified");
+		}
+		if (getBufferSize() == AudioSystem.NOT_SPECIFIED)
+		{
+			setBufferSize(getDefaultBufferSize());
+		}
+	}
+
+
+
+	protected int getDefaultBufferSize()
+	{
+		// TODO: use symbolic constant
+		return 128000;
+	}
+
+
+
+	protected void notifyLineEvent(LineEvent.Type type)
+	{
+		notifyLineEvent(new LineEvent(this, type, getFramePosition()));
+	}
+
+
+/*
+	protected class TDataLineInfo
+		extends	DataLine.Info
+	{
+		private Mixer		m_mixer;
+
+
+
+		public TDataLineInfo(Class lineClass, Mixer mixer)
+		{
+			super(lineClass, null);
+			m_mixer = mixer;
+		}
+
+
+
+		public AudioFormats[] getFormats
+	}
+*/
+}
+
+
+
+/*** TDataLine.java ***/
+

@@ -1,0 +1,66 @@
+Installing instructions for Tritonus, version 0.2.0
+
+What you need
+=============
+
+- jdk1.2.x or jdk1.1.x for Linux. Testing was done with the Blackdown
+jdk1.2.2 RC3, jdk1.1.7 v3 and jdk1.1.8 v1 (http://www.blackdown.org/). Other
+versions may work.  If you want to use jdk1.1.x you need the 1.1
+collections framework (it's an additional jar file) from
+http://web2.java.sun.com/beans/infobus/ (look down the page).
+
+- the Enlightened Sound Daemon (esd or EsounD). On Debian systems,
+install the packages esound-common, esound, libesd0 and
+libesd0-dev. On Suse systems, install the package esound. If esd is
+not part of your Linux distribution, look at www.gnome.org. Make sure
+you have not only the daemon and the library, but also the header
+files for libesd.
+
+- If you want to use the MIDI stuff: the ALSA drivers (& library)
+version 0.5.1a or later (most recent version recommended). See
+http://www.alsa-project.org/.
+
+
+Installing steps
+================
+
+1. Unpack the distribution. It should unpack into a directory
+tritonus-<version>. cd into the top-level directory.
+
+2. Issue 'configure' ('./configure' if you build as root) in the
+top-level directory.
+
+3. Issue 'make' or 'make compileinitial' (the second one is
+faster). There are spurious compilation errors with some jdk1.1
+versions. Just restart with 'make' (even if you originally said 'make
+compileinitial') and they will go away. This may be necessary several
+times.
+
+4. Issue 'make install'. This will copy the files tritonus.jar,
+javalayer.jar, libesdtritonus.so.1.0 and libtritonusalsa.so.1.0 into
+the directory tree of the jdk, thereby installing it as an
+extension. Note that this works only if you have a jdk/jre1.2 or
+higher and java is accessible in the path. If you have jdk/jre1.1.x,
+you have to set the CLASSPATH and LD_LIBRARY_PATH to include the above
+files. The important files are:
+
+- tritonus-x.y.z/tritonus.jar - this contains the java classes and
+should be in your CLASSPATH
+
+- tritonus-x.y.z/javalayer.jar - this contains the java classes for the mp3 decoder (seperated because of legal reasons). They should be in your CLASSPATH, too.
+
+-  tritonus-x.y.z/src/lib/alsa/libtritonusalsa.so.1.0 (if you use the MIDI stuff)
+
+-  tritonus-x.y.z/src/lib/esd/libesdtritonus.so.1.0
+
+this contains the native 
+code and should be in your LD_LIBRARY_PATH
+
+If you found bugs, have suggestions, want to contribute or whatever,
+you can contact the author of this library:
+Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+
+You may also have a look at the Tritonus developer page:
+http://tritonus.sourceforge.net/developer.html
+
+Have fun!!

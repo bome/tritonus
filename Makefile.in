@@ -1,0 +1,219 @@
+# compilation and packing for the tritonus library
+#
+
+SHELL = /bin/sh
+
+prefix=@prefix@
+
+#LIBNAME=tritonus
+
+JAVADIR=$(prefix)
+JAVAEXTPATH=$(JAVADIR)/jre/lib/ext
+
+JAVAC=javac
+#JAVAC=guavac
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+%.class: %.java
+	export CLASSPATH=.:src:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $<
+
+
+SRCDIR_PUB = src/javax/sound
+SRCDIR_PRIV = src/org/tritonus
+SRCDIR_JL = src/javazoom/jl/decoder
+SRCDIR_JESD = src/com/jcraft/jesd
+
+DESTDIR = .
+
+OBJDIR_PUB = $(DESTDIR)/javax/sound
+OBJDIR_PRIV = $(DESTDIR)/org/tritonus
+OBJDIR_JL = $(DESTDIR)/javazoom/jl/decoder
+OBJDIR_JESD = $(DESTDIR)/com/jcraft/jesd
+
+PACKSRCDIR_MAIN = javax/sound org/tritonus com/jcraft/jesd
+PACKSRCDIR_JL = javazoom
+LIBDEST=tritonus.jar
+LIBDEST_JL=javalayer.jar
+CONFIGFILENAME=Configuration.properties
+CONFIGFILE=$(SRCDIR_PRIV)/$(CONFIGFILENAME)
+CONFIGFILE2=$(OBJDIR_PRIV)/$(CONFIGFILENAME)
+
+#vpath %.lex $(SRCDIR2)
+
+vpath %.java $(SRCDIR_PUB)/midi
+vpath %.java $(SRCDIR_PUB)/midi/spi
+vpath %.java $(SRCDIR_PUB)/sampled
+vpath %.java $(SRCDIR_PUB)/sampled/spi
+vpath %.java $(SRCDIR_PRIV)
+vpath %.java $(SRCDIR_PRIV)/lowlevel/alsa
+vpath %.java $(SRCDIR_PRIV)/lowlevel/esd
+vpath %.java $(SRCDIR_PRIV)/sampled
+vpath %.java $(SRCDIR_PRIV)/sampled/convert
+vpath %.java $(SRCDIR_PRIV)/sampled/file
+vpath %.java $(SRCDIR_PRIV)/sampled/mixer
+vpath %.java $(SRCDIR_PRIV)/sampled/mixer/alsa
+vpath %.java $(SRCDIR_PRIV)/sampled/mixer/esd
+vpath %.java $(SRCDIR_PRIV)/sampled/mixer/jesd
+vpath %.java $(SRCDIR_PRIV)/midi
+vpath %.java $(SRCDIR_PRIV)/midi/device
+vpath %.java $(SRCDIR_PRIV)/midi/device/alsa
+vpath %.java $(SRCDIR_PRIV)/midi/file
+vpath %.java $(SRCDIR_PRIV)/util
+vpath %.java $(SRCDIR_JL)
+vpath %.java $(SRCDIR_JESD)
+
+vpath %.class $(OBJDIR_PUB)/midi
+vpath %.class $(OBJDIR_PUB)/midi/spi
+vpath %.class $(OBJDIR_PUB)/sampled
+vpath %.class $(OBJDIR_PUB)/sampled/spi
+vpath %.class $(OBJDIR_PRIV)
+vpath %.class $(OBJDIR_PRIV)/lowlevel/alsa
+vpath %.class $(OBJDIR_PRIV)/lowlevel/esd
+vpath %.class $(OBJDIR_PRIV)/sampled
+vpath %.class $(OBJDIR_PRIV)/sampled/convert
+vpath %.class $(OBJDIR_PRIV)/sampled/file
+vpath %.class $(OBJDIR_PRIV)/sampled/mixer
+vpath %.class $(OBJDIR_PRIV)/sampled/mixer/alsa
+vpath %.class $(OBJDIR_PRIV)/sampled/mixer/esd
+vpath %.class $(OBJDIR_PRIV)/sampled/mixer/jesd
+vpath %.class $(OBJDIR_PRIV)/midi
+vpath %.class $(OBJDIR_PRIV)/midi/device
+vpath %.class $(OBJDIR_PRIV)/midi/device/alsa
+vpath %.class $(OBJDIR_PRIV)/midi/file
+vpath %.class $(OBJDIR_PRIV)/util
+vpath %.class $(OBJDIR_JL)
+vpath %.class $(OBJDIR_JESD)
+
+SRCTMP:=$(wildcard \
+	$(SRCDIR_PUB)/midi/*.java \
+	$(SRCDIR_PUB)/midi/spi/*.java \
+	$(SRCDIR_PUB)/sampled/*.java \
+	$(SRCDIR_PUB)/sampled/spi/*.java \
+	$(SRCDIR_PRIV)/*.java \
+	$(SRCDIR_PRIV)/lowlevel/alsa/*.java \
+	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
+	$(SRCDIR_PRIV)/sampled/*.java \
+	$(SRCDIR_PRIV)/sampled/convert/*.java \
+	$(SRCDIR_PRIV)/sampled/file/*.java \
+	$(SRCDIR_PRIV)/sampled/mixer/*.java \
+	$(SRCDIR_PRIV)/sampled/mixer/alsa/*.java \
+	$(SRCDIR_PRIV)/sampled/mixer/esd/*.java \
+	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \
+	$(SRCDIR_PRIV)/midi/*.java \
+	$(SRCDIR_PRIV)/midi/device/*.java \
+	$(SRCDIR_PRIV)/midi/device/alsa/*.java \
+	$(SRCDIR_PRIV)/midi/file/*.java \
+	$(SRCDIR_PRIV)/util/*.java \
+	$(SRCDIR_JL)/*.java \
+	$(SRCDIR_JESD)/*.java \
+	)
+
+SRC:=$(notdir $(SRCTMP))
+OBJ:=$(SRC:.java=.class)
+
+srcdir=.
+DISTFILES=ConvertJDK117 INSTALL LGPL Makefile.in NEWS README README.midi README.mp3 config.guess config.sub configure.in configure  doc src test util #new
+SUBDIRS=@SUBDIRS@
+CONVERTTARGETS = @CONVERTTARGETS@
+
+#----------------- rules -------------------
+
+.PHONY: all
+all: $(CONVERTTARGETS) $(LIBDEST) $(LIBDEST_JL)
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
+
+.PHONY: compileinitial
+compileinitial: $(CONVERTTARGETS) compileinitialimpl
+
+.PHONY: compileinitialimpl
+compileinitialimpl: $(SRC)
+	export CLASSPATH=.:$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $(SRCTMP)
+	$(MAKE) all
+
+.PHONY: convert
+convert:
+	@if [ ! -f .converted ]; then ./ConvertJDK117; echo "" > .converted; fi
+
+$(LIBDEST):	$(OBJ) $(CONFIGFILE2)
+	jar cf $(LIBDEST) $(PACKSRCDIR_MAIN)
+
+$(CONFIGFILE2): $(CONFIGFILE)
+	mkdir -p $(OBJDIR_PRIV)
+	cp $(CONFIGFILE) $(CONFIGFILE2)
+
+$(LIBDEST_JL):	$(OBJ)
+	cp src/javazoom/jl/decoder/*.ser javazoom/jl/decoder/
+	jar cf $(LIBDEST_JL) $(PACKSRCDIR_JL)
+
+.PHONY: mp3jars
+mp3jars:	all
+	mkdir -p META-INF/services
+	cp src/META-INF/Services/* META-INF/services/
+	jar cf mp3.jar org/tritonus javazoom META-INF/
+
+.PHONY: doc
+doc:	all 
+	$(MAKE) -C doc
+
+.PHONY: test
+test:	all 
+	$(MAKE) -C all
+
+.PHONY: install
+install: all
+	$(INSTALL_DATA) $(LIBDEST) $(JAVAEXTPATH)
+	$(INSTALL_DATA) $(LIBDEST_JL) $(JAVAEXTPATH)
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d install; done
+
+.PHONY: install-link
+install-link:
+	(cd  $(JAVAEXTLIBPATH) && $(LN_S) $(LIBDEST_ABSOLUTE))
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d install-link; done
+
+.PHONY: clean
+clean:
+	rm -rf $(LIBDEST) org javax javazoom
+	find . -name '*~' -exec rm '{}' ';'
+	find . -name '.directory' -exec rm '{}' ';'
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d clean; done
+
+.PHONY: veryclean
+veryclean: clean
+	rm -rf TAGS
+
+.PHONY:tags
+tags: TAGS
+
+TAGS: $(SRCTMP)
+	etags $(SRCTMP)
+
+
+dist:
+	echo tritonus-`cat version` >.fname
+	-rm -rf `cat .fname`
+	mkdir `cat .fname`
+	dst=`cat .fname`; for f in $(DISTFILES); do \
+	ln $(srcdir)/$$f $$dst/$$f || { echo copying $$f; \
+	cp -pr $(srcdir)/$$f $$dst/$$f; } \
+	done
+	tar czhf `cat .fname`.tar.gz `cat .fname`
+	-rm -rf `cat .fname` .fname
+
+devdist:
+	echo tritonus-`date +%Y-%m-%d` >.fname
+	-rm -rf `cat .fname`
+	mkdir `cat .fname`
+	dst=`cat .fname`; for f in $(DISTFILES); do \
+	ln $(srcdir)/$$f $$dst/$$f || { echo copying $$f; \
+	cp -pr $(srcdir)/$$f $$dst/$$f; } \
+	done
+	tar czhf `cat .fname`.tar.gz `cat .fname`
+	-rm -rf `cat .fname` .fname
+
+devdist-upload: devdist
+	echo tritonus-`date +%Y-%m-%d.tar.gz` >.fname
+	scp `cat .fname` pfisterer@tritonus.sourceforge.net:/home/groups/ftp/pub/tritonus/`cat .fname`
+	-rm -f .fname

@@ -1,0 +1,111 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(src/javax/sound/sampled/AudioSystem.java)
+AC_CONFIG_AUX_DIR(util)
+
+#AC_ARG_WITH(jdk11,--with-jdk11=version	use this option if you want to compile Tritonus with jdk1.1.x,[JAVA_VERSION="$withval"],[JAVA_VERSION="12"])
+
+case "$JAVA_VERSION" in
+yes) JAVA_VERSION=118;;
+esac
+
+
+# JDK Version Check automatic checker.
+# This is Sun JVM specific when looking the 
+# release number at least
+# Peter Pilgrim Wed Jan 12 00:20:42 GMT 2000
+
+# Temporary directory
+: ${TMPDIR:=/tmp}
+# Your Java VM might be JIKES
+: ${JAVA:=java}
+
+TEMPFILE=${TMPDIR}/javaver.lst
+/bin/rm -f $TEMPFILE
+${JAVA} -version 2> $TEMPFILE
+JdkVersion=`cat $TEMPFILE | cut -d" " -f3 | sed 's!"!!g'`
+
+dnl AC_MSG_RESULT(version: x${JdkVersion}x)
+
+case $JdkVersion in
+    1.3* )
+	echo "JDK 1.3 detected (Very lucky indeed)" ;;
+    1.3*[Bb]eta )
+	echo "JDK 1.3 detected (Only a Beta version)" ;;
+    1.2* )
+	echo "JDK 1.2 detected (Nice)" ;;
+    1.1.8* )
+	echo "JDK 1.1.8 detected" ;;
+    1.1.7* )
+	echo "JDK 1.1.7 detected" ;;
+    1.1* )
+	echo "JDK 1.1.x detected" ;;
+    1.0* )
+	echo "JDK 1.0.x detected (impossible)" ;;
+    *)
+	echo "No JDK Version detected SERIOUS FAILURE...";;
+esac
+# fini
+
+JAVA_VERSION=${JdkVersion}
+dnl AC_MSG_RESULT(version: x${JAVA_VERSION}x)
+
+AC_SUBST(JAVAH)
+AC_SUBST(CONVERTTARGETS)
+
+case "$JAVA_VERSION" in
+1.1*) JAVAH='javah -classpath $(OBJDIR):$(CLASSPATH)'; CONVERTTARGETS=convert;;
+*) JAVAH='javah -force -classpath $(OBJDIR)'; CONVERTTARGETS= ;;
+esac
+
+
+
+
+
+AC_SUBST(OSNAME)
+AC_SUBST(ARCHNAME)
+AC_CANONICAL_HOST
+dnl AC_MSG_RESULT(cpu: ${host_cpu})
+dnl AC_MSG_RESULT(vendor: ${host_vendor})
+dnl AC_MSG_RESULT(os: ${host_os})
+
+case "$host_cpu" in
+i386 | i486 | i586 | i686) ARCHNAME=i386;;
+esac
+
+case "$host_os" in
+linux*) case "$JAVA_VERSION" in
+	1.1.7*) OSNAME=genunix;;
+	*) OSNAME=linux;;
+	esac;;
+cygwin) OSNAME=win32;;
+esac
+
+AC_PREFIX_PROGRAM(javac)
+
+dnl Checks for programs.
+AC_PROG_CC
+dnl AC_PROG_LEX
+AC_PROG_INSTALL
+AC_PROG_LN_S
+
+AC_SUBST(SUBDIRS)
+dnl Checks for libraries.
+SUBDIRS=
+AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"]; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
+AC_CHECK_LIB(esd,esd_open_sound,[SUBDIRS="$SUBDIRS src/lib/esd"; AC_MSG_RESULT(Information: will build stuff for Enlightened Sound Daemon)],[AC_MSG_RESULT(Information: will not build stuff for Enlightened Sound Daemon)],-laudiofile)
+#AC_CHECK_LIB(audio, AuOpenServer,[SUBDIRS="$SUBDIRS src/lib/nas"; AC_MSG_RESULT(Information: will build stuff for Network Audio System)],[AC_MSG_RESULT(Information: will not build stuff for Network Audio System)],-lXt -lm)
+dnl AC_MSG_RESULT(hallo x${SUBDIRS}x)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl AC_C_CONST
+
+dnl Checks for library functions.
+
+AC_OUTPUT(Makefile
+	src/lib/alsa/Makefile
+	src/lib/esd/Makefile
+	test/Makefile)

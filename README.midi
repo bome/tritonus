@@ -1,0 +1,138 @@
+README.midi
+-----------
+
+ALSA
+----
+
+The MIDI stuff of tritonus makes heavy use of the ALSA sequencer.
+ALSA is the Advanced Linux Sound Architecture
+(http://www.alsa-project.org), a new soundcard driver system intended
+to replace the OSS/Free driver. According to Alan Cox, ALSA will be
+merged into the official kernel source for Linux 2.5.
+
+
+HOW TO MAKE IT WORK
+-------------------
+
+Use a recent 2.2 kernel. The developer of this stuff uses 2.2.10 and
+2.2.14 kernels; every kernel newer than 2.2.3 should work. In the
+kernel configuration, enable sound support, but do not include any
+concrete driver.  Enabling kernel symbol versioning helps if you
+recompile kernels frequently.
+
+Download and install the ALSA drivers/lib/utils version 0.5.1a or
+later.  You cannot use 4.1 versions of ALSA due to incompatible
+changes.  Be sure to configure '--with-sequencer=yes' in the driver
+part.  Install the modules and load the new versions.  Load the
+sequencer modules. For help on installing ALSA, see the alsa-user
+mailing list (visit the ALSA web site).
+
+
+Installation check
+------------------
+
+> cat /proc/asound/seq/clients
+The result should be similar to this:
+Client info
+  cur  clients : 2
+  peak clients : 2
+  max  clients : 192
+
+Client   0 : "System" [Kernel]
+  Port   0 : "Timer" (system:Rwe:Rwe)
+  Port   1 : "Announce" (system:R-e:R-e)
+Client  64 : "0: MIDI Synth" [Kernel]
+  Port   0 : "MIDI 0-0" (device:RWe:RWe)
+
+If the file doesn't exist at all, load the sequencer module:
+
+	modprobe snd-seq
+
+If the file exists, but the "MIDI Synth" doesn't show up, load the
+MIDI client module:
+
+	modprobe snd-seq-midi
+
+If the internal synthesizer of your card is supported (very few
+cards), you can load the synth support, too:
+
+	modprobe snd-seq-synth
+
+There may be additional lines if you have more than one soundcard,
+your soundcard has more than one MIDI port or the internal synth of
+the soundcard is supported.
+
+Second install check
+--------------------
+
+Install pmidi (http://www.parabola.demon.co.uk/alsa/pmidi.html).
+You need version 1.4.0 or later.
+Call 'pmidi -l'. The output should be similar to this:
+ Port     Client name                       Port name
+ 64:0     0: MIDI Synth                     MIDI 0-0
+
+Connect a synthesizer to the MIDI out of your computer.  Call 'pmidi
+-p 64:0 <midifile>'.  '64:0' should be the number shown in the first
+column of the output from 'pmidi -l'. The MIDI file should be played
+on your synth.
+
+
+Now the test
+------------
+
+Install Tritonus. Follow the instructions in the file INSTALL.
+
+Go to the directory test/midi. Compile all java files. Note that this
+only works after installation is done.
+
+
+MIDI IN test
+------------
+
+Connect a keyboard to the MIDI IN port of the soundcard. Start AlsaMidiInTest. Play on your keyboard. There should be output like this:
+ASequencer.getEvent(): before getEvent(int[], long[])
+ASequencer.getEvent(): note event
+Note On Key: [Channel 0] A# 1 Velocity: 104
+ASequencer.getEvent(): before getEvent(int[], long[])
+ASequencer.getEvent(): note event
+Note On Key: [Channel 11] D# 4 Velocity: 34
+ASequencer.getEvent(): before getEvent(int[], long[])
+ASequencer.getEvent(): controller event
+Controller No.: [Channel 10] 7 Value: 127
+ASequencer.getEvent(): before getEvent(int[], long[])
+ASequencer.getEvent(): controller event
+Controller No.: [Channel 10] 10 Value: 127
+ASequencer.getEvent(): before getEvent(int[], long[])
+ASequencer.getEvent(): controller event
+Controller No.: [Channel 10] 91 Value: 42
+
+(This was generated from a MIDI file)
+
+
+MIDI OUT test
+-------------
+
+*WARNING* Do not try this. It can crash your system. *WARNING*
+
+Connect a synthesizer to the MIDI OUT port of your soundcard. Start
+AlsaMidiOutTest. You should hear a single note with a duration of 1
+second.
+
+
+Sequencer test
+--------------
+
+Call
+	java AlsaSequencerTest <midifile>
+or
+	java AlsaSequencerTest <sequencer client> <sequencer port> <midifile>
+
+The first version outputs to port 64:0, i.e. to the first external
+MIDI port of the first soundcard. The second version allows you to
+specify the destination. If the internal synthesizer of your soundcard
+is supported, you can direct output to it. For instance, use '73 0'
+for the first synthesizer of the second soundcard.
+
+Please report results (positive and negative) to matthias.pfisterer@gmx.de.
+Thanks for your support.
+

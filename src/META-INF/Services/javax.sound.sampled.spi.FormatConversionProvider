@@ -1,0 +1,2 @@
+# provider for the mp3 decoder
+org.tritonus.sampled.convert.MpegFormatConversionProvider
