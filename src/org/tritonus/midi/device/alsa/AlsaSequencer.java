@@ -57,6 +57,7 @@ public class AlsaSequencer
 
 	private AlsaSeq			m_controlAlsaSeq;
 	private AlsaSeq			m_dataAlsaSeq;
+	private AlsaSeq.QueueInfo	m_queueInfo;
 	private AlsaSeq.QueueStatus	m_queueStatus;
 	private AlsaSeq.QueueTempo	m_queueTempo;
 	private int			m_nControlClient;
@@ -167,9 +168,12 @@ public class AlsaSequencer
 
 		// m_nQueue = getControlAlsaSeq().allocQueue();
 		m_nQueue = getDataAlsaSeq().allocQueue();
+		m_queueInfo = new AlsaSeq.QueueInfo();
 		m_queueStatus = new AlsaSeq.QueueStatus();
 		m_queueTempo = new AlsaSeq.QueueTempo();
-		getDataAlsaSeq().setQueueLocked(getQueue(), false);
+		getDataAlsaSeq().getQueueInfo(getQueue(), m_queueInfo);
+		m_queueInfo.setLocked(false);
+		getDataAlsaSeq().setQueueInfo(getQueue(), m_queueInfo);
 		m_alsaMidiOut = new AlsaMidiOut(getDataAlsaSeq(), getDataPort(), getQueue());
 		m_alsaMidiOut.setHandleMetaMessages(true);
 
