@@ -31,18 +31,21 @@ import	javax.microedition.media.MediaException;
 import	javax.microedition.media.Player;
 import	javax.microedition.media.PlayerListener;
 import	javax.microedition.media.TimeBase;
+import	javax.microedition.media.control.StopTimeControl;
 import	javax.microedition.media.protocol.DataSource;
 
+import org.tritonus.share.TDebug;
 
 
 public abstract class TPlayer
 extends TControllable
 implements Player
 {
-	private DataSource	m_dataSource;
-	private TimeBase	m_timeBase;
-	private Vector		m_listeners;
-	private int		m_nState;
+	private DataSource		m_dataSource;
+	private TimeBase		m_timeBase;
+	private Vector			m_listeners;
+	private int			m_nState;
+	private TStopTimeControl	m_stopTimeControl;
 
 
 
@@ -62,6 +65,7 @@ implements Player
 		m_listeners = new Vector();
 		m_nState = UNREALIZED;
 		m_timeBase = getDefaultTimeBase();
+		m_stopTimeControl = null;
 	}
 
 
@@ -77,13 +81,25 @@ implements Player
 
 		if (getState() == UNREALIZED)
 		{
-			doRealize();
+			try
+			{
+				doRealize();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				MediaException	me = new MediaException("can't realize Player");
+				// NOTE: The following is a 1.4 construct.
+				me.initCause(e);
+				throw me;
+			}
 			setState(REALIZED);
 		}
 	}
 
 
-	protected abstract void doRealize();
+	protected abstract void doRealize()
+		throws Exception;
 
 
 	// TODO:
@@ -99,13 +115,25 @@ implements Player
 		}
 		if (getState() == REALIZED)
 		{
-			doPrefetch();
+			try
+			{
+				doPrefetch();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				MediaException	me = new MediaException("can't prefetch Player");
+				// NOTE: The following is a 1.4 construct.
+				me.initCause(e);
+				throw me;
+			}
 			setState(PREFETCHED);
 		}
 	}
 
 
-	protected abstract void doPrefetch();
+	protected abstract void doPrefetch()
+		throws Exception;
 
 
 	// TODO:
@@ -122,29 +150,67 @@ implements Player
 		if (getState() == PREFETCHED)
 		{
 			setState(STARTED);
-			doStart();
+			try
+			{
+				doStart();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				MediaException	me = new MediaException("can't start Player");
+				// NOTE: The following is a 1.4 construct.
+				me.initCause(e);
+				throw me;
+			}
+			if (getStopTimeControl() != null)
+			{
+				getStopTimeControl().init();
+			}
 		}
 	}
 
 
-	protected abstract void doStart();
+	protected abstract void doStart()
+		throws Exception;
 
 
 	// TODO:
 	public void stop()
+	{
+		stop(false);
+	}
+
+
+	/**
+	   @param bAtTime If true, a STOPPED_AT_TIME event is posted. Otherwise,
+	   a STOPPED event is posted.
+	*/
+	protected void stop(boolean bAtTime)
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
 
 		if (getState() == STARTED)
 		{
-			doStop();
+			try
+			{
+				doStop();
+				// TODO: send event depending on bAtTime
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				// Exception is ignored.
+			}
 			setState(PREFETCHED);
 		}
 	}
 
 
-	protected abstract void doStop();
+
+	protected abstract void doStop()
+		throws Exception;
+
 
 
 	// TODO:
@@ -156,14 +222,25 @@ implements Player
 
 		if (getState() == PREFETCHED)
 		{
-			doDeallocate();
+			try
+			{
+				doDeallocate();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				// Exception is ignored.
+			}
 			setState(REALIZED);
 		}
 		// TODO: implement interrupting of realize()
 	}
 
 
-	protected abstract void doDeallocate();
+
+	protected abstract void doDeallocate()
+		throws Exception;
+
 
 
 	public void close()
@@ -171,11 +248,25 @@ implements Player
 		switch (getState())
 		{
 		case STARTED:
-			doStop();
+			try
+			{
+				doStop();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+			}
 			// FALL THROUGH
 
 		case PREFETCHED:
-			doDeallocate();
+			try
+			{
+				doDeallocate();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+			}
 			// FALL THROUGH
 
 		case REALIZED:
@@ -184,13 +275,21 @@ implements Player
 			// FALL THROUGH
 
 		case UNREALIZED:
-			doClose();
+			try
+			{
+				doClose();
+			}
+			catch (Exception e)
+			{
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+			}
 			setState(CLOSED);
 		}
 	}
 
 
-	protected abstract void doClose();
+	protected abstract void doClose()
+		throws Exception;
 
 
 	/**	Set TimeBase for this player.
@@ -398,6 +497,155 @@ implements Player
 		if (nState == CLOSED)
 		{
 			throw new IllegalStateException("state is CLOSED. Required state is UNREALIZED, REALIZED, PREFETCHED or STARTED.");
+		}
+	}
+
+
+
+	private TStopTimeControl getStopTimeControl()
+	{
+		return m_stopTimeControl;
+	}
+
+
+
+	private void setStopTimeControl(TStopTimeControl stopTimeControl)
+	{
+		m_stopTimeControl = stopTimeControl;
+	}
+
+
+
+	///////////////////////////////////////////////////////////////////////
+	//
+	//	inner classes
+	//
+	///////////////////////////////////////////////////////////////////////
+
+
+
+	/**	StopTimeControl for TPlayer.
+		The basic idea is to have a thread that sleeps until the desired
+		stop time and then calls the normal stop() method.
+	 */
+	protected class TStopTimeControl
+	implements StopTimeControl, Runnable
+	{
+		private long		m_lStopTime;
+		private Thread		m_thread;
+
+
+		public TStopTimeControl()
+		{
+			m_lStopTime = RESET;
+		}
+
+
+
+		/**
+		   cases:
+
+		 */
+		public void setStopTime(long lStopTime)
+		{
+			if (getStopTime() != RESET &&
+			    TPlayer.this.getState() == STARTED)
+			{
+				throw new IllegalStateException("already set stop time cannot be changed on a started player");
+			}
+			// the following is from the specification of Player.setMediaTime(long)
+			// TODO: open specification bug, mail to Florian sent
+			if (lStopTime < 0)
+			{
+				lStopTime = 0;
+			}
+
+			m_lStopTime = lStopTime;
+			if (lStopTime == RESET)
+			{
+				TPlayer.this.setStopTimeControl(null);
+				if (TPlayer.this.getState() == STARTED)
+				{
+					if (m_thread != null)
+					{
+						m_thread.interrupt();
+						m_thread = null;
+					}
+				}
+			}
+			else
+			{
+				TPlayer.this.setStopTimeControl(this);
+				if (TPlayer.this.getState() == STARTED)
+				{
+					init();
+				}
+			}
+
+		}
+
+
+
+		public long getStopTime()
+		{
+			return m_lStopTime;
+		}
+
+
+
+		private void init()
+		{
+			long	lMediaTime = TPlayer.this.getMediaTime();
+			if (lMediaTime >= getStopTime())
+			{
+				this.stop();
+			}
+			else
+			{
+				m_thread = new Thread(this);
+				m_thread.start();
+			}
+		}
+
+
+		/**
+		   NOTE: the current implementation only works correctely if
+		   the rate is 1.0. This has to be reworked in the future.
+		 */
+		public void run()
+		{
+			/*	If Thread.sleep() throws an InterruptedException,
+				the interrupted state of the thread is reset.
+				So to get the interrupted condition, we have to
+				track it separately.
+			*/
+			boolean	bInterrupted = false;
+
+			// these values are in microseconds
+			long	lMediaTime = TPlayer.this.getMediaTime();
+			long	lRemainingMediaTime = getStopTime() - lMediaTime;
+			// the following is in milliseconds
+			long	lTimeToSleep = lRemainingMediaTime / 1000;
+			try
+			{
+				Thread.sleep(lTimeToSleep);
+			}
+			catch (InterruptedException e)
+			{
+				bInterrupted = true;
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+			}
+			if (! m_thread.isInterrupted() || bInterrupted)
+			{
+				stop();
+			}
+		}
+
+
+		private void stop()
+		{
+			TPlayer.this.stop(true);
+			m_lStopTime = RESET;
 		}
 	}
 }
