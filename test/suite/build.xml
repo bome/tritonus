@@ -51,6 +51,10 @@
   </target>
 
   <target name="test"
+	  depends="test-audiofilereader,test-dataoutputstream,test-audiooutputstream">
+  </target>
+
+  <target name="test-audiofilereader"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
@@ -66,6 +70,28 @@
 <!--
       <test name="VorbisAudioFileReaderTestCase" />
 -->
+    </junit>
+  </target>
+
+  <target name="test-audiooutputstream"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
+      <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
+      <!--sysproperty key="tritonus.TraceService" value="true" /-->
+      <formatter type="plain" />
+      <test name="AuAudioOutputStreamTestCase" />
+    </junit>
+  </target>
+
+  <target name="test-dataoutputstream"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
+      <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
+      <!--sysproperty key="tritonus.TraceService" value="true" /-->
+      <formatter type="plain" />
+      <test name="TDataOutputStreamTestCase" />
     </junit>
   </target>
 </project>
