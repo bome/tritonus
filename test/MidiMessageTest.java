@@ -125,6 +125,24 @@ public class MidiMessageTest
 		out("MetaMessage().getLength(): " + mm.getLength());
 		out("MetaMessage().getStatus(): " + mm.getStatus());
 		out("MetaMessage().getType(): " + mm.getType());
+
+		out("----------------------------------------");
+		SysexMessage	sxm = new SysexMessage();
+		byte[] databytes ={(byte) 240,120,100,100,(byte) 247};
+		try
+		{
+			sxm.setMessage(databytes,5);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			e.printStackTrace();
+		}
+		out("SysexMessage.getMessage(): ");
+		out(sxm.getMessage());
+		out("SysexMessage.getData(): ");
+		out(sxm.getData());
+		out("SysexMessage.getLength(): " + sxm.getLength());
+		out("SysexMessage.getStatus(): " + sxm.getStatus());
 	}
 
 
