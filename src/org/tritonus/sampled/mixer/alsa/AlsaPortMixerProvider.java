@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 2001 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,7 +18,6 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
 
@@ -27,6 +25,7 @@ package	org.tritonus.sampled.mixer.alsa;
 
 
 import	org.tritonus.share.TDebug;
+import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaCtl;
 import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
@@ -43,10 +42,21 @@ public class AlsaPortMixerProvider
 	{
 		super();
 		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaPortMixerProvider.<init>(): begin"); }
-		if (!sm_bInitialized)
+		if (! sm_bInitialized && ! isDisabled())
 		{
-			staticInit();
-			sm_bInitialized = true;
+			if (! Alsa.isLibraryAvailable())
+			{
+				disable();
+			}
+			else
+			{
+				staticInit();
+				sm_bInitialized = true;
+			}
+		}
+		else
+		{
+			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.<init>(): already initialized or disabled"); }
 		}
 		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaPortMixerProvider.<init>(): end"); }
 	}
