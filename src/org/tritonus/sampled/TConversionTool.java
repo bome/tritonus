@@ -335,30 +335,6 @@ public class TConversionTool {
 		}
 	}
 
-	/*
-	public static void pcm16BigEndian2ulaw(byte[] buffer, int byteOffset, int sampleCount) {
-	int shortIndex=byteOffset;
-	int ulawIndex=shortIndex;
-	while (sampleCount>0) {
-	 buffer[ulawIndex++]=linear2ulaw
-	(convertBytesToShort(buffer[shortIndex], buffer[shortIndex+1]));
-	 shortIndex++; shortIndex++;
-	 sampleCount--;
-}
-}
-
-	public static void pcm16LittleEndian2ulaw(byte[] buffer, int byteOffset, int sampleCount) {
-	int shortIndex=byteOffset;
-	int ulawIndex=shortIndex;
-	while (sampleCount>0) {
-	 buffer[ulawIndex++]=linear2ulaw
-	(convertBytesToShort(buffer[shortIndex+1], buffer[shortIndex]));
-	 shortIndex++; shortIndex++;
-	 sampleCount--;
-}
-}
-	*/
-
 	/**
 	 * Fills outBuffer with ulaw samples.
 	 * reading starts from inBuffer[inByteOffset].
@@ -390,32 +366,6 @@ public class TConversionTool {
 		}
 	}
 
-	/*
-	public static void pcm16BigEndian2ulaw(byte[] inBuffer, int inByteOffset, 
-		   byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int shortIndex=inByteOffset;
-	int ulawIndex=outByteOffset;
-	while (sampleCount>0) {
-	 outBuffer[ulawIndex++]=linear2ulaw
-	(convertBytesToShort(inBuffer[shortIndex], inBuffer[shortIndex+1]));
-	 shortIndex++; shortIndex++;
-	 sampleCount--;
-}
-}
-
-	public static void pcm16LittleEndian2ulaw(byte[] inBuffer, int inByteOffset, 
-		      byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int shortIndex=inByteOffset;
-	int ulawIndex=outByteOffset;
-	while (sampleCount>0) {
-	 outBuffer[ulawIndex++]=linear2ulaw
-	(convertBytesToShort(inBuffer[shortIndex+1], inBuffer[shortIndex]));
-	 shortIndex++; shortIndex++;
-	 sampleCount--;
-}
-}
-	*/
-
 	// TODO: either direct 8bit pcm to ulaw, or better conversion from 8bit to 16bit
 	/**
 	 * Converts a buffer of 8bit samples to uLaw.
@@ -435,22 +385,6 @@ public class TConversionTool {
 			}
 		}
 	}
-
-	/*
-	public static void pcm8Signed2ulaw(byte[] buffer, int byteOffset, int sampleCount) {
-	sampleCount+=byteOffset;
-	for (int i=byteOffset; i<sampleCount; i++) {
-	 buffer[i]=linear2ulaw(buffer[i] << 8);
-}
-}
-
-	public static void pcm8Unsigned2ulaw(byte[] buffer, int byteOffset, int sampleCount) {
-	sampleCount+=byteOffset;
-	for (int i=byteOffset; i<sampleCount; i++) {
-	buffer[i]=linear2ulaw(((byte) (buffer[i]+128)) << 8);
-}
-}
-	*/
 
 	/**
 	 * Fills outBuffer with ulaw samples.
@@ -474,27 +408,6 @@ public class TConversionTool {
 			}
 		}
 	}
-	/*
-	public static void pcm8Signed2ulaw(byte[] inBuffer, int inByteOffset, 
-	byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int ulawIndex=outByteOffset;
-	int pcmIndex=inByteOffset;
-	while (sampleCount>0) {
-	outBuffer[ulawIndex++]=linear2ulaw(inBuffer[pcmIndex++] << 8);
-	sampleCount--;
-}
-}
-
-	public static void pcm8Unsigned2ulaw(byte[] inBuffer, int inByteOffset, 
-	byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int ulawIndex=outByteOffset;
-	int pcmIndex=inByteOffset;
-	while (sampleCount>0) {
-	outBuffer[ulawIndex++]=linear2ulaw(((byte) (inBuffer[pcmIndex++]+128)) << 8);
-	sampleCount--;
-}
-}
-	*/
 
 	/**
 	* Fills outBuffer with pcm signed 16 bit samples.
@@ -524,38 +437,6 @@ public class TConversionTool {
 		}
 	}
 
-	/**
-	 * Fills outBuffer with pcm signed 16 bit samples.
-	 * reading starts from inBuffer[inByteOffset].
-	 * writing starts at outBuffer[outByteOffset].
-	 * There will be sampleCount bytes read from inBuffer;
-	 * There will be sampleCount*2 bytes written to outBuffer.
-	 */
-	/*
-	public static void ulaw2pcm16BigEndian(byte[] inBuffer, int inByteOffset, 
-	byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int shortIndex=outByteOffset;
-	int ulawIndex=inByteOffset;
-	while (sampleCount>0) {
-	convertShortToBigEndianBytes
-	   (u2l[inBuffer[ulawIndex++] & 0xFF], outBuffer, shortIndex++);
-	shortIndex++;
-	sampleCount--;
-}
-}
-
-	public static void ulaw2pcm16LittleEndian(byte[] inBuffer, int inByteOffset, 
-	byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int shortIndex=outByteOffset;
-	int ulawIndex=inByteOffset;
-	while (sampleCount>0) {
-	convertShortToLittleEndianBytes
-	   (u2l[inBuffer[ulawIndex++] & 0xFF], outBuffer, shortIndex++);
-	shortIndex++;
-	sampleCount--;
-}
-}
-	*/
 
 	// TODO: either direct 8bit pcm to ulaw, or better conversion from 8bit to 16bit
 	/**
@@ -577,21 +458,6 @@ public class TConversionTool {
 		}
 	}
 
-	/*
-	public static void ulaw2pcm8Signed(byte[] buffer, int byteOffset, int sampleCount) {
-	sampleCount+=byteOffset;
-	for (int i=byteOffset; i<sampleCount; i++) {
-	buffer[i]=(byte) ((u2l[buffer[i] & 0xFF] >> 8) & 0xFF);
-}
-}
-
-	public static void ulaw2pcm8Unsigned(byte[] buffer, int byteOffset, int sampleCount) {
-	sampleCount+=byteOffset;
-	for (int i=byteOffset; i<sampleCount; i++) {
-	buffer[i]=(byte) ((u2l[buffer[i] & 0xFF]>>8)+128);
-}
-}
-	*/
 	/**
 	 * Fills outBuffer with ulaw samples.
 	 * reading starts from inBuffer[inByteOffset].
@@ -617,28 +483,6 @@ public class TConversionTool {
 		}
 	}
 
-	/*
-	public static void ulaw2pcm8Signed(byte[] inBuffer, int inByteOffset, 
-	byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int ulawIndex=inByteOffset;
-	int pcmIndex=outByteOffset;
-	while (sampleCount>0) {
-	outBuffer[pcmIndex++]=
-	   (byte) ((u2l[inBuffer[ulawIndex++] & 0xFF] >> 8) & 0xFF);
-	sampleCount--;
-}
-}
-
-	public static void ulaw2pcm8Unsigned(byte[] inBuffer, int inByteOffset, 
-	byte[] outBuffer, int outByteOffset, int sampleCount) {
-	int ulawIndex=inByteOffset;
-	int pcmIndex=outByteOffset;
-	while (sampleCount>0) {
-	outBuffer[pcmIndex++]=(byte) ((u2l[inBuffer[ulawIndex++] & 0xFF]>>8)+128);
-	sampleCount--;
-}
-}
-	*/
 
 	//////////////////// ALAW ////////////////////////////
 
