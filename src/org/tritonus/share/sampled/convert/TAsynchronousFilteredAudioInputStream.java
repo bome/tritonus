@@ -118,6 +118,8 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read(byte[] abData, int nOffset, int nLength)
 		throws	IOException
 	{
+		//$$fb 2001-04-22: this returns at maximum circular buffer
+		// length. This is not very efficient...
 		return m_circularBuffer.read(abData, nOffset, nLength);
 	}
 
