@@ -52,6 +52,7 @@ public abstract class TSequencer
 	extends		TMidiDevice
 	implements	Sequencer
 {
+	private static final float	MPQ_BPM_FACTOR = 6.0E7F;
 	/**	The Sequence to play or to record to.
 	 */
 	private Sequence	m_sequence;
@@ -76,6 +77,7 @@ public abstract class TSequencer
 	protected TSequencer(MidiDevice.Info info)
 	{
 		super(info);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): begin"); }
 		m_sequence = null;
 		m_metaListeners = new ArraySet();
 		m_aControllerListeners = new Set[128];
@@ -85,6 +87,7 @@ public abstract class TSequencer
 		setTempoFactor(1.0F);
 		setTempoInMPQ(500000);
 */
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.<init>(): end"); }
 	}
 
 
@@ -92,10 +95,12 @@ public abstract class TSequencer
 	public void setSequence(Sequence sequence)
 		throws	InvalidMidiDataException
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSequence(Sequence): begin"); }
 		// TODO: what if playing is in progress?
 		m_sequence = sequence;
 		// yes, this is required by the specification
 		setTempoFactor(1.0F);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSequence(Sequence): end"); }
 	}
 
 
@@ -103,14 +108,18 @@ public abstract class TSequencer
 	public void setSequence(InputStream inputStream)
 		throws	InvalidMidiDataException, IOException
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSequence(InputStream): begin"); }
 		Sequence	sequence = MidiSystem.getSequence(inputStream);
 		setSequence(sequence);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setSequence(InputStream): end"); }
 	}
 
 
 
 	public Sequence getSequence()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getSequence(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getSequence(): end"); }
 		return m_sequence;
 	}
 
@@ -118,39 +127,47 @@ public abstract class TSequencer
 
 	public float getTempoInBPM()
 	{
-		return 6.0E7F / getTempoInMPQ();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInBPM(): begin"); }
+		float	fBPM = MPQ_BPM_FACTOR / getTempoInMPQ();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInBPM(): end"); }
+		return fBPM;
 	}
 
 
 
 	public void setTempoInBPM(float fBPM)
 	{
-		setTempoInMPQ(6.0E7F / fBPM);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInBPM(): begin"); }
+		setTempoInMPQ(MPQ_BPM_FACTOR / fBPM);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInBPM(): end"); }
 	}
 
 
 
 	public float getTempoInMPQ()
 	{
-		return getTempoNative() * getTempoFactor();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInMPQ(): begin"); }
+		float fMPQ = getTempoNative() * getTempoFactor();
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoInMPQ(): end"); }
+		return fMPQ;
 	}
 
 
 
 	public void setTempoInMPQ(float fMPQ)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInMPQ(): begin"); }
 		float	fRealTempo = fMPQ / getTempoFactor();
-		if (TDebug.TraceTSequencer)
-		{
-			TDebug.out("TSequencer.setTempoInMPQ(): real tempo: " + fRealTempo);
-		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInMPQ(): real tempo: " + fRealTempo); }
 		setTempoNative(fRealTempo);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoInMPQ(): end"); }
 	}
 
 
 
 	public void setTempoFactor(float fFactor)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoFactor(): begin"); }
 		/*
 		 *	Get nominal tempo, using the old tempo factor.
 		 */
@@ -161,17 +178,17 @@ public abstract class TSequencer
 		 *	factor.
 		 */
 		float	fRealTempo = fNominalTempo / fFactor;
-		if (TDebug.TraceTSequencer)
-		{
-			TDebug.out("TSequencer.setTempoFactor(): real tempo: " + fRealTempo);
-		}
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoFactor(): real tempo: " + fRealTempo); }
 		setTempoNative(fRealTempo);
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.setTempoFactor(): end"); }
 	}
 
 
 
 	public float getTempoFactor()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoFactor(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("TSequencer.getTempoFactor(): end"); }
 		return m_fTempoFactor;
 	}
 
