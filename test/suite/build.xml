@@ -1,0 +1,63 @@
+<project name="tritonus_tests" default="compile" basedir=".">
+  <target name="init">
+    <tstamp/>
+    <property name="src" value="." />
+    <property name="build" value="." />
+    <property name="dist"  value="." />
+    <!--
+    Remove the next line if you don't have jikes.
+    In this case, javac will be used for compiling.
+    -->
+    <property name="build.compiler" value="jikes" />
+    <!--property name="build.compiler.fulldepend" value="true" /-->
+
+    <!--
+    <available
+	       classname="grame.midishare.Midi"
+	       property="midishare-present" />
+    <available
+	       classname="javazoom.jl.decoder.Decoder"
+	       property="javalayer-present" />
+    -->
+    <!--
+    This assumes that the javalayer code is in a directory
+    'javalayer' that is parallel to 'tritonus'. If not, change
+    the value of the property.
+    -->
+    <property name="javalayer-path" value="../javalayer" />
+    <available
+	       file="${javalayer-path}/build.xml"
+	       property="javalayer-source-present" />
+
+    <property
+	      name="java_ext_path"
+	      value="${java.home}/lib/ext" />
+  </target>
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${build}" />
+  </target>
+
+  <target name="build-javalayer"
+	  depends="init"
+	  if="javalayer-source-present">
+    <ant dir="${javalayer-path}" />
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src}"
+	   depend="yes"
+	   destdir="${build}" />
+  </target>
+
+  <target name="test"
+	  depends="compile">
+    <junit fork="no" printsummary="yes">
+      <sysproperty key="tritonus.TraceAudioFileReader" value="true" />
+      <formatter type="plain" />
+      <test name="AiffAudioFileReaderTestCase" />
+      <test name="AuAudioFileReaderTestCase" />
+      <test name="WaveAudioFileReaderTestCase" />
+    </junit>
+  </target>
+</project>
