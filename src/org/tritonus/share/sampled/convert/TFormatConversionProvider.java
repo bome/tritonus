@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -30,16 +30,16 @@ import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.spi.FormatConversionProvider;
+
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.AudioFormats;
 
 
-/**
- * Base class for all conversion providers.
- *
- * @author Matthias Pfisterer
- */
 
+/**	Base class for all conversion providers of Tritonus.
+ *
+ *	@author Matthias Pfisterer
+ */
 public abstract class TFormatConversionProvider
 	extends		FormatConversionProvider
 {
@@ -48,9 +48,6 @@ public abstract class TFormatConversionProvider
 
 
 
-	// TODO: find a better solution; move out of TFormatConversionProvider
-	// very primitive, not too useful
-	// perhaps use some overwritable method getDefaultAudioFormat(Encoding)
 	// $$fb2000-10-04: use AudioSystem.NOT_SPECIFIED for all fields.
 	public AudioInputStream getAudioInputStream(AudioFormat.Encoding targetEncoding, AudioInputStream audioInputStream)
 	{
@@ -63,8 +60,15 @@ public abstract class TFormatConversionProvider
 			AudioSystem.NOT_SPECIFIED,   // frame size
 			AudioSystem.NOT_SPECIFIED,   // frame rate
 			sourceFormat.isBigEndian());  // big endian
+		if (TDebug.TraceAudioConverter)
+		{
+			TDebug.out("TFormatConversionProvider.getAudioInputStream(AudioFormat.Encoding, AudioInputStream):");
+			TDebug.out("trying to convert to " + targetFormat);
+		}
 		return getAudioInputStream(targetFormat, audioInputStream);
 	}
+
+
 
 	/**
 	 * WARNING: this method uses <code>getTargetFormats(AudioFormat.Encoding, AudioFormat)</code>
