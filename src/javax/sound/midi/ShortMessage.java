@@ -90,7 +90,13 @@ public class ShortMessage
 		  implementation.
 		 */
 		// TODO: check if the Sun implementation uses setMessage(), too.
-		setMessage(144, 255, 0);
+		try
+		{
+			setMessage(144, 255, 0);
+		}
+		catch (InvalidMidiDataException e)
+		{
+		}
 	}
 
 
