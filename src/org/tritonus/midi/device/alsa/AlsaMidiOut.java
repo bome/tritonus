@@ -37,7 +37,12 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
 
 
-
+/**
+   This class sends events always to clients that have subscribed to the client
+   passed as AlsaSeq object and the source port number passed.
+   This class doesn't establish any subscriptions. They have to be
+   established elsewhere.
+ */
 public class AlsaMidiOut
 {
 	/**	The low-level object to interface to the ALSA sequencer.
@@ -103,30 +108,6 @@ public class AlsaMidiOut
 	private AlsaSeq getAlsaSeq()
 	{
 		return m_alsaSeq;
-	}
-
-
-
-	public void subscribe(int nDestClient, int nDestPort)
-	{
-		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.subscribe(): begin"); }
-		getAlsaSeq().subscribePort(
-			getAlsaSeq().getClientId(), getSourcePort(),
-			nDestClient, nDestPort);
-		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.subscribe(): end"); }
-	}
-
-
-
-	public void unsubscribe(int nDestClient, int nDestPort)
-	{
-		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.unsubscribe(): begin"); }
-/*	TODO:
-		getAlsaSeq().subscribePort(
-			getAlsaSeq().getClientId(), getSourcePort(),
-			nDestClient, nDestPort);
-*/
-		if (TDebug.TraceAlsaMidiOut) { TDebug.out("AlsaMidiOut.unsubscribe(): end"); }
 	}
 
 
