@@ -1,5 +1,7 @@
 /*
  *	MidiFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -42,17 +44,17 @@ import javax.sound.midi.Sequence;
 public abstract class MidiFileReader
 {
     public abstract MidiFileFormat getMidiFileFormat(InputStream inputStream)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
     public abstract MidiFileFormat getMidiFileFormat(URL url)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
     public abstract MidiFileFormat getMidiFileFormat(File file)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
     public abstract Sequence getSequence(InputStream inputStream)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
     public abstract Sequence getSequence(URL url)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
     public abstract Sequence getSequence(File file)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
 }
 
 

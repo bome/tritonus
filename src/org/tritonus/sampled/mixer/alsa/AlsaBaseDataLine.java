@@ -1,7 +1,7 @@
 /*
  *	AlsaBaseDataLine.java
  *
- *	This file is part of Tritonus.
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -67,7 +67,7 @@ extends TBaseDataLine
 
 
 	public AlsaBaseDataLine(AlsaDataLineMixer mixer, DataLine.Info info)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		super(mixer,
 		      info);
@@ -79,7 +79,7 @@ extends TBaseDataLine
 
 	public AlsaBaseDataLine(AlsaDataLineMixer mixer, DataLine.Info info,
 				Collection controls)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		super(mixer,
 		      info);
@@ -130,7 +130,7 @@ extends TBaseDataLine
 
 
 	protected void openImpl()
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceSourceDataLine) { TDebug.out("AlsaBaseDataLine.openImpl(): begin"); }
 

@@ -1,5 +1,7 @@
 /*
  *	GSMFormatConversionProvider.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -267,7 +269,7 @@ extends TSimpleFormatConversionProvider
 
 
 		public void close()
-			throws	IOException
+			throws IOException
 		{
 			super.close();
 			m_encodedStream.close();
@@ -366,7 +368,7 @@ extends TSimpleFormatConversionProvider
 
 
 		public void close()
-			throws	IOException
+			throws IOException
 		{
 			super.close();
 			m_decodedStream.close();

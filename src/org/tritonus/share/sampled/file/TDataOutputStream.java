@@ -1,5 +1,7 @@
 /*
  *	TDataOutputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -67,7 +69,7 @@ extends DataOutput
 		throws IOException;
 
 	public void close()
-		throws	IOException;
+		throws IOException;
 }
 
 

@@ -1,5 +1,7 @@
 /*
  *	MshSequencer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -108,7 +110,7 @@ extends TMidiDevice
 	
 
 	public void setSequence(Sequence sequence)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		// TODO: what if playing is in progress?
 		//m_sequence = sequence;
@@ -398,7 +400,7 @@ extends TMidiDevice
 
 
 	public Transmitter getTransmitter()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		// TODO: check number
 		return new MidiShareTransmitter();

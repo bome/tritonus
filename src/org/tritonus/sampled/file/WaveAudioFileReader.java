@@ -1,5 +1,7 @@
 /*
  *	WaveAudioFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -254,7 +256,7 @@ public class WaveAudioFileReader extends TAudioFileReader
 
 
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileLengthInBytes)
-	throws	UnsupportedAudioFileException, IOException {
+	throws UnsupportedAudioFileException, IOException {
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
 		int magic = dataInputStream.readInt();
 		if (magic != WaveTool.WAVE_RIFF_MAGIC) {

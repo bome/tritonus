@@ -1,5 +1,7 @@
 /*
  *	TClip.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -72,7 +74,7 @@ implements Clip
 			 byte[] abData,
 			 int nOffset,
 			 int nLength)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		// int	nBufferLength = nNumFrames * audioFormat.getFrameSize();
 		// TODO: check if nOffset + nBufferLength <= abData.length
@@ -96,7 +98,7 @@ implements Clip
 
 
 	public void open(AudioInputStream audioInputStream)
-		throws	LineUnavailableException, IOException
+		throws LineUnavailableException, IOException
 	{
 		AudioFormat	audioFormat = audioInputStream.getFormat();
 		// TOOD:

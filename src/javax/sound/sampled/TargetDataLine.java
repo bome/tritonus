@@ -1,5 +1,7 @@
 /*
  *	TargetDataLine.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -33,11 +35,11 @@ extends DataLine
 {
 	public void open(AudioFormat audioFormat,
 			 int nBufferSize)
-		throws	LineUnavailableException;
+		throws LineUnavailableException;
 
 
 	public void open(AudioFormat audioFormat)
-		throws	LineUnavailableException;
+		throws LineUnavailableException;
 
 
 	public int read(byte[] abData,

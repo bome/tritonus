@@ -214,7 +214,7 @@ implements MshMidiIn.MshMidiInListener, MshClient
 
 
 	public Receiver getReceiver()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		/*
 		 *	Another quick&dirty solution. In the Sun jdk1.3,
@@ -232,7 +232,7 @@ implements MshMidiIn.MshMidiInListener, MshClient
 
 
 	public Transmitter getTransmitter()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		/*
 		 *	See the comment in getReceiver().

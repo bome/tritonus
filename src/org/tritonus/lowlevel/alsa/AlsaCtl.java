@@ -1,5 +1,7 @@
 /*
  *	AlsaCtl.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -72,7 +74,7 @@ public class AlsaCtl
 
 	*/
 	public AlsaCtl(String strName, int nMode)
-		throws	Exception
+		throws Exception
 	{
 		if (open(strName, nMode) < 0)
 		{
@@ -83,7 +85,7 @@ public class AlsaCtl
 
 
 	public AlsaCtl(int nCard)
-		throws	Exception
+		throws Exception
 	{
 		this("hw:" + nCard, 0);
 	}

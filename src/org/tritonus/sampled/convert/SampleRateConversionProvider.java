@@ -1,5 +1,7 @@
 /*
  *	SampleRateConversionProvider.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -668,7 +670,7 @@ private long testOutFramesReturned=0;
 		 * this method may read less than nLength bytes.
 		 */
 		public int read(byte[] abData, int nOffset, int nLength)
-		throws	IOException {
+		throws IOException {
 			if (isClosed()) {
 				return -1;
 			}

@@ -1,5 +1,7 @@
 /*
  *	Mixer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -44,7 +46,7 @@ extends Line
 	public boolean isLineSupported(Line.Info info);
 
 	public Line getLine(Line.Info info)
-		throws	LineUnavailableException;
+		throws LineUnavailableException;
 
 	public int getMaxLines(Line.Info info);
 

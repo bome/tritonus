@@ -1,5 +1,7 @@
 /*
  *	AuAudioFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -78,7 +80,7 @@ public class AuAudioFileReader extends TAudioFileReader
 
 
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("AuAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);

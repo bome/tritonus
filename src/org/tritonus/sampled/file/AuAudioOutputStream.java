@@ -1,5 +1,7 @@
 /*
  *	AuAudioOutputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -84,7 +86,7 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
 	}
 
-	protected void writeHeader() throws	IOException {
+	protected void writeHeader() throws IOException {
 		if (TDebug.TraceAudioOutputStream) {
 			TDebug.out("AuAudioOutputStream.writeHeader(): called.");
 		}

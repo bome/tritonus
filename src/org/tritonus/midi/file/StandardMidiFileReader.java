@@ -1,5 +1,7 @@
 /*
  *	StandardMidiFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -151,7 +153,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public MidiFileFormat getMidiFileFormat(URL url)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		InputStream	inputStream = url.openStream();
 		try
@@ -169,7 +171,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public MidiFileFormat getMidiFileFormat(File file)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		InputStream	inputStream = new FileInputStream(file);
 		//inputStream = new BufferedInputStream(inputStream, 1024);
@@ -188,7 +190,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public Sequence getSequence(URL url)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		InputStream	inputStream = url.openStream();
 		try
@@ -220,7 +222,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public Sequence getSequence(File file)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		InputStream	inputStream = new FileInputStream(file);
 		// inputStream = new BufferedInputStream(inputStream, 1024);
@@ -253,7 +255,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public Sequence getSequence(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		MidiFileFormat	midiFileFormat = getMidiFileFormat(inputStream);
 		Sequence	sequence = new Sequence(
@@ -274,7 +276,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	private void readTrack(DataInputStream dataInputStream, Track track)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		// search for a "MTrk" chunk
 		while (true)
@@ -313,7 +315,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	private static MidiEvent readEvent(DataInputStream dataInputStream, long[] alRemainingBytes, int[] anRunningStatusByte, long lTicks)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		int	nStatusByte = readUnsignedByte(dataInputStream, alRemainingBytes);
 		// TDebug.out("status byte: " + nStatusByte);
@@ -454,7 +456,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public static long readVariableLengthQuantity(DataInputStream dataInputStream, long[] alRemainingBytes)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		long	lValue = 0;
 		int	nByteCount = 0;
@@ -478,7 +480,7 @@ extends MidiFileReader
 	/**	TODO:
 	 */
 	public static int readUnsignedByte(DataInputStream dataInputStream, long[] alRemainingBytes)
-		throws	IOException
+		throws IOException
 	{
 		int	nByte = dataInputStream.readUnsignedByte();
 // already done in DataInputStream.readUnsignedByte();

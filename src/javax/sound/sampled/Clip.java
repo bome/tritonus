@@ -1,5 +1,7 @@
 /*
  *	Clip.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -41,12 +43,12 @@ extends DataLine
 			 byte[] abData,
 			 int nOffset,
 			 int nBufferSize)
-		throws	LineUnavailableException;
+		throws LineUnavailableException;
 
 
 
 	public void open(AudioInputStream audioInputStream)
-		throws	LineUnavailableException, IOException;
+		throws LineUnavailableException, IOException;
 
 
 	public int getFrameLength();

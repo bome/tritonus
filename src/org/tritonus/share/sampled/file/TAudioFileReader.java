@@ -1,5 +1,7 @@
 /*
  *	TAudioFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -102,7 +104,7 @@ extends	AudioFileReader
 		information from the header of the file passed in.
 	*/
 	public AudioFileFormat getAudioFileFormat(File file)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(File): begin"); }
 		long	lFileLengthInBytes = file.length();
@@ -133,7 +135,7 @@ extends	AudioFileReader
 		information from the header of the URL passed in.
 	*/
 	public AudioFileFormat getAudioFileFormat(URL url)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(URL): begin"); }
@@ -165,7 +167,7 @@ extends	AudioFileReader
 		information from the header of the stream passed in.
 	*/
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): begin"); }
@@ -213,7 +215,7 @@ extends	AudioFileReader
 	protected abstract AudioFileFormat getAudioFileFormat(
 		InputStream inputStream,
 		long lFileLengthInBytes)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 
 
 
@@ -229,7 +231,7 @@ extends	AudioFileReader
 		the audio data from this file.
 	*/
 	public AudioInputStream getAudioInputStream(File file)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(File): begin"); }
 		long	lFileLengthInBytes = file.length();
@@ -267,7 +269,7 @@ extends	AudioFileReader
 		the audio data from this URL.
 	*/
 	public AudioInputStream getAudioInputStream(URL url)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): begin"); }
 		long	lFileLengthInBytes = getDataLength(url);
@@ -305,7 +307,7 @@ extends	AudioFileReader
 		the audio data from this stream.
 	*/
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): begin"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
@@ -350,7 +352,7 @@ extends	AudioFileReader
 		informmation in the file header.
 	*/
 	protected AudioInputStream getAudioInputStream(InputStream inputStream, long lFileLengthInBytes)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin"); }
 		if (isRereading())
@@ -397,7 +399,7 @@ extends	AudioFileReader
 
 
 	public static int readLittleEndianInt(InputStream is)
-		throws	IOException
+		throws IOException
 	{
 		int	b0 = is.read();
 		int	b1 = is.read();
@@ -413,7 +415,7 @@ extends	AudioFileReader
 
 
 	public static short readLittleEndianShort(InputStream is)
-		throws	IOException
+		throws IOException
 	{
 		int	b0 = is.read();
 		int	b1 = is.read();

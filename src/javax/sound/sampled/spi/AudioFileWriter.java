@@ -1,5 +1,7 @@
 /*
  *	AudioFileWriter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -66,14 +68,14 @@ public abstract class AudioFileWriter
 	public abstract int write(AudioInputStream audioInputStream,
 				  AudioFileFormat.Type fileType,
 				  OutputStream outputStream)
-		throws	IOException;
+		throws IOException;
 
 
 
 	public abstract int write(AudioInputStream audioInputStream,
 				  AudioFileFormat.Type fileType,
 				  File file)
-		throws	IOException;
+		throws IOException;
 
 
 

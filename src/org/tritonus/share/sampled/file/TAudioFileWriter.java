@@ -1,5 +1,7 @@
 /*
  *	TAudioFileWriter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -155,7 +157,7 @@ extends AudioFileWriter
 	public int write(AudioInputStream audioInputStream,
 			 AudioFileFormat.Type fileType,
 			 File file)
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioFileWriter)
 		{
@@ -225,7 +227,7 @@ extends AudioFileWriter
 	public int write(AudioInputStream audioInputStream,
 			 AudioFileFormat.Type fileType,
 			 OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		//$$fb added this check
 		if (!isFileTypeSupported(fileType)) {
@@ -287,7 +289,7 @@ extends AudioFileWriter
 		AudioInputStream audioInputStream,
 		AudioOutputStream audioOutputStream,
 		boolean bNeedsConversion)
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioFileWriter)
 		{
@@ -388,7 +390,7 @@ extends AudioFileWriter
 		long lLengthInBytes,
 		AudioFileFormat.Type fileType,
 		TDataOutputStream dataOutputStream)
-		throws	IOException;
+		throws IOException;
 
 	private AudioFormat findConvertableFormat(
 		AudioFormat inputFormat,

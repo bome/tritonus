@@ -1,5 +1,7 @@
 /*
  *	EsdClip.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -68,7 +70,7 @@ implements Clip
 
 	// interface Clip
 	public void open(AudioFormat audioFormat, byte[] abData, int nOffset, int nNumFrames)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		int	nBufferLength = nNumFrames * audioFormat.getFrameSize();
 		// TODO: check if nOffset + nBufferLength <= abData.length
@@ -92,7 +94,7 @@ implements Clip
 
 
 	public void open(AudioInputStream audioInputStream)
-		throws	LineUnavailableException, IOException
+		throws LineUnavailableException, IOException
 	{
 		AudioFormat	audioFormat = audioInputStream.getFormat();
 		// TOOD:

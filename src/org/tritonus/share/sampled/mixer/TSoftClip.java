@@ -1,5 +1,7 @@
 /*
  *	TSoftClip.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -59,7 +61,7 @@ implements Runnable
 	private Thread			m_thread;
 
 	public TSoftClip(Mixer mixer, AudioFormat format)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		// TODO: info object
 /*
@@ -78,7 +80,7 @@ implements Runnable
 
 
 	public void open(AudioInputStream audioInputStream)
-		throws	LineUnavailableException, IOException
+		throws LineUnavailableException, IOException
 	{
 		AudioFormat	audioFormat = audioInputStream.getFormat();
 		setFormat(audioFormat);

@@ -1,5 +1,7 @@
 /*
  *	CookedIoctlMidLevel.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -313,7 +315,7 @@ implements CddaMidLevel
 
 
 		public void close()
-			throws	IOException
+			throws IOException
 		{
 			m_cookedIoctl.close();
 			super.close();

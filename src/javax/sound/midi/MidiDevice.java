@@ -1,5 +1,7 @@
 /*
  *	MidiDevice.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -36,7 +38,7 @@ public interface MidiDevice
 
 
 	public void open()
-		throws	MidiUnavailableException;
+		throws MidiUnavailableException;
 
 
 
@@ -61,12 +63,12 @@ public interface MidiDevice
 
 
 	public Receiver getReceiver()
-		throws	MidiUnavailableException;
+		throws MidiUnavailableException;
 
 
 
 	public Transmitter getTransmitter()
-		throws	MidiUnavailableException;
+		throws MidiUnavailableException;
 
 
 

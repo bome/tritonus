@@ -1,5 +1,7 @@
 /*
  *	TDirectSynthesizer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -81,7 +83,7 @@ implements Synthesizer
 	 *	opening.
 	 */
 	protected void openImpl()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 	}
 

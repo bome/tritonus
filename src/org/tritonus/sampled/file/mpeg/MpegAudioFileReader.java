@@ -1,5 +1,7 @@
 /*
  *	MpegAudioFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -81,7 +83,7 @@ extends	TAudioFileReader
 
 
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) { TDebug.out("MpegAudioFileReader.getAudioFileFormat(): begin"); }
 		int	b0 = inputStream.read();

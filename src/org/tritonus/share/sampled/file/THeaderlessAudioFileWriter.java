@@ -1,5 +1,7 @@
 /*
  *	THeaderlessAudioFileWriter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -60,7 +62,7 @@ extends TAudioFileWriter
 		long lLengthInBytes,
 		AudioFileFormat.Type fileType,
 		TDataOutputStream dataOutputStream)
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioFileWriter) { TDebug.out("THeaderlessAudioFileWriter.getAudioOutputStream(): begin"); }
 		AudioOutputStream	aos = new HeaderlessAudioOutputStream(

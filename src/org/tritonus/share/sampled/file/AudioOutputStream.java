@@ -1,5 +1,7 @@
 /*
  *	AudioOutputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -92,7 +94,7 @@ public interface AudioOutputStream
 	 */
 	// IDEA: use long?
 	public int write(byte[] abData, int nOffset, int nLength)
-		throws	IOException;
+		throws IOException;
 
 
 
@@ -101,7 +103,7 @@ public interface AudioOutputStream
 	 *	backpatch the header, if necessary, and closes the destination.
 	 */
 	public void close()
-		throws	IOException;
+		throws IOException;
 }
 
 

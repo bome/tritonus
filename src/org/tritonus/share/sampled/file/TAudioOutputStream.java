@@ -1,5 +1,7 @@
 /*
  *	TAudioOutputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -103,7 +105,7 @@ implements AudioOutputStream
 	 */
 	// IDEA: use long?
 	public int write(byte[] abData, int nOffset, int nLength)
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioOutputStream)
 		{
@@ -144,7 +146,7 @@ implements AudioOutputStream
 	/**	Writes the header of the audio file.
 	 */
 	protected abstract void writeHeader()
-		throws	IOException;
+		throws IOException;
 
 
 
@@ -153,7 +155,7 @@ implements AudioOutputStream
 	 *	backpatch the header, if necessary, and closes the destination.
 	 */
 	public void close()
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioOutputStream)
 		{
@@ -174,7 +176,7 @@ implements AudioOutputStream
 
 
 	protected void patchHeader()
-		throws	IOException
+		throws IOException
 	{
 		TDebug.out("TAudioOutputStream.patchHeader(): called");
 		// DO NOTHING

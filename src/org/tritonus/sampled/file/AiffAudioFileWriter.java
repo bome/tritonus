@@ -1,5 +1,7 @@
 /*
  *	AiffAudioFileWriter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -89,7 +91,7 @@ public class AiffAudioFileWriter extends TAudioFileWriter {
 	protected AudioOutputStream getAudioOutputStream(AudioFormat audioFormat,
 	        long lLengthInBytes,
 	        AudioFileFormat.Type fileType,
-	        TDataOutputStream dataOutputStream)	throws	IOException {
+	        TDataOutputStream dataOutputStream)	throws IOException {
 	            return new AiffAudioOutputStream(audioFormat, fileType,
 	                                             lLengthInBytes,
 	                                             dataOutputStream);

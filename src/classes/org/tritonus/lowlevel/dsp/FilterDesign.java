@@ -1,5 +1,7 @@
 /*
  *	FilterDesign.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*

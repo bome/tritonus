@@ -1,5 +1,7 @@
 /*
  *	MidiFileWriter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -71,13 +73,13 @@ public abstract class MidiFileWriter
 	public abstract int write(Sequence sequence,
 				  int nFileType,
 				  OutputStream outputStream)
-		throws	IOException;
+		throws IOException;
 
 
 	public abstract int write(Sequence sequence,
 				  int nFileType,
 				  File outputFile)
-		throws	IOException;
+		throws IOException;
 }
 
 

@@ -1,7 +1,7 @@
 /*
  *	AlsaTargetDataLine.java
  *
- *	This file is part of Tritonus.
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -52,7 +52,7 @@ implements TargetDataLine
 
 
 	public AlsaTargetDataLine(AlsaDataLineMixer mixer, AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		// TODO: use an info object that represents the mixer's capabilities (all possible formats for the line)
 		super(mixer,

@@ -1,5 +1,7 @@
 /*
  *	SysexMessage.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -70,7 +72,7 @@ extends MidiMessage
 	/**	TODO:
 	*/
 	public void setMessage(byte[] abData, int nLength)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		super.setMessage(abData, nLength);
 	}
@@ -80,7 +82,7 @@ extends MidiMessage
 	/**	TODO:
 	*/
 	public void setMessage(int nStatus, byte[] abData, int nLength)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		byte[]	abCompleteData = new byte[nLength + 1];
 		abCompleteData[0] = (byte) nStatus;

@@ -1,5 +1,7 @@
 /*
  *	Line.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -34,7 +36,7 @@ public interface Line
 
 
 	public void open()
-		throws	LineUnavailableException;
+		throws LineUnavailableException;
 
 
 

@@ -1,5 +1,7 @@
 /*
  *	AudioFileReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -41,32 +43,32 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public abstract class AudioFileReader
 {
 	public abstract AudioFileFormat getAudioFileFormat(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 
 
 
 	public abstract AudioFileFormat getAudioFileFormat(URL url)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 
 
 
 	public abstract AudioFileFormat getAudioFileFormat(File file)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 
 
 
 	public abstract AudioInputStream getAudioInputStream(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 
 
 
 	public abstract AudioInputStream getAudioInputStream(URL url)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 
 
 
 	public abstract AudioInputStream getAudioInputStream(File file)
-		throws	UnsupportedAudioFileException, IOException;
+		throws UnsupportedAudioFileException, IOException;
 }
 
 

@@ -1,5 +1,7 @@
 /*
  *	AlsaMixer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -53,7 +55,7 @@ public class AlsaMixer
 
 
 	public AlsaMixer(String strMixerName)
-		throws	Exception
+		throws Exception
 	{
 		if (open(0) < 0)
 		{

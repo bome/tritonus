@@ -1,5 +1,7 @@
 /*
  *	Sequence.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -50,7 +52,7 @@ public class Sequence
 
 	public Sequence(float fDivisionType,
 			int nResolution)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		this(fDivisionType, nResolution, 0);
 	}
@@ -60,7 +62,7 @@ public class Sequence
 	public Sequence(float fDivisionType,
 			int nResolution,
 			int nNumTracks)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		if (fDivisionType == PPQ || fDivisionType == SMPTE_24 || fDivisionType == SMPTE_25 || fDivisionType == SMPTE_30DROP || fDivisionType == SMPTE_30)
 		{

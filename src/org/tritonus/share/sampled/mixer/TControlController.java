@@ -1,8 +1,7 @@
 /*
  *	TControlController.java
  *
- *	This file is part of Tritonus,
- *	an implementation of the Java Sound API.
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*

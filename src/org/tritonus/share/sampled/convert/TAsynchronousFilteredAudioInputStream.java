@@ -1,5 +1,7 @@
 /*
  *	TAsynchronousFilteredAudioInputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -144,7 +146,7 @@ implements TCircularBuffer.Trigger
 
 
 	public int read()
-		throws	IOException
+		throws IOException
 	{
 		// if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(): begin"); }
 		int	nByte = -1;
@@ -169,7 +171,7 @@ implements TCircularBuffer.Trigger
 
 
 	public int read(byte[] abData)
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[]): begin"); }
 		int	nRead = read(abData, 0, abData.length);
@@ -180,7 +182,7 @@ implements TCircularBuffer.Trigger
 
 
 	public int read(byte[] abData, int nOffset, int nLength)
-		throws	IOException
+		throws IOException
 	{
 		if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.read(byte[], int, int): begin"); }
 		//$$fb 2001-04-22: this returns at maximum circular buffer
@@ -194,7 +196,7 @@ implements TCircularBuffer.Trigger
 
 
 	public long skip(long lSkip)
-		throws	IOException
+		throws IOException
 	{
 		// TODO: this is quite inefficient
 		for (long lSkipped = 0; lSkipped < lSkip; lSkipped++)
@@ -211,7 +213,7 @@ implements TCircularBuffer.Trigger
 
 
 	public int available()
-		throws	IOException
+		throws IOException
 	{
 		return m_circularBuffer.availableRead();
 	}
@@ -219,7 +221,7 @@ implements TCircularBuffer.Trigger
 
 
 	public void close()
-		throws	IOException
+		throws IOException
 	{
 		m_circularBuffer.close();
 	}
@@ -240,7 +242,7 @@ implements TCircularBuffer.Trigger
 
 
 	public void reset()
-		throws	IOException
+		throws IOException
 	{
 		throw new IOException("mark not supported");
 	}

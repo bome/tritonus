@@ -1,5 +1,7 @@
 /*
  *	AlsaSequencer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -695,7 +697,7 @@ extends TSequencer
 
 
 	public Receiver getReceiver()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		return new AlsaSequencerReceiver();
 	}
@@ -703,7 +705,7 @@ extends TSequencer
 
 
 	public Transmitter getTransmitter()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		return new AlsaSequencerTransmitter();
 	}

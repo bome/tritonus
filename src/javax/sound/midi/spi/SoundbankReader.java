@@ -1,5 +1,7 @@
 /*
  *	SoundbankReader.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -41,17 +43,17 @@ import javax.sound.midi.InvalidMidiDataException;
 public abstract class SoundbankReader
 {
     public abstract Soundbank getSoundbank(InputStream inputStream)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
 
 
 
     public abstract Soundbank getSoundbank(URL url)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
 
 
 
     public abstract Soundbank getSoundbank(File file)
-	throws	InvalidMidiDataException, IOException;
+	throws InvalidMidiDataException, IOException;
 }
 
 

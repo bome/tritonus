@@ -1,5 +1,7 @@
 /*
  *	TMidiConfig.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -89,7 +91,7 @@ public class TMidiConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 				{
 					MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
 					TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
@@ -106,7 +108,7 @@ public class TMidiConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 				{
 					MidiFileReader	provider = (MidiFileReader) obj;
 					TMidiConfig.addMidiFileReader(provider);
@@ -123,7 +125,7 @@ public class TMidiConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 				{
 					MidiFileWriter	provider = (MidiFileWriter) obj;
 					TMidiConfig.addMidiFileWriter(provider);
@@ -140,7 +142,7 @@ public class TMidiConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 				{
 					SoundbankReader	provider = (SoundbankReader) obj;
 					TMidiConfig.addSoundbankReader(provider);

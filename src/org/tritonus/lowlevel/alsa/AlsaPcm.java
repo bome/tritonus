@@ -1,5 +1,7 @@
 /*
  *	AlsaPcm.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -191,7 +193,7 @@ public class AlsaPcm
 	public AlsaPcm(String strPcmName,
 		       int nDirection,
 		       int nMode)
-		throws	Exception
+		throws Exception
 	{
 		int	nReturn;
 		nReturn = open(strPcmName,

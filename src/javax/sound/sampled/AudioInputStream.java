@@ -1,5 +1,7 @@
 /*
  *	AudioInputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -183,7 +185,7 @@ extends InputStream
 
 
 	public int read()
-		throws	IOException
+		throws IOException
 	{
 		if (CHECK_LENGTHS)
 		{
@@ -208,7 +210,7 @@ extends InputStream
 
 
 	public int read(byte[] abData)
-		throws	IOException
+		throws IOException
 	{
 		return read(abData, 0, abData.length);
 	}
@@ -216,7 +218,7 @@ extends InputStream
 
 
 	public int read(byte[] abData, int nOffset, int nLength)
-		throws	IOException
+		throws IOException
 	{
 		//$$fb better to first check if end is reached.
 		//otherwise, on un-aligned nLength, it will lead to a misleading exception
@@ -266,7 +268,7 @@ extends InputStream
 
 
 	public long skip(long nSkip)
-		throws	IOException
+		throws IOException
 	{
 		if (CHECK_LENGTHS)
 		{
@@ -288,7 +290,7 @@ extends InputStream
 
 
 	public int available()
-		throws	IOException
+		throws IOException
 	{
 		if (m_lLengthInBytes == AudioSystem.NOT_SPECIFIED)
 		{
@@ -303,7 +305,7 @@ extends InputStream
 
 
 	public void close()
-		throws	IOException
+		throws IOException
 	{
 		stream.close();
 	}
@@ -319,7 +321,7 @@ extends InputStream
 
 
 	public void reset()
-		throws	IOException
+		throws IOException
 	{
 		stream.reset();
 		m_lPosition = m_lMarkedPosition;

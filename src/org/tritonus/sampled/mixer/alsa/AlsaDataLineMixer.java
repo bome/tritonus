@@ -1,5 +1,7 @@
 /*
  *	AlsaDataLineMixer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -203,7 +205,7 @@ extends TMixer
 
 	// nBufferSize is in bytes!
 	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getSourceDataLine(): begin"); }
 		if (TDebug.TraceMixer)
@@ -225,7 +227,7 @@ extends TMixer
 
 	// nBufferSize is in bytes!
 	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getTargetDataLine(): begin"); }
 		int			nBufferSizeInBytes = nBufferSize * format.getFrameSize();
@@ -239,7 +241,7 @@ extends TMixer
 
 
 	protected Clip getClip(AudioFormat format)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer) { TDebug.out("AlsaDataLineMixer.getClip(): begin"); }
 		Clip	clip = new TSoftClip(this, format);

@@ -1,5 +1,7 @@
 /*
  *	TAudioConfig.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -64,7 +66,7 @@ public class TAudioConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 					{
 						AudioFileReader	provider = (AudioFileReader) obj;
 						TAudioConfig.addAudioFileReader(provider);
@@ -81,7 +83,7 @@ public class TAudioConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 					{
 						AudioFileWriter	provider = (AudioFileWriter) obj;
 						TAudioConfig.addAudioFileWriter(provider);
@@ -98,7 +100,7 @@ public class TAudioConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 					{
 						FormatConversionProvider	provider = (FormatConversionProvider) obj;
 						TAudioConfig.addFormatConversionProvider(provider);
@@ -115,7 +117,7 @@ public class TAudioConfig
 		action = new ProviderRegistrationAction()
 			{
 				public void register(Object obj)
-					throws	Exception
+					throws Exception
 					{
 						MixerProvider	provider = (MixerProvider) obj;
 						TAudioConfig.addMixerProvider(provider);

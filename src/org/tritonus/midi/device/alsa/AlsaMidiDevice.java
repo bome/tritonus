@@ -1,5 +1,7 @@
 /*
  *	AlsaMidiDevice.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -293,7 +295,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 
 
 	public Receiver getReceiver()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		if (! getUseOut())
 		{
@@ -305,7 +307,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 
 
 	public Transmitter getTransmitter()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		if (! getUseIn())
 		{

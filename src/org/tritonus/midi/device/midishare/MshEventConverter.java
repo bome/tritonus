@@ -1,5 +1,7 @@
 /*
  *	MshEventConverter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -332,7 +334,7 @@ final public class MshEventConverter {
 		return ev;	
 	}
 
-	static private MidiMessage makeProgChangeMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makeProgChangeMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0xC0, Midi.GetChan(ev), Midi.GetField(ev,0), 0);
@@ -377,7 +379,7 @@ final public class MshEventConverter {
 		return ev;	
 	}
 
-	static private MidiMessage makePitchBendMessage(int ev) throws	InvalidMidiDataException
+	static private MidiMessage makePitchBendMessage(int ev) throws InvalidMidiDataException
 	{
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setMessage(0xE0, Midi.GetChan(ev), Midi.GetField(ev,0), Midi.GetField(ev,1));
@@ -642,7 +644,7 @@ final public class MshEventConverter {
 		return ev;	
 	}
 	
-	static private MidiMessage makeKeySignMessage(int event) throws	InvalidMidiDataException
+	static private MidiMessage makeKeySignMessage(int event) throws InvalidMidiDataException
 	{
 		MetaMessage metaMessage = new MetaMessage();
 		int l = Midi.GetField(event,0);

@@ -1,5 +1,7 @@
 /*
  *	AiffAudioOutputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -70,7 +72,7 @@ public class AiffAudioOutputStream extends TAudioOutputStream {
 	}
 
 	protected void writeHeader()
-	throws	IOException {
+	throws IOException {
 		if (TDebug.TraceAudioOutputStream) {
 			TDebug.out("AiffAudioOutputStream.writeHeader(): called.");
 		}
@@ -151,7 +153,7 @@ public class AiffAudioOutputStream extends TAudioOutputStream {
 
 
 	protected void patchHeader()
-	throws	IOException {
+	throws IOException {
 		TDataOutputStream	tdos = getDataOutputStream();
 		tdos.seek(0);
 		setLengthFromCalculatedLength();

@@ -1,5 +1,7 @@
 /*
  *	TMixer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -206,7 +208,7 @@ implements Mixer
 
 
 	public Line getLine(Line.Info info)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer) { TDebug.out("TMixer.getLine(): begin"); }
 		Class		lineClass = info.getLineClass();

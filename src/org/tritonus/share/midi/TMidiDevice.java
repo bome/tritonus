@@ -1,5 +1,7 @@
 /*
  *	TMidiDevice.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -136,7 +138,7 @@ implements MidiDevice
 
 
 	public void open()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): begin"); }
 		if (! isOpen())
@@ -154,7 +156,7 @@ implements MidiDevice
 	 *	opening.
 	 */
 	protected void openImpl()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.openImpl(): begin"); }
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.openImpl(): end"); }
@@ -268,7 +270,7 @@ implements MidiDevice
 	 *	per MidiDevice can be created.
 	 */
 	public Receiver getReceiver()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		if (! getUseOut())
 		{
@@ -284,7 +286,7 @@ implements MidiDevice
 	 *	per MidiDevice can be created.
 	 */
 	public Transmitter getTransmitter()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		if (! getUseIn())
 		{

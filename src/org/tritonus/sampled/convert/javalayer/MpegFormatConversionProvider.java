@@ -1,5 +1,7 @@
 /*
  *	MpegFormatConversionProvider.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -329,7 +331,7 @@ extends TEncodingFormatConversionProvider
 
 
 		public void close()
-			throws	IOException
+			throws IOException
 		{
 			super.close();
 			m_encodedStream.close();

@@ -1,5 +1,7 @@
 /*
  *	CddaMidLevel.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -66,10 +68,10 @@ public interface CddaMidLevel
 
 
 	public InputStream getTocAsXml(String strDevice)
-		throws	IOException;
+		throws IOException;
 
 	public AudioInputStream getTrack(String strDevice, int nTrack)
-		throws	IOException;
+		throws IOException;
 }
 
 

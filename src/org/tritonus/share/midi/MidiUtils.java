@@ -1,5 +1,7 @@
 /*
  *	MidiUtils.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -83,7 +85,7 @@ public class MidiUtils
 
 
 	public static int writeVariableLengthQuantity(long lValue, OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		int	nLength = 0;
 		// IDEA: use a loop

@@ -1,7 +1,7 @@
 /*
  *	AlsaSourceDataLine.java
  *
- *	This file is part of Tritonus.
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -58,7 +58,7 @@ implements SourceDataLine
 	// TODO: has info object to change if format or buffer size are changed later?
 	// no, but it has to represent the mixer's capabilities. So a fixed info per mixer.
 	public AlsaSourceDataLine(AlsaDataLineMixer mixer, AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		super(mixer,
 		      new DataLine.Info(SourceDataLine.class,

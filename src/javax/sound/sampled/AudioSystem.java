@@ -1,5 +1,7 @@
 /*
  *	AudioSystem.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -397,7 +399,7 @@ public class AudioSystem
 
 
 	public static Line getLine(Line.Info info)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		GetLineMixerAction	action = new GetLineMixerAction(info);
 		doMixerIteration(action);
@@ -825,7 +827,7 @@ public class AudioSystem
 
 		public boolean handleAudioFileReader(
 			AudioFileReader audioFileReader)
-			throws	IOException
+			throws IOException
 		{
 			AudioFileFormat	audioFileFormat = null;
 			try
@@ -873,7 +875,7 @@ public class AudioSystem
 
 	public static AudioFileFormat getAudioFileFormat(
 		InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		return getAudioFileFormatImpl(inputStream);
 	}
@@ -881,7 +883,7 @@ public class AudioSystem
 
 
 	public static AudioFileFormat getAudioFileFormat(URL url)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		return getAudioFileFormatImpl(url);
 	}
@@ -889,7 +891,7 @@ public class AudioSystem
 
 
 	public static AudioFileFormat getAudioFileFormat(File file)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		return getAudioFileFormatImpl(file);
 	}
@@ -898,7 +900,7 @@ public class AudioSystem
 
 	private static AudioFileFormat getAudioFileFormatImpl(
 		Object source)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		GetAudioFileFormatAudioFileReaderAction	action = new GetAudioFileFormatAudioFileReaderAction(source);
 		doAudioFileReaderIteration(action);
@@ -934,7 +936,7 @@ public class AudioSystem
 
 		public boolean handleAudioFileReader(
 			AudioFileReader audioFileReader)
-			throws	IOException
+			throws IOException
 		{
 			AudioInputStream	audioInputStream = null;
 			try
@@ -981,7 +983,7 @@ public class AudioSystem
 
 
 	public static AudioInputStream getAudioInputStream(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		return getAudioInputStreamImpl(inputStream);
 	}
@@ -989,7 +991,7 @@ public class AudioSystem
 
 
 	public static AudioInputStream getAudioInputStream(URL url)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		return getAudioInputStreamImpl(url);
 	}
@@ -997,7 +999,7 @@ public class AudioSystem
 
 
 	public static AudioInputStream getAudioInputStream(File file)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		return getAudioInputStreamImpl(file);
 	}
@@ -1006,7 +1008,7 @@ public class AudioSystem
 
 	private static AudioInputStream getAudioInputStreamImpl(
 		Object source)
-		throws	UnsupportedAudioFileException, IOException
+		throws UnsupportedAudioFileException, IOException
 	{
 		GetAudioInputStreamAudioFileReaderAction	action = new GetAudioInputStreamAudioFileReaderAction(source);
 		doAudioFileReaderIteration(action);
@@ -1181,7 +1183,7 @@ public class AudioSystem
 		// $$fb 2000-04-02: variable should be called "audioFileWriter" (too much copy&paste :)
 		public boolean handleAudioFileWriter(
 			AudioFileWriter audioFileWriter)
-			throws	IOException
+			throws IOException
 		{
 			int	nWritten = -1;
 			// $$fb 2000-04-02: need to check whether this audioFileWriter is actually
@@ -1241,7 +1243,7 @@ public class AudioSystem
 	public static int write(AudioInputStream inputStream,
 				AudioFileFormat.Type fileType,
 				OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		return writeImpl(inputStream,
 				 fileType,
@@ -1253,7 +1255,7 @@ public class AudioSystem
 	public static int write(AudioInputStream inputStream,
 				AudioFileFormat.Type fileType,
 				File file)
-		throws	IOException
+		throws IOException
 	{
 		return writeImpl(inputStream,
 				 fileType,
@@ -1265,7 +1267,7 @@ public class AudioSystem
 	private static int writeImpl(AudioInputStream audioInputStream,
 				     AudioFileFormat.Type fileType,
 				     Object destination)
-		throws	IOException
+		throws IOException
 	{
 		WriteAudioFileWriterAction	action = new WriteAudioFileWriterAction(
 			audioInputStream,
@@ -1355,7 +1357,7 @@ public class AudioSystem
 	private static interface FormatConversionProviderAction
 	{
 		public boolean handleFormatConversionProvider(FormatConversionProvider formatConversionProvider);
-		// throws	IOException;
+		// throws IOException;
 	}
 
 
@@ -1367,7 +1369,7 @@ public class AudioSystem
 	 */
 	private static void doFormatConversionProviderIteration(
 		FormatConversionProviderAction action)
-		// throws	IOException
+		// throws IOException
 	{
 		Iterator	formatConversionProviders = TAudioConfig.getFormatConversionProviders();
 		boolean bCompleted = false;
@@ -1386,7 +1388,7 @@ public class AudioSystem
 	private static interface AudioFileReaderAction
 	{
 		public boolean handleAudioFileReader(AudioFileReader audioFileReader)
-			throws	IOException;
+			throws IOException;
 	}
 
 
@@ -1398,7 +1400,7 @@ public class AudioSystem
 	 */
 	private static void doAudioFileReaderIteration(
 		AudioFileReaderAction action)
-		throws	IOException
+		throws IOException
 	{
 		Iterator	audioFileReaders = TAudioConfig.getAudioFileReaders();
 		boolean bCompleted = false;
@@ -1417,7 +1419,7 @@ public class AudioSystem
 	private static interface AudioFileWriterAction
 	{
 		public boolean handleAudioFileWriter(AudioFileWriter audioFileWriter)
-			throws	IOException;
+			throws IOException;
 	}
 
 
@@ -1429,7 +1431,7 @@ public class AudioSystem
 	 */
 	private static void doAudioFileWriterIteration(
 		AudioFileWriterAction action)
-		throws	IOException
+		throws IOException
 	{
 		Iterator	audioFileWriters = TAudioConfig.getAudioFileWriters();
 		boolean bCompleted = false;

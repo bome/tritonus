@@ -1,5 +1,7 @@
 /*
  *	TSequencer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -140,7 +142,7 @@ implements Sequencer
 
 
 	public void setSequence(Sequence sequence)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		// TODO: what if playing is in progress?
 		if (getSequence() != sequence)
@@ -170,7 +172,7 @@ implements Sequencer
 
 
 	public void setSequence(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Sequence	sequence = MidiSystem.getSequence(inputStream);
 		setSequence(sequence);

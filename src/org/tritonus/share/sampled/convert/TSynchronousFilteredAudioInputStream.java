@@ -1,5 +1,7 @@
 /*
  *	TSynchronousFilteredAudioInputStream.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -163,7 +165,7 @@ extends TAudioInputStream {
 	 * this method may read less than nLength bytes.
 	 */
 	public int read(byte[] abData, int nOffset, int nLength)
-	throws	IOException {
+	throws IOException {
 		// number of frames that we have to read from the underlying stream.
 		int	nFrameLength = nLength/newFrameSize;
 
@@ -215,7 +217,7 @@ extends TAudioInputStream {
 
 
 	public long skip(long nSkip)
-	throws	IOException {
+	throws IOException {
 		// only returns integral frames
 		long skipFrames = nSkip / newFrameSize;
 		long originalSkippedBytes = originalStream.skip(skipFrames*originalFrameSize);

@@ -1,7 +1,7 @@
 /*
  *	AudioSystemShadow.java
  *
- *	This file is part of Tritonus.
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*

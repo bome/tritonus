@@ -1,5 +1,7 @@
 /*
  *	MidiSystem.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -69,7 +71,7 @@ public class MidiSystem
 
 
 	public static MidiDevice getMidiDevice(MidiDevice.Info info)
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		Iterator	providers = TMidiConfig.getMidiDeviceProviders();
 		while (providers.hasNext())
@@ -86,7 +88,7 @@ public class MidiSystem
 
 
 	public static Receiver getReceiver()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultMidiOutDeviceInfo();
 		MidiDevice	device = getMidiDevice(info);
@@ -103,7 +105,7 @@ public class MidiSystem
 
 
 	public static Transmitter getTransmitter()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultMidiInDeviceInfo();
 		MidiDevice	device = getMidiDevice(info);
@@ -120,7 +122,7 @@ public class MidiSystem
 
 
 	public static Synthesizer getSynthesizer()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSynthesizerInfo();
 		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSynthesizer(): using default synthesizer info: " + info); }
@@ -131,7 +133,7 @@ public class MidiSystem
 
 
 	public static Sequencer getSequencer()
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		return getSequencer(true);
 	}
@@ -139,7 +141,7 @@ public class MidiSystem
 
 
 	public static Sequencer getSequencer(boolean bConnected)
-		throws	MidiUnavailableException
+		throws MidiUnavailableException
 	{
 		MidiDevice.Info	info = TMidiConfig.getDefaultSequencerInfo();
 		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequencer(): using: " + info); }
@@ -156,7 +158,7 @@ public class MidiSystem
 
 
 	public static Soundbank getSoundbank(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		return null; //TMidiConfig.getSoundbank(inputStream);
 	}
@@ -165,7 +167,7 @@ public class MidiSystem
 
 
 	public static Soundbank getSoundbank(URL url)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		return null;	//TMidiConfig.getSoundbank(inputStream);
 	}
@@ -174,7 +176,7 @@ public class MidiSystem
 
 
 	public static Soundbank getSoundbank(File file)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		return null;	//TMidiConfig.getSoundbank(inputStream);
 	}
@@ -182,7 +184,7 @@ public class MidiSystem
 
 
 	public static MidiFileFormat getMidiFileFormat(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
 		while (readers.hasNext())
@@ -203,7 +205,7 @@ public class MidiSystem
 
 
 	public static MidiFileFormat getMidiFileFormat(URL url)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
 		while (readers.hasNext())
@@ -224,7 +226,7 @@ public class MidiSystem
 
 
 	public static MidiFileFormat getMidiFileFormat(File file)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
 		while (readers.hasNext())
@@ -245,7 +247,7 @@ public class MidiSystem
 
 
 	public static Sequence getSequence(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
 		while (readers.hasNext())
@@ -266,7 +268,7 @@ public class MidiSystem
 
 
 	public static Sequence getSequence(URL url)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
 		while (readers.hasNext())
@@ -287,7 +289,7 @@ public class MidiSystem
 
 
 	public static Sequence getSequence(File file)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		Iterator	readers = TMidiConfig.getMidiFileReaders();
 		if (TDebug.TraceMidiSystem) { TDebug.out("MidiSystem.getSequence(File): got readers: " + readers); }
@@ -423,7 +425,7 @@ public class MidiSystem
 
 		public boolean handleMidiFileWriter(
 			MidiFileWriter midiFileWriter)
-			throws	IOException
+			throws IOException
 		{
 			int	nWritten = -1;
 			// $$fb 2000-04-02: need to check whether this audioFileWriter is actually
@@ -478,7 +480,7 @@ public class MidiSystem
 	public static int write(Sequence sequence,
 				int fileType,
 				OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		return writeImpl(sequence,
 				 fileType,
@@ -490,7 +492,7 @@ public class MidiSystem
 	public static int write(Sequence sequence,
 				int fileType,
 				File file)
-		throws	IOException
+		throws IOException
 	{
 		return writeImpl(sequence,
 				 fileType,
@@ -502,7 +504,7 @@ public class MidiSystem
 	private static int writeImpl(Sequence sequence,
 				     int fileType,
 				     Object destination)
-		throws	IOException
+		throws IOException
 	{
 		WriteMidiFileWriterAction	action = new WriteMidiFileWriterAction(
 			sequence,
@@ -526,7 +528,7 @@ public class MidiSystem
 	public static int write(Sequence sequence,
 				int nFileType,
 				OutputStream outputStream)
-		throws	IOException
+		throws IOException
 	{
 		Iterator	writers = TMidiConfig.getMidiFileWriters();
 		while (writers.hasNext())
@@ -549,7 +551,7 @@ public class MidiSystem
 	public static int write(Sequence sequence,
 				int nFileType,
 				File file)
-		throws	IOException
+		throws IOException
 	{
 		Iterator	writers = TMidiConfig.getMidiFileWriters();
 		while (writers.hasNext())
@@ -574,7 +576,7 @@ public class MidiSystem
 	private static interface MidiFileReaderAction
 	{
 		public boolean handleMidiFileReader(MidiFileReader audioFileReader)
-			throws	IOException;
+			throws IOException;
 	}
 
 
@@ -586,7 +588,7 @@ public class MidiSystem
 	 */
 	private static void doMidiFileReaderIteration(
 		MidiFileReaderAction action)
-		throws	IOException
+		throws IOException
 	{
 		Iterator<MidiFileReader>	audioFileReaders = TMidiConfig.getMidiFileReaders();
 		boolean bCompleted = false;
@@ -603,7 +605,7 @@ public class MidiSystem
 	private static interface MidiFileWriterAction
 	{
 		public boolean handleMidiFileWriter(MidiFileWriter audioFileWriter)
-			throws	IOException;
+			throws IOException;
 	}
 
 
@@ -615,7 +617,7 @@ public class MidiSystem
 	 */
 	private static void doMidiFileWriterIteration(
 		MidiFileWriterAction action)
-		throws	IOException
+		throws IOException
 	{
 		Iterator<MidiFileWriter>	audioFileWriters = TMidiConfig.getMidiFileWriters();
 		boolean bCompleted = false;

@@ -1,8 +1,7 @@
 /*
  *	TLine.java
  *
- *	This file is part of Tritonus,
- *	an implementation of the Java Sound API.
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -111,7 +110,7 @@ implements Line
 
 
 	public void open()
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceLine)
 		{
@@ -145,7 +144,7 @@ implements Line
 	 *	Subclasses should override this method.
 	 */
 	protected void openImpl()
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceLine)
 		{

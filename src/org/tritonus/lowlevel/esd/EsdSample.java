@@ -1,5 +1,7 @@
 /*
  *	EsdSample.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -70,7 +72,7 @@ extends	Esd
 	 *	the sample (not after you've uploaded all data).
 	 */
 	public native void open(int nFormat, int nSampleRate, int nLength);
-//		throws	IOException;
+//		throws IOException;
 
 
 
@@ -83,7 +85,7 @@ extends	Esd
 	 *	@return	the number of bytes written
 	 */
 	public native int write(byte[] abData, int nOffset, int nLength);
-		//throws	IOException;
+		//throws IOException;
 
 
 

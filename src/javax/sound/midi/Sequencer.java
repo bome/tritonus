@@ -1,5 +1,7 @@
 /*
  *	Sequencer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -36,13 +38,13 @@ extends MidiDevice
 
 
 	public void setSequence(Sequence sequence)
-		throws	InvalidMidiDataException;
+		throws InvalidMidiDataException;
 
 
 
 
 	public void setSequence(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException;
+		throws InvalidMidiDataException, IOException;
 
 
 

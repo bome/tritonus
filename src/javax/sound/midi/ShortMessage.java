@@ -1,5 +1,7 @@
 /*
  *	ShortMessage.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -245,7 +247,7 @@ extends MidiMessage
 	   TODO:
 	*/
 	public void setMessage(int nStatus)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		if (getDataLength(nStatus) != 0)
 		{
@@ -263,7 +265,7 @@ extends MidiMessage
 	   TODO:
 	*/
 	public void setMessage(int nStatus, int nData1, int nData2)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		int	nDataLength = getDataLength(nStatus);
 		if (nDataLength < 1)
@@ -290,7 +292,7 @@ extends MidiMessage
 	   TODO:
 	*/
 	public void setMessage(int nCommand, int nChannel, int nData1, int nData2)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		setMessage((nCommand & 0xF0) | (nChannel & 0x0F), nData1, nData2);
 	}
@@ -361,7 +363,7 @@ extends MidiMessage
 	   TODO:
 	*/
 	protected final int getDataLength(int nStatus)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		int	nDataLength = 0;
 		if (nStatus < 0xF0)	// channel voice message

@@ -1,5 +1,7 @@
 /*
  *	AuAudioFileWriter.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -89,7 +91,7 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 	protected AudioOutputStream getAudioOutputStream(AudioFormat audioFormat,
 	        long lLengthInBytes,
 	        AudioFileFormat.Type fileType,
-	        TDataOutputStream dataOutputStream)	throws	IOException {
+	        TDataOutputStream dataOutputStream)	throws IOException {
 	            return new AuAudioOutputStream(audioFormat,
 	                                           lLengthInBytes,
 	                                           dataOutputStream);

@@ -1,5 +1,7 @@
 /*
  *	EsdMixer.java
+ *
+ *	This file is part of Tritonus: http://www.tritonus.org/
  */
 
 /*
@@ -201,7 +203,7 @@ extends TMixer
 
 	// nBufferSize is in bytes!
 	protected SourceDataLine getSourceDataLine(AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer)
 		{
@@ -234,7 +236,7 @@ extends TMixer
 
 	// nBufferSize is in bytes!
 	protected TargetDataLine getTargetDataLine(AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer)
 		{
@@ -258,7 +260,7 @@ extends TMixer
 
 
 	protected Clip getClip(AudioFormat format)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
 		if (TDebug.TraceMixer)
 		{
