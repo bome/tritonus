@@ -45,6 +45,7 @@ import	javax.sound.sampled.Mixer;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.mixer.TMixer;
+import	org.tritonus.sampled.mixer.TMixerInfo;
 import	org.tritonus.sampled.mixer.TSoftClip;
 import	org.tritonus.util.GlobalInfo;
 
@@ -100,7 +101,7 @@ public class JEsdMixer
 
 	public JEsdMixer()
 	{
-		super(new Mixer.Info(
+		super(new TMixerInfo(
 			"JEsd Mixer",
 			GlobalInfo.getVendor(),
 			"Mixer for the Enlightened Sound Daemon (esd) running on the local machine",
