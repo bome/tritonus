@@ -5,6 +5,7 @@ For several common cases, this is not necessary. These cases are:
 - you want to do mp3 decoding (all platforms)
 - you want to do mp3 encoding (Linux i386, Windows)
 - you want to do GSM 06.10 decoding or encoding (all platforms)
+- you want to do ogg/vorbis decoding (all platforms)
 - you want to do CD digital audio extraction (Linux i386)
 For these cases, precompiled components are available. Go to:
 http://www.tritonus.org/plugins.html
@@ -72,6 +73,7 @@ For the build process:
 - libtool (currently not needed)
 - m4
 - cpp
+- javah (for building the native libraries)
 
 
 Building mp3 related components
@@ -94,6 +96,7 @@ I'm currently building with these commands:
 ../tritonus> ant -f build-dtd.xml
 ../tritonus> ant
 ../tritonus> make -C src/lib/alsa
+../tritonus> make -C src/lib/vorbis
 ../tritonus> make -C src/lib/...
 
 If you want ant to use jikes, issue:
