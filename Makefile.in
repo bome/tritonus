@@ -7,7 +7,7 @@ prefix=@prefix@
 
 
 JAVADIR=$(prefix)
-JAVAEXTPATH=$(JAVADIR)/jre/lib/ext
+JAVAEXTPATH=$(JAVADIR)/@REL_JAVAEXTPATH@
 
 JAVAC=javac
 #JAVAC=guavac
@@ -302,35 +302,24 @@ test:	all
 
 .PHONY: install
 install: all
-	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_CORE) $(JAVAEXTPATH)
-	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_SHARE) $(JAVAEXTPATH)
-	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_REMAINING) $(JAVAEXTPATH)
-	$(INSTALL_DATA) $(DISTDIR)/$(LIBDEST_JL) $(JAVAEXTPATH)
+	@for l in $(LIBS) ; do \
+		echo "Installing $$l in $(JAVAEXTPATH)" ; \
+		$(INSTALL_DATA) $(DISTDIR)/$$l $(JAVAEXTPATH) ; done
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install; done
 
 .PHONY: install-link
 install-link: all
-	@echo "Creating link for $(DISTDIR)/$(LIBDEST_CORE) in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_CORE)
-	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_CORE) $(LIBDEST_CORE))
-	@echo "Creating link for $(DISTDIR)/$(LIBDEST_SHARE) in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_SHARE)
-	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_SHARE) $(LIBDEST_SHARE))
-	@echo "Creating link for $(DISTDIR)/$(LIBDEST_REMAINING) in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_REMAINING)
-	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_REMAINING) $(LIBDEST_REMAINING))
-	@echo "Creating link for $(DISTDIR)/$(LIBDEST_JL) in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_JL)
-	@(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$(LIBDEST_JL) $(LIBDEST_JL))
+	@for l in $(LIBS) ; do \
+		echo "Installing link for $$l in $(JAVAEXTPATH)" ; \
+		$(RM_F) $(JAVAEXTPATH)/$$l ; \
+		(cd  $(JAVAEXTPATH) && $(LN_S) $(LIBDEST_ABSOLUTE_PREFIX)/$$l $$l) ; done
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d install-link; done
 
 .PHONY: uninstall
 uninstall:
-	@echo "Removing tritonus jars in $(JAVAEXTPATH)"
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_CORE)
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_SHARE)
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_REMAINING)
-	@$(RM_F) $(JAVAEXTPATH)/$(LIBDEST_JL)
+	@for l in $(LIBS) ; do \
+		echo "Removing $$l from $(JAVAEXTPATH)" ; \
+		$(RM_F) $(JAVAEXTPATH)/$$l ; done
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d uninstall; done
 
 .PHONY: uninstall-link

@@ -85,6 +85,14 @@ esac
 
 AC_PREFIX_PROGRAM(javac)
 
+# set installation directory of plug-ins (extension directory)
+REL_JAVAEXTPATH=jre/lib/ext
+AC_SUBST(REL_JAVAEXTPATH)
+
+# set installation directory for native libraries
+REL_JAVAEXTLIBPATH=jre/lib/$ARCHNAME
+AC_SUBST(REL_JAVAEXTLIBPATH)
+
 dnl Checks for programs.
 AC_PROG_CC
 dnl AC_PROG_LEX
