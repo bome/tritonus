@@ -398,6 +398,8 @@ public class AlsaSeq
 	 */
 	private long		m_lNativeHandle;
 
+	// TODO: hack
+	private Event		m_event = new Event();
 
 
 	public AlsaSeq()
@@ -626,22 +628,47 @@ public class AlsaSeq
 		int nMidiChannels, int nMidiVoices, int nSynthVoices);
 
 
-	public native void sendNoteEvent(
+	public void sendNoteEvent(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
-		int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration);
+		int nChannel, int nNote, int nVelocity, int nOffVelocity, int nDuration)
+	{
+		m_event.setCommon(nType, nFlags, nTag, nQueue, lTime,
+		0, nSourcePort, nDestClient, nDestPort);
+		m_event.setNote(nChannel, nNote, nVelocity, nOffVelocity, nDuration);
+		eventOutput(m_event);
+		drainOutput();
+	}
 
 
-	public native void sendControlEvent(
+
+
+	public void sendControlEvent(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
-		int nChannel, int nParam, int nValue);
+		int nChannel, int nParam, int nValue)
+	{
+		m_event.setCommon(nType, nFlags, nTag, nQueue, lTime,
+		0, nSourcePort, nDestClient, nDestPort);
+		m_event.setControl(nChannel, nParam, nValue);
+		eventOutput(m_event);
+		drainOutput();
+	}
 
 
-	public native void sendQueueControlEvent(
+
+
+	public void sendQueueControlEvent(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
-		int nControlQueue, int nControlValue, long lControlTime);
+		int nControlQueue, int nControlValue, long lControlTime)
+	{
+		m_event.setCommon(nType, nFlags, nTag, nQueue, lTime,
+		0, nSourcePort, nDestClient, nDestPort);
+		m_event.setQueueControl(nControlQueue, nControlValue, lControlTime);
+		eventOutput(m_event);
+		drainOutput();
+	}
 
 
 	/**
@@ -649,10 +676,18 @@ public class AlsaSeq
 	 *	In getEvent(), a reference to a byte array is returned
 	 *	in the passed object array.
 	 */
-	public native void sendVarEvent(
+	public void sendVarEvent(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
-		byte[] abData, int nOffset, int nLength);
+		byte[] abData, int nOffset, int nLength)
+	{
+		m_event.setCommon(nType, nFlags, nTag, nQueue, lTime,
+		0, nSourcePort, nDestClient, nDestPort);
+		m_event.setVar(abData, nOffset, nLength);
+		eventOutput(m_event);
+		drainOutput();
+	}
+
 
 
 	/**	Wait for an event.
@@ -747,6 +782,28 @@ public class AlsaSeq
 			nQueue, bExclusive, bRealtime, bConvertTime,
 			0, 0, 0);
 	}
+
+
+
+	////////////////////////////////////////////////////////////////
+	//
+	//	Events
+	//
+	////////////////////////////////////////////////////////////////
+
+
+	public native int eventOutput(Event event);
+	public native int eventOutputBuffer(Event event);
+	public native int eventOutputDirect(Event event);
+	public native int eventInput(Event event);
+	public native int eventInputPending(int nFetchSequencer);
+	public native int drainOutput();
+	public native int eventOutputPending();
+	public native int extractOutput(Event event);
+	public native int dropOutput();
+	public native int dropOutputBuffer();
+	public native int dropInput();
+	public native int dropInputBuffer();
 
 
 
@@ -1643,6 +1700,75 @@ public class AlsaSeq
 
 
 	///////////////////////////////////////////////////////////
+
+
+	/**	Event for the sequencer.
+	 *	This class encapsulates an instance of
+	 *	snd_seq_event_t.
+	 */
+	public static class Event
+	{
+		/**
+		 *	Holds the pointer to snd_seq_event_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public Event()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.Event.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of event failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.Event.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		// TODO: this relies on snd_seq_event_free(), which is currently a no-op
+		public native void free();
+
+		// TODO: implement natively
+		public native int getLength();
+
+		public native int getType();
+		public native int getFlags();
+		public native int getTag();
+		public native int getQueue();
+		public native long getTimestamp();
+		public native int getSourceClient();
+		public native int getSourcePort();
+		public native int getDestClient();
+		public native int getDestPort();
+
+		public native void getNote(int[] anValues);
+		public native void getControl(int[] anValues);
+		public native void getQueueControl(int[] anValues, long[] alValues);
+		public native void getVar(Object[] aValues);
+
+		public native void setCommon(int nType, int nFlags, int nTag, int nQueue, long lTimestamp, int nSourceClient, int nSourcePort, int nDestClient, int nDestPort);
+
+		public native void setNote(int nChannel, int nKey, int nVelocity, int nOffVelocity, int nDuration);
+		public native void setControl(int nChannel, int nParam, int nValue);
+		public native void setQueueControl(int nControlQueue, int nControlValue, long lControlTime);
+		public native void setVar(byte[] abData, int nOffset, int nLength);
+	}
+
 
 
 	/**	General information about the sequencer.
