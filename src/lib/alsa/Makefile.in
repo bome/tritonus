@@ -53,9 +53,10 @@ JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaSeqQueueInfo.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqQueueStatus.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqQueueTempo.o \
-	#org_tritonus_lowlevel_alsa_AlsaSeqQueueTimer.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqRemoveEvents.o \
 	org_tritonus_lowlevel_alsa_AlsaSeqSystemInfo.o
+
+	#org_tritonus_lowlevel_alsa_AlsaSeqQueueTimer.o \
 
 OBJ=\
 	$(JNIOBJ) \
@@ -84,9 +85,10 @@ JNICLASSFILES=\
 	AlsaSeqQueueInfo.class \
 	AlsaSeqQueueStatus.class \
 	AlsaSeqQueueTempo.class \
-	#AlsaSeqQueueTimer.class \
 	AlsaSeqRemoveEvents.class \
 	AlsaSeqSystemInfo.class
+
+	#AlsaSeqQueueTimer.class \
 
 
 JNICLASSES=\
@@ -107,9 +109,10 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaSeqQueueInfo \
 	org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus \
 	org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo \
-	#org.tritonus.lowlevel.alsa.AlsaSeqQueueTimer \
 	org.tritonus.lowlevel.alsa.AlsaSeqRemoveEvents \
 	org.tritonus.lowlevel.alsa.AlsaSeqSystemInfo
+
+	#org.tritonus.lowlevel.alsa.AlsaSeqQueueTimer \
 
 #----------------- rules -------------------
 
