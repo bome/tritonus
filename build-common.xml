@@ -60,111 +60,6 @@
     </fileset>
   </jar>
 
-<<<<<<< build-common.xml
-  <!-- SHARE: contains base and auxiliary classes for all other jars -->
-  <jar jarfile="${dist}/tritonus_share.jar">
-    <fileset dir="${build}">
-      <include name="org/tritonus/share/" />
-    </fileset>
-  </jar>
-
-  <!-- ALSA: contains Alsa mixer and Alsa sequencer -->
-  <jar jarfile="${dist}/tritonus_alsa.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/lowlevel/alsa/" />
-      <include name="org/tritonus/sampled/mixer/alsa/" />
-      <include name="org/tritonus/midi/device/alsa/" />
-    </fileset>
-    <fileset dir="${src}/packaging/tritonus_alsa" />
-  </jar>
-
-  <!-- ESD: contains Esd mixer -->
-  <jar jarfile="${dist}/tritonus_esd.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/lowlevel/esd/" />
-      <include name="org/tritonus/sampled/mixer/esd/" />
-    </fileset>
-    <fileset dir="${src}/packaging/tritonus_esd" />
-  </jar>
-
-  <!-- GSM: -->
-  <jar jarfile="${dist}/tritonus_gsm.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/lowlevel/gsm/" />
-      <include name="org/tritonus/sampled/convert/gsm/" />
-      <include name="org/tritonus/sampled/file/gsm/" />
-    </fileset>
-    <fileset dir="${src}/packaging/tritonus_gsm" />
-  </jar>
-
-  <!-- VORBIS: -->
-  <jar jarfile="${dist}/tritonus_vorbis.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/lowlevel/ogg/" />
-      <include name="org/tritonus/lowlevel/vorbis/" />
-      <include name="org/tritonus/sampled/convert/vorbis/" />
-      <include name="org/tritonus/sampled/file/vorbis/" />
-      <!-- This is a hack needed for the debug build. Files in this
-      directory aren't needed for the release build. However, it
-      should do no harm if files laying around are included.
-      -->
-      <include name="org/tritonus/debug/" />
-    </fileset>
-    <fileset
-      dir="${src}/packaging/tritonus_vorbis" />
-  </jar>
-
-  <!-- JAVASEQUENCER: -->
-  <jar jarfile="${dist}/tritonus_javasequencer.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/midi/device/java/" />
-    </fileset>
-    <fileset dir="${src}/packaging/tritonus_javasequencer" />
-  </jar>
-
-  <!-- AOS: AudioOutputStream stuff-->
-  <jar jarfile="${dist}/tritonus_aos.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/sampled/file/*AudioOutputStream.class/" />
-      <include name="org/tritonus/sampled/file/*Tool.class/" />
-    </fileset>
-  </jar>
-
-  <!-- SRC: sample rate converter -->
-  <jar jarfile="${dist}/tritonus_src.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/sampled/convert/SampleRateConversionProvider.class" />
-    </fileset>
-    <fileset dir="${src}/packaging/tritonus_src" />
-  </jar>
-
-
-  <!-- CDDA: -->
-  <jar jarfile="${dist}/tritonus_cdda.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/lowlevel/cdda/" />
-      <include name="org/tritonus/sampled/cdda/" />
-    </fileset>
-  </jar>
-
-  <!-- DSP: -->
-  <jar jarfile="${dist}/tritonus_dsp.jar">
-    <fileset dir="${build}">
-      <include name="org/tritonus/lowlevel/dsp/" />
-    </fileset>
-  </jar>
-
-  <!-- REMAINING:: -->
-  <jar jarfile="${dist}/tritonus_remaining.jar" >
-    <fileset dir="${build}" >
-      <include name="org/tritonus/midi/file/" />
-      <include name="org/tritonus/sampled/file/*.class" />
-      <include name="org/tritonus/sampled/convert/*.class" />
-    </fileset>
-    <fileset dir ="${src}/packaging/tritonus_core" />
-  </jar>
-</target>
-=======
     <!-- SHARE: contains base and auxiliary classes for all other jars -->
     <jar jarfile="${dist}/tritonus_share.jar">
       <fileset dir="${build}">
@@ -200,6 +95,23 @@
       </fileset>
       <fileset dir="${src}/packaging/tritonus_gsm" />
     </jar>
+
+  <!-- VORBIS: -->
+  <jar jarfile="${dist}/tritonus_vorbis.jar" >
+    <fileset dir="${build}" >
+      <include name="org/tritonus/lowlevel/ogg/" />
+      <include name="org/tritonus/lowlevel/vorbis/" />
+      <include name="org/tritonus/sampled/convert/vorbis/" />
+      <include name="org/tritonus/sampled/file/vorbis/" />
+      <!-- This is a hack needed for the debug build. Files in this
+      directory aren't needed for the release build. However, it
+      should do no harm if files laying around are included.
+      -->
+      <include name="org/tritonus/debug/" />
+    </fileset>
+    <fileset
+      dir="${src}/packaging/tritonus_vorbis" />
+  </jar>
 
     <!-- JAVASEQUENCER: -->
     <jar jarfile="${dist}/tritonus_javasequencer.jar" >
@@ -251,7 +163,6 @@
       <fileset dir ="${src}/packaging/tritonus_core" />
     </jar>
   </target>
->>>>>>> 1.7
 
 
   <target name="dist-javalayer-dependent"
