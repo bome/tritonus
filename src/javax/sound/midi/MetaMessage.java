@@ -80,7 +80,6 @@ extends MidiMessage
 	*/
 	protected MetaMessage(byte[] abData)
 	{
-		// TODO: set dataLength, ...
 		super(abData);
 	}
 
@@ -89,20 +88,18 @@ extends MidiMessage
 	/**	TODO:
 	*/
 	public void setMessage(int nType, byte[] abData, int nDataLength)
-		throws	InvalidMidiDataException
+		throws InvalidMidiDataException
 	{
 		if (nType > 127)
 		{
 			throw new InvalidMidiDataException("type must not exceed 127");
 		}
 		byte[]	abLength = MidiUtils.getVariableLengthQuantity(nDataLength);
-		int	nCompleteLength = 2 + abLength.length + nDataLength;
-		int	nDataStart = 2 + abLength.length;
+		int	nCompleteLength = 2 + nDataLength;
 		byte[]	abCompleteData = new byte[nCompleteLength];
 		abCompleteData[0] = (byte) META;
 		abCompleteData[1] = (byte) nType;
-		System.arraycopy(abLength, 0, abCompleteData, 2, abLength.length);
-		System.arraycopy(abData, 0, abCompleteData, nDataStart, nDataLength);
+		System.arraycopy(abData, 0, abCompleteData, 2, nDataLength);
 		super.setMessage(abCompleteData, nCompleteLength);
 	}
 
@@ -122,10 +119,9 @@ extends MidiMessage
 	*/
 	public byte[] getData()
 	{
-		int	nDataLength = getDataLength();
-		int	nDataStartIndex = getDataStartIndex();
+		int	nDataLength = getLength() - 2;
 		byte[] abData = new byte[nDataLength];
-		System.arraycopy(getMessage(), nDataStartIndex, abData, 0, nDataLength);
+		System.arraycopy(getMessage(), 2, abData, 0, nDataLength);
 		return abData;
 	}
 
@@ -139,44 +135,6 @@ extends MidiMessage
 		byte[]	abData = getMessage();
 		MetaMessage	message = new MetaMessage(abData);
 		return message;
-	}
-
-
-
-	/**	Get the start of the "data" of the meta message.
-		The returned value is an index into the array
-		{@link MidiMessage#data data}.
-		It is the index of the first byte considered as "data".
-		"data" is the part of the message without status byte, type
-		byte and length (as variable length quantity).
-	*/
-	private int getDataStartIndex()
-	{
-		byte[]	abData = getMessage();
-		int	nIndex = 2;	// start of length information
-		// search for the last byte of the variable length quantity representation
-		while ((abData[nIndex] & 0x80) != 0)
-		{
-			nIndex++;
-		}
-		// one more is the start of the data
-		nIndex++;
-		return nIndex;
-	}
-
-
-
-	/**	Get the length of the "data" of the meta message.
-		The returned value is the number of bytes considered as "data".
-		"data" is the part of the message without status byte, type
-		byte and length (as variable length quantity).
-	*/
-	private int getDataLength()
-	{
-		byte[]	abData = getMessage();
-		int	nDataStartIndex = getDataStartIndex();
-		int	nDataLength = abData.length - nDataStartIndex;
-		return nDataLength;
 	}
 }
 

@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -19,12 +18,9 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
-
 package	org.tritonus.midi.file;
-
 
 import	java.io.FileInputStream;
 import	java.io.InputStream;
@@ -52,14 +48,15 @@ import	org.tritonus.share.midi.TMidiFileFormat;
 
 
 
-
+/**	TODO:
+ */
 public class StandardMidiFileReader
-	extends		MidiFileReader
+extends MidiFileReader
 {
+	/**	TODO:
+	 */
 	public static boolean		CANCEL_RUNNING_STATUS_ON_META_AND_SYSEX = true;
 
-	private static final int	HEADER_MAGIC = 0x4d546864;	// "MThd"
-	private static final int	TRACK_MAGIC = 0x4d54726b;	// "MTrk"
 	private static final int	STATUS_NONE = 0;
 	private static final int	STATUS_ONE_BYTE = 1;
 	private static final int	STATUS_TWO_BYTES = 2;
@@ -68,12 +65,14 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public MidiFileFormat getMidiFileFormat(InputStream inputStream)
-		throws	InvalidMidiDataException, IOException
+		throws InvalidMidiDataException, IOException
 	{
 		DataInputStream		dataInputStream = new DataInputStream(inputStream);
 		int	nHeaderMagic = dataInputStream.readInt();
-		if (nHeaderMagic != HEADER_MAGIC)
+		if (nHeaderMagic != MidiConstants.HEADER_MAGIC)
 		{
 			throw new InvalidMidiDataException("not a MIDI file: wrong header magic");
 		}
@@ -149,6 +148,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public MidiFileFormat getMidiFileFormat(URL url)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -165,6 +166,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public MidiFileFormat getMidiFileFormat(File file)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -182,6 +185,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public Sequence getSequence(URL url)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -212,6 +217,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public Sequence getSequence(File file)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -243,6 +250,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public Sequence getSequence(InputStream inputStream)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -262,6 +271,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	private void readTrack(DataInputStream dataInputStream, Track track)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -269,7 +280,7 @@ public class StandardMidiFileReader
 		while (true)
 		{
 			int	nMagic = dataInputStream.readInt();
-			if (nMagic == TRACK_MAGIC)
+			if (nMagic == MidiConstants.TRACK_MAGIC)
 			{
 				break;
 			}
@@ -299,6 +310,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	private static MidiEvent readEvent(DataInputStream dataInputStream, long[] alRemainingBytes, int[] anRunningStatusByte, long lTicks)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -360,15 +373,15 @@ public class StandardMidiFileReader
 			{
 				anRunningStatusByte[0] = -1;
 			}
-			int	nSysexLength = (int) readVariableLengthQuantity(dataInputStream, alRemainingBytes);
-			byte[]	abSysexMessage = new byte[nSysexLength];
-			for (int i = 0; i < abSysexMessage.length; i++)
+			int	nSysexDataLength = (int) readVariableLengthQuantity(dataInputStream, alRemainingBytes);
+			byte[]	abSysexData = new byte[nSysexDataLength];
+			for (int i = 0; i < nSysexDataLength; i++)
 			{
 				int	nDataByte = readUnsignedByte(dataInputStream, alRemainingBytes);
-				abSysexMessage[i] = (byte) nDataByte;
+				abSysexData[i] = (byte) nDataByte;
 			}
 			SysexMessage	sysexMessage = new SysexMessage();
-			sysexMessage.setMessage(nStatusByte, abSysexMessage, abSysexMessage.length);
+			sysexMessage.setMessage(nStatusByte, abSysexData, nSysexDataLength);
 			message = sysexMessage;
 			break;
 
@@ -378,15 +391,15 @@ public class StandardMidiFileReader
 				anRunningStatusByte[0] = -1;
 			}
 			int	nTypeByte = readUnsignedByte(dataInputStream, alRemainingBytes);
-			int	nLength = (int) readVariableLengthQuantity(dataInputStream, alRemainingBytes);
-			byte[]	abMessage = new byte[nLength];
-			for (int i = 0; i < abMessage.length; i++)
+			int	nMetaDataLength = (int) readVariableLengthQuantity(dataInputStream, alRemainingBytes);
+			byte[]	abMetaData = new byte[nMetaDataLength];
+			for (int i = 0; i < nMetaDataLength; i++)
 			{
 				int	nDataByte = readUnsignedByte(dataInputStream, alRemainingBytes);
-				abMessage[i] = (byte) nDataByte;
+				abMetaData[i] = (byte) nDataByte;
 			}
 			MetaMessage	metaMessage = new MetaMessage();
-			metaMessage.setMessage(nTypeByte, abMessage, abMessage.length);
+			metaMessage.setMessage(nTypeByte, abMetaData, nMetaDataLength);
 			message = metaMessage;
 			break;
 		default:
@@ -398,6 +411,8 @@ public class StandardMidiFileReader
 
 
 	// TODO: use table
+	/**	TODO:
+	 */
 	private static int getType(int nStatusByte)
 	{
 		if (nStatusByte < 0xf0)	// channel voice or mode command
@@ -436,6 +451,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public static long readVariableLengthQuantity(DataInputStream dataInputStream, long[] alRemainingBytes)
 		throws	InvalidMidiDataException, IOException
 	{
@@ -458,6 +475,8 @@ public class StandardMidiFileReader
 
 
 
+	/**	TODO:
+	 */
 	public static int readUnsignedByte(DataInputStream dataInputStream, long[] alRemainingBytes)
 		throws	IOException
 	{
