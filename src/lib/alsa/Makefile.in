@@ -34,6 +34,7 @@ JAVAH = @JAVAH@
 
 JNIOBJ=\
 	org_tritonus_lowlevel_alsa_AlsaSeq.o \
+	org_tritonus_lowlevel_alsa_AlsaSeq_ClientInfo.o \
 	org_tritonus_lowlevel_alsa_AlsaSeq_PortInfo.o \
 	org_tritonus_lowlevel_alsa_AlsaSeq_QueueInfo.o \
 	org_tritonus_lowlevel_alsa_AlsaSeq_QueueStatus.o \
@@ -66,6 +67,7 @@ JNICLASSFILES=\
 	AlsaPcm$$HWParams$$FormatMask.class \
 	AlsaPcm$$SWParams.class \
 	AlsaSeq.class \
+	AlsaSeq$$ClientInfo.class \
 	AlsaSeq$$PortInfo.class \
 	AlsaSeq$$QueueInfo.class \
 	AlsaSeq$$QueueStatus.class \
@@ -84,6 +86,7 @@ JNICLASSES=\
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$HWParams\$$FormatMask \
 	org.tritonus.lowlevel.alsa.AlsaPcm\$$SWParams \
 	org.tritonus.lowlevel.alsa.AlsaSeq \
+	org.tritonus.lowlevel.alsa.AlsaSeq\$$ClientInfo \
 	org.tritonus.lowlevel.alsa.AlsaSeq\$$PortInfo \
 	org.tritonus.lowlevel.alsa.AlsaSeq\$$QueueInfo \
 	org.tritonus.lowlevel.alsa.AlsaSeq\$$QueueStatus \

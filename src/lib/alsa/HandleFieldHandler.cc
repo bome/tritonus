@@ -94,6 +94,7 @@ template class HandleFieldHandler<snd_pcm_hw_params_t*>;
 template class HandleFieldHandler<snd_pcm_format_mask_t*>;
 template class HandleFieldHandler<snd_pcm_sw_params_t*>;
 template class HandleFieldHandler<snd_seq_t*>;
+template class HandleFieldHandler<snd_seq_client_info_t*>;
 template class HandleFieldHandler<snd_seq_port_info_t*>;
 template class HandleFieldHandler<snd_seq_queue_info_t*>;
 template class HandleFieldHandler<snd_seq_queue_status_t*>;
