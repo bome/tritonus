@@ -155,18 +155,14 @@ fillClientInfoArrays(JNIEnv *env, jobject obj, snd_seq_client_info_t* clientInfo
 static void
 fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jintArray anValues, jobjectArray astrValues)
 {
-	jstring		strName;
 	jint*		pnValues;
 
-	// printf("4a\n");
 	checkArrayLength(env, anValues, 10);
-	// printf("4b\n");
 	pnValues = env->GetIntArrayElements(anValues, NULL);
 	if (pnValues == NULL)
 	{
 		throwRuntimeException(env, "GetIntArrayElements() failed");
 	}
-	// printf("4c\n");
 	pnValues[0] = snd_seq_port_info_get_client(portInfo);
 	pnValues[1] = snd_seq_port_info_get_port(portInfo);
 	pnValues[2] = snd_seq_port_info_get_capability(portInfo);
@@ -177,21 +173,9 @@ fillPortInfoArrays(JNIEnv *env, jobject obj, snd_seq_port_info_t* portInfo, jint
 	pnValues[7] = snd_seq_port_info_get_read_use(portInfo);
 	pnValues[8] = snd_seq_port_info_get_write_use(portInfo);
 	pnValues[9] = snd_seq_port_info_get_port_specified(portInfo);
-	// printf("4d\n");
 	env->ReleaseIntArrayElements(anValues, pnValues, 0);
-	// printf("4e\n");
 	checkArrayLength(env, astrValues, 1);
-	// printf("4f\n");
-	// printf("name: %s\n", portInfo->name);
-	strName = env->NewStringUTF(snd_seq_port_info_get_name(portInfo));
-	if (strName == NULL)
-	{
-		// TODO: should be exception or error
-		(void) fprintf(debug_file, "NewString() failed\n");
-	}
-	// printf("4g\n");
-	// this causes a segment violation
-	env->SetObjectArrayElement(astrValues, 0, strName);
+	setStringArrayElement(env, astrValues, 0, snd_seq_port_info_get_name(portInfo));
 }
 
 
@@ -429,7 +413,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextClientInfo
 	int			nReturn;
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextClientInfo(): begin\n"); }
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextClientInfo(): client: %d\n", (int) nClient); }
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextClientInfo(): passed client: %d\n", (int) nClient); }
 	seq = handler.getHandle(env, obj);
 	snd_seq_client_info_alloca(&clientInfo);
 	snd_seq_client_info_set_client(clientInfo, nClient);
@@ -472,7 +456,7 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextPortInfo
 	snd_seq_port_info_set_client(portInfo, nClient);
 	snd_seq_port_info_set_port(portInfo, nPort);
 	nReturn = snd_seq_query_next_port(seq, portInfo);
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextPortInfo(): return value from snd_seq_query_next_port(): %d\n", nReturn); }
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_getNextPortInfo(): snd_seq_query_next_port() returns: %d\n", nReturn); }
 	if (nReturn < 0)
 	{
 		// -2 (no such file or directory): returned when no more port is available
@@ -630,29 +614,22 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq0_open
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_open(): begin\n"); }
 	nReturn = snd_seq_open(&seq, "hw", SND_SEQ_OPEN_DUPLEX, 0);
-	// printf("2\n");
-	// printf("return: %d\n", nReturn);
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_open(): snd_seq_open() returns: %d\n", nReturn); }
 	// perror("abc");
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_open() failed");
 		return (jint) nReturn;
 	}
-	// printf("3\n");
 	snd_seq_nonblock(seq, SND_SEQ_NONBLOCK);
-	// printf("4\n");
 	handler.setHandle(env, obj, seq);
-	// printf("5\n");
 	nReturn = snd_seq_client_id(seq);
-	// printf("6\n");
-	// printf("return: %d\n", nReturn);
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_open(): snd_seq_client_id() returns: %d\n", nReturn); }
 	// perror("abc");
-	// fflush(stdout);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_client_id() failed");
 	}
-	// printf("7\n");
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq0_open(): end\n"); }
 	return (jint) nReturn;
 }
