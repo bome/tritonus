@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 
 package	org.tritonus.midi.device.alsa;
 
+import	javax.sound.midi.InvalidMidiDataException;
 import	javax.sound.midi.Sequence;
 import	javax.sound.midi.Sequencer;
 import	javax.sound.midi.Track;
@@ -39,6 +40,7 @@ import	javax.sound.midi.MidiDevice;
 
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
 import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.MidiUtils;
 import	org.tritonus.share.midi.TSequencer;
 
 
@@ -63,6 +65,8 @@ public class AlsaSequencer
 	public AlsaSequencer(MidiDevice.Info info)
 	{
 		super(info);
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.<init>(): begin"); }
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.<init>(): end"); }
 	}
 
 
@@ -104,6 +108,7 @@ public class AlsaSequencer
 
 	protected void openImpl()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): begin"); }
 		m_controlAlsaSeq = new AlsaSeq("Tritonus ALSA Sequencer (control)");
 		m_nControlClient = m_controlAlsaSeq.getClientId();
 		m_nControlPort = m_controlAlsaSeq.createPort("control port", AlsaSeq.SND_SEQ_PORT_CAP_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_WRITE | AlsaSeq.SND_SEQ_PORT_CAP_READ | AlsaSeq.SND_SEQ_PORT_CAP_SUBS_READ, 0, AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION, 0, 0, 0);
@@ -122,12 +127,14 @@ public class AlsaSequencer
 		m_alsaMidiIn = new AlsaMidiIn(m_dataAlsaSeq, getDataPort(), getDataClient(), getDataPort(), this);
 		// start the receiving thread
 		m_alsaMidiIn.start();
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.openImpl(): end"); }
 	}
 
 
 
 	protected void closeImpl()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): begin"); }
 		m_alsaMidiIn.interrupt();
 		m_alsaMidiIn = null;
 		// TODO:
@@ -137,26 +144,28 @@ public class AlsaSequencer
 		m_controlAlsaSeq = null;
 		m_dataAlsaSeq.close();
 		m_dataAlsaSeq = null;
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): end"); }
 	}
 
 
 
-	public void start()
+	protected void startImpl()
 	{
-/*	TODO:
-	setTempoInMPQ(500000);
-*/
-		m_controlAlsaSeq.setQueueTempo(getQueue(), getSequence().getResolution(), 500000/*getBPM() * getFactor()*/);
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): begin"); }
+		setTempoInMPQ(500000);
 		startSeq();
 		m_loaderThread = new LoaderThread();
 		m_loaderThread.start();
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): end"); }
 	}
 
 
 
-	public void stop()
+	protected void stopImpl()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): begin"); }
 		stopSeq();
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): end"); }
 	}
 
 
@@ -174,6 +183,7 @@ public class AlsaSequencer
 
 	public void startRecording()
 	{
+		// TODO:
 	}
 
 
@@ -187,6 +197,7 @@ public class AlsaSequencer
 
 	public boolean isRecording()
 	{
+		// TODO:
 		return false;
 	}
 
@@ -206,26 +217,38 @@ public class AlsaSequencer
 
 
 
-	protected float getTempoNative()
+	protected float getTempoImpl()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTempoImpl(): begin"); }
+		float	fTempo;
 		if (isOpen())
 		{
-			return m_controlAlsaSeq.getQueueTempo(getQueue());
+			fTempo = m_controlAlsaSeq.getQueueTempo(getQueue());
 		}
 		else
 		{
-			return 0.0F;
+			fTempo = 0.0F;
 		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTempoImpl(): returning: " + fTempo); }
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.getTempoImpl(): end"); }
+		return fTempo;
 	}
 
 
 
-	protected void setTempoNative(float fRealMPQ)
+	protected void setTempoImpl(float fRealMPQ)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): begin"); }
 		if (isOpen())
 		{
-			m_controlAlsaSeq.setQueueTempo(getQueue(), getSequence().getResolution(), (int) fRealMPQ);
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): setting tempo to " + (int) fRealMPQ); }
+			m_controlAlsaSeq.setQueueTempo(getQueue(), getSequence().getResolution(), (int) (fRealMPQ));
 		}
+		else
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): ignoring because sequencer is not opened"); }
+		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTempoImpl(): end"); }
 	}
 
 
@@ -359,30 +382,9 @@ public class AlsaSequencer
 
 
 
-/*
-  private void loadSequenceToNative()
-  {
-  Sequence	sequence = getSequence();
-  Track[]	aTracks = sequence.getTracks();
-  TDebug.out("# tracks: " + aTracks.length);
-  for (int nTrack = 0; nTrack < aTracks.length; nTrack++)
-  {
-  TDebug.out("track " + nTrack);
-  Track	track = aTracks[nTrack];
-  for (int nEvent = 0; nEvent < track.size(); nEvent++)
-  {
-  MidiEvent	event = track.get(nEvent);
-  MidiMessage	message = event.getMessage();
-  long		lTick = event.getTick();
-  m_alsaMidiOut.enqueueMessage(message, lTick);
-  }
-  }
-  }
-*/
-
-
 	private void loadSequenceToNative()
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): begin"); }
 		Sequence	sequence = getSequence();
 		Track[]	aTracks = sequence.getTracks();
 		int[]	anTrackPositions = new int[aTracks.length];
@@ -390,15 +392,15 @@ public class AlsaSequencer
 		{
 			anTrackPositions[i] = 0;
 		}
+		// this is used to get a useful tick value for the end of track message
+		long	lHighestTick = 0;
 		while (true)
 		{
 			boolean		bTrackPresent = false;
-			long	lBestTick = Long.MAX_VALUE;
-			int	nBestTrack = -1;
+			long		lBestTick = Long.MAX_VALUE;
+			int		nBestTrack = -1;
 			for (int nTrack = 0; nTrack < aTracks.length; nTrack++)
 			{
-				// TDebug.out("track " + nTrack);
-				// Track	track = aTracks[nTrack];
 				if (anTrackPositions[nTrack] < aTracks[nTrack].size())
 				{
 					bTrackPresent = true;
@@ -413,18 +415,42 @@ public class AlsaSequencer
 			}
 			if (!bTrackPresent)
 			{
+				MetaMessage	metaMessage = new MetaMessage();
+				try
+				{
+					metaMessage.setMessage(0x2F, new byte[0], 0);
+				}
+				catch (InvalidMidiDataException e)
+				{
+					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				}
+				if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): sending End of Track message with tick " + (lHighestTick + 1)); }
+				enqueueMessage(metaMessage, lHighestTick + 1);
 				break;
 			}
 			MidiEvent	event = aTracks[nBestTrack].get(anTrackPositions[nBestTrack]);
 			anTrackPositions[nBestTrack]++;
 			MidiMessage	message = event.getMessage();
 			long		lTick = event.getTick();
-			if (TDebug.TraceAlsaSequencer)
+			lHighestTick = Math.max(lHighestTick, lTick);
+			if (message instanceof MetaMessage && ((MetaMessage) message).getType() == 0x2F)
 			{
-				TDebug.out("AlsaSequencer.loadSequenceToNative(): enqueueing event with tick " + lTick);
+				if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): ignoring End of Track message with tick " + lTick); }
 			}
-			m_alsaMidiOut.enqueueMessage(message, lTick);
+			else
+			{
+				if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): enqueueing event with tick " + lTick); }
+				enqueueMessage(message, lTick);
+			}
 		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): end"); }
+	}
+
+
+
+	private void enqueueMessage(MidiMessage message, long lTick)
+	{
+		m_alsaMidiOut.enqueueMessage(message, lTick);
 	}
 
 
@@ -433,11 +459,9 @@ public class AlsaSequencer
 	// passes events to the receivers
 	public void dequeueEvent(MidiEvent event)
 	{
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.dequeueEvent(): begin"); }
 		MidiMessage	message = event.getMessage();
-		if (TDebug.TraceAlsaSequencer)
-		{
-			TDebug.out("AlsaSequencer.dequeueEvent(): message: " + message);
-		}
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.dequeueEvent(): message: " + message); }
 		if (message instanceof MetaMessage)
 		{
 			MetaMessage	metaMessage = (MetaMessage) message;
@@ -445,26 +469,18 @@ public class AlsaSequencer
 			if (metaMessage.getType() == 0x51)	// set tempo
 			{
 				byte[]	abData = metaMessage.getData();
-				int	nTempo = signedByteToUnsigned(abData[0]) * 65536 +
-					signedByteToUnsigned(abData[1]) * 256 +
-					signedByteToUnsigned(abData[2]);
+				int	nTempo = MidiUtils.getUnsignedInteger(abData[0]) * 65536 +
+					MidiUtils.getUnsignedInteger(abData[1]) * 256 +
+					MidiUtils.getUnsignedInteger(abData[2]);
 				// TDebug.out("tempo (us/quarter note): " + nTempo);
 				setTempoInMPQ((float) nTempo);
 					
 			}
 		}
 		sendImpl(message, -1L);
-		if (message instanceof MetaMessage)
-		{
-			// TODO: use extra thread for event delivery
-			sendMetaMessage((MetaMessage) message);
-		}
-		else if (message instanceof ShortMessage && ((ShortMessage) message).getCommand() == ShortMessage.CONTROL_CHANGE)
-		{
-			sendControllerEvent((ShortMessage) message);
-		}
+		notifyListeners(message);
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.dequeueEvent(): end"); }
 	}
-
 
 
 
@@ -564,47 +580,6 @@ public class AlsaSequencer
 		public void run()
 		{
 			loadSequenceToNative();
-		}
-	}
-
-
-
-/*
-  public TimeMBT getMBT()
-  {
-  // TODO:
-  return null;
-  }
-*/
-
-
-/*
-  public void setMBT(TimeMBT time)
-  {
-  }
-*/
-/*
-  public TimeSMPTE getSMPTE()
-  {
-  return null;
-  }
-*/
-/*
-  public void setSMPTE(TimeSMPTE time)
-  {
-  }
-*/
-
-
-	private static int signedByteToUnsigned(byte b)
-	{
-		if (b >= 0)
-		{
-			return (int) b;
-		}
-		else
-		{
-			return 256 + (int) b ;
 		}
 	}
 }
