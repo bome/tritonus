@@ -807,162 +807,6 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaSeq
- * Method:    getEvent
- * Signature: ([I[J[Ljava/lang/Object;)Z
- */
-JNIEXPORT jboolean JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaSeq_getEvent
-(JNIEnv* env, jobject obj, jintArray anValues, jlongArray alValues, jobjectArray aObjValues)
-{
-	snd_seq_t*		seq;
-	snd_seq_event_t*	pEvent;
-	int			nReturn;
-	jint*			panValues;
-	jlong*			palValues;
-	jbyteArray		byteArray;
-
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getEvent(): begin\n"); }
-	seq = handler.getHandle(env, obj);
-
-	/*
-	 *	snd_seq_event_input() results in a blocking read on a
-	 *	device file. There are two problems:
-	 *	1. green threads VMs do no blocking read. Therefore, this
-	 *	code doesn't work with green threads at all. A solution is
-	 *	outstanding.
-	 *	2. In some cases, the read is interrupted by a signal. This
-	 *	is the reason for the do..while.
-	 */
-	do
-	{
-		// printf("1\n");
-		//errno = 0;
-		nReturn = snd_seq_event_input(seq, &pEvent);
-		//printf("return: %d\n", nReturn);
-		// printf("event: %p\n", pEvent);
-		// printf("errno: %d\n", errno);
-		//perror("abc");
-		// printf("2\n");
-	}
-	while (nReturn == -EINTR);
-	if (pEvent == NULL)
-	{
-		return JNI_FALSE;
-	}
-	// now uesless?
-	if (nReturn < 0)
-	{
-		throwRuntimeException(env, "snd_seq_event_input() failed");
-	}
-	checkArrayLength(env, anValues, 13);
-	panValues = env->GetIntArrayElements(anValues, NULL);
-	// printf("4\n");
-	if (panValues == NULL)
-	{
-		throwRuntimeException(env, "GetIntArrayElements() failed");
-	}
-
-	checkArrayLength(env, alValues, 1);
-	palValues = env->GetLongArrayElements(alValues, NULL);
-	// printf("6\n");
-	if (palValues == NULL)
-	{
-		throwRuntimeException(env, "GetLongArrayElements() failed");
-	}
-	// printf("6a\n");
-	panValues[0] = pEvent->type;
-	// printf("6b\n");
-	panValues[1] = pEvent->flags;
-	// printf("6c\n");
-	panValues[2] = pEvent->tag;
-	// printf("6d\n");
-	panValues[3] = pEvent->queue;
-
-	panValues[4] = pEvent->source.client;
-	panValues[5] = pEvent->source.port;
-
-	panValues[6] = pEvent->dest.client;
-	panValues[7] = pEvent->dest.port;
-
-	if ((pEvent->flags & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
-	{
-		palValues[0] = pEvent->time.tick;
-	}
-	else	// time
-	{
-		palValues[0] = (jlong) pEvent->time.time.tv_sec * (jlong) 1E9 + (jlong) pEvent->time.time.tv_nsec;
-	}
-
-	switch (pEvent->type)
-	{
-	case SND_SEQ_EVENT_NOTE:
-	case SND_SEQ_EVENT_NOTEON:
-	case SND_SEQ_EVENT_NOTEOFF:
-		panValues[8] = pEvent->data.note.channel;
-		panValues[9] = pEvent->data.note.note;
-		panValues[10] = pEvent->data.note.velocity;
-		panValues[11] = pEvent->data.note.off_velocity;
-		panValues[12] = pEvent->data.note.duration;
-		break;
-
-	case SND_SEQ_EVENT_KEYPRESS:
-	case SND_SEQ_EVENT_CONTROLLER:
-	case SND_SEQ_EVENT_PGMCHANGE:
-	case SND_SEQ_EVENT_CHANPRESS:
-	case SND_SEQ_EVENT_PITCHBEND:
-	case SND_SEQ_EVENT_CONTROL14:
-	case SND_SEQ_EVENT_NONREGPARAM:
-	case SND_SEQ_EVENT_REGPARAM:
-		panValues[8] = pEvent->data.control.channel;
-		panValues[9] = pEvent->data.control.param;
-		panValues[10] = pEvent->data.control.value;
-		break;
-
-	case SND_SEQ_EVENT_SYSEX:
-	case SND_SEQ_EVENT_BOUNCE:
-	case SND_SEQ_EVENT_USR_VAR0:
-	case SND_SEQ_EVENT_USR_VAR1:
-	case SND_SEQ_EVENT_USR_VAR2:
-	case SND_SEQ_EVENT_USR_VAR3:
-	case SND_SEQ_EVENT_USR_VAR4:
-	{
-		jbyteArray	abData;
-		abData = env->NewByteArray(pEvent->data.ext.len);
-		if (abData == NULL)
-		{
-			throwRuntimeException(env, "NewByteArray() failed");
-		}
-		env->SetByteArrayRegion(abData, (jsize) 0, (jsize) pEvent->data.ext.len, (jbyte*) pEvent->data.ext.ptr);
-		checkArrayLength(env, aObjValues, 1);
-		env->SetObjectArrayElement(aObjValues, 0, abData);
-	}
-	break;
-	}
-
-
-
-	env->ReleaseIntArrayElements(anValues, panValues, 0);
-	env->ReleaseLongArrayElements(alValues, palValues, 0);
-
-	if ((pEvent->flags & SND_SEQ_EVENT_LENGTH_MASK) == SND_SEQ_EVENT_LENGTH_VARUSR)
-	{
-		byteArray = env->NewByteArray(pEvent->data.ext.len);
-		if (byteArray == NULL)
-		{
-			throwRuntimeException(env, "NewByteArray() failed");
-		}
-		env->SetByteArrayRegion(byteArray, (jsize) 0, (jsize) pEvent->data.ext.len, (jbyte*) pEvent->data.ext.ptr);
-		env->SetObjectArrayElement(aObjValues, 0, byteArray);
-	}
-	// TODO: should events be freed with snd_seq_free_event()?
-	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getEvent(): end\n"); }
-	return JNI_TRUE;
-}
-
-
-
-/*
- * Class:     org_tritonus_lowlevel_alsa_AlsaSeq
  * Method:    setTrace
  * Signature: (Z)V
  */
@@ -1095,10 +939,10 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_eventInput
 	}
 	// TODO: should catch -EAGAIN, too?
 	while (nReturn == -EINTR);
-	if (nReturn < 0)
-	{
-		throwRuntimeException(env, "snd_seq_event_input() failed");
-	}
+// 	if (nReturn < 0)
+// 	{
+// 		throwRuntimeException(env, "snd_seq_event_input() failed");
+// 	}
 	if (event != NULL)
 	{
 		setEventNativeHandle(env, eventObj, event);
