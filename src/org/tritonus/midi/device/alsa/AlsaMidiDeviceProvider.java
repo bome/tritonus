@@ -59,14 +59,10 @@ public class AlsaMidiDeviceProvider
 		}
 		synchronized (AlsaMidiDeviceProvider.class)
 		{
-			//TDebug.out("gaga");
 			if (m_devices == null)
 			{
-				//TDebug.out("gaga2");
 				m_devices = new ArrayList();
-				TDebug.out("gaga2a");
 				m_aSequencer = new AlsaSeq("Tritonus ALSA device manager");
-				//TDebug.out("gaga3");
 				scanPorts();
 			}
 		}
