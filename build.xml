@@ -1,21 +1,22 @@
 <project name="tritonus" default="dist" basedir=".">
-	<target name="init">
-		<tstamp/>
-		<property name="src" value="src" />
-		<property name="build" value="build" />
-		<property name="dist"  value="dist" />
-		<!--
-			Remove the next line if you don't have jikes.
-			In this case, javac will be used for compiling.
-		-->
-		<property name="build.compiler" value="jikes" />
-		<filter token="version" value="0.3.1" />
-		<filter token="year" value="2000" />
+  <target name="init">
+    <tstamp/>
+    <property name="src" value="src" />
+    <property name="build" value="build" />
+    <property name="dist"  value="dist" />
+    <property name="plugins"  value="tritonus_share.jar tritonus_gsm.jar tritonus_mp3.jar tritonus_javasequencer.jar ../../javalayer/dist/javalayer.jar" />
+    <!--
+    Remove the next line if you don't have jikes.
+    In this case, javac will be used for compiling.
+    -->
+    <property name="build.compiler" value="jikes" />
+    <filter token="version" value="0.3.1" />
+    <filter token="year" value="2000" />
 
-		<available
-			classname="grame.midishare.Midi"
-			property="midishare-present" />
-		<available
+    <available
+	       classname="grame.midishare.Midi"
+	       property="midishare-present" />
+    <available
 			classname="javazoom.jl.decoder.Decoder"
 			property="javalayer-present" />
 
@@ -146,8 +147,15 @@
 				<include name="org/tritonus/sampled/convert/gsm/" />
 				<include name="org/tritonus/sampled/file/gsm/" />
 			</fileset>
-			<!--fileset
-				dir="${src}/packaging/tritonus_gsm" /-->
+		</jar>
+
+		<jar	jarfile="${dist}/tritonus_javasequencer.jar" >
+			<fileset
+				dir="${build}" >
+				<include name="org/tritonus/midi/device/java/" />
+			</fileset>
+			<fileset
+				dir="${src}/packaging/tritonus_javasequencer" />
 		</jar>
 	</target>
 
@@ -216,5 +224,15 @@
 		depends="init"
 		if="javalayer-source-present">
 		<ant dir="${javalayer-path}" target="clean" />
+	</target>
+
+	<target name="plugins-upload"
+		depends="dist">
+		<exec
+			dir="${dist}"
+			executable="scp"
+			output="upload.log" >
+			<arg line="${plugins} www.tritonus.org:vtritonus/htdocs/" />
+		</exec>
 	</target>
 </project>
