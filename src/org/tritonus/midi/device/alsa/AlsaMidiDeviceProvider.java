@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -126,10 +125,12 @@ public class AlsaMidiDeviceProvider
 				AlsaSeq.PortInfo	portInfo = (AlsaSeq.PortInfo) ports.next();
 				int	nPort = portInfo.getPort();
 				int	nType = portInfo.getType();
+				int	nCapability = portInfo.getCapability();
 				if (TDebug.TracePortScan)
 				{
 					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): port: " + nPort);
 					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): type: " + nType);
+					TDebug.out("AlsaMidiDeviceProvider.scanPorts(): cap: " + nCapability);
 				}
 				if ((nType & AlsaSeq.SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0)
 				{
