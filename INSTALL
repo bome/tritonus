@@ -10,6 +10,11 @@ For these cases, precompiled components are available. Go to:
 http://www.tritonus.org/plugins.html
 
 
+Which components do i need?
+[TODO: Which coponents to compile/install]
+
+
+
 What you need
 =============
 
@@ -92,7 +97,9 @@ tritonus-<version>. cd into the top-level directory.
 
 2. Issue 'configure' ('./configure' if you build as root) in the
 top-level directory. If you are building from the cvs, you have to
-create configure from configure.in by calling 'autoconf'.
+create configure from configure.in by calling 'autoconf'. Note that
+autoconf 2.52 hat a bug that prevents Tritonus' configure from working
+correctely. Tested (and working) versions are 2.53 and 2.13.
 
 THE OLD WAY
 
