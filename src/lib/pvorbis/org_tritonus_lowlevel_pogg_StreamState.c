@@ -83,7 +83,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_free
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_init
+Java_org_tritonus_lowlevel_pogg_StreamState_init_1native
 (JNIEnv* env, jobject obj, jint nSerialNo)
 {
 	ogg_stream_state*	handle;
@@ -104,7 +104,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_init
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_clear
+Java_org_tritonus_lowlevel_pogg_StreamState_clear_1native
 (JNIEnv* env, jobject obj)
 {
 	ogg_stream_state*	handle;
@@ -125,7 +125,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_clear
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_reset
+Java_org_tritonus_lowlevel_pogg_StreamState_reset_1native
 (JNIEnv* env, jobject obj)
 {
 	ogg_stream_state*	handle;
@@ -146,7 +146,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_reset
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_destroy
+Java_org_tritonus_lowlevel_pogg_StreamState_destroy_1native
 (JNIEnv* env, jobject obj)
 {
 	ogg_stream_state*	handle;
@@ -167,7 +167,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_destroy
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_isEOSReached
+Java_org_tritonus_lowlevel_pogg_StreamState_isEOSReached_1native
 (JNIEnv* env, jobject obj)
 {
 	ogg_stream_state*	handle;
@@ -188,7 +188,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_isEOSReached
  * Signature: (Lorg/tritonus/lowlevel/ogg/Packet;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_packetIn
+Java_org_tritonus_lowlevel_pogg_StreamState_packetIn_1native
 (JNIEnv* env, jobject obj, jobject packet)
 {
 	ogg_stream_state*	handle;
@@ -211,7 +211,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_packetIn
  * Signature: (Lorg/tritonus/lowlevel/ogg/Page;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_pageOut
+Java_org_tritonus_lowlevel_pogg_StreamState_pageOut_1native
 (JNIEnv* env, jobject obj, jobject page)
 {
 	ogg_stream_state*	handle;
@@ -234,7 +234,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_pageOut
  * Signature: (Lorg/tritonus/lowlevel/ogg/Page;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_flush
+Java_org_tritonus_lowlevel_pogg_StreamState_flush_1native
 (JNIEnv* env, jobject obj, jobject page)
 {
 	ogg_stream_state*	handle;
@@ -257,7 +257,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_flush
  * Signature: (Lorg/tritonus/lowlevel/ogg/Page;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_pageIn
+Java_org_tritonus_lowlevel_pogg_StreamState_pageIn_1native
 (JNIEnv* env, jobject obj, jobject page)
 {
 	ogg_stream_state*	handle;
@@ -280,7 +280,7 @@ Java_org_tritonus_lowlevel_pogg_StreamState_pageIn
  * Signature: (Lorg/tritonus/lowlevel/ogg/Packet;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_packetOut
+Java_org_tritonus_lowlevel_pogg_StreamState_packetOut_1native
 (JNIEnv* env, jobject obj, jobject packet)
 {
 	ogg_stream_state*	handle;
@@ -303,16 +303,19 @@ Java_org_tritonus_lowlevel_pogg_StreamState_packetOut
  * Signature: (Lorg/tritonus/lowlevel/ogg/Packet;)I
  */
 JNIEXPORT jint JNICALL
-Java_org_tritonus_lowlevel_pogg_StreamState_packetPeek
+Java_org_tritonus_lowlevel_pogg_StreamState_packetPeek_1native
 (JNIEnv* env, jobject obj, jobject packet)
 {
 	ogg_stream_state*	handle;
-	ogg_packet*		packetHandle;
+	ogg_packet*		packetHandle = NULL;
 	int			nReturn;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_StreamState_packetPeek(): begin\n"); }
 	handle = getHandle(env, obj);
-	packetHandle = getPacketNativeHandle(env, packet);
+	if (packet != NULL)
+	{
+		packetHandle = getPacketNativeHandle(env, packet);
+	}
 	nReturn = ogg_stream_packetpeek(handle, packetHandle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_StreamState_packetPeek(): end\n"); }
 	return nReturn;

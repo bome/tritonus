@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000 - 2001 by Matthias Pfisterer
+ *  Copyright (c) 2000 - 2005 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -52,6 +52,11 @@ public class StreamState
 	 */
 	private long	m_lNativeHandle;
 
+	/** The serial number of the stream.
+		This is set by init().
+	 */
+	private int		m_nSerialNo;
+
 
 
 	public StreamState()
@@ -83,54 +88,142 @@ public class StreamState
 
 	/** Calls ogg_stream_init().
 	 */
-	public native int init(int nSerialNo);
+	public int init(int nSerialNo)
+	{
+		m_nSerialNo = nSerialNo;
+		return init_native(nSerialNo);
+	}
+
+	/** Calls ogg_stream_init().
+	 */
+	private native int init_native(int nSerialNo);
+
 
 	/** Calls ogg_stream_clear().
 	 */
-	public native int clear();
+	public int clear()
+	{
+		return clear_native();
+	}
+
+	/** Calls ogg_stream_clear().
+	 */
+	private native int clear_native();
+
 
 	/** Calls ogg_stream_reset().
 	 */
-	public native int reset();
+	public int reset()
+	{
+		return reset_native();
+	}
+
+	/** Calls ogg_stream_reset().
+	 */
+	private native int reset_native();
+
 
 	/** Calls ogg_stream_destroy().
 	 */
-	public native int destroy();
+	public int destroy()
+	{
+		return destroy_native();
+	}
+
+	/** Calls ogg_stream_destroy().
+	 */
+	private native int destroy_native();
+
 
 	/** Calls ogg_stream_eos().
 	 */
-	public native boolean isEOSReached();
+	public boolean isEOSReached()
+	{
+		return isEOSReached_native();
+	}
+
+	/** Calls ogg_stream_eos().
+	 */
+	private native boolean isEOSReached_native();
 
 
 
 	/** Calls ogg_stream_packetin().
 	 */
-	public native int packetIn(Packet packet);
+	public int packetIn(Packet packet)
+	{
+		return packetIn_native(packet);
+	}
+
+
+	/** Calls ogg_stream_packetin().
+	 */
+	private native int packetIn_native(Packet packet);
 
 
 	/** Calls ogg_stream_pageout().
 	 */
-	public native int pageOut(Page page);
+	public int pageOut(Page page)
+	{
+		return pageOut_native(page);
+	}
+
+
+	/** Calls ogg_stream_pageout().
+	 */
+	private native int pageOut_native(Page page);
 
 
 	/** Calls ogg_stream_flush().
 	 */
-	public native int flush(Page page);
+	public int flush(Page page)
+	{
+		return flush_native(page);
+	}
+
+
+	/** Calls ogg_stream_flush().
+	 */
+	private native int flush_native(Page page);
 
 
 	/** Calls ogg_stream_pagein().
 	 */
-	public native int pageIn(Page page);
+	public int pageIn(Page page)
+	{
+		return pageIn_native(page);
+	}
+
+
+	/** Calls ogg_stream_pagein().
+	 */
+	private native int pageIn_native(Page page);
 
 
 	/** Calls ogg_stream_packetout().
 	 */
-	public native int packetOut(Packet packet);
+	public int packetOut(Packet packet)
+	{
+		return packetOut_native(packet);
+	}
+
+
+	/** Calls ogg_stream_packetout().
+	 */
+	private native int packetOut_native(Packet packet);
 
 
 	/** Calls ogg_stream_packetpeek().
 	 */
-	public native int packetPeek(Packet packet);
+	public int packetPeek(Packet packet)
+	{
+		return packetPeek_native(packet);
+	}
+
+
+	/** Calls ogg_stream_packetpeek().
+	 */
+	private native int packetPeek_native(Packet packet);
 
 
 	private static native void setTrace(boolean bTrace);

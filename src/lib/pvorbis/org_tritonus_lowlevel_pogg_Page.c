@@ -54,8 +54,11 @@ Java_org_tritonus_lowlevel_pogg_Page_malloc
 	handle = malloc(sizeof(ogg_page));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_malloc(): handle: %p\n", handle); }
 	setHandle(env, obj, handle);
-	handle->header = NULL;
-	handle->body = NULL;
+	if (handle)
+	{
+		handle->header = NULL;
+		handle->body = NULL;
+	}
 	nReturn = (handle == NULL) ? -1 : 0;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_malloc(): end\n"); }
 	return nReturn;
@@ -122,6 +125,15 @@ Java_org_tritonus_lowlevel_pogg_Page_isContinued
 	return nReturn;
 }
 
+static int getPackets(ogg_page* og)
+{
+  int i;
+  int n=og->header[26];
+  int count=0;
+  for(i=0;i<n;i++)
+    if(og->header[27+i]<255)count++;
+  return(count);
+}
 
 
 /*
@@ -138,7 +150,8 @@ Java_org_tritonus_lowlevel_pogg_Page_getPackets
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_getPackets(): begin\n"); }
 	handle = getHandle(env, obj);
-	nReturn = ogg_page_packets(handle);
+	nReturn = getPackets(handle);
+	//nReturn = ogg_page_packets(handle);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_getPackets(): end\n"); }
 	return nReturn;
 }
@@ -322,22 +335,21 @@ Java_org_tritonus_lowlevel_pogg_Page_setData
 (JNIEnv* env, jobject obj, jbyteArray abHeader, jint nHeaderOffset, jint nHeaderLength, jbyteArray abBody, jint nBodyOffset, jint nBodyLength)
 {
 	ogg_page*	handle;
-	//jbyteArray	byteArray;
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_setData(): begin\n"); }
 	handle = getHandle(env, obj);
 	/* ATTENTION! The storage allocated here is never freed! We have a memory hole! */
 	handle->header_len = nHeaderLength;
-	if (handle->header != NULL)
-	{
-		free(handle->header);
-	}
+/* 	if (handle->header != NULL) */
+/* 	{ */
+/* 		free(handle->header); */
+/* 	} */
 	handle->header = malloc(nHeaderLength);
 	handle->body_len = nBodyLength;
-	if (handle->body != NULL)
-	{
-		free(handle->body);
-	}
+/* 	if (handle->body != NULL) */
+/* 	{ */
+/* 		free(handle->body); */
+/* 	} */
 	handle->body = malloc(nBodyLength);
 	(*env)->GetByteArrayRegion(env, abHeader, nHeaderOffset, nHeaderLength, handle->header);
 	(*env)->GetByteArrayRegion(env, abBody, nBodyOffset, nBodyLength, handle->body);

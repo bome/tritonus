@@ -103,6 +103,12 @@ public class Packet
 	public native boolean isEos();
 
 
+	public native long getGranulePos();
+
+
+	public native long getPacketNo();
+
+
 	/**	Sets the data in the packet.
 	 */
 	public native void setData(byte[] abData, int nLength);

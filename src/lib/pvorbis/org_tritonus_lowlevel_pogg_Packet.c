@@ -52,6 +52,8 @@ Java_org_tritonus_lowlevel_pogg_Packet_malloc
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_malloc(): begin\n"); }
 	handle = malloc(sizeof(ogg_packet));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_malloc(): handle: %p\n", handle); }
+	if (handle != NULL)
+		memset(handle, 0, sizeof(*handle));
 	setHandle(env, obj, handle);
 	nReturn = (handle == NULL) ? -1 : 0;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_malloc(): end\n"); }
@@ -112,6 +114,8 @@ Java_org_tritonus_lowlevel_pogg_Packet_getData
 
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_getData(): begin\n"); }
 	handle = getHandle(env, obj);
+	if (handle->packet == NULL)
+		return 0;
 	abData = (*env)->NewByteArray(env, handle->bytes);
 	(*env)->SetByteArrayRegion(env, abData, 0, handle->bytes, handle->packet);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_getData(): end\n"); }
@@ -160,6 +164,36 @@ Java_org_tritonus_lowlevel_pogg_Packet_isEos
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Packet_isEos(): end\n"); }
 	return bReturn;
 }
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pogg_Packet
+ * Method:    getGranulePos
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL
+Java_org_tritonus_lowlevel_pogg_Packet_getGranulePos
+(JNIEnv *env, jobject obj)
+{
+	ogg_packet*	handle = getHandle(env, obj);
+	return handle->granulepos;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_pogg_Packet
+ * Method:    getPacketNo
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL
+Java_org_tritonus_lowlevel_pogg_Packet_getPacketNo
+(JNIEnv *env, jobject obj)
+{
+	ogg_packet*	handle = getHandle(env, obj);
+	return handle->packetno;
+}
+
 
 
 /*
