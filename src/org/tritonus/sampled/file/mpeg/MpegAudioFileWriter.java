@@ -26,29 +26,23 @@
 package	org.tritonus.sampled.file.mpeg;
 
 
-import	java.io.IOException;
 import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
-import	org.tritonus.share.sampled.file.AudioOutputStream;
-import	org.tritonus.share.sampled.file.HeaderlessAudioOutputStream;
-import	org.tritonus.share.sampled.file.TAudioFileWriter;
-import	org.tritonus.share.sampled.file.TDataOutputStream;
+import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 
 
-/**
- * Class for writing mpeg files
+
+/** Class for writing mpeg files
  *
  * @author Florian Bomers
  */
-public class MpegAudioFileWriter extends TAudioFileWriter {
+public class MpegAudioFileWriter extends THeaderlessAudioFileWriter {
 
 	private static final AudioFileFormat.Type[]	FILE_TYPES = {
 	    //AudioFileTypes.getType("MPEG", "mpeg"),
@@ -57,7 +51,6 @@ public class MpegAudioFileWriter extends TAudioFileWriter {
 	    AudioFileTypes.getType("MP3", "mp3")
 	};
 
-	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	public static AudioFormat.Encoding MPEG1L3=Encodings.getEncoding("MPEG1L3");
 
 	private static final AudioFormat[]	AUDIO_FORMATS = {
@@ -71,18 +64,7 @@ public class MpegAudioFileWriter extends TAudioFileWriter {
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
 	}
-
-	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    TDataOutputStream dataOutputStream)
-	throws	IOException {
-		return new HeaderlessAudioOutputStream(audioFormat,
-		                                       lLengthInBytes,
-		                                       dataOutputStream);
-	}
-
 }
+
 
 /*** MpegAudioFileWriter.java ***/

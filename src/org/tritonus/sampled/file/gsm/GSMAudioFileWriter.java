@@ -26,21 +26,16 @@
 package	org.tritonus.sampled.file.gsm;
 
 
-import	java.io.IOException;
 import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.sampled.file.AudioOutputStream;
-import	org.tritonus.share.sampled.file.TAudioFileWriter;
-import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.HeaderlessAudioOutputStream;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
+import	org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 
 
 
@@ -50,7 +45,7 @@ import	org.tritonus.share.sampled.AudioFileTypes;
  * @author Matthias Pfisterer
  */
 public class GSMAudioFileWriter
-	extends TAudioFileWriter
+	extends THeaderlessAudioFileWriter
 {
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{
@@ -59,8 +54,8 @@ public class GSMAudioFileWriter
 
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	{
-		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, AudioSystem.NOT_SPECIFIED, 1, 33, 50.0F, false),
-		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, AudioSystem.NOT_SPECIFIED, 1, 33, 50.0F, true),
+		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, ALL, 1, 33, 50.0F, false),
+		new AudioFormat(Encodings.getEncoding("GSM0610"), 8000.0F, ALL, 1, 33, 50.0F, true),
 	};
 
 
@@ -70,21 +65,6 @@ public class GSMAudioFileWriter
 		super(Arrays.asList(FILE_TYPES),
 		      Arrays.asList(AUDIO_FORMATS));
 	}
-
-
-
-	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		TDataOutputStream	dataOutputStream)
-		throws	IOException
-	{
-		return new HeaderlessAudioOutputStream(audioFormat,
-					       lLengthInBytes,
-					       dataOutputStream);
-	}
-
 }
 
 
