@@ -49,7 +49,10 @@ public class MpegAudioFileWriter extends TAudioFileWriter {
 
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{
-	    MpegFileFormatType.MPEG
+		MpegFileFormatType.MPEG,
+		// workaround for the fixed extension problem in AudioFileFormat.Type
+		// see org.tritonus.sampled.AudioFileTypes.java
+		MpegFileFormatType.MP3
 	};
 	
 	private static final AudioFormat[]	AUDIO_FORMATS =

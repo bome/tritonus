@@ -39,7 +39,9 @@ import	org.tritonus.TDebug;
 public class MpegFileFormatType
 	extends	AudioFileFormat.Type
 {
-	public static final AudioFileFormat.Type	MPEG = new MpegFileFormatType("MPEG", ".mpeg");
+	public static final AudioFileFormat.Type	MPEG = new MpegFileFormatType("MPEG", "mpeg");
+	//$$fb 2000-08-15: added mp3 special file format for the correct extension
+	public static final AudioFileFormat.Type	MP3 = new MpegFileFormatType("MP3", "mp3");
 
 
 

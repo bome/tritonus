@@ -135,7 +135,13 @@ public class MpegAudioFileReader
 			AudioSystem.NOT_SPECIFIED /*????*/,
 			AudioSystem.NOT_SPECIFIED /*????*/,
 			true);
-		return new TAudioFileFormat(MpegFileFormatType.MPEG, format, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED);
+		//$$fb 2000-08-15: workaround for the fixed extension problem in AudioFileFormat.Type
+		// see org.tritonus.sampled.AudioFileTypes.java
+		AudioFileFormat.Type type=MpegFileFormatType.MPEG;
+		if (encoding.equals(MpegEncoding.MPEG1L3)) {
+			type=MpegFileFormatType.MP3;
+		}
+		return new TAudioFileFormat(type, format, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED);
 	}
 
 
