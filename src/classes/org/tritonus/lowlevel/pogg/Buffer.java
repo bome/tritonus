@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000 - 2004 by Matthias Pfisterer
+ *  Copyright (c) 2000 - 2005 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -257,6 +257,13 @@ public class Buffer
 		return s;
 	}
 
+
+	/** Reads a single bit.
+	 */
+	public boolean readFlag()
+	{
+		return (read(1) != 0);
+	}
 
 	private static native void setTrace(boolean bTrace);
 
