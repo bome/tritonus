@@ -287,7 +287,7 @@ implements Runnable
 						if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 					}
 					if (TDebug.TraceSequencer) { TDebug.out("JavaSequencer.run(): sending End of Track message with tick " + (m_lTickPosition + 1)); }
-					// TODO: calulate µs
+					// TODO: calulate us
 					deliverEvent(metaMessage, m_lTickPosition + 1);
 					stop();
 					break;
