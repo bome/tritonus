@@ -54,6 +54,8 @@ Java_org_tritonus_lowlevel_pogg_Page_malloc
 	handle = malloc(sizeof(ogg_page));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_malloc(): handle: %p\n", handle); }
 	setHandle(env, obj, handle);
+	handle->header = NULL;
+	handle->body = NULL;
 	nReturn = (handle == NULL) ? -1 : 0;
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_malloc(): end\n"); }
 	return nReturn;
@@ -309,6 +311,38 @@ Java_org_tritonus_lowlevel_pogg_Page_getBody
 	return byteArray;
 }
 
+
+/*
+ * Class:     org_tritonus_lowlevel_pogg_Page
+ * Method:    setData
+ * Signature: ([BII[BII)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_pogg_Page_setData
+(JNIEnv* env, jobject obj, jbyteArray abHeader, jint nHeaderOffset, jint nHeaderLength, jbyteArray abBody, jint nBodyOffset, jint nBodyLength)
+{
+	ogg_page*	handle;
+	//jbyteArray	byteArray;
+
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_setData(): begin\n"); }
+	handle = getHandle(env, obj);
+	/* ATTENTION! The storage allocated here is never freed! We have a memory hole! */
+	handle->header_len = nHeaderLength;
+	if (handle->header != NULL)
+	{
+		free(handle->header);
+	}
+	handle->header = malloc(nHeaderLength);
+	handle->body_len = nBodyLength;
+	if (handle->body != NULL)
+	{
+		free(handle->body);
+	}
+	handle->body = malloc(nBodyLength);
+	(*env)->GetByteArrayRegion(env, abHeader, nHeaderOffset, nHeaderLength, handle->header);
+	(*env)->GetByteArrayRegion(env, abBody, nBodyOffset, nBodyLength, handle->body);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_pogg_Page_setData(): end\n"); }
+}
 
 
 /*

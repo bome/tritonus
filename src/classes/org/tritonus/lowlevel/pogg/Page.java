@@ -120,6 +120,10 @@ public class Page
 
 	public native byte[] getBody();
 
+	public native void setData(byte[] abHeader, int nHeaderOffset,
+							   int nHeaderLength,
+							   byte[] abBody, int nBodyOffset,
+							   int nBodyLength);
 
 	private static native void setTrace(boolean bTrace);
 }
