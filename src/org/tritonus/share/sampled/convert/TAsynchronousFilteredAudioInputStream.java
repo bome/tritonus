@@ -54,7 +54,9 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	private byte[]			m_abSingleByte;
 
 
-
+	/**
+	 * @param lLength length of this stream in frames
+	 */
 	public TAsynchronousFilteredAudioInputStream(AudioFormat outputFormat, long lLength)
 	{
 		this(outputFormat, lLength, DEFAULT_BUFFER_SIZE);
@@ -62,10 +64,14 @@ public abstract class TAsynchronousFilteredAudioInputStream
 
 
 
+	/**
+	 * @param lLength length of this stream in frames
+	 * @param nBufferSize size of the circular buffer in bytes
+	 */
 	public TAsynchronousFilteredAudioInputStream(AudioFormat outputFormat, long lLength, int nBufferSize)
 	{
 		/*	The usage of a ByteArrayInputStream is a hack.
-		 *	(the infamous "JavaOne hack", because I did it on june
+		 *	(the infamous "JavaOne hack", because I did it on June
 		 *	6th 2000 in San Francisco, only hours before a
 		 *	JavaOne session where I wanted to show mp3 playback
 		 *	with Java Sound.) It is necessary because in the FCS
@@ -110,7 +116,8 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	public int read(byte[] abData)
 		throws	IOException
 	{
-		return m_circularBuffer.read(abData);
+		//return m_circularBuffer.read(abData);
+		return read(abData, 0, abData.length);
 	}
 
 
@@ -120,6 +127,7 @@ public abstract class TAsynchronousFilteredAudioInputStream
 	{
 		//$$fb 2001-04-22: this returns at maximum circular buffer
 		// length. This is not very efficient...
+		//$$fb 2001-04-25: we should check that we do not exceed getFrameLength() !
 		return m_circularBuffer.read(abData, nOffset, nLength);
 	}
 

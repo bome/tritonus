@@ -563,39 +563,12 @@ public class PCM2PCMConversionProvider
 			}
 		}
 
-		private void expandChannels(FloatSampleBuffer buffer) {
-			// even more sanity...
-			if (buffer.getChannelCount()!=1) {
-				throw new IllegalArgumentException(
-				    "PCM2PCMConverter: can only expand channels for mono signals.");
-			}
-			int channels=getFormat().getChannels();
-			for (int ch=1; ch<channels; ch++) {
-				buffer.addChannel(false);
-				buffer.copyChannel(0, ch);
-			}
-		}
-
-		/** simple mixdown: all other channels are added to first channel */
-		private void mixDownChannels(FloatSampleBuffer buffer) {
-			float[] firstChannel=buffer.getChannel(0);
-			int sampleCount=buffer.getSampleCount();
-			int channelCount=buffer.getChannelCount();
-			for (int ch=channelCount-1; ch>0; ch--) {
-				float[] thisChannel=buffer.getChannel(ch);
-				for (int i=0; i<sampleCount; i++) {
-					firstChannel[i]+=thisChannel[i];
-				}
-				buffer.removeChannel(ch);
-			}
-		}
-
 		private void doFloatConversion(FloatSampleBuffer buffer, boolean expandChannels) {
 			if (needMixDown) {
-				mixDownChannels(buffer);
+				buffer.mixDownChannels();
 			}
 			if (expandChannels) {
-				expandChannels(buffer);
+				buffer.expandChannels(getFormat().getChannels());
 			}
 		}
 

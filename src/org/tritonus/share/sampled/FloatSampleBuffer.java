@@ -241,7 +241,6 @@ public class FloatSampleBuffer {
 			                   bytesPerFrame, formatType);
 			offset+=bytesPerSample; // next channel
 		}
-
 	}
 
 	public void initFromFloatSampleBuffer(FloatSampleBuffer source) {
@@ -442,6 +441,49 @@ public class FloatSampleBuffer {
 	public void removeChannel(int channel) {
 		removeChannel(channel, LAZY_DEFAULT);
 	}
+
+	/** 
+	 * Mix up of 1 channel to n channels.<br>
+	 * It copies the first channel to all newly created channels.
+	 * @param targetChannels: the number of channels that this sample buffer
+	 *                        will have after expanding. NOT the number of 
+	 *                        channels to add !
+	 * @exception IllegalArgumentException if this buffer does not have one 
+	 *            channel before calling this method.
+	 */
+	public void expandChannels(int targetChannels) {
+		// even more sanity...
+		if (getChannelCount()!=1) {
+			throw new IllegalArgumentException(
+			    "FloatSampleBuffer: can only expand channels for mono signals.");
+		}
+		for (int ch=1; ch<targetChannels; ch++) {
+			addChannel(false);
+			copyChannel(0, ch);
+		}
+	}
+
+	/** 
+	 * Mix down of n channels to one channel.<br>
+	 * It uses a simple mixdown: all other channels are added to first channel.<br>
+	 * The volume is NOT lowered !
+	 * Be aware, this might cause clipping when converting back
+	 * to integer samples.
+	 */
+	public void mixDownChannels() {
+		float[] firstChannel=getChannel(0);
+		int sampleCount=getSampleCount();
+		int channelCount=getChannelCount();
+		for (int ch=channelCount-1; ch>0; ch--) {
+			float[] thisChannel=getChannel(ch);
+			for (int i=0; i<sampleCount; i++) {
+				firstChannel[i]+=thisChannel[i];
+			}
+			removeChannel(ch);
+		}
+	}
+
+
 
 	/**
 	 * Removes a channel.

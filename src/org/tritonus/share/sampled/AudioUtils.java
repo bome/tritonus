@@ -102,23 +102,72 @@ public class AudioUtils
 		return false;
 	}
 
+	/**
+	* Conversion milliseconds -> bytes
+	*/
+
+	public static long millis2Bytes(long ms, AudioFormat format) {
+		return millis2Bytes(ms, format.getFrameRate(), format.getFrameSize());
+	}
+
+	public static long millis2Bytes(long ms, float frameRate, int frameSize) {
+		return (long) (ms*frameRate/1000*frameSize);
+	}
+
+	/**
+	* Conversion milliseconds -> bytes (bytes will be frame-aligned)
+	*/
+	public static long millis2BytesFrameAligned(long ms, AudioFormat format) {
+		return millis2BytesFrameAligned(ms, format.getFrameRate(), format.getFrameSize());
+	}
+
+	public static long millis2BytesFrameAligned(long ms, float frameRate, int frameSize) {
+		return ((long) (ms*frameRate/1000))*frameSize;
+	}
+
+	/**
+	* Conversion milliseconds -> frames
+	*/
+	public static long millis2Frames(long ms, AudioFormat format) {
+		return millis2Frames(ms, format.getFrameRate());
+	}
+
+	public static long millis2Frames(long ms, float frameRate) {
+		return (long) (ms*frameRate/1000);
+	}
+
+	/**
+	* Conversion bytes -> milliseconds 
+	*/
+	public static long bytes2Millis(long bytes, AudioFormat format) {
+		return (long) (bytes/format.getFrameRate()*1000/format.getFrameSize());
+	}
+
+	/**
+	* Conversion frames -> milliseconds 
+	*/
+	public static long frames2Millis(long frames, AudioFormat format) {
+		return (long) (frames/format.getFrameRate()*1000);
+	}
+
+
     //$$fb 2000-07-18: added these debugging functions
     public static String NS_or_number(int number) {
-	return (number==AudioSystem.NOT_SPECIFIED)?"NOT_SPECIFIED":String.valueOf(number);
+		return (number==AudioSystem.NOT_SPECIFIED)?"NOT_SPECIFIED":String.valueOf(number);
     }
     public static String NS_or_number(float number) {
-	return (number==AudioSystem.NOT_SPECIFIED)?"NOT_SPECIFIED":String.valueOf(number);
+		return (number==AudioSystem.NOT_SPECIFIED)?"NOT_SPECIFIED":String.valueOf(number);
     }
 
     /** 
      * For debugging purposes.
      */
     public static String format2ShortStr(AudioFormat format) {
-	return format.getEncoding() + "-" +
-	    NS_or_number(format.getChannels()) + "ch-" +
-	    NS_or_number(format.getSampleSizeInBits()) + "bit-" +
-	    NS_or_number(((int)format.getSampleRate())) + "Hz-"+
-	    (format.isBigEndian() ? "be" : "le");
+		return format.getEncoding() + "-" +
+	    	NS_or_number(format.getChannels()) + "ch-" +
+	    	NS_or_number(format.getSampleSizeInBits()) + "bit-" +
+	    	NS_or_number(((int)format.getSampleRate())) + "Hz-"+
+	    	(format.isBigEndian() ? "be" : "le");
     } 
 
 }
