@@ -41,7 +41,6 @@ public class BCELTest
 	{
 		String	strClassName = "tone";
 		ClassGen	classGen = new ClassGen(strClassName,
-							//   "AbstractInstrument",
 							"AbstractInstrument",
 							"<generated>",
 							Constants.ACC_PUBLIC | Constants.ACC_SUPER,
