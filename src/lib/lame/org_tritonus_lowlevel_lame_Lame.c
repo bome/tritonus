@@ -4,7 +4,7 @@
 
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -24,9 +24,6 @@
  */
 
 
-#include	<errno.h>
-#include	<string.h>
-#include	<stdio.h>
 #include	<stdlib.h>
 
 #include	"lame/lame.h"
