@@ -40,8 +40,8 @@ public class TCircularBuffer
 	private boolean		m_bBlockingWrite;
 	private byte[]		m_abData;
 	private int			m_nSize;
-	private int			m_nReadPos;
-	private int			m_nWritePos;
+	private long		m_lReadPos;
+	private long		m_lWritePos;
 	private Trigger		m_trigger;
 	private boolean		m_bOpen;
 
@@ -53,8 +53,8 @@ public class TCircularBuffer
 		m_bBlockingWrite = bBlockingWrite;
 		m_nSize = nSize;
 		m_abData = new byte[m_nSize];
-		m_nReadPos = 0;
-		m_nWritePos = 0;
+		m_lReadPos = 0;
+		m_lWritePos = 0;
 		m_trigger = trigger;
 		m_bOpen = true;
 	}
@@ -77,7 +77,7 @@ public class TCircularBuffer
 
 	public int availableRead()
 	{
-		return m_nWritePos - m_nReadPos;
+		return (int) (m_lWritePos - m_lReadPos);
 	}
 
 
@@ -91,14 +91,14 @@ public class TCircularBuffer
 
 	private int getReadPos()
 	{
-		return m_nReadPos % m_nSize;
+		return (int) (m_lReadPos % m_nSize);
 	}
 
 
 
 	private int getWritePos()
 	{
-		return m_nWritePos % m_nSize;
+		return (int) (m_lWritePos % m_nSize);
 	}
 
 
@@ -163,7 +163,7 @@ public class TCircularBuffer
 				{
 					int	nToRead = Math.min(nAvailable, m_nSize - getReadPos());
 					System.arraycopy(m_abData, getReadPos(), abData, nOffset, nToRead);
-					m_nReadPos += nToRead;
+					m_lReadPos += nToRead;
 					nOffset += nToRead;
 					nAvailable -= nToRead;
 					nRemainingBytes -= nToRead;
@@ -225,7 +225,7 @@ public class TCircularBuffer
 					int	nToWrite = Math.min(nAvailable, m_nSize - getWritePos());
 					//TDebug.out("src buf size= " + abData.length + ", offset = " + nOffset + ", dst buf size=" + m_abData.length + " write pos=" + getWritePos() + " len=" + nToWrite);
 					System.arraycopy(abData, nOffset, m_abData, getWritePos(), nToWrite);
-					m_nWritePos += nToWrite;
+					m_lWritePos += nToWrite;
 					nOffset += nToWrite;
 					nAvailable -= nToWrite;
 					nRemainingBytes -= nToWrite;
@@ -246,8 +246,8 @@ public class TCircularBuffer
 
 	private void dumpInternalState()
 	{
-		TDebug.out("m_nReadPos  = " + m_nReadPos + " ^= "+getReadPos());
-		TDebug.out("m_nWritePos = " + m_nWritePos + " ^= "+getWritePos());
+		TDebug.out("m_lReadPos  = " + m_lReadPos + " ^= "+getReadPos());
+		TDebug.out("m_lWritePos = " + m_lWritePos + " ^= "+getWritePos());
 		TDebug.out("availableRead()  = " + availableRead());
 		TDebug.out("availableWrite() = " + availableWrite());
 	}
