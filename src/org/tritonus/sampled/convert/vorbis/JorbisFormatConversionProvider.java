@@ -187,7 +187,7 @@ public class JorbisFormatConversionProvider
 						  newTargetFormat.getChannels(),
 						  newTargetFormat.getFrameSize(),
 						  sourceFormat.getSampleRate(),
-						  /*newTargetFormat.isBigEndian()*/false);
+						  newTargetFormat.isBigEndian());
 		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat); }
 		return newTargetFormat;
 	}
@@ -534,7 +534,6 @@ public class JorbisFormatConversionProvider
 		*/
 		private void decodeDataPacket()
 		{
-			// we have a packet.  Decode it
 			int samples;
 			if (m_vorbisBlock.synthesis(m_oggPacket) == 0)
 			{ // test for success!
