@@ -32,7 +32,13 @@ import	javax.sound.sampled.Mixer;
 
 public abstract class MixerProvider
 {
-	public boolean isMixerSupported(Mixer.Info info);
+	// TODO: check if jdk uses getMixerInfo() or getMixer() to
+	// implement this functionality (and document this officially).
+	public boolean isMixerSupported(Mixer.Info info)
+	{
+		return false;
+	}
+
 
 	public abstract Mixer.Info[] getMixerInfo();
 
