@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 1999 - 2003 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -104,6 +103,7 @@ public class JorbisFormatConversionProvider
 
 	/**	Constructor.
 	 */
+	// TODO: check interaction with base class
 	public JorbisFormatConversionProvider()
 	{
 		super(Arrays.asList(INPUT_FORMATS),
@@ -209,6 +209,7 @@ public class JorbisFormatConversionProvider
 		public static boolean		DEBUG = false;
   		private static final int	BUFFER_MULTIPLE = 4;
   		private static final int	BUFFER_SIZE = BUFFER_MULTIPLE * 256 * 2;
+  		private static final int	CONVSIZE = BUFFER_SIZE * 2;
 
 		private InputStream		m_oggBitStream = null;
 
@@ -225,17 +226,13 @@ public class JorbisFormatConversionProvider
 		// actually is an ogg structure
   		private Block			m_vorbisBlock = null;
 
+  		private List			m_songComments = new ArrayList();
+		// is altered lated in a dubious way
+  		private int			convsize = -1; // BUFFER_SIZE * 2;
 		// TODO: further checking
-  		private int			convsize = BUFFER_SIZE * 2;
-  		private byte[]			convbuffer = new byte[convsize];
-  		private byte[]			buffer = null;
-  		private int			rate = 0;
- 	 	private int			channels = 0;
-  		private List			songComments_ = new ArrayList();
-		private double[][][]		_pcm = null;
+  		private byte[]			convbuffer = new byte[CONVSIZE];
 		private float[][][]		_pcmf = null;
 		private int[]			_index = null;
-		private int			index = 0;
 
 		private int			loopid = 1;
 		private int			eos = 0;
@@ -254,7 +251,6 @@ public class JorbisFormatConversionProvider
 			this.m_oggBitStream = bitStream;
 			loopid = 1;
 			init_jorbis();
-			index = 0;
 		}
 
 
@@ -273,8 +269,6 @@ public class JorbisFormatConversionProvider
 			m_vorbisComment = new Comment();
 			m_vorbisDspState = new DspState();
 			m_vorbisBlock = new Block(m_vorbisDspState);
-
-			buffer = null;
 
 			m_oggSyncState.init();
 		}
@@ -347,53 +341,7 @@ public class JorbisFormatConversionProvider
 								}
 								else
 								{
-									// we have a packet.  Decode it
-									int samples;
-									if (m_vorbisBlock.synthesis(m_oggPacket) == 0)
-									{ // test for success!
-										m_vorbisDspState.synthesis_blockin(m_vorbisBlock);
-									}
-									while ((samples = m_vorbisDspState.synthesis_pcmout(_pcmf, _index)) > 0)
-									{
-										double[][] pcm = _pcm[0];
-										float[][] pcmf = _pcmf[0];
-										boolean clipflag = false;
-										int bout = (samples < convsize ? samples : convsize);
-										double fVal = 0.0;
-										// convert doubles to 16 bit signed ints (host order) and
-										// interleave
-										for (int i = 0; i < m_vorbisInfo.channels; i++)
-										{
-											int pointer = i * 2;
-											//int ptr=i;
-											int mono = _index[i];
-											for (int j = 0; j < bout; j++)
-											{
-												fVal = (float) pcmf[i][mono + j] * 32767.;
-												int val = (int) (fVal);
-												if (val > 32767)
-												{
-													val = 32767;
-													clipflag = true;
-												}
-												if (val < -32768)
-												{
-													val = -32768;
-													clipflag = true;
-												}
-												if (val < 0)
-												{
-													val = val | 0x8000;
-												}
-												convbuffer[pointer] = (byte) (val);
-												convbuffer[pointer + 1] = (byte) (val >>> 8);
-												pointer += 2 * (m_vorbisInfo.channels);
-											}
-										}
-										m_circularBuffer.write(convbuffer, 0, 2 * m_vorbisInfo.channels * bout);
-										//outputLine.write(convbuffer, 0, 2 * m_vorbisInfo.channels * bout);
-										m_vorbisDspState.synthesis_read(bout);
-									}
+									decodeDataPacket();
 								}
 							}
 							if (m_oggPage.eos() != 0)
@@ -411,9 +359,8 @@ public class JorbisFormatConversionProvider
 
 					if (eos == 0)
 					{
-						index = m_oggSyncState.buffer(BUFFER_SIZE);
-						buffer = m_oggSyncState.data;
-						bytes = readFromStream(buffer, index, BUFFER_SIZE);
+						int index = m_oggSyncState.buffer(BUFFER_SIZE);
+						bytes = readFromStream(m_oggSyncState.data, index, BUFFER_SIZE);
 						if (DEBUG) System.err.println("More data : "+bytes);
 						if (bytes == -1)
 						{
@@ -534,7 +481,7 @@ public class JorbisFormatConversionProvider
 		{
 			byte[][] ptr = m_vorbisComment.user_comments;
 			String currComment = "";
-			songComments_.clear();
+			m_songComments.clear();
 			for (int j = 0; j < ptr.length; j++)
 			{
 				if (ptr[j] == null)
@@ -542,7 +489,7 @@ public class JorbisFormatConversionProvider
 					break;
 				}
 				currComment = (new String(ptr[j], 0, ptr[j].length - 1)).trim();
-				songComments_.add(currComment);
+				m_songComments.add(currComment);
 				if (currComment.toUpperCase().startsWith("ARTIST"))
 				{
 					String artistLabelValue = currComment.substring(7);
@@ -555,10 +502,10 @@ public class JorbisFormatConversionProvider
 				if (DEBUG) System.err.println("Comment: " + currComment);
 			}
 			currComment = "Bitstream: " + m_vorbisInfo.channels + " channel," + m_vorbisInfo.rate + "Hz";
-			songComments_.add(currComment);
+			m_songComments.add(currComment);
 			if (DEBUG) System.err.println(currComment);
 			if (DEBUG) currComment = "Encoded by: " + new String(m_vorbisComment.vendor, 0, m_vorbisComment.vendor.length - 1);
-			songComments_.add(currComment);
+			m_songComments.add(currComment);
 			if (DEBUG) System.err.println(currComment);
 		}
 
@@ -573,9 +520,113 @@ public class JorbisFormatConversionProvider
 			convsize = BUFFER_SIZE / m_vorbisInfo.channels;
 			m_vorbisDspState.synthesis_init(m_vorbisInfo);
 			m_vorbisBlock.init(m_vorbisDspState);
-			_pcm = new double[1][][];
 			_pcmf = new float[1][][];
 			_index = new int[m_vorbisInfo.channels];
+		}
+
+
+
+		/** Decode a packet of vorbis data.
+		    This method assumes that a packet is available in
+		    {@link #m_oggPacket m_oggPacket}. The content of this
+		    packet is run through the decoder. The resulting
+		    PCM data are written to the circular buffer.
+		*/
+		private void decodeDataPacket()
+		{
+			// we have a packet.  Decode it
+			int samples;
+			if (m_vorbisBlock.synthesis(m_oggPacket) == 0)
+			{ // test for success!
+				m_vorbisDspState.synthesis_blockin(m_vorbisBlock);
+			}
+			while ((samples = m_vorbisDspState.synthesis_pcmout(_pcmf, _index)) > 0)
+			{
+				float[][] pcmf = _pcmf[0];
+				int bout = (samples < convsize ? samples : convsize);
+				// convert floats to signed ints and
+				// interleave
+				for (int nChannel = 0; nChannel < m_vorbisInfo.channels; nChannel++)
+				{
+					int pointer = nChannel * getSampleSizeInBytes();
+					int mono = _index[nChannel];
+					for (int j = 0; j < bout; j++)
+					{
+						float fVal = pcmf[nChannel][mono + j];
+						clipAndWriteSample(fVal, pointer);
+						pointer += getFrameSize();
+					}
+				}
+				m_circularBuffer.write(convbuffer, 0, getFrameSize() * bout);
+				m_vorbisDspState.synthesis_read(bout);
+			}
+		}
+
+
+		/** Scale and clip the sample and write it to convbuffer.
+		 */
+		private void clipAndWriteSample(float fSample, int nPointer)
+		{
+			int nSample;
+			// TODO: check if clipping is necessary
+			if (fSample > 1.0F)
+			{
+				fSample = 1.0F;
+			}
+			if (fSample < -1.0F)
+			{
+				fSample = -1.0F;
+			}
+			switch (getFormat().getSampleSizeInBits())
+			{
+			case 16:
+				nSample = (int) (fSample * 32767.0F);
+				if (isBigEndian())
+				{
+					convbuffer[nPointer++] = (byte) (nSample >> 8);
+					convbuffer[nPointer] = (byte) (nSample & 0xFF);
+				}
+				else
+				{
+					convbuffer[nPointer++] = (byte) (nSample & 0xFF);
+					convbuffer[nPointer] = (byte) (nSample >> 8);
+				}
+				break;
+
+			case 24:
+				nSample = (int) (fSample * 8388607.0F);
+				if (isBigEndian())
+				{
+					convbuffer[nPointer++] = (byte) (nSample >> 16);
+					convbuffer[nPointer++] = (byte) ((nSample >>> 8) & 0xFF);
+					convbuffer[nPointer] = (byte) (nSample & 0xFF);
+				}
+				else
+				{
+					convbuffer[nPointer++] = (byte) (nSample & 0xFF);
+					convbuffer[nPointer++] = (byte) ((nSample >>> 8) & 0xFF);
+					convbuffer[nPointer] = (byte) (nSample >> 16);
+				}
+				break;
+
+			case 32:
+				nSample = (int) (fSample * 2147483647.0F);
+				if (isBigEndian())
+				{
+					convbuffer[nPointer++] = (byte) (nSample >> 24);
+					convbuffer[nPointer++] = (byte) ((nSample >>> 16) & 0xFF);
+					convbuffer[nPointer++] = (byte) ((nSample >>> 8) & 0xFF);
+					convbuffer[nPointer] = (byte) (nSample & 0xFF);
+				}
+				else
+				{
+					convbuffer[nPointer++] = (byte) (nSample & 0xFF);
+					convbuffer[nPointer++] = (byte) ((nSample >>> 8) & 0xFF);
+					convbuffer[nPointer++] = (byte) ((nSample >>> 16) & 0xFF);
+					convbuffer[nPointer] = (byte) (nSample >> 24);
+		}
+				break;
+			}
 		}
 
 
@@ -587,7 +638,7 @@ public class JorbisFormatConversionProvider
 		    read more data from the stream. The resulting packet is
 		    placed in {@link #m_oggPacket m_oggPacket} (for which the
 		    reference is not altered; is has to be initialized before).
-		 */
+		*/
 		private void readOggPacket()
 			throws IOException
 		{
@@ -674,6 +725,25 @@ public class JorbisFormatConversionProvider
 
 
 
+		/** 
+		*/
+		private int getSampleSizeInBytes()
+		{
+			return getFormat().getFrameSize() / getFormat().getChannels();
+		}
+
+
+
+		/** .
+		    @return .
+		*/
+		private int getFrameSize()
+		{
+			return getFormat().getFrameSize();
+		}
+
+
+
 		/** Returns if this stream (the decoded one) is big endian.
 		    @return true if this stream is big endian.
 		*/
@@ -681,6 +751,8 @@ public class JorbisFormatConversionProvider
 		{
 			return getFormat().isBigEndian();
 		}
+
+
 
 		/**
 		 *
