@@ -170,6 +170,8 @@ public class AlsaSequencer
 		return false;
 	}
 
+
+
 	public void startRecording()
 	{
 	}
@@ -181,13 +183,14 @@ public class AlsaSequencer
 		// TODO:
 	}
 
-	{
-		// TODO:
-	}
+
+
 	public boolean isRecording()
 	{
 		return false;
 	}
+
+
 
 	// name should be: enableRecording
 	public void recordEnable(Track track, int nChannel)
@@ -205,14 +208,21 @@ public class AlsaSequencer
 
 	protected float getTempoNative()
 	{
-		return m_controlASequencer.getQueueTempo(getQueue());
+		if (isOpen())
+		{
+			return m_controlASequencer.getQueueTempo(getQueue());
+		}
+		else
+		{
+			return 0.0F;
+		}
 	}
 
 
 
 	protected void setTempoNative(float fRealMPQ)
 	{
-		if (m_controlASequencer != null)
+		if (isOpen())
 		{
 			m_controlASequencer.setQueueTempo(getQueue(), getSequence().getResolution(), (int) fRealMPQ);
 		}
@@ -222,30 +232,50 @@ public class AlsaSequencer
 
 	public long getTickPosition()
 	{
-		return m_controlASequencer.getQueuePositionTick(getQueue());
+		if (isOpen())
+		{
+			return m_controlASequencer.getQueuePositionTick(getQueue());
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 
 
 	public void setTickPosition(long lTick)
 	{
-		m_controlASequencer.setQueuePositionTick(getControlPort(), getQueue(), lTick);
+		if (isOpen())
+		{
+			m_controlASequencer.setQueuePositionTick(getControlPort(), getQueue(), lTick);
+		}
 	}
 
 
 
 	public long getMicrosecondPosition()
 	{
-		long	lNanoSeconds = m_controlASequencer.getQueuePositionTime(getQueue()) / 1000;
-		return lNanoSeconds / 1000;
+		if (isOpen())
+		{
+			long	lNanoSeconds = m_controlASequencer.getQueuePositionTime(getQueue()) / 1000;
+			return lNanoSeconds / 1000;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 
 
 	public void setMicrosecondPosition(long lMicroseconds)
 	{
-		long	lNanoSeconds = lMicroseconds * 1000;
-		m_controlASequencer.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
+		if (isOpen())
+		{
+			long	lNanoSeconds = lMicroseconds * 1000;
+			m_controlASequencer.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
+		}
 	}
 
 

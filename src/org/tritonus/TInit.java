@@ -26,6 +26,8 @@
 package	org.tritonus;
 
 
+import	java.util.Iterator;
+
 import	javax.sound.midi.spi.MidiDeviceProvider;
 import	javax.sound.midi.spi.MidiFileReader;
 import	javax.sound.midi.spi.MidiFileWriter;
@@ -40,15 +42,24 @@ import	org.tritonus.TConfiguration;
 import	org.tritonus.TDebug;
 import	org.tritonus.midi.TMidiConfig;
 import	org.tritonus.sampled.TAudioConfig;
-
+import	org.tritonus.util.Service;
 
 
 
 public class TInit
 {
+/*
 	private static interface ClassRegistrationAction
 	{
 		public void register(Class clazz)
+			throws	Exception;
+	}
+*/
+
+
+	private static interface ProviderRegistrationAction
+	{
+		public void register(Object provider)
 			throws	Exception;
 	}
 
@@ -57,25 +68,25 @@ public class TInit
 	static
 	{
 		// MidiDeviceProviders
-		registerClasses("midiDeviceProviders", new ClassRegistrationAction()
+		registerClasses(MidiDeviceProvider.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							MidiDeviceProvider	provider = (MidiDeviceProvider) cls.newInstance();
-							TMidiConfig.addMidiDeviceProvider(provider);
+							MidiDeviceProvider	midiDeviceProvider = (MidiDeviceProvider) obj;
+							TMidiConfig.addMidiDeviceProvider(midiDeviceProvider);
 						}
 				});
 
 
 
 		// MidiFileReaders
-		registerClasses("midiFileReaders", new ClassRegistrationAction()
+		registerClasses(MidiFileReader.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							MidiFileReader	provider = (MidiFileReader) cls.newInstance();
+							MidiFileReader	provider = (MidiFileReader) obj;
 							TMidiConfig.addMidiFileReader(provider);
 						}
 				});
@@ -86,12 +97,12 @@ public class TInit
 		}
 
 		// MidiFileWriters
-		registerClasses("midiFileWriters", new ClassRegistrationAction()
+		registerClasses(MidiFileWriter.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							MidiFileWriter	provider = (MidiFileWriter) cls.newInstance();
+							MidiFileWriter	provider = (MidiFileWriter) obj;
 							TMidiConfig.addMidiFileWriter(provider);
 						}
 				});
@@ -105,12 +116,12 @@ public class TInit
 		}
 
 		// SoundbankReaders
-		registerClasses("soundbankReaders", new ClassRegistrationAction()
+		registerClasses(SoundbankReader.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							SoundbankReader	provider = (SoundbankReader) cls.newInstance();
+							SoundbankReader	provider = (SoundbankReader) obj;
 							TMidiConfig.addSoundbankReader(provider);
 						}
 				});
@@ -124,52 +135,53 @@ public class TInit
 		}
 
 		// AudioFileReaders
-		registerClasses("audioFileReaders", new ClassRegistrationAction()
+		registerClasses(AudioFileReader.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							AudioFileReader	provider = (AudioFileReader) cls.newInstance();
+							AudioFileReader	provider = (AudioFileReader) obj;
 							TAudioConfig.addAudioFileReader(provider);
 						}
 				});
 
 
 		// AudioFileWriters
-		registerClasses("audioFileWriters", new ClassRegistrationAction()
+		registerClasses(AudioFileWriter.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							AudioFileWriter	provider = (AudioFileWriter) cls.newInstance();
+							AudioFileWriter	provider = (AudioFileWriter) obj;
 							TAudioConfig.addAudioFileWriter(provider);
 						}
 				});
 
 
 		// FormatConversionProviders
-		registerClasses("formatConversionProviders", new ClassRegistrationAction()
+		registerClasses(FormatConversionProvider.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							FormatConversionProvider	provider = (FormatConversionProvider) cls.newInstance();
+							FormatConversionProvider	provider = (FormatConversionProvider) obj;
 							TAudioConfig.addFormatConversionProvider(provider);
 						}
 				});
 
 		// MixerProviders
-		registerClasses("mixerProviders", new ClassRegistrationAction()
+		registerClasses(MixerProvider.class, new ProviderRegistrationAction()
 				{
-					public void register(Class cls)
+					public void register(Object obj)
 						throws	Exception
 						{
-							MixerProvider	provider = (MixerProvider) cls.newInstance();
+							MixerProvider	provider = (MixerProvider) obj;
 							TAudioConfig.addMixerProvider(provider);
 						}
 				});
 
 		// additional classes
+/*
 		String	strInitClasses = TConfiguration.getResourceString("initClasses");
 		String[]	astrInitClasses = TConfiguration.tokenize(strInitClasses);
 		for (int i = 0; i < astrInitClasses.length; i++)
@@ -186,12 +198,16 @@ public class TInit
 				}
 			}
 		}
+*/
 	}
 
 
 
-	private static void registerClasses(String strResourceKey,
-					    ClassRegistrationAction action)
+
+
+
+	private static void registerClasses(Class providerClass,
+					    ProviderRegistrationAction action)
 	{
 /*
 		if (TDebug.TraceInit)
@@ -199,37 +215,15 @@ public class TInit
 			TDebug.out("TInit.registerClasses(): before getting of resource string");
 		}
 */
-		String		strClassNames = TConfiguration.getResourceString(strResourceKey);
-		if (TDebug.TraceInit)
+		Iterator	providers = Service.providers(providerClass);
+		if (providers != null)
 		{
-			TDebug.out("TInit.registerClasses(): class names (" + strResourceKey + "): " + strClassNames);
-		}
-		if (strClassNames != null)
-		{
-			String[]	astrClassNames = TConfiguration.tokenize(strClassNames);
-			for (int i = 0; i < astrClassNames.length; i++)
+			while (providers.hasNext())
 			{
+				Object	provider = providers.next();
 				try
 				{
-					Class	cls = Class.forName(astrClassNames[i]);
-					if (TDebug.TraceInit)
-					{
-						TDebug.out("TInit.registerClasses(): class " + astrClassNames[i] + " loaded");
-					}
-					action.register(cls);
-/*
-					if (TDebug.TraceInit)
-					{
-						TDebug.out("TInit.registerClasses(): class registered");
-					}
-*/
-				}
-				catch (ClassNotFoundException e)
-				{
-					if (TDebug.TraceInit)
-					{
-						TDebug.out(e);
-					}
+					action.register(provider);
 				}
 				catch (Throwable e)
 				{

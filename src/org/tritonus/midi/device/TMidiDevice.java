@@ -160,14 +160,20 @@ public abstract class TMidiDevice
 
 	public int getMaxReceivers()
 	{
-		return Integer.MAX_VALUE;
+		/*
+		 *	The value -1 means unlimited.
+		 */
+		return -1;
 	}
 
 
 
 	public int getMaxTransmitters()
 	{
-		return Integer.MAX_VALUE;
+		/*
+		 *	The value -1 means unlimited.
+		 */
+		return -1;
 	}
 
 

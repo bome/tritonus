@@ -7,8 +7,7 @@ ALSA
 The MIDI stuff of tritonus makes heavy use of the ALSA sequencer.
 ALSA is the Advanced Linux Sound Architecture
 (http://www.alsa-project.org), a new soundcard driver system intended
-to replace the OSS/Free driver. According to Alan Cox, ALSA will be
-merged into the official kernel source for Linux 2.5.
+to replace the OSS/Free driver in future kernels.
 
 
 HOW TO MAKE IT WORK
@@ -20,8 +19,8 @@ kernel configuration, enable sound support, but do not include any
 concrete driver.  Enabling kernel symbol versioning helps if you
 recompile kernels frequently.
 
-Download and install the ALSA drivers/lib/utils version 0.5.1a or
-later.  You cannot use 4.1 versions of ALSA due to incompatible
+Download and install the ALSA drivers/lib/utils version 0.5.x.
+You cannot use 4.1 versions of ALSA due to incompatible
 changes.  Be sure to configure '--with-sequencer=yes' in the driver
 part.  Install the modules and load the new versions.  Load the
 sequencer modules. For help on installing ALSA, see the alsa-user
