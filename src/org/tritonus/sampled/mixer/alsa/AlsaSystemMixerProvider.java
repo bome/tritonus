@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -26,11 +26,8 @@
 package	org.tritonus.sampled.mixer.alsa;
 
 
-import	javax.sound.sampled.Mixer;
-import	javax.sound.sampled.spi.MixerProvider;
-
 import	org.tritonus.share.TDebug;
-import	org.tritonus.lowlevel.alsa.Alsa;
+import	org.tritonus.lowlevel.alsa.AlsaCtl;
 import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
 
@@ -38,24 +35,35 @@ import	org.tritonus.share.sampled.mixer.TMixerProvider;
 public class AlsaSystemMixerProvider
 	extends	TMixerProvider
 {
+	private static boolean		sm_bInitialized = false;
+
+
+
 	public AlsaSystemMixerProvider()
 	{
 		super();
-/*
-		int	nNumCards = Alsa.getCards();
-		if (TDebug.TraceMixerProvider)
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.<init>(): begin"); }
+		if (!sm_bInitialized)
 		{
-			System.out.println("AlsaSystemMixerProvider.<init>(): num cards: " + nNumCards);
+			staticInit();
+			sm_bInitialized = true;
 		}
-		for (int i = 0; i < nNumCards; i++)
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.<init>(): end"); }
+	}
+
+
+
+	protected void staticInit()
+	{
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.staticInit(): begin"); }
+		int[]	anCards = AlsaCtl.getCards();
+		if (TDebug.TraceMixerProvider) { System.out.println("AlsaSystemMixerProvider.staticInit(): num cards: " + anCards.length); }
+		for (int i = 0; i < anCards.length; i++)
 		{
-			Alsa.loadCard(i);
-			AlsaMixer	mixer = new AlsaMixer(i);
-			super.addMixer(mixer);
+			AlsaSystemMixer	mixer = new AlsaSystemMixer(anCards[i]);
+			addMixer(mixer);
 		}
-*/
-		Mixer	mixer = new TestSystemMixer();
-		addMixer(mixer);
+		if (TDebug.TraceMixerProvider) { TDebug.out("AlsaSystemMixerProvider.staticInit(): end"); }
 	}
 }
 
