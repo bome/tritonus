@@ -27,7 +27,7 @@ package	javax.sound.midi;
 
 
 
-public abstract interface MidiChannel
+public interface MidiChannel
 {
 	public void noteOn(int nNoteNumber, int nVelocity);
 	public void noteOff(int nNoteNumber, int nVelocity);

@@ -30,7 +30,7 @@ import	java.io.IOException;
 
 
 
-public abstract interface Clip
+public interface Clip
 	extends		DataLine
 {
 	// TODO: check value against sun implementation

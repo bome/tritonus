@@ -28,7 +28,7 @@ package	javax.sound.midi;
 
 
 
-public abstract interface Soundbank
+public interface Soundbank
 {
 	public String getName();
 

@@ -29,7 +29,7 @@ import	java.util.EventListener;
 
 
 
-public abstract interface ControllerEventListener
+public interface ControllerEventListener
 	extends	EventListener
 {
 	public void controlChange(ShortMessage message);

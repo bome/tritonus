@@ -28,7 +28,7 @@ package	javax.sound.midi;
 
 
 
-public abstract interface Synthesizer
+public interface Synthesizer
 	extends	MidiDevice
 {
 	public int getMaxPolyphony();

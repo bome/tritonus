@@ -28,7 +28,7 @@ package	javax.sound.sampled;
 
 
 
-public abstract interface SourceDataLine
+public interface SourceDataLine
 	extends		DataLine
 {
 	public void open(AudioFormat audioFormat,

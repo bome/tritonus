@@ -29,7 +29,7 @@ import	java.util.EventListener;
 
 
 
-public abstract interface MetaEventListener
+public interface MetaEventListener
 	extends	EventListener
 {
 	public void meta(MetaMessage message);
