@@ -407,18 +407,11 @@ public class AlsaSeq
 
 
 
-	private SystemInfo	m_systemInfo;
-
-
-// 	private long getNativeHandle()
-// 	{
-// 		return m_lNativeHandle;
-// 	}
-
 	public AlsaSeq()
 	{
 		super();
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(): begin"); }
+		// TODO: open() should return success value. depending on it, a runtime exception should be thrown
 		m_nClientId = open();
 		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.<init>(): end"); }
 	}
@@ -434,12 +427,6 @@ public class AlsaSeq
 	}
 
 
-	public int getClientId()
-	{
-		return m_nClientId;
-	}
-
-
 
 	/**	Opens the sequencer.
 	 *	Calls snd_seq_open() and snd_seq_client_id(). Returns the
@@ -451,6 +438,26 @@ public class AlsaSeq
 	 *	Calls snd_seq_close().
 	 */
 	public native void close();
+
+	public native String getName();
+
+	public native int getType();
+	
+	public native int setNonblock(boolean bNonblock);
+	
+	public native int getClientId();
+
+	public native int getOutputBufferSize();
+
+	public native int getInputBufferSize();
+
+	public native int setOutputBufferSize(int nSize);
+
+	public native int setInputBufferSize(int nSize);
+
+
+
+	public native int getSystemInfo(SystemInfo systemInfo);
 
 	public native int getPortInfo(int nPort, PortInfo portInfo);
 
@@ -478,11 +485,84 @@ public class AlsaSeq
 	public native int freeQueue(int nQueue);
 
 
+
+	/**	Get the queue information.
+		This method fills a QueueInfo instance with information
+		from the given queue. Internally, snd_seq_get_queue_info()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int getQueueInfo(int nQueue, QueueInfo queueInfo);
+
+
+
+	/**	Set the queue information.
+		This method sets the information for the given queue from
+		the QueueInfo instance. Internally, snd_seq_set_queue_info()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int setQueueInfo(int nQueue, QueueInfo queueInfo);
+
+
+	/**	Get the queue status.
+		This method fills a QueueStatus instance with information
+		from the given queue. Internally, snd_seq_get_queue_status()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int getQueueStatus(int nQueue, QueueStatus queueStatus);
+
+
+	/**	Get the queue tempo.
+		This method fills a QueueTempo instance with information
+		from the given queue. Internally, snd_seq_get_queue_tempo()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int getQueueTempo(int nQueue, QueueTempo queueTempo);
+
+
+	/**	Set the queue tempo.
+		This method sets the information for the given queue from
+		the QueueTempo instance. Internally, snd_seq_set_queue_tempo()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int setQueueTempo(int nQueue, QueueTempo queueTempo);
+
+
+	/**	Get the queue timer.
+		This method fills a QueueTimer instance with information
+		from the given queue. Internally, snd_seq_get_queue_timer()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int getQueueTimer(int nQueue, QueueTimer queueTimer);
+
+
+	/**	Set the queue timer.
+		This method sets the timer for the given queue from
+		the QueueTimer instance. Internally, snd_seq_set_queue_timer()
+		is called.
+
+		@return returns 0 on success, otherwise a negative value.
+	*/
+	public native int setQueueTimer(int nQueue, QueueTimer queueTimer);
+
+
 	/*
 	 *	nResolution: ticks/beat
 	 *	nTempo: microseconds/beat
 	 */
-	public native void setQueueTempo(int nQueue, int nResolution, int nTempo);
+	// TODO: remove
+	// public native void setQueueTempo(int nQueue, int nResolution, int nTempo);
 
 
 	/**	Get the current tempo of a queue.
@@ -492,8 +572,9 @@ public class AlsaSeq
 	 *	anValues[0]	tempo (us/tick)
 	 *	anValues[1]	resolution (ticks/quarter)
 	 */
-	public native void getQueueTempo(int nQueue,
-					 int[] anValues);
+	// TODO: remove
+// 	public native void getQueueTempo(int nQueue,
+// 					 int[] anValues);
 
 
 	/**	Get information about a queue.
@@ -506,9 +587,10 @@ public class AlsaSeq
 	 *	alValues[0]	tick time
 	 *	alValues[1]	real time (ns)
 	 */
-	public native void getQueueStatus(int nQueue,
-					  int[] anValues,
-					  long[] alValues);
+	// TODO: remove
+// 	public native void getQueueStatus(int nQueue,
+// 					  int[] anValues,
+// 					  long[] alValues);
 
 
 	public native void subscribePort(
@@ -615,7 +697,7 @@ public class AlsaSeq
 	 *	Calls snd_seq_system_info() and puts the relevant values into
 	 *	the passed array.
 	 */
-	public native void getSystemInfo(int[] anValues);
+	// public native void getSystemInfo(int[] anValues);
 
 	/**	Gets information about this client.
 	 *	Calls snd_seq_get_client_info() [nClient <= -1]
@@ -699,19 +781,6 @@ public class AlsaSeq
 
 
 
-	public SystemInfo getSystemInfo()
-	{
-		if (m_systemInfo == null)
-		{
-			int[]	anValues = new int[4];
-			getSystemInfo(anValues);
-			m_systemInfo = new SystemInfo(anValues[0], anValues[1], anValues[2], anValues[3]);
-		}
-		return m_systemInfo;
-	}
-
-
-
 	public ClientInfo getClientInfo()
 	{
 		return getClientInfo(getClientId());
@@ -780,31 +849,31 @@ public class AlsaSeq
 	 *
 	 *	@return the current playback position in ticks
 	 */
-	public long getQueuePositionTick(int nQueue)
-	{
-		int[]	anValues = new int[3];
-		long[]	alValues = new long[2];
-		getQueueStatus(nQueue,
-			       anValues,
-			       alValues);
-		return alValues[0];
-	}
+// 	public long getQueuePositionTick(int nQueue)
+// 	{
+// 		int[]	anValues = new int[3];
+// 		long[]	alValues = new long[2];
+// 		getQueueStatus(nQueue,
+// 			       anValues,
+// 			       alValues);
+// 		return alValues[0];
+// 	}
 
 
 
-	/**	Get the playback position of a sequencer queue.
-	 *
-	 *	@return the current playback position in nanoseconds
-	 */
-	public long getQueuePositionTime(int nQueue)
-	{
-		int[]	anValues = new int[3];
-		long[]	alValues = new long[2];
-		getQueueStatus(nQueue,
-			       anValues,
-			       alValues);
-		return alValues[1];
-	}
+// 	/**	Get the playback position of a sequencer queue.
+// 	 *
+// 	 *	@return the current playback position in nanoseconds
+// 	 */
+// 	public long getQueuePositionTime(int nQueue)
+// 	{
+// 		int[]	anValues = new int[3];
+// 		long[]	alValues = new long[2];
+// 		getQueueStatus(nQueue,
+// 			       anValues,
+// 			       alValues);
+// 		return alValues[1];
+// 	}
 
 
 
@@ -870,13 +939,13 @@ public class AlsaSeq
 
 	/**	Returns tempo in MPQ.
 	 */
-	public int getQueueTempo(int nQueue)
-	{
-		int[]	anValues = new int[2];
-		getQueueTempo(nQueue,
-			      anValues);
-		return anValues[0] * anValues[1];
-	}
+// 	public int getQueueTempo(int nQueue)
+// 	{
+// 		int[]	anValues = new int[2];
+// 		getQueueTempo(nQueue,
+// 			      anValues);
+// 		return anValues[0] * anValues[1];
+// 	}
 
 
 
@@ -1416,265 +1485,265 @@ public class AlsaSeq
 			/*
 			 *	Sleep for 1 ms to enable scheduling.
 			 */
-			try
+		try
+		{
+			Thread.sleep(1);
+		}
+		catch (InterruptedException e)
+		{
+			if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+		}
+		}
+	// TDebug.out("after getEvent()");
+	MidiMessage	message = null;
+	int	nType = anValues[0];
+	switch (nType)
+	{
+	case SND_SEQ_EVENT_NOTEON:
+	case SND_SEQ_EVENT_NOTEOFF:
+	{
+		if (TDebug.TraceAlsaSeq)
+		{
+			TDebug.out("AlsaSeq.getEvent(): note event");
+		}
+		ShortMessage	shortMessage = new ShortMessage();
+		int	nCommand = (nType == SND_SEQ_EVENT_NOTEON) ? 0x90 : 0x80;
+		int	nChannel = anValues[8] & 0xF;
+		int	nKey = anValues[9] & 0x7F;
+		int	nVelocity = anValues[10] & 0x7F;
+		try
+		{
+			shortMessage.setMessage(nCommand, nChannel, nKey, nVelocity);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
 			{
-				Thread.sleep(1);
-			}
-			catch (InterruptedException e)
-			{
-				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				TDebug.out(e);
 			}
 		}
-		// TDebug.out("after getEvent()");
-		MidiMessage	message = null;
-		int	nType = anValues[0];
-		switch (nType)
+		message = shortMessage;
+		break;
+	}
+
+	case SND_SEQ_EVENT_KEYPRESS:
+	{
+		if (TDebug.TraceAlsaSeq)
 		{
-		case SND_SEQ_EVENT_NOTEON:
-		case SND_SEQ_EVENT_NOTEOFF:
-		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): note event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = (nType == SND_SEQ_EVENT_NOTEON) ? 0x90 : 0x80;
-			int	nChannel = anValues[8] & 0xF;
-			int	nKey = anValues[9] & 0x7F;
-			int	nVelocity = anValues[10] & 0x7F;
-			try
-			{
-				shortMessage.setMessage(nCommand, nChannel, nKey, nVelocity);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
+			TDebug.out("AlsaSeq.getEvent(): key pressure event");
 		}
-
-		case SND_SEQ_EVENT_KEYPRESS:
+		ShortMessage	shortMessage = new ShortMessage();
+		int	nCommand = 0xA0;
+		int	nChannel = anValues[8] & 0xF;
+		int	nKey = anValues[9] & 0x7F;
+		int	nValue = anValues[10] & 0x7F;
+		try
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): key pressure event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xA0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nKey = anValues[9] & 0x7F;
-			int	nValue = anValues[10] & 0x7F;
-			try
-			{
-				shortMessage.setMessage(nCommand, nChannel, nKey, nValue);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
+			shortMessage.setMessage(nCommand, nChannel, nKey, nValue);
 		}
-
-		case SND_SEQ_EVENT_CONTROLLER:
+		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaSeq)
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
 			{
-				TDebug.out("AlsaSeq.getEvent(): controller event");
+				TDebug.out(e);
 			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xB0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nControl = anValues[9] & 0x7F;
-			int	nValue = anValues[10] & 0x7F;
-			try
-			{
-
-				shortMessage.setMessage(nCommand, nChannel, nControl, nValue);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
 		}
+		message = shortMessage;
+		break;
+	}
 
-		case SND_SEQ_EVENT_PGMCHANGE:
+	case SND_SEQ_EVENT_CONTROLLER:
+	{
+		if (TDebug.TraceAlsaSeq)
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): program change event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xC0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nProgram = anValues[10] & 0x7F;
-			try
-			{
-				shortMessage.setMessage(nCommand, nChannel, nProgram, 0);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
+			TDebug.out("AlsaSeq.getEvent(): controller event");
 		}
-
-		case SND_SEQ_EVENT_CHANPRESS:
+		ShortMessage	shortMessage = new ShortMessage();
+		int	nCommand = 0xB0;
+		int	nChannel = anValues[8] & 0xF;
+		int	nControl = anValues[9] & 0x7F;
+		int	nValue = anValues[10] & 0x7F;
+		try
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): channel pressure event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xD0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nPressure = anValues[10] & 0x7F;
-			try
-			{
-				// TODO: dirty: assuming time in ticks
-				shortMessage.setMessage(nCommand, nChannel, nPressure, 0);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
-		}
 
-		case SND_SEQ_EVENT_PITCHBEND:
+			shortMessage.setMessage(nCommand, nChannel, nControl, nValue);
+		}
+		catch (InvalidMidiDataException e)
 		{
-			if (TDebug.TraceAlsaSeq)
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
 			{
-				TDebug.out("AlsaSeq.getEvent(): pitchbend event");
+				TDebug.out(e);
 			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xE0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nValueLow = anValues[10] & 0x7F;
-			int	nValueHigh = (anValues[10] >> 7) & 0x7F;
-			try
-			{
-				shortMessage.setMessage(nCommand, nChannel, nValueLow, nValueHigh);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
 		}
+		message = shortMessage;
+		break;
+	}
 
-		case SND_SEQ_EVENT_USR_VAR4:
+	case SND_SEQ_EVENT_PGMCHANGE:
+	{
+		if (TDebug.TraceAlsaSeq)
 		{
-			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): meta event"); }
-			MetaMessage	metaMessage = new MetaMessage();
-			byte[]	abTransferData = (byte[]) aValues[0];
-			int	nMetaType = abTransferData[0];
-			byte[]	abData = new byte[abTransferData.length - 1];
-			System.arraycopy(abTransferData, 1, abData, 0, abTransferData.length - 1);
-			try
-			{
-				metaMessage.setMessage(nMetaType, abData, abData.length);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions) { TDebug.out(e); }
-			}
-			message = metaMessage;
-			break;
+			TDebug.out("AlsaSeq.getEvent(): program change event");
 		}
-
-		case SND_SEQ_EVENT_SYSEX:
+		ShortMessage	shortMessage = new ShortMessage();
+		int	nCommand = 0xC0;
+		int	nChannel = anValues[8] & 0xF;
+		int	nProgram = anValues[10] & 0x7F;
+		try
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): sysex event");
-			}
-			SysexMessage	sysexMessage = new SysexMessage();
-			byte[]	abCompleteData = (byte[]) aValues[0];
-			int	nStatus = 0;
-			int	nDataStart = 0;
-			if (abCompleteData[0] == 0xF0)
-			{
-				nStatus = 0xF0;
-				nDataStart = 1;
-			}
-			else
-			{
-				nStatus = 0xF7;
-			}
-			byte[]	abData = new byte[abCompleteData.length - nDataStart];
-			System.arraycopy(abCompleteData, nDataStart, abData, 0, abCompleteData.length - 1);
-			try
-			{
-				sysexMessage.setMessage(nStatus, abData, abData.length);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = sysexMessage;
-			break;
+			shortMessage.setMessage(nCommand, nChannel, nProgram, 0);
 		}
-
-		default:
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): unknown event");
-			}
-
-		}
-		if (message != null)
+		catch (InvalidMidiDataException e)
 		{
-			/*
-			  If the timestamp is in ticks, ticks in the MidiEvent
-			  gets this value.
-			  Otherwise, if the timestamp is in realtime (ns),
-			  we put us in the tick value.
-			*/
-			long	lTick = 0L;
-			if ((anValues[1] & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
+			if (TDebug.TraceAllExceptions)
 			{
-				lTick = alValues[0];
+				TDebug.out(e);
 			}
-			else
+		}
+		message = shortMessage;
+		break;
+	}
+
+	case SND_SEQ_EVENT_CHANPRESS:
+	{
+		if (TDebug.TraceAlsaSeq)
+		{
+			TDebug.out("AlsaSeq.getEvent(): channel pressure event");
+		}
+		ShortMessage	shortMessage = new ShortMessage();
+		int	nCommand = 0xD0;
+		int	nChannel = anValues[8] & 0xF;
+		int	nPressure = anValues[10] & 0x7F;
+		try
+		{
+			// TODO: dirty: assuming time in ticks
+			shortMessage.setMessage(nCommand, nChannel, nPressure, 0);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
 			{
-				// ns -> us
-				lTick = alValues[0] / 1000;
+				TDebug.out(e);
 			}
-			MidiEvent	event = new MidiEvent(message, lTick);
-			return event;
+		}
+		message = shortMessage;
+		break;
+	}
+
+	case SND_SEQ_EVENT_PITCHBEND:
+	{
+		if (TDebug.TraceAlsaSeq)
+		{
+			TDebug.out("AlsaSeq.getEvent(): pitchbend event");
+		}
+		ShortMessage	shortMessage = new ShortMessage();
+		int	nCommand = 0xE0;
+		int	nChannel = anValues[8] & 0xF;
+		int	nValueLow = anValues[10] & 0x7F;
+		int	nValueHigh = (anValues[10] >> 7) & 0x7F;
+		try
+		{
+			shortMessage.setMessage(nCommand, nChannel, nValueLow, nValueHigh);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
+		}
+		message = shortMessage;
+		break;
+	}
+
+	case SND_SEQ_EVENT_USR_VAR4:
+	{
+		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): meta event"); }
+		MetaMessage	metaMessage = new MetaMessage();
+		byte[]	abTransferData = (byte[]) aValues[0];
+		int	nMetaType = abTransferData[0];
+		byte[]	abData = new byte[abTransferData.length - 1];
+		System.arraycopy(abTransferData, 1, abData, 0, abTransferData.length - 1);
+		try
+		{
+			metaMessage.setMessage(nMetaType, abData, abData.length);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions) { TDebug.out(e); }
+		}
+		message = metaMessage;
+		break;
+	}
+
+	case SND_SEQ_EVENT_SYSEX:
+	{
+		if (TDebug.TraceAlsaSeq)
+		{
+			TDebug.out("AlsaSeq.getEvent(): sysex event");
+		}
+		SysexMessage	sysexMessage = new SysexMessage();
+		byte[]	abCompleteData = (byte[]) aValues[0];
+		int	nStatus = 0;
+		int	nDataStart = 0;
+		if (abCompleteData[0] == 0xF0)
+		{
+			nStatus = 0xF0;
+			nDataStart = 1;
 		}
 		else
 		{
-			return null;
+			nStatus = 0xF7;
 		}
+		byte[]	abData = new byte[abCompleteData.length - nDataStart];
+		System.arraycopy(abCompleteData, nDataStart, abData, 0, abCompleteData.length - 1);
+		try
+		{
+			sysexMessage.setMessage(nStatus, abData, abData.length);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
+		}
+		message = sysexMessage;
+		break;
+	}
+
+	default:
+		if (TDebug.TraceAlsaSeq)
+		{
+			TDebug.out("AlsaSeq.getEvent(): unknown event");
+		}
+
+	}
+	if (message != null)
+	{
+		/*
+		  If the timestamp is in ticks, ticks in the MidiEvent
+		  gets this value.
+		  Otherwise, if the timestamp is in realtime (ns),
+		  we put us in the tick value.
+		*/
+		long	lTick = 0L;
+		if ((anValues[1] & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK)
+		{
+			lTick = alValues[0];
+		}
+		else
+		{
+			// ns -> us
+			lTick = alValues[0] / 1000;
+		}
+		MidiEvent	event = new MidiEvent(message, lTick);
+		return event;
+	}
+	else
+	{
+		return null;
+	}
 	}
 
 
@@ -1741,51 +1810,68 @@ public class AlsaSeq
 	 */
 	public static class SystemInfo
 	{
-		private int	m_nMaxQueues;
-		private int	m_nMaxClients;
-		private int	m_nMaxPortsPerClient;
-		private int	m_nMaxChannelsPerPort;
+		/**
+		 *	Holds the pointer to snd_seq_system_info_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
 
 
-		public SystemInfo(int nMaxQueues, int nMaxClients, int nMaxPortsPerClient, int nMaxChannelsPerPort)
+
+		public SystemInfo()
 		{
-			m_nMaxQueues = nMaxQueues;
-			m_nMaxClients = nMaxClients;
-			m_nMaxPortsPerClient = nMaxPortsPerClient;
-			m_nMaxChannelsPerPort = nMaxChannelsPerPort;
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.SystemInfo.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of system_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.SystemInfo.<init>(): end"); }
 		}
 
 
 
-		public int getMaxQueues()
+		public void finalize()
 		{
-			return m_nMaxQueues;
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
 		}
 
 
 
-		public int getMaxClients()
-		{
-			return m_nMaxClients;
-		}
+		private native int malloc();
+		public native void free();
 
 
 
-		public int getMaxPortsPerClient()
-		{
-			return m_nMaxPortsPerClient;
-		}
+		public native int getQueues();
 
 
 
-		public int getMaxChannelsPerPort()
-		{
-			return m_nMaxChannelsPerPort;
-		}
+		public native int getClients();
+
+
+
+		public native int getPorts();
+
+
+
+		public native int getChannels();
+
+
+
+		public native int getCurrentClients();
+
+
+
+		public native int getCurrentQueues();
 	}
 
 
 
+	// TODO: change to native style
 	public static class ClientInfo
 	{
 		private int	m_nClientId;
@@ -1914,10 +2000,205 @@ public class AlsaSeq
 
 
 		public native int getPortSpecified();
+	}
 
+
+
+	public static class QueueInfo
+	{
+		/**
+		 *	Holds the pointer to snd_seq_queue_info_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public QueueInfo()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueInfo.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueInfo.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+		public native int getQueue();
+		public native String getName();
+		public native int getOwner();
+		public native boolean getLocked();
+		public native int getFlags();
+
+							 public native void setName(String strName);
+							 public native void setOwner(int nOwner);
+							 public native void setLocked(boolean bLocked);
+							 public native void setFlags(int nFlags);
+
+	}
+
+
+
+	public static class QueueStatus
+	{
+		/**
+		 *	Holds the pointer to snd_seq_queue_status_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public QueueStatus()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueStatus.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueStatus.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+							 public native int getQueue();
+							 public native int getEvents();
+							 public native long getTickTime();
+							 public native long getRealTime();
+							 public native int getStatus();
+
+	}
+
+
+
+	public static class QueueTempo
+	{
+		/**
+		 *	Holds the pointer to snd_seq_queue_tempo_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public QueueTempo()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTempo.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTempo.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+							 public native int getQueue();
+							 public native int getTempo();
+							 public native int getPpq();
+							 public native void setTempo(int nTempo);
+							 public native void setPpq(int nPpq);
+
+	}
+
+
+
+	public static class QueueTimer
+	{
+		/**
+		 *	Holds the pointer to snd_seq_queue_timer_t
+		 *	for the native code.
+		 *	This must be long to be 64bit-clean.
+		 */
+		/*private*/ long	m_lNativeHandle;
+
+
+
+		public QueueTimer()
+		{
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTimer.<init>(): begin"); }
+			int	nReturn = malloc();
+			if (nReturn < 0)
+			{
+				throw new RuntimeException("malloc of port_info failed");
+			}
+			if (TDebug.TraceAlsaSeqNative) { TDebug.out("AlsaSeq.QueueTimer.<init>(): end"); }
+		}
+
+
+
+		public void finalize()
+		{
+			// TODO: call free()
+			// call super.finalize() first or last?
+			// and introduce a flag if free() has already been called?
+		}
+
+
+
+		private native int malloc();
+		public native void free();
+
+							 public native int getQueue();
+							 public native int getType();
+							 // TODO:
+							 // public native ?? getTimerId();
+							 public native int getResolution();
+
+							 public native void setType(int nType);
+							 // TODO:
+							 // public native void setId(???);
+							 public native void setResolution(int nResolution);
 
 
 	}
+
+
+
 
 
 	private class ClientInfoIterator
