@@ -79,7 +79,7 @@
 	</target>
 
 	<target name="dist"
-		depends="compile,compile-midishare,compile-libs,build-javalayer">
+		depends="build-javalayer,compile,compile-midishare,compile-libs" >
 		<mkdir dir="${dist}" />
 
 		<jar jarfile="${dist}/tritonus_core.jar"
