@@ -77,6 +77,15 @@ privileged aspect AJDebugVorbis
 				outLeavingJoinPoint(thisJoinPoint);
 			}
 		}
+
+
+	before(Throwable t): allExceptions() && args(t)
+		{
+			if (TDebug.TraceAllExceptions)
+			{
+				TDebug.out(t);
+			}
+		}
 }
 
 
