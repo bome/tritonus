@@ -168,7 +168,9 @@ public class AlawFormatConversionProvider
 			           sourceStream.getFormat().getFrameRate(),
 			           sourceStream.getFormat().isBigEndian()));
 			convertType=getConvertType(sourceStream.getFormat());
-			enableConvertInPlace();
+			if (sourceStream.getFormat().getSampleSizeInBits() == 8) {
+				enableConvertInPlace();
+			}
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}
@@ -238,7 +240,9 @@ public class AlawFormatConversionProvider
 			           sourceStream.getFormat().getFrameRate(),
 			           targetFormat.isBigEndian()));
 			convertType=getConvertType(getFormat());
-			enableConvertInPlace();
+			if (targetFormat.getSampleSizeInBits() == 8) {
+				enableConvertInPlace();
+			}
 			if (convertType==0)
 				throw new IllegalArgumentException("format conversion not supported");
 		}
