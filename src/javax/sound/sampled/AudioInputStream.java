@@ -61,35 +61,35 @@ public class AudioInputStream
 
 
 	/**	The length of the audio data.
-	 *	This value is in frames.
-	 *	May have the value AudioSystem.NOT_SPECIFIED to express
-	 *	that the length in frames is unknown.
-	 *	Accessing this property, especially writing, is discouraged.
-	 *	You should use the method getFrameLength().
+	 *
+	 *  This value is in frames.  May have the value
+	 *  AudioSystem.NOT_SPECIFIED to express that the length in frames
+	 *  is unknown.  Accessing this property, especially writing, is
+	 *  strongly discouraged.  You should use the method
+	 *  getFrameLength().
 	 */
 	protected long			frameLength;
 
 
 
 	/**	The size of an frame of audio data.
-	 *	This value is in bytes.
-	 *	May have the value AudioSystem.NOT_SPECIFIED to express
-	 *	that the size of frames is unknown.
-	 *	Accessing this property, especially writing, is strongly
-	 *	discouraged. Its semantics is not clearly defined.
+	 *
+	 *	This value is in bytes.  May have the value
+	 *	AudioSystem.NOT_SPECIFIED to express that the size of frames
+	 *	is unknown.  Accessing this property, especially writing, is
+	 *	strongly discouraged. Its semantics is not clearly defined.
 	 */
 	protected int			frameSize;
 
 
 
 	/**	The size of an frame of audio data.
-	 *	This value is used internally to check whether the number
-	 *	of bytes requested in read() or skip() is a multiple of the
-	 *	frame size.
-	 *	This value is in bytes.
-	 *	In contrary to frameSize, which may be
-	 *	AudioSystem.NOT_SPECIFIED, this variable always has
-	 *	a value >= 1. If the length in frames or the frame size of
+	 *
+	 *	This value is used internally to check whether the number of
+	 *	bytes requested in read() or skip() is a multiple of the frame
+	 *	size.  This value is in bytes.  In contrary to frameSize,
+	 *	which may be AudioSystem.NOT_SPECIFIED, this variable always
+	 *	has a value >= 1. If the length in frames or the frame size of
 	 *	the audio data is unknown, this value is set to 1.
 	 */
 	private int			m_nCheckFrameSize;
@@ -97,10 +97,10 @@ public class AudioInputStream
 
 
 	/**	The read position in the stream.
-	 *	This value is in frames.
-	 *	NOTE: this property only has a useful value if the encoding
-	 *	of the stream is PCM.
-	 *	Accessing this property, especially writing, is strongly
+	 *
+	 *	This value is in frames.  NOTE: this property only has a
+	 *	useful value if the encoding of the stream is PCM.  Accessing
+	 *	this property, especially writing, is strongly
 	 *	discouraged. Its semantics is not clearly defined.
 	 */
 	protected long			framePos;
@@ -108,6 +108,7 @@ public class AudioInputStream
 
 
 	/**	The read position in the stream.
+	 *
 	 *	This value is in bytes.
 	 */
 	private long			m_lPosition;
@@ -115,9 +116,10 @@ public class AudioInputStream
 
 
 	/**	The length of the audio data.
-	 *	This value is in bytes.
-	 *	May have the value AudioSystem.NOT_SPECIFIED to express
-	 *	that the length is unknown.
+	 *
+	 *	This value is in bytes.  May have the value
+	 *	AudioSystem.NOT_SPECIFIED to express that the length is
+	 *	unknown.
 	 */
 	private long			m_lLengthInBytes;
 
@@ -126,6 +128,7 @@ public class AudioInputStream
 
 
 	/**	Position where the mark was set in the stream.
+	 *
 	 *	This value is in bytes.
 	 */
 	private long			m_lMarkedPosition;
@@ -135,13 +138,10 @@ public class AudioInputStream
 
 
 	public AudioInputStream(InputStream inputStream,
-				AudioFormat audioFormat,
-				long lLengthInFrames)
+							AudioFormat audioFormat,
+							long lLengthInFrames)
 	{
-		if (TDebug.TraceAudioInputStream)
-		{
-			TDebug.out("AudioInputStream.<init>: inputStream: " + inputStream);
-		}
+		if (TDebug.TraceAudioInputStream) { TDebug.out("AudioInputStream.<init>: inputStream: " + inputStream); }
 		stream = inputStream;
 		format = audioFormat;
 		frameLength = lLengthInFrames;
@@ -240,17 +240,23 @@ public class AudioInputStream
 		//$$fb e.g. SequenceInputStream
 		int nBytesRead=0;
 		int thisRead;
-		do {
-		  thisRead = stream.read(abData, nOffset, nLength);
-		  if (thisRead>0) {
-		  	nBytesRead+=thisRead;
-		  	nLength-=thisRead;
-		  	nOffset+=thisRead;
+		do
+		{
+			thisRead = stream.read(abData, nOffset, nLength);
+			if (thisRead > 0)
+			{
+				nBytesRead += thisRead;
+		  	nLength -= thisRead;
+		  	nOffset += thisRead;
 		  }
-		} while (thisRead>0 && nLength>0);
-		if (nBytesRead<=0 && thisRead==-1) {
-			nBytesRead=-1;
-		} else {
+		}
+		while (thisRead > 0 && nLength > 0);
+		if (nBytesRead <= 0 && thisRead == -1)
+		{
+			nBytesRead =- 1;
+		}
+		else
+		{
 			m_lPosition += nBytesRead;
 			updateFramePosition();
 		}
@@ -330,6 +336,7 @@ public class AudioInputStream
 
 
 	/**	Returns the frame size for internal checks.
+	 *
 	 *	This number is is bytes.
 	 */
 	private int getCheckFrameSize()
@@ -347,6 +354,7 @@ public class AudioInputStream
 
 
 	/**	Calculates the position in frames from the position in bytes.
+	 *
 	 *	This only produces meaningful values if the encoding is PCM.
 	 *	Maintaining framePos is only done for backwards compatibility
 	 *	with really badly designed programs that directely access the
@@ -370,6 +378,7 @@ public class AudioInputStream
 
 
 		/**	A buffer used for reading single bytes.
+		 *
 		 *	It is allocated and used in read().
 		 */
 		private byte[]		m_abSingleByteBuffer = null;
@@ -416,4 +425,3 @@ public class AudioInputStream
 
 
 /*** AudioInputStream.java ***/
-
