@@ -26,7 +26,9 @@
 #include "../common/debug.h"
 #include <stdlib.h>
 #include <ogg/ogg.h>
-#include <vorbis/codec.h>
-#include <vorbis/vorbisenc.h>
+//#include <vorbis/codec.h>
+//#include <vorbis/vorbisenc.h>
+#include "vorbis/codec.h"
+#include "vorbis/vorbisenc.h"
 
 /*** common.h ***/
