@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 -2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,42 +18,34 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
 
 package	org.tritonus.sampled.file.mpeg;
 
 
-import	java.io.DataInputStream;
-import	java.io.File;
 import	java.io.InputStream;
-import	java.io.BufferedInputStream;
 import	java.io.IOException;
 import	java.io.EOFException;
-import	java.io.SequenceInputStream;
-import	java.io.ByteArrayInputStream;
 
 import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
-import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.UnsupportedAudioFileException;
-import	javax.sound.sampled.spi.AudioFileReader;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TAudioFileReader;
+import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
+
 
 
 /*
  * @author Matthias Pfisterer
  */
-
 public class MpegAudioFileReader
-	extends	TAudioFileReader
+	extends	TRereadingAudioFileReader
 {
 	private static final int	SYNC = 0xFFE00000;
 	private static final AudioFormat.Encoding[][]	sm_aEncodings =
@@ -80,32 +71,21 @@ public class MpegAudioFileReader
 		{44100.0F, 48000.0F, 32000.0F},
 	};
 
+	private static final int	BUFFERING_AMOUNT = 4;
+
+
+
+	public MpegAudioFileReader()
+	{
+		super(BUFFERING_AMOUNT);
+	}
+
 
 
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
 		throws	UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader)
-		{
-			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream): begin");
-		}
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, null);
-		if (TDebug.TraceAudioFileReader)
-		{
-			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream): end");
-		}
-		return audioFileFormat;
-	}
-
-
-
-	private AudioFileFormat getAudioFileFormat(InputStream inputStream, byte[] abHeader)
-		throws	UnsupportedAudioFileException, IOException
-	{
-		if (TDebug.TraceAudioFileReader)
-		{
-			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream, byte[]): begin");
-		}
+		if (TDebug.TraceAudioFileReader) { TDebug.out("MpegAudioFileReader.getAudioFileFormat(): begin"); }
 		int	b0 = inputStream.read();
 		int	b1 = inputStream.read();
 		int	b2 = inputStream.read();
@@ -115,13 +95,6 @@ public class MpegAudioFileReader
 			throw new EOFException();
 		}
 		int	nHeader = (b0 << 24) + (b1 << 16) + (b2 << 8) + (b3 << 0);
-		if (abHeader != null)
-		{
-			abHeader[0] = (byte) b0;
-			abHeader[1] = (byte) b1;
-			abHeader[2] = (byte) b2;
-			abHeader[3] = (byte) b3;
-		}
 		/*
 		 *	We check for the sync bits. If they are present, we
 		 *	assume that we have an MPEG bitstream.
@@ -161,49 +134,20 @@ public class MpegAudioFileReader
 			true);
 		//$$fb 2000-08-15: workaround for the fixed extension problem in AudioFileFormat.Type
 		// see org.tritonus.share.sampled.AudioFileTypes.java
-		AudioFileFormat.Type type=AudioFileTypes.getType("MPEG", "mpeg");
-		if (encoding.equals(Encodings.getEncoding("MPEG1L3"))) {
-			type=AudioFileTypes.getType("MP3", "mp3");
+		AudioFileFormat.Type type = AudioFileTypes.getType("MPEG", "mpeg");
+		if (encoding.equals(Encodings.getEncoding("MPEG1L3")))
+		{
+			type = AudioFileTypes.getType("MP3", "mp3");
 		}
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
-				type, 
-				format, 
-				AudioSystem.NOT_SPECIFIED, 
+				type,
+				format,
+				AudioSystem.NOT_SPECIFIED,
 				AudioSystem.NOT_SPECIFIED);
-		if (TDebug.TraceAudioFileReader)
-		{
-			TDebug.out("MpegAudioFileReader.getAudioFileFormat(InputStream, byte[]): end");
-		}
+		if (TDebug.TraceAudioFileReader) { TDebug.out("MpegAudioFileReader.getAudioFileFormat(): end"); }
 		return audioFileFormat;
 	}
-
-
-
-	public AudioInputStream getAudioInputStream(InputStream inputStream)
-		throws	UnsupportedAudioFileException, IOException
-	{
-		if (TDebug.TraceAudioFileReader)
-		{
-			TDebug.out("MpegAudioFileReader.getAudioInputStream(): begin");
-		}
-		byte[]	abHeader = new byte[4];
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, abHeader);
-		SequenceInputStream	sequenceInputStream = new SequenceInputStream(new ByteArrayInputStream(abHeader), inputStream);
-		AudioInputStream	audioInputStream =
-			new AudioInputStream(
-				sequenceInputStream,
-				audioFileFormat.getFormat(),
-				audioFileFormat.getFrameLength());
-		if (TDebug.TraceAudioFileReader)
-		{
-			TDebug.out("MpegAudioFileReader.getAudioInputStream(): end");
-		}
-		return audioInputStream;
-	}
-
-
-
 }
 
 
