@@ -1,23 +1,5 @@
 /*
  *	AlsaCtl.java
-
- for the following, see 'man ident'.
-
-$Id$
-$Log$
-Revision 1.8  2002/08/04 06:57:00  pfisterer
-Introduced card info object instead of single method with strange parameters; removed obsolete methods; cleanup
-
-Revision 1.7  2001/07/02 18:41:44  pfisterer
-reorganized native library loading and tracing
-
-Revision 1.6  2001/05/30 09:25:03  pfisterer
-intermediate development state, mainly related to ALSA
-
-Revision 1.5  2001/05/11 08:53:45  pfisterer
-rcs keywords test
-
-
  */
 
 /*
