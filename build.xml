@@ -341,53 +341,6 @@
 
 
 
-  <!-- for MMAPI (jsr-135) -->
-  <target name="compile-mmapi-release" depends="prepare">
-    <javac srcdir="${src}/classes"
-	   depend="yes"
-	   destdir="${build}"
-	   includes="javax/microedition/media/,org/tritonus/mmapi/"
-	   excludes="org/tritonus/mmapi/debug" />
-  </target>
-
-  <target name="compile-mmapi-debug" depends="prepare">
-    <ajc srcdir="${src}/classes"
-	   destdir="${build}"
-	   includes="javax/microedition/media/,org/tritonus/mmapi/"
-	   excludes="org/tritonus/whatever" />
-  </target>
-
-  <target name="dist-mmapi"
-	  depends="dist-mmapi-debug" >
-  </target>
-
-  <target name="dist-mmapi-release"
-	  depends="compile-mmapi-release,do-dist-mmapi" >
-  </target>
-
-  <target name="dist-mmapi-debug"
-	  depends="compile-mmapi-debug,do-dist-mmapi" >
-  </target>
-
-  <target name="do-dist-mmapi" >
-
-    <jar jarfile="${dist}/tritonus_mmapi.jar">
-      <fileset dir="${build}">
-	<include name="javax/microedition/media/" />
-	<include name="org/tritonus/mmapi/" />
-      </fileset>
-    </jar>
-  </target>
-
-  <target name="javadoc-mmapi" depends="init">
-    <mkdir dir="${javadoc.dir}"/>
-    <javadoc
-	     package="true" sourcepath="src/classes" destdir="${javadoc.dir}"
-	     packagenames="javax.microedition.media.*,org.tritonus.mmapi.*" 
-	     excludepackagenames="org.tritonus.mmapi.debug" >
-    </javadoc>
-  </target>
-
   <!-- for saol -->
   <target name="compile-saol" depends="prepare">
     <!--sablecc
