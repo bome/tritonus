@@ -28,6 +28,8 @@ package	org.tritonus.midi.device.alsa;
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiEvent;
+import	javax.sound.midi.MidiMessage;
+import	javax.sound.midi.MetaMessage;
 import	javax.sound.midi.MidiUnavailableException;
 import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
@@ -52,7 +54,7 @@ public class AlsaMidiIn
 	/**
 	   Does establish a subscription where events are routed directely
 	   (not getting a timestamp).
-	 */
+	*/
 	public AlsaMidiIn(AlsaSeq aSequencer,
 			  int nDestPort,
 			  int nSourceClient,
@@ -72,7 +74,7 @@ public class AlsaMidiIn
 	/**
 	   Does establish a subscription where events are routed through
 	   a queue to get a timestamp.
-	 */
+	*/
 	public AlsaMidiIn(AlsaSeq aSequencer,
 			  int nDestPort,
 			  int nSourceClient,
@@ -110,7 +112,7 @@ public class AlsaMidiIn
 		Here, the thread repeats in blocking in a call to
 		AlsaSeq.getEvent() and calling the listener's
 		dequeueEvent() method.
-	 */
+	*/
 	public void run()
 	{
 		// TODO: recheck interupt mechanism
@@ -118,12 +120,17 @@ public class AlsaMidiIn
 		{
 			// TODO: do we need a filter in AlsaSeq?
 			MidiEvent	event = m_aSequencer.getEvent();
-			if (TDebug.TraceAlsaMidiIn)
-			{
-				TDebug.out("AlsaMidiIn.run(): got event: " + event);
-			}
+			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.run(): got event: " + event); }
+
+			// TODO: event == null indicates a serious bug
 			if (event != null)
 			{
+				MidiMessage	m = event.getMessage();
+				if (m instanceof MetaMessage)
+				{
+					MetaMessage	me = (MetaMessage) m;
+					if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.run(): MetaMessage.getData().length: " + me.getData().length); }
+				}
 				m_listener.dequeueEvent(event);
 			}
 		}
@@ -137,7 +144,7 @@ public class AlsaMidiIn
 	{
 		public void dequeueEvent(MidiEvent event);
 	}
-}
+	}
 
 
 
