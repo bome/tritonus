@@ -1,10 +1,9 @@
 /*
- *	TSourceTargetDataLine.java
+ *	TBaseDataLine.java
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,12 +18,9 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
-
 package	org.tritonus.share.sampled.mixer;
-
 
 import	java.util.Collection;
 import	java.util.EventListener;
@@ -43,13 +39,13 @@ import	org.tritonus.share.TDebug;
 
 
 
-/**	Base class for classes implementing SourceDataLine or TargetDataLine.
+/**	Base class for implementing SourceDataLine or TargetDataLine.
  */
-public abstract class TSourceTargetDataLine
+public abstract class TBaseDataLine
 	extends	TDataLine
 {
-	public TSourceTargetDataLine(TMixer mixer,
-				     DataLine.Info info)
+	public TBaseDataLine(TMixer mixer,
+			     DataLine.Info info)
 	{
 		super(mixer,
 		      info);
@@ -57,9 +53,9 @@ public abstract class TSourceTargetDataLine
 
 
 
-	public TSourceTargetDataLine(TMixer mixer,
-				     DataLine.Info info,
-				     Collection controls)
+	public TBaseDataLine(TMixer mixer,
+			     DataLine.Info info,
+			     Collection controls)
 	{
 		super(mixer,
 		      info,
@@ -69,12 +65,9 @@ public abstract class TSourceTargetDataLine
 
 
 	public void open(AudioFormat format, int nBufferSize)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
-		if (TDebug.TraceDataLine)
-		{
-			TDebug.out("TSourceTargetDataLine.open(AudioFormat, int): called with buffer size: " + nBufferSize);
-		}
+		if (TDebug.TraceDataLine) { TDebug.out("TBaseDataLine.open(AudioFormat, int): called with buffer size: " + nBufferSize); }
 		setBufferSize(nBufferSize);
 		open(format);
 	}
@@ -82,12 +75,9 @@ public abstract class TSourceTargetDataLine
 
 
 	public void open(AudioFormat format)
-		throws	LineUnavailableException
+		throws LineUnavailableException
 	{
-		if (TDebug.TraceDataLine)
-		{
-			TDebug.out("TSourceTargetDataLine.open(AudioFormat): called");
-		}
+		if (TDebug.TraceDataLine) { TDebug.out("TBaseDataLine.open(AudioFormat): called"); }
 		setFormat(format);
 		open();
 	}
@@ -106,5 +96,5 @@ public abstract class TSourceTargetDataLine
 
 
 
-/*** TSourceTargetDataLine.java ***/
+/*** TBaseDataLine.java ***/
 
