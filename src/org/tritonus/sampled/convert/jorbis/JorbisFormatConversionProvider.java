@@ -26,7 +26,6 @@
 
 package	org.tritonus.sampled.convert.jorbis;
 
-import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.InputStream;
 import java.io.IOException;
@@ -41,12 +40,10 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 import org.tritonus.share.TDebug;
-import org.tritonus.share.sampled.TConversionTool;
-import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
-import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
-import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import org.tritonus.share.sampled.AudioFormats;
 import org.tritonus.share.sampled.Encodings;
+import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
+import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 
 import com.jcraft.jogg.SyncState;
 import com.jcraft.jogg.StreamState;
@@ -66,7 +63,7 @@ import com.jcraft.jorbis.Block;
 	@author Matthias Pfisterer
 */
 public class JorbisFormatConversionProvider
-	extends		TEncodingFormatConversionProvider
+extends TEncodingFormatConversionProvider
 {
 	// only used as abbreviation
 	private static final AudioFormat.Encoding	VORBIS = Encodings.getEncoding("VORBIS");
@@ -122,7 +119,7 @@ public class JorbisFormatConversionProvider
 
 		if (TDebug.TraceAudioConverter)
 		{
-			TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
+			TDebug.out(">JorbisFormatConversionProvider.getAudioInputStream(): begin");
 			TDebug.out("checking if conversion supported");
 			TDebug.out("from: " + audioInputStream.getFormat());
 			TDebug.out("to: " + targetFormat);
@@ -135,7 +132,6 @@ public class JorbisFormatConversionProvider
 		{
 			if (TDebug.TraceAudioConverter)
 			{
-				TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
 				TDebug.out("conversion supported; trying to create DecodedJorbisAudioInputStream");
 			}
 			convertedAudioInputStream = new
@@ -147,11 +143,12 @@ public class JorbisFormatConversionProvider
 		{
 			if (TDebug.TraceAudioConverter)
 			{
-				TDebug.out("JorbisFormatConversionProvider.getAudioInputStream():");
 				TDebug.out("conversion not supported; throwing IllegalArgumentException");
+				TDebug.out("<");
 			}
 			throw new IllegalArgumentException("conversion not supported");
 		}
+		if (TDebug.TraceAudioConverter) { TDebug.out("<JorbisFormatConversionProvider.getAudioInputStream(): end"); }
 		return convertedAudioInputStream;
 	}
 
@@ -232,19 +229,8 @@ public class JorbisFormatConversionProvider
 		private float[][][]		_pcmf = null;
 		private int[]			_index = null;
 
-		private int			loopid = 1;
-		private int			eos = 0;
-		private boolean			streamStillHasData = true;
+		private boolean			m_bHeadersExpected;
 
-/*
-  if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): begin"); }
-  getCircularBuffer() = new TCircularBuffer(
-  nBufferSize,
-  false,	// blocking read
-  true,	// blocking write
-  this);	// trigger
-  if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): end"); }
-*/
 
 		/**
 		 * Constructor.
@@ -254,7 +240,7 @@ public class JorbisFormatConversionProvider
 			super(outputFormat, AudioSystem.NOT_SPECIFIED);
 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): begin"); }
 			m_oggBitStream = bitStream;
-			loopid = 1;
+			m_bHeadersExpected = true;
 			init_jorbis();
 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): end"); }
 		}
@@ -280,39 +266,16 @@ public class JorbisFormatConversionProvider
 		}
 
 
+
 		/**
 		 * Main loop.
 		 */
 		public void execute()
 		{
 			if (TDebug.TraceAudioConverter) TDebug.out(">DecodedJorbisAudioInputStream.execute(): begin");
-			int bytes = 0;
-			// This code was developed by the jCraft group, slightly modifed by jOggPlayer developer
-			// and adapted by E.B from JavaZOOM to suit to JavaSound SPI.
-			// loop 1
-			if (streamStillHasData == false)
+			if (m_bHeadersExpected)
 			{
-				m_oggSyncState.clear();
-				if (TDebug.TraceAudioConverter) System.out.println("Done Song.");
-				try
-				{
-					if (m_oggBitStream != null)
-					{
-						m_oggBitStream.close();
-					}
-					getCircularBuffer().close();
-				}
-				catch (Exception e)
-				{
-					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				}
-				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
-				return;
-			}
-			if (loopid == 1)
-			{
-				if (TDebug.TraceAudioConverter) TDebug.out("loop1 [reading headers]");
-				eos = 0;
+				if (TDebug.TraceAudioConverter) TDebug.out("reading headers...");
 				// Headers (+ Comments).
 				try
 				{
@@ -320,84 +283,66 @@ public class JorbisFormatConversionProvider
 				}
 				catch (IOException e)
 				{
-					// TDebug.out(e);
-					streamStillHasData = false;
+					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+					closePhysicalStream();
 					if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
 					return;
 				}
-				loopid = 2;
+				m_bHeadersExpected = false;
 			}
-			// loop 2
-			if (eos == 1)
+			if (TDebug.TraceAudioConverter) TDebug.out("decoding...");
+			// Decoding !
+			while (writeMore())
 			{
-				loopid = 1;
+				try
+				{
+					readOggPacket();
+				}
+				catch (IOException e)
+				{
+					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+					closePhysicalStream();
+					if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+					return;
+				}
+				decodeDataPacket();
+			}
+			if (m_oggPage.eos() != 0)
+			{
+				if (TDebug.TraceAudioConverter) TDebug.out("end of vorbis stream reached");
+				/* The end of the vorbis stream is reached.
+				   So we shut down the logical bitstream and
+				   vorbis structures.
+				*/
 				m_oggStreamState.clear();
 				m_vorbisBlock.clear();
 				m_vorbisDspState.clear();
 				m_vorbisInfo.clear();
-				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
-				return;
+				m_bHeadersExpected = true;
 			}
-			if (TDebug.TraceAudioConverter) TDebug.out("loop2 [Decoding]");
-			// loop 3
-			int result = 0;
+			if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+		}
+
+
+
+
+		private void closePhysicalStream()
+		{
+			if (TDebug.TraceAudioConverter) TDebug.out("DecodedJorbisAudioInputStream.closePhysicalStream(): begin");
+			m_oggSyncState.clear();
 			try
 			{
-				readOggPage();
-			}
-			catch (IOException e)
-			{
-				streamStillHasData = false;
-				eos = 1;
-				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
-				return;
-			}
-			if (TDebug.TraceAudioConverter) TDebug.out("page header length: " + m_oggPage.header_len);
-			if (TDebug.TraceAudioConverter) TDebug.out("page body length: " + m_oggPage.body_len);
-			m_oggStreamState.pagein(m_oggPage);
-			// Decoding !
-			while (true)
-			{
-				result = m_oggStreamState.packetout(m_oggPacket);
-				if (TDebug.TraceAudioConverter) TDebug.out("packetout(): " + result);
-				if (TDebug.TraceAudioConverter) TDebug.out("packet no: " + m_oggPacket.packetno);
-				if (TDebug.TraceAudioConverter) TDebug.out("packet length: " + m_oggPacket.bytes);
-				if (result == 0) // need more data
+				if (m_oggBitStream != null)
 				{
-					if (TDebug.TraceAudioConverter) TDebug.out("leaving packet decoding loop (needs another page)");
-					break;
+					m_oggBitStream.close();
 				}
-				else if (result == -1)
-				{ // missing or corrupt data at this page position
-					// DO NOTHING
-				}
-				else
-				{
-					decodeDataPacket();
-				}
+				getCircularBuffer().close();
 			}
-			if (m_oggPage.eos() != 0)
+			catch (Exception e)
 			{
-				eos = 1;
+				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
-			loopid = 3;
-			if (loopid == 3)
-			{
-				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
-				return;
-			}
-
-			if (loopid == 2)
-			{
-				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
-				return;
-			}
-
-			m_oggStreamState.clear();
-			m_vorbisBlock.clear();
-			m_vorbisDspState.clear();
-			m_vorbisInfo.clear();
-			if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+			if (TDebug.TraceAudioConverter) TDebug.out("DecodedJorbisAudioInputStream.closePhysicalStream(): end");
 		}
 
 
