@@ -29,6 +29,7 @@ package	org.tritonus.sampled.mixer.esd;
 import	java.io.IOException;
 
 import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.BooleanControl;
 import	javax.sound.sampled.Control;
 import	javax.sound.sampled.DataLine;
 import	javax.sound.sampled.FloatControl;
@@ -91,6 +92,8 @@ public class EsdSourceDataLine
 					format,
 					nBufferSize));
 		addControl(new EsdSourceDataLineGainControl());
+		addControl(new EsdSourceDataLinePanControl());
+		addControl(new EsdSourceDataLineMuteControl());
 /*
   if (TDebug.TraceSourceDataLine)
   {
@@ -172,7 +175,6 @@ public class EsdSourceDataLine
 	{
 		// TODO:
 		return -1;
-		// return m_nAvailable;
 	}
 
 
@@ -277,7 +279,44 @@ public class EsdSourceDataLine
 
 
 	/**
-	 *	fGain is logarithmic!!
+	 */
+	private void setPan(float fPan)
+	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.setPan(): pan: " + fPan);
+		}
+		m_fPan = fPan;
+		if (! m_bMuted)
+		{
+			setGainImpl();
+		}
+	}
+
+
+
+	/**
+	 */
+	private void setMuted(boolean bMuted)
+	{
+		if (TDebug.TraceSourceDataLine)
+		{
+			TDebug.out("EsdSourceDataLine.setMuted(): muted: " + bMuted);
+		}
+		m_bMuted = bMuted;
+		if (m_bMuted)
+		{
+			m_esdStream.setVolume(0, 0);
+		}
+		else
+		{
+			setGainImpl();
+		}
+	}
+
+
+
+	/**
 	 */
 	private void setGainImpl()
 	{
@@ -285,10 +324,14 @@ public class EsdSourceDataLine
 		{
 			TDebug.out("EsdSourceDataLine.setGainImpl(): called: ");
 		}
-		float	fLinear = (float) TVolumeUtils.log2lin(m_fGain);
-		m_esdStream.setVolume((int) (fLinear * 256),
-				      (int) (fLinear * 256));
+		float	fLeftDb = m_fGain + m_fPan * 15.0F;
+		float	fRightDb = m_fGain - m_fPan * 15.0F;
+		float	fLeftLinear = (float) TVolumeUtils.log2lin(fLeftDb);
+		float	fRightLinear = (float) TVolumeUtils.log2lin(fRightDb);
+		m_esdStream.setVolume((int) (fLeftLinear * 256),
+				      (int) (fRightLinear * 256));
 	}
+
 
 
 
@@ -302,12 +345,6 @@ public class EsdSourceDataLine
 		 */
 		private /*static*/ final float	MAX_GAIN = 24.0F;
 		private /*static*/ final float	MIN_GAIN = -96.0F;
-
-		// TODO: recheck this value
-		private /*static*/ final int	GAIN_INCREMENTS = 1000;
-
-		// private float		m_fGain;
-		// private boolean		m_bMuted;
 
 
 
@@ -334,58 +371,90 @@ public class EsdSourceDataLine
 			{
 				TDebug.out("EsdSourceDataLineGainControl.setValue(): gain: " + fGain);
 			}
-			fGain = Math.max(Math.min(fGain, getMaximum()), getMinimum());
-			if (TDebug.TraceSourceDataLine)
-			{
-				TDebug.out("EsdSourceDataLineGainControl.setValue(): limited gain: " + fGain);
-				TDebug.out("EsdSourceDataLineGainControl.setValue(): current gain: " + getValue());
-			}
-			if (Math.abs(fGain - getValue()) > 1.0E-9)
+			float	fOldGain = getValue();
+			super.setValue(fGain);
+			if (Math.abs(fOldGain - getValue()) > 1.0E-9)
 			{
 				if (TDebug.TraceSourceDataLine)
 				{
 					TDebug.out("EsdSourceDataLineGainControl.setValue(): really changing gain");
 				}
-				super.setValue(fGain);
 				EsdSourceDataLine.this.setGain(getValue());
 			}
 		}
+	}
 
 
 
-		public float getMaximum()
+	// IDEA: move inner classes to TSourceTargetDataLine
+	public class EsdSourceDataLinePanControl
+		extends		FloatControl
+	{
+		/*package*/ EsdSourceDataLinePanControl()
 		{
-			return MAX_GAIN;
+			super(FloatControl.Type.PAN,
+			      -1.0F,	// MIN_GAIN,
+			      1.0F,	// MAX_GAIN,
+			      0.01F,	// precision
+			      0,	// update period?
+			      0.0F,	// initial value
+			      "??",
+			      "left",
+			      "center",
+			      "right");
 		}
 
 
 
-		public float getMinimum()
+		public void setValue(float fPan)
 		{
-			return MIN_GAIN;
+			if (TDebug.TraceSourceDataLine)
+			{
+				TDebug.out("EsdSourceDataLinePanControl.setValue(): pan: " + fPan);
+			}
+			float	fOldPan = getValue();
+			super.setValue(fPan);
+			if (Math.abs(fOldPan - getValue()) > 1.0E-9)
+			{
+				if (TDebug.TraceSourceDataLine)
+				{
+					TDebug.out("EsdSourceDataLinePanControl.setValue(): really changing pan");
+				}
+				EsdSourceDataLine.this.setPan(getValue());
+			}
+		}
+	}
+
+
+
+	public class EsdSourceDataLineMuteControl
+		extends		BooleanControl
+	{
+		/*package*/ EsdSourceDataLineMuteControl()
+		{
+			super(BooleanControl.Type.MUTE,
+			      false,
+			      "muted",
+			      "unmuted");
 		}
 
 
 
-		public int getIncrements()
+		public void setValue(boolean bMuted)
 		{
-			// TODO: check this value
-			return GAIN_INCREMENTS;
-		}
-
-
-
-		public void fade(float fInitialGain, float fFinalGain, int nFrames)
-		{
-			// TODO:
-		}
-
-
-
-		public int getFadePrecision()
-		{
-			//TODO:
-			return -1;
+			if (TDebug.TraceSourceDataLine)
+			{
+				TDebug.out("EsdSourceDataLineMuteControl.setValue(): muted: " + bMuted);
+			}
+			if (bMuted != getValue())
+			{
+				if (TDebug.TraceSourceDataLine)
+				{
+					TDebug.out("EsdSourceDataLineMuteControl.setValue(): really changing mute status");
+				}
+				super.setValue(bMuted);
+				EsdSourceDataLine.this.setMuted(getValue());
+			}
 		}
 
 
