@@ -22,10 +22,7 @@
 
 import junit.framework.TestCase;
 
-//import java.io.IOException;
-//import javax.microedition.media.Control;
 import javax.microedition.media.MediaException;
-//import javax.microedition.media.protocol.SourceStream;
 
 
 
