@@ -53,39 +53,6 @@ testsaint:	saint.class
 testsaint2:	saint.class SourceDataLineOutputStream.class
 	java $(JAVAFLAGS) saint -c ../../../sounds/sa/equalizer.saol -s ../../../sounds/sa/eq.sasl -f s16l -o +
 
-.PHONY: testnas
-testnas:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) SineNas
-
-.PHONY: testnas2
-testnas2:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) SineNas2
-
-.PHONY: testplayer
-testplayer:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) Player $(SOUNDFILE)
-
-.PHONY: testwiredump
-testwiredump:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) WireDump
-
-.PHONY: testformat
-testformat:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) ShowFormat -i $(SOUNDFILE)
-
-.PHONY: testconvert
-testconvert:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) Convert $(SOUNDFILE)
-
-.PHONY: testsysteminfo
-testsysteminfo:	all
-	$(PATHSETTINGS); java $(JAVAFLAGS) SystemInfo
-
-.PHONY: install
-install:
-
-.PHONY: install-link
-install-link:
 
 .PHONY: clean
 clean:
