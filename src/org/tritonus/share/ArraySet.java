@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 by Matthias Pfisterer
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,9 @@ import	java.util.Set;
 
 
 
-public class ArraySet
-	extends		ArrayList
-	implements	Set
+public class ArraySet<E>
+extends		ArrayList<E>
+implements	Set<E>
 {
 	public ArraySet()
 	{
@@ -43,7 +43,7 @@ public class ArraySet
 
 
 
-	public ArraySet(Collection c)
+	public ArraySet(Collection<E> c)
 	{
 		this();
 		addAll(c);
@@ -51,7 +51,7 @@ public class ArraySet
 
 
 
-	public boolean add(Object element)
+	public boolean add(E element)
 	{
 		if (!contains(element))
 		{
@@ -66,12 +66,12 @@ public class ArraySet
 
 
 
-	public void add(int index, Object element)
+	public void add(int index, E element)
 	{
 		throw new UnsupportedOperationException("ArraySet.add(int index, Object element) unsupported");
 	}
 
-	public Object set(int index, Object element)
+	public E set(int index, E element)
 	{
 		throw new UnsupportedOperationException("ArraySet.set(int index, Object element) unsupported");
 	}
