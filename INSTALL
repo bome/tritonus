@@ -29,7 +29,7 @@ been tested.
 If you only want to build pure-java (not Linux specific) components, you
 can use a jdk on any platform.
 Tritonus does not work with jdk1.1.X.
-There are no experiences with gcj and kaffe. Reports are welcome.
+There are no experiences with gcj. Reports are welcome.
 
 - Optional: jikes (recommanded, testing was done with version 1.16)
 
@@ -81,6 +81,7 @@ I'm currently building with these commands:
 
 ../tritonus> autoconf
 ../tritonus> ./configure
+../tritonus> ant -f build-dtd.xml
 ../tritonus> ant
 ../tritonus> make -C src/lib/alsa
 ../tritonus> make -C src/lib/...
