@@ -25,6 +25,8 @@ import	java.io.File;
 import	java.io.FileInputStream;
 import	java.io.IOException;
 
+import javax.microedition.media.protocol.SourceStream;
+
 
 
 public class Util
@@ -74,11 +76,43 @@ public class Util
 	}
 
 
+
+	public static byte[] getByteArrayFromSourceStream(SourceStream sourceStream)
+		throws IOException
+	{
+		long	lLength = sourceStream.getContentLength();
+		byte[]	abData = new byte[(int) lLength];
+		int	nBytesRemaining = (int) lLength;
+		int	nWriteStart = 0;
+		while (nBytesRemaining > 0)
+		{
+			int	nBytesRead = sourceStream.read(abData, nWriteStart, nBytesRemaining);
+			nBytesRemaining -= nBytesRead;
+			nWriteStart += nBytesRead;
+		}
+		return abData;
+	}
+
+
+
 	public static boolean arrayContains(String[] astrArray, String strToSearch)
 	{
 		for (int i = 0; i < astrArray.length; i++)
 		{
 			if (astrArray[i].equals(strToSearch))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	public static boolean arrayContains(int[] anArray, int nToSearch)
+	{
+		for (int i = 0; i < anArray.length; i++)
+		{
+			if (anArray[i] == nToSearch)
 			{
 				return true;
 			}
