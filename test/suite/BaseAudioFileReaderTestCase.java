@@ -30,9 +30,10 @@ import	java.net.URL;
 import	java.util.MissingResourceException;
 import	java.util.ResourceBundle;
 
-import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioFormat;
+import	javax.sound.sampled.AudioInputStream;
+import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.spi.AudioFileReader;
 
 import	junit.framework.TestCase;
@@ -136,7 +137,44 @@ extends TestCase
 	public void testAudioInputStreamFile()
 		throws Exception
 	{
-		// TODO:
+		File	file = new File(getFilename());
+		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(file);
+		checkAudioInputStream(audioInputStream);
+	}
+
+
+
+	public void testAudioInputStreamURL()
+		throws Exception
+	{
+		URL	url = new URL("file:" + getFilename());
+		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(url);
+		checkAudioInputStream(audioInputStream);
+	}
+
+
+
+	public void testAudioInputStreamInputStream()
+		throws Exception
+	{
+		InputStream	inputStream = new FileInputStream(getFilename());
+		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(inputStream);
+		checkAudioInputStream(audioInputStream);
+	}
+
+
+
+	private void checkAudioInputStream(AudioInputStream audioInputStream)
+		throws Exception
+	{
+		assertTrue(audioInputStream.getFormat().getEncoding().equals(getEncoding()));
+		assertTrue(audioInputStream.getFormat().getSampleRate() == getSampleRate());
+		assertTrue(audioInputStream.getFormat().getSampleSizeInBits() == getSampleSizeInBits());
+		assertTrue(audioInputStream.getFormat().getChannels() == getChannels());
+		assertTrue(audioInputStream.getFormat().getFrameSize() == getFrameSize());
+		assertTrue(audioInputStream.getFormat().getFrameRate() == getFrameRate());
+		assertTrue(audioInputStream.getFormat().isBigEndian() == getBigEndian());
+		assertTrue(audioInputStream.getFrameLength() == getFrameLength());
 	}
 
 
