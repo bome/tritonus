@@ -28,7 +28,7 @@
 	 excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" >
       <classpath>
 	<pathelement path="${classpath}"/>
-	<pathelement location="${build}"/>
+	<pathelement location="build"/>
       </classpath>
     </ajc>
 <!--
