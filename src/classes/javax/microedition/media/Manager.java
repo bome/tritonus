@@ -17,14 +17,21 @@ import	org.tritonus.micro.Mp3AudioPlayer;
 import	org.tritonus.micro.MidiPlayer;
 
 
-
+/**	TODO:
+*/
 public final class Manager
 {
+	/**	TODO:
+	*/
 	public static final String	TONE_DEVICE_LOCATOR = "device://tone";
+
+
+	/**	TODO:
+	*/
 	public static final String	MIDI_DEVICE_LOCATOR = "device://midi";
 
 
-	/*
+	/**
 	  Table of protocol names and DataSource classes used to
 	  implement the protocols.
 	*/
@@ -38,7 +45,7 @@ public final class Manager
 	};
 
 
-	/*
+	/**
 	  Table of protocol names and DataSource classes used to
 	  implement the protocols.
 	*/
@@ -51,12 +58,16 @@ public final class Manager
 	};
 
 
+	/**	TODO:
+	*/
 	private static final TimeBase	sm_systemTimeBase = new SystemTimeBase();
 
 
 
 
-	public static String[] getSupportedContentTypes()
+	/**	TODO:
+	*/
+	public static String[] getSupportedContentTypes(String strProtocol)
 	{
 		String[]	astrContentTypes = new String[CONTENT_TYPE_TABLE.length];
 		for (int i = 0; i < CONTENT_TYPE_TABLE.length; i++)
@@ -68,7 +79,9 @@ public final class Manager
 
 
 
-	public static String[] getSupportedProtocols()
+	/**	TODO:
+	*/
+	public static String[] getSupportedProtocols(String strContentType)
 	{
 		String[]	astrProtocols = new String[PROTOCOL_TABLE.length];
 		for (int i = 0; i < PROTOCOL_TABLE.length; i++)
@@ -80,6 +93,8 @@ public final class Manager
 
 
 
+	/**	TODO:
+	*/
 	public static Player createPlayer(String strLocator)
 		throws IOException, MediaException
 	{
@@ -90,6 +105,8 @@ public final class Manager
 
 
 	// TODO:
+	/**	TODO:
+	*/
 	public static Player createPlayer(DataSource source)
 		throws IOException, MediaException
 	{
@@ -104,6 +121,8 @@ public final class Manager
 
 	// TODO:
 	// IDEA: use a class InputStreamDataSource
+	/**	TODO:
+	*/
 	public static Player createPlayer(InputStream stream,
 					  String strType)
 		throws IOException, MediaException
@@ -114,8 +133,28 @@ public final class Manager
 	}
 
 
+
 	// TODO:
-	public static DataSource createDataSource(String strLocator)
+	/**	TODO:
+	*/
+	public static void playTone(int nNote, int nDuration, int nVolume)
+	{
+	}
+
+
+
+	/**	TODO:
+	*/
+	public static TimeBase getSystemTimeBase()
+	{
+		return sm_systemTimeBase;
+	}
+
+
+	/**	TODO:
+	*/
+	// TODO:
+	private static DataSource createDataSource(String strLocator)
 		throws IOException, MediaException
 	{
 		if (strLocator == null)
@@ -155,20 +194,6 @@ public final class Manager
 			throw new MediaException("unknown protocol: " + strProtocol);
 		}
 		return dataSource;
-	}
-
-
-
-	// TODO:
-	public static void playTone(int nNote, int nDuration, int nVolume)
-	{
-	}
-
-
-
-	public static TimeBase getSystemTimeBase()
-	{
-		return sm_systemTimeBase;
 	}
 }
 

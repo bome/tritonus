@@ -5,11 +5,18 @@
 package	javax.microedition.media;
 
 
-
+/**	TODO:
+*/
 public interface Controllable
 {
-	public Control getControl(String strType);
+	/**	TODO:
+	*/
 	public Control[] getControls();
+
+
+	/**	TODO:
+	*/
+	public Control getControl(String strType);
 }
 
 

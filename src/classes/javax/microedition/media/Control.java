@@ -6,6 +6,8 @@ package	javax.microedition.media;
 
 
 
+/**	TODO:
+*/
 public interface Control
 {
 }
