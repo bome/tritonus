@@ -153,6 +153,24 @@ $(OBJDIR_PRIV)/util/ArraySet.class \
 $(OBJDIR_PRIV)/util/TCircularBuffer.class \
 $(OBJDIR_PRIV)/util/TCircularBuffer\$$Trigger.class
 
+GSM_OBJ = \
+$(OBJDIR_PRIV)/lowlevel/gsm/GSMDecoder.class \
+$(OBJDIR_PRIV)/sampled/file/TAudioFileReader.class \
+$(OBJDIR_PRIV)/sampled/file/gsm/GSMAudioFileReader.class \
+$(OBJDIR_PRIV)/sampled/file/gsm/GSMEncoding.class \
+$(OBJDIR_PRIV)/sampled/file/gsm/GSMFileFormatType.class \
+$(OBJDIR_PRIV)/sampled/convert/gsm/GSMFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TEncodingFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TSimpleFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TAsynchronousFilteredAudioInputStream.class \
+$(OBJDIR_PRIV)/sampled/convert/gsm/GSMFormatConversionProvider\$$DecodedGSMAudioInputStream.class \
+$(OBJDIR_PRIV)/TDebug.class \
+$(OBJDIR_PRIV)/TDebug\$$AssertException.class \
+$(OBJDIR_PRIV)/util/ArraySet.class \
+$(OBJDIR_PRIV)/util/TCircularBuffer.class \
+$(OBJDIR_PRIV)/util/TCircularBuffer\$$Trigger.class
+
 
 #----------------- rules -------------------
 
