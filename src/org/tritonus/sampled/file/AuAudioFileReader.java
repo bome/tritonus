@@ -51,6 +51,19 @@ import	org.tritonus.share.sampled.file.TAudioFileReader;
  */
 public class AuAudioFileReader extends TAudioFileReader {
 
+	private static String readDescription(DataInputStream dis, int len) throws IOException {
+		byte c=-1;
+		String ret="";
+		while (len>0 && (c=dis.readByte())!=0) {
+			ret=ret+(char) c;
+			len--;
+		}
+		if (len>1 && c==0) {
+			dis.skip(len-1);
+		}
+		return ret;
+	}
+
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
 	throws	UnsupportedAudioFileException, IOException {
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
@@ -131,6 +144,9 @@ public class AuAudioFileReader extends TAudioFileReader {
 		}
 		// skip  header information field
 		inputStream.skip(nDataOffset - AuTool.DATA_OFFSET);
+		// read header info field
+		//String desc=readDescription(dataInputStream, nDataOffset - AuTool.DATA_OFFSET);
+
 		AudioFormat format = new AudioFormat(encoding,
 		                                     (float) nSampleRate,
 		                                     nSampleSize,

@@ -164,7 +164,6 @@ public class GSMFormatConversionProvider
 		private byte[]			m_abBuffer;
 
 
-
 		public DecodedGSMAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
 		{
 			super(outputFormat,
@@ -177,6 +176,7 @@ public class GSMFormatConversionProvider
 			m_decoder = new GSMDecoder();
 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
 			m_abBuffer = new byte[BUFFER_SIZE];
+
 		}
 
 
@@ -194,7 +194,7 @@ public class GSMFormatConversionProvider
 			catch (IOException e)
 			{
 				/*
-				  Not only errors, but also EOF is catched here.
+				  Not only errors, but also EOF is caught here.
 				 */
 				if (TDebug.TraceAllExceptions)
 				{

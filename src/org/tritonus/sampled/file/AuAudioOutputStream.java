@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
  *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
@@ -45,8 +45,37 @@ import	org.tritonus.share.sampled.file.TDataOutputStream;
 
 public class AuAudioOutputStream extends TAudioOutputStream {
 
+	private static String description="Created by Tritonus";
+
 	// this constant is used for chunk lengths when the length is not known yet
 	private static final int LENGTH_NOT_KNOWN=-1;
+
+	/**
+	* Writes a null-terminated ascii string s to f.
+	* The total number of bytes written is aligned on a 2byte boundary.
+	* @exception IOException Write error.
+	*/
+	protected static void writeText(TDataOutputStream dos, String s) throws IOException {
+		if (s.length()>0) {
+			dos.writeBytes(s);
+			dos.writeByte(0);  // pour terminer le texte
+			if ((s.length() % 2)==0) {
+				// ajout d'un zero pour faire la longeur pair
+				dos.writeByte(0);
+			}
+		}
+	}
+
+	/**
+	* Returns number of bytes that have to written for string s (with alignment)
+	*/
+	protected static int getTextLength(String s) {
+		if (s.length()==0) {
+			return 0;
+		} else {
+			return (s.length()+2) & 0xFFFFFFFE;
+		}
+	}
 
 	public AuAudioOutputStream(AudioFormat audioFormat,
 	                           long lLength,
@@ -64,8 +93,7 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 		}
 	}
 
-	protected void writeHeader()
-	throws	IOException {
+	protected void writeHeader() throws	IOException {
 		if (TDebug.TraceAudioOutputStream) {
 			TDebug.out("AuAudioOutputStream.writeHeader(): called.");
 		}
@@ -77,16 +105,17 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 			lLength=0x7FFFFFFFl;
 		}
 		TDataOutputStream	dos = getDataOutputStream();
+
 		dos.writeInt(AuTool.AU_HEADER_MAGIC);
-		dos.writeInt(AuTool.DATA_OFFSET);
+		dos.writeInt(AuTool.DATA_OFFSET+getTextLength(description));
 		dos.writeInt((lLength!=AudioSystem.NOT_SPECIFIED)?((int) lLength):LENGTH_NOT_KNOWN);
 		dos.writeInt(AuTool.getFormatCode(format));
 		dos.writeInt((int) format.getSampleRate());
 		dos.writeInt(format.getChannels());
+		writeText(dos, description);
 	}
 
-	protected void patchHeader()
-	throws	IOException {
+	protected void patchHeader() throws IOException {
 		TDataOutputStream	tdos = getDataOutputStream();
 		tdos.seek(0);
 		setLengthFromCalculatedLength();
