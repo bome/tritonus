@@ -39,7 +39,7 @@ import org.tritonus.mmapi.Mp3AudioPlayer;
 import org.tritonus.mmapi.JavaSoundAudioPlayer;
 import org.tritonus.mmapi.MidiPlayer;
 import org.tritonus.mmapi.ToneGenerator;
-import org.tritonus.share.TDebug;
+
 
 
 /**	TODO:
@@ -223,7 +223,6 @@ public final class Manager
 	public static void playTone(int nNote, int nDuration, int nVolume)
 		throws MediaException
 	{
-		if (TDebug.TraceManager) { TDebug.out("Manager.playTone(): begin"); }
 		if (nNote < 0 || nNote > 127)
 		{
 			throw new IllegalArgumentException("note value out of range (must be [0..127])");
@@ -235,11 +234,12 @@ public final class Manager
 		nVolume = Math.min(100, Math.max(0, nVolume));
 		if (sm_toneGenerator == null)
 		{
-			if (TDebug.TraceManager) { TDebug.out("Manager.playTone(): initializing ToneGenerator"); }
-			sm_toneGenerator = new JavaSoundToneGenerator();
+			synchronized (Manager.class)
+			{
+				sm_toneGenerator = new JavaSoundToneGenerator();
+			}
 		}
 		sm_toneGenerator.playTone(nNote, nDuration, nVolume);
-		if (TDebug.TraceManager) { TDebug.out("Manager.playTone(): end"); }
 	}
 
 
