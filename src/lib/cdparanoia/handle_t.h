@@ -1,5 +1,5 @@
 /*
- *	handle_t.hh
+ *	handle_t.h
  */
 
 #include <cdda_interface.h>
@@ -14,4 +14,4 @@ typedef struct
 
 
 
-/*** handle_t.hh ***/
+/*** handle_t.h ***/
