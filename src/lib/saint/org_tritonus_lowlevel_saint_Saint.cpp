@@ -110,6 +110,10 @@ JNIEXPORT void JNICALL
 Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2
 (JNIEnv *env, jobject obj, jobject bitStream)
 {
+	jstreambuf*	bitStreamBuf = new jstreambuf(env, bitStream);
+	istream*	bitIStream = new istream(bitStreamBuf);
+	Saint*	saint = new Saint(bitIStream);
+	setNativeHandle(env, obj, saint);
 }
 
 
@@ -119,7 +123,8 @@ Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2
  * Method:    init
  * Signature: (Ljava/io/InputStream;Ljava/io/InputStream;)V
  */
-JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2Ljava_io_InputStream_2
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2Ljava_io_InputStream_2
 (JNIEnv *env, jobject obj, jobject orchestraStream, jobject scoreStream)
 {
 	jstreambuf*	orchestraStreamBuf = new jstreambuf(env, orchestraStream);
@@ -130,17 +135,6 @@ JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_Inp
 	setNativeHandle(env, obj, saint);
 }
 
-/*
-JNIEXPORT void JNICALL
-Java_org_tritonus_lowlevel_saint_Saint_init__Ljava_io_InputStream_2Ljava_io_InputStream_2Ljava_io_OutputStream_2I
-(JNIEnv *env, jobject obj, jobject orchestraStream, jobject scoreStream, jobject outputStream, jint nOutputFormat)
-{
-	jstreambuf*	orchestraStreamBuf = new jstreambuf(env, orchestraStream);
-	istream*	orchestraIStream = new istream(orchestraStreamBuf);
-	Saint*	saint = new Saint(orchestraIStream, scoreIStream, nOutputFormat);
-	setNativeHandle(env, obj, saint);
-}
-*/
 
 
 /*
@@ -168,11 +162,18 @@ Java_org_tritonus_lowlevel_saint_Saint_setOutput
 (JNIEnv *env, jobject obj, jobject outputStream, jint nOutputFormat)
 {
 	cerr << "in (native) setOutput()" << endl;
+	// cerr << "0";
 	jstreambuf*	outputStreamBuf = new jstreambuf(env, outputStream, 128000);
+	// cerr << "1";
 	ostream*	outputOStream = new ostream(outputStreamBuf);
+	// cerr << "2";
 	Out*	pOut = new Out(outputOStream, nOutputFormat);
+	// cerr << "3";
 	Saint*	saint = getNativeHandle(env, obj);
+	// cerr << "4";
+	// cerr << "native handle: " << saint << endl;
 	saint->setOutput(pOut);
+	// cerr << "5";
 }
 
 

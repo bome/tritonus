@@ -119,6 +119,17 @@
 			<fileset
 				dir="${src}/packaging/tritonus_gsm" />
 		</jar>
+
+		<jar	jarfile="${dist}/tritonus_saint.jar" >
+			<fileset
+				dir="${build}" >
+				<include name="org/tritonus/lowlevel/saint/" />
+				<include name="org/tritonus/sampled/convert/gsm/" />
+				<include name="org/tritonus/sampled/file/gsm/" />
+			</fileset>
+			<!--fileset
+				dir="${src}/packaging/tritonus_gsm" /-->
+		</jar>
 	</target>
 
 	<!--

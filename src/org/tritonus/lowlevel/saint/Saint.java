@@ -78,14 +78,11 @@ public class Saint
 /*
 Saint::~Saint()
 {
-	copyFromTempfile(m_strOutputTempFilename,
-			 m_pOutputStream);
 	if (m_pScheduler)
 	{
 		// with saint 1.33 (prerelease), a segfault occures if the destructor is called
 		// delete m_pScheduler;
 	}
-	// TODO: remove temporary files
 }
 */
 
