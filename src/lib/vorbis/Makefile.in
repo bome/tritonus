@@ -1,4 +1,4 @@
-# compilation and packing of the native library for esd
+# compilation and packing of the native library for vorbis
 #
 
 SHELL = /bin/sh
