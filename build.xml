@@ -15,39 +15,52 @@
 
   <target name="compile" depends="prepare">
     <javac srcdir="${src}"
-	   destdir="${build}"
-	   includes="javax/sound/,org/tritonus/"
-	   excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/,org/tritonus/sampled/cdda/,org/tritonus/debug/" />
+	   debug="on"
+	   destdir="${build}" >
+      <include name="javax/sound/" />
+      <include name="org/tritonus/" />
+      <exclude name="org/tritonus/sampled/convert/javalayer/" />
+      <exclude name="org/tritonus/sampled/convert/vorbis/" />
+      <exclude name="org/tritonus/sampled/file/vorbis/" />
+      <exclude name="org/tritonus/midi/device/midishare/" />
+      <!--exclude name="org/tritonus/sampled/cdda/" /-->
+      <exclude name="org/tritonus/debug/" />
+    </javac>
     <javac srcdir="${src.classes}"
 	   debug="on"
-	   destdir="${build}"
-	   includes="org/tritonus/lowlevel/dsp/" />
+	   destdir="${build}" >
+      <include name="org/tritonus/lowlevel/dsp/" />
+    </javac>
   </target>
+
 
   <target name="compile-javalayer-dependent"
 	  depends="prepare"
 	  if="javalayer-present">
     <javac srcdir="${src}"
-	   destdir="${build}"
-	   depend="yes"
-	   includes="org/tritonus/sampled/convert/javalayer/" />
+	   destdir="${build}" >
+      <include name="org/tritonus/sampled/convert/javalayer/" />
+    </javac>
   </target>
+
 
   <target name="compile-jorbis-dependent"
 	  depends="prepare"
 	  if="jorbis-present">
     <javac srcdir="${src}"
-	   destdir="${build}"
-	   depend="yes"
-	   includes="org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/" />
+	   destdir="${build}" >
+      <include name="org/tritonus/sampled/convert/vorbis/" />
+      <include name="org/tritonus/sampled/file/vorbis/" />
+    </javac>
   </target>
 
   <target name="compile-midishare-dependent"
 	  depends="prepare"
 	  if="midishare-present">
     <javac srcdir="${src}"
-	   destdir="${build}"
-	   includes="org/tritonus/midi/device/midishare/" />
+	   destdir="${build}" >
+      <include name="org/tritonus/midi/device/midishare/" />
+    </javac>
   </target>
 
 </project>

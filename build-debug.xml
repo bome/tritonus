@@ -22,18 +22,34 @@
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 includes="javax/sound/,org/tritonus/core/,org/tritonus/share/,org/tritonus/debug/AJDebug.java,org/tritonus/debug/Utils.java" 
-	 excludes="org/tritonus/share/sampled/AudioSystemShadow.java" >
+	 usejavac="false" >
+      <include name="javax/sound/" />
+      <include name="org/tritonus/core/" />
+      <include name="org/tritonus/share/" />
+      <include name="org/tritonus/debug/AJDebug.java" />
+      <include name="org/tritonus/debug/Utils.java" />
+      <exclude name="org/tritonus/share/sampled/AudioSystemShadow.java" />
+      <classpath>
+	<pathelement path="${classpath}"/>
+	<pathelement location="build"/>
+      </classpath>
     </ajc>
 
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/"
-	 excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" >
+	 usejavac="false" >
+      <include name="org/tritonus/lowlevel/" />
+      <include name="org/tritonus/midi/" />
+      <include name="org/tritonus/sampled/" />
+      <exclude name="org/tritonus/sampled/convert/javalayer/" />
+      <exclude name="org/tritonus/sampled/convert/vorbis/" />
+      <exclude name="org/tritonus/sampled/file/vorbis/" />
+      <exclude name="org/tritonus/midi/device/midishare/" />
       <classpath>
 	<pathelement path="${classpath}"/>
 	<pathelement location="build"/>
+	<pathelement location="/usr/local/java/j2sdk1.3.1/lib/tools.jar"/>
       </classpath>
     </ajc>
 <!--
@@ -44,13 +60,15 @@
 -->
   </target>
 
+
   <target name="compile-javalayer-dependent"
 	  depends="prepare"
 	  if="javalayer-present">
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 includes="org/tritonus/sampled/convert/javalayer/" >
+	 usejavac="false" >
+      <include name="org/tritonus/sampled/convert/javalayer/" />
       <classpath>
 	<pathelement path="${classpath}"/>
 	<pathelement location="build"/>
@@ -64,7 +82,10 @@
     <ajc srcdir="${src}"
 	 destdir="${build}"
 	 debug="on"
-	 includes="org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/debug/AJDebugVorbis.java" >
+	 usejavac="false" >
+      <include name="org/tritonus/sampled/convert/vorbis/" />
+      <include name="org/tritonus/sampled/file/vorbis/" />
+      <include name="org/tritonus/debug/AJDebugVorbis.java" />
       <classpath>
 	<pathelement path="${classpath}"/>
 	<pathelement location="build"/>
