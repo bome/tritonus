@@ -218,6 +218,7 @@ extends TAudioFileReader
 				format,
 				nFrameSize,
 				nByteSize);
+		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): AudioFileFormat: " + audioFileFormat); }
 		return audioFileFormat;
 	}
 }
