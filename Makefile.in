@@ -421,3 +421,8 @@ plugins-rsync:	$(PLUGINS)
 	cd $(DISTDIR) ; rsync $(PLUGINS) www.tritonus.org:vtritonus/htdocs
 
 
+#------- EXPERIMENTAL ----------------
+
+nativelibs:
+	$(MAKE) -C src/lib/alsa
+	$(MAKE) -C src/lib/greatlysimplifiedvorbis
