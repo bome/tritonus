@@ -28,7 +28,6 @@ LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/esd/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
 LIBS=-lesd -L../common -ltritonuscommon
-#LIBS=-Wl,-rpath-link,.:../common -lesd -L../common -ltritonuscommon
 
 JAVAH = @JAVAH@
 
