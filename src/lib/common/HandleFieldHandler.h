@@ -26,7 +26,9 @@
 
 #include <jni.h>
 
-// the C macros that will replace the template class
+
+#define HandleFieldHandler(_type)            \
+HandleFieldHandlerDeclaration(_handler, _type)
 
 #define HandleFieldHandlerDeclaration(_variableName, _type)            \
 static jfieldID  _variableName ## FieldID = NULL;                      \
