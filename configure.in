@@ -214,4 +214,5 @@ AC_OUTPUT(Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
 	src/lib/saint/Makefile
+	doc/Makefile
 	test/Makefile)
