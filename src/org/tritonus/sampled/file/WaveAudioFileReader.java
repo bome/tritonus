@@ -51,7 +51,18 @@ import	org.tritonus.share.sampled.file.TAudioFileReader;
  * @author Matthias Pfisterer
  */
 
-public class WaveAudioFileReader extends TAudioFileReader {
+public class WaveAudioFileReader extends TAudioFileReader
+{
+	private static final int	READ_LIMIT = 1000;
+
+
+
+	public WaveAudioFileReader()
+	{
+		super(READ_LIMIT);
+	}
+
+
 
 	protected void advanceChunk(DataInputStream dis, long prevLength, long prevRead)
 	throws IOException {

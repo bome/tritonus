@@ -37,7 +37,7 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
+import	org.tritonus.share.sampled.file.TAudioFileReader;
 
 
 
@@ -45,7 +45,7 @@ import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
  * @author Matthias Pfisterer
  */
 public class MpegAudioFileReader
-	extends	TRereadingAudioFileReader
+	extends	TAudioFileReader
 {
 	private static final int	SYNC = 0xFFE00000;
 	private static final AudioFormat.Encoding[][]	sm_aEncodings =
@@ -71,13 +71,13 @@ public class MpegAudioFileReader
 		{44100.0F, 48000.0F, 32000.0F},
 	};
 
-	private static final int	BUFFERING_AMOUNT = 4;
+	private static final int	MARK_LIMIT = 4;
 
 
 
 	public MpegAudioFileReader()
 	{
-		super(BUFFERING_AMOUNT);
+		super(MARK_LIMIT, true);
 	}
 
 

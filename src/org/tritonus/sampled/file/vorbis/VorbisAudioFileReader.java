@@ -36,7 +36,7 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
+import	org.tritonus.share.sampled.file.TAudioFileReader;
 
 import	com.jcraft.jogg.SyncState;
 import	com.jcraft.jogg.StreamState;
@@ -53,16 +53,16 @@ import	com.jcraft.jorbis.Block;
  * @author Matthias Pfisterer
  */
 public class VorbisAudioFileReader
-	extends	TRereadingAudioFileReader
+	extends	TAudioFileReader
 {
 	// Note: this value is only an estimate
-	private static final int	BUFFERING_AMOUNT = 10000;
+	private static final int	MARK_LIMIT = 10000;
 
 
 
 	public VorbisAudioFileReader()
 	{
-		super(BUFFERING_AMOUNT);
+		super(MARK_LIMIT, true);
 	}
 
 

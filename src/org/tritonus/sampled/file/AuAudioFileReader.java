@@ -49,7 +49,18 @@ import	org.tritonus.share.sampled.file.TAudioFileReader;
  * @author Florian Bomers
  * @author Matthias Pfisterer
  */
-public class AuAudioFileReader extends TAudioFileReader {
+public class AuAudioFileReader extends TAudioFileReader
+{
+	private static final int	READ_LIMIT = 1000;
+
+
+
+	public AuAudioFileReader()
+	{
+		super(READ_LIMIT);
+	}
+
+
 
 	private static String readDescription(DataInputStream dis, int len) throws IOException {
 		byte c=-1;
@@ -159,7 +170,7 @@ public class AuAudioFileReader extends TAudioFileReader {
 			AudioSystem.NOT_SPECIFIED:(nDataLength / format.getFrameSize()),
 			(nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
 			AudioSystem.NOT_SPECIFIED:(nDataLength + nDataOffset));
-		if (TDebug.TraceAudioFileReader) {TDebug.out("AuAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
+		if (TDebug.TraceAudioFileReader) { TDebug.out("AuAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
 		return audioFileFormat;
 	}
 }

@@ -49,7 +49,18 @@ import	org.tritonus.share.TDebug;
  * @author Florian Bomers
  * @author Matthias Pfisterer
  */
-public class AiffAudioFileReader extends TAudioFileReader {
+public class AiffAudioFileReader extends TAudioFileReader
+{
+	private static final int	READ_LIMIT = 1000;
+
+
+
+	public AiffAudioFileReader()
+	{
+		super(READ_LIMIT);
+	}
+
+
 
 	private void skipChunk(DataInputStream dataInputStream, int chunkLength, int chunkRead)
 	throws IOException {

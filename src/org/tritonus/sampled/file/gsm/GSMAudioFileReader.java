@@ -39,7 +39,7 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.file.TAudioFileFormat;
-import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
+import	org.tritonus.share.sampled.file.TAudioFileReader;
 
 
 
@@ -47,18 +47,18 @@ import	org.tritonus.share.sampled.file.TRereadingAudioFileReader;
 	@author Matthias Pfisterer
  */
 public class GSMAudioFileReader
-	extends	TRereadingAudioFileReader
+	extends	TAudioFileReader
 {
 	private static final int	GSM_MAGIC = 0xD0;
 	private static final int	GSM_MAGIC_MASK = 0xF0;
 
-	private static final int	BUFFERING_AMOUNT = 1;
+	private static final int	MARK_LIMIT = 1;
 
 
 
 	public GSMAudioFileReader()
 	{
-		super(BUFFERING_AMOUNT);
+		super(MARK_LIMIT, true);
 	}
 
 
