@@ -49,24 +49,22 @@ import	org.tritonus.TDebug;
  */
 public class MpegAudioFileWriter extends TAudioFileWriter {
 
-	private static final AudioFileFormat.Type[]	FILE_TYPES =
-	    {
-		    AudioFileTypes.getType("MPEG", "mpeg"),
-	        // workaround for the fixed extension problem in AudioFileFormat.Type
-	        // see org.tritonus.sampled.AudioFileTypes.java
-		    AudioFileTypes.getType("MP3", "mp3")
-	    };
+	private static final AudioFileFormat.Type[]	FILE_TYPES = {
+		//AudioFileTypes.getType("MPEG", "mpeg"),
+		// workaround for the fixed extension problem in AudioFileFormat.Type
+		// see org.tritonus.sampled.AudioFileTypes.java
+		AudioFileTypes.getType("MP3", "mp3")
+	};
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	public static AudioFormat.Encoding MPEG1L3=Encodings.getEncoding("MPEG1L3");
 
-	private static final AudioFormat[]	AUDIO_FORMATS =
-	    {
-	        new AudioFormat(MPEG1L3, 44100, 16, 1, ALL, ALL, false),
-	        new AudioFormat(MPEG1L3, 44100, 16, 1, ALL, ALL, true),
-	        new AudioFormat(MPEG1L3, 44100, 16, 2, ALL, ALL, false),
-	        new AudioFormat(MPEG1L3, 44100, 16, 2, ALL, ALL, true),
-	    };
+	private static final AudioFormat[]	AUDIO_FORMATS = {
+		new AudioFormat(MPEG1L3, ALL, ALL, 1, ALL, ALL, false),
+		new AudioFormat(MPEG1L3, ALL, ALL, 1, ALL, ALL, true),
+		new AudioFormat(MPEG1L3, ALL, ALL, 2, ALL, ALL, false),
+		new AudioFormat(MPEG1L3, ALL, ALL, 2, ALL, ALL, true),
+	};
 
 	public MpegAudioFileWriter() {
 		super(Arrays.asList(FILE_TYPES),
@@ -79,7 +77,7 @@ public class MpegAudioFileWriter extends TAudioFileWriter {
 	    long lLengthInBytes,
 	    AudioFileFormat.Type fileType,
 	    File file)
-	throws	IOException {
+		throws	IOException {
 		TDataOutputStream	dataOutputStream = new SeekableTDOS(file);
 		return new HeaderLessAudioOutputStream(audioFormat,
 		                                       lLengthInBytes,

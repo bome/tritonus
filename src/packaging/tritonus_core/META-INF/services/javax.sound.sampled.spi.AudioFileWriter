@@ -4,6 +4,7 @@
 org.tritonus.sampled.file.AuAudioFileWriter
 org.tritonus.sampled.file.WaveAudioFileWriter
 org.tritonus.sampled.file.AiffAudioFileWriter
+org.tritonus.sampled.file.MpegAudioFileWriter
 org.tritonus.sampled.file.gsm.GSMAudioFileWriter
 
 # end

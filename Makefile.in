@@ -114,6 +114,7 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
 	$(SRCDIR_PRIV)/lowlevel/gsm/*.java \
 	$(SRCDIR_PRIV)/lowlevel/saint/*.java \
+	$(SRCDIR_PRIV)/lowlevel/lame/*.java \
 	$(SRCDIR_PRIV)/sampled/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/*.java \
 	$(SRCDIR_PRIV)/sampled/convert/gsm/*.java \
@@ -130,7 +131,6 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_JL)/*.java \
 	)
 
-#	$(SRCDIR_PRIV)/lowlevel/lame/*.java \
 #	$(SRCDIR_PRIV)/midi/device/midishare/*.java \
 #	$(SRCDIR_PRIV)/midi/device/saint/*.java \
 #	$(SRCDIR_PRIV)/sampled/mixer/jesd/*.java \

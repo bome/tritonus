@@ -90,7 +90,6 @@ AC_PROG_LN_S
 
 AC_SUBST(SUBDIRS)
 dnl Checks for libraries.
-#SUBDIRS=src/lib/lame
 #SUBDIRS=src/lib/saint
 SUBDIRS=
 AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"]; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
@@ -117,6 +116,6 @@ AC_SUBST(MKDIR_P)
 AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
 	src/lib/esd/Makefile
-dnl	src/lib/lame/Makefile
+	src/lib/lame/Makefile
 	test/Makefile)
 dnl	src/lib/saint/Makefile
