@@ -30,7 +30,6 @@ import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
 import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 
 /**
  * Common constants and methods for handling wave files.
@@ -70,13 +69,7 @@ public class WaveTool {
 	public static final int DATA_OFFSET=RIFF_CONTAINER_CHUNK_SIZE
 	                                    +CHUNK_HEADER_SIZE+FMT_CHUNK_SIZE+CHUNK_HEADER_SIZE;
 
-	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
-	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
-	public static AudioFormat.Encoding ULAW=Encodings.getEncoding("ULAW");
-	public static AudioFormat.Encoding ALAW=Encodings.getEncoding("ALAW");
 	public static AudioFormat.Encoding GSM0610=Encodings.getEncoding("GSM0610");
-
-	public static AudioFileFormat.Type WAVE=AudioFileTypes.getType("WAVE", "wav");
 
 	public static short getFormatCode(AudioFormat format) {
 		AudioFormat.Encoding encoding = format.getEncoding();
@@ -86,17 +79,18 @@ public class WaveTool {
 		                    || format.getChannels()!=AudioSystem.NOT_SPECIFIED
 		                    || format.getFrameSize()==nSampleSize/8*format.getChannels();
 
-		if (((encoding.equals(PCM_SIGNED) && smallEndian && nSampleSize>8)
-		        || (encoding.equals(PCM_UNSIGNED) && nSampleSize==8))
-		        && frameSizeOK) {
+		if (((encoding.equals(AudioFormat.Encoding.PCM_SIGNED) 
+		      && smallEndian && nSampleSize>8)
+		     || (encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED) && nSampleSize==8))
+		    && frameSizeOK) {
 			return WAVE_FORMAT_PCM;
-		} else if (encoding.equals(ULAW) 
-			   && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8) 
-			   && frameSizeOK) {
+		} else if (encoding.equals(AudioFormat.Encoding.ULAW)
+		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
+		           && frameSizeOK) {
 			return WAVE_FORMAT_ULAW;
-		} else if (encoding.equals(ALAW) 
-			   && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8) 
-			   && frameSizeOK) {
+		} else if (encoding.equals(AudioFormat.Encoding.ALAW)
+		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
+		           && frameSizeOK) {
 			return WAVE_FORMAT_ALAW;
 		} else if (encoding.equals(GSM0610)) {
 			return WAVE_FORMAT_GSM610;

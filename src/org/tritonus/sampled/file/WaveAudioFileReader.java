@@ -79,7 +79,8 @@ public class WaveAudioFileReader extends TAudioFileReader {
 				// IMHO, this is not an IOException, as there are incarnations
 				// of WAVE files which store data in different chunks.
 				// maybe we can find a nice description of the "required chunk" ?
-				throw new UnsupportedAudioFileException("unsupported WAVE file: required chunk not found.");
+				throw new UnsupportedAudioFileException(
+				    "unsupported WAVE file: required chunk not found.");
 			}
 			chunkLength = readLittleEndianInt(dis) & 0xFFFFFFFF; // unsigned
 		}
@@ -131,7 +132,7 @@ public class WaveAudioFileReader extends TAudioFileReader {
 				    "corrupt WAVE file: sample size must be positive");
 			}
 			encoding = (sampleSizeInBits <= 8) ?
-			           WaveTool.PCM_UNSIGNED : WaveTool.PCM_SIGNED;
+			           AudioFormat.Encoding.PCM_UNSIGNED : AudioFormat.Encoding.PCM_SIGNED;
 			if (TDebug.TraceAudioFileReader) {
 				debugAdd+=", wBitsPerSample="+sampleSizeInBits;
 			}
@@ -139,11 +140,11 @@ public class WaveAudioFileReader extends TAudioFileReader {
 			break;
 		case WaveTool.WAVE_FORMAT_ALAW:
 			sampleSizeInBits = 8;
-			encoding = WaveTool.ALAW;
+			encoding = AudioFormat.Encoding.ALAW;
 			break;
 		case WaveTool.WAVE_FORMAT_ULAW:
 			sampleSizeInBits = 8;
-			encoding = WaveTool.ULAW;
+			encoding = AudioFormat.Encoding.ULAW;
 			break;
 		case WaveTool.WAVE_FORMAT_GSM610:
 			if (chunkLength<WaveTool.MIN_FMT_CHUNK_LENGTH+6) {
@@ -236,7 +237,7 @@ public class WaveAudioFileReader extends TAudioFileReader {
 			TDebug.out("WaveAudioFileReader.getAudioFileFormat(): total length: "
 			           +totalLength+", frame length = "+frameLength);
 		}
-		return new TAudioFileFormat(WaveTool.WAVE,
+		return new TAudioFileFormat(AudioFileFormat.Type.WAVE,
 		                            format,
 		                            (int) frameLength,
 		                            (int) (totalLength + WaveTool.CHUNK_HEADER_SIZE));

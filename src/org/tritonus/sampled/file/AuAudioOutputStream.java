@@ -36,7 +36,7 @@ import	org.tritonus.share.sampled.file.TDataOutputStream;
 
 
 
-/**	
+/**
  * AudioOutputStream for AU files.
  *
  * @author Florian Bomers
@@ -47,11 +47,10 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 
 	// this constant is used for chunk lengths when the length is not known yet
 	private static final int LENGTH_NOT_KNOWN=-1;
-	
+
 	public AuAudioOutputStream(AudioFormat audioFormat,
-				   long lLength,
-				   TDataOutputStream dataOutputStream)
-	{
+	                           long lLength,
+	                           TDataOutputStream dataOutputStream) {
 		// au cannot store more than 2GB
 		// when this check is here, we will truncate the output file
 		// it could be placed in write(), then the
@@ -66,10 +65,8 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 	}
 
 	protected void writeHeader()
-		throws	IOException
-	{
-		if (TDebug.TraceAudioOutputStream)
-		{
+	throws	IOException {
+		if (TDebug.TraceAudioOutputStream) {
 			TDebug.out("AuAudioOutputStream.writeHeader(): called.");
 		}
 		AudioFormat		format = getFormat();
@@ -89,8 +86,7 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 	}
 
 	protected void patchHeader()
-		throws	IOException
-	{
+	throws	IOException {
 		TDataOutputStream	tdos = getDataOutputStream();
 		tdos.seek(0);
 		setLengthFromCalculatedLength();

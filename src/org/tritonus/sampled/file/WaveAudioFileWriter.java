@@ -26,11 +26,7 @@
 package	org.tritonus.sampled.file;
 
 
-import	java.io.File;
-import	java.io.InputStream;
 import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.io.DataOutputStream;
 import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioFileFormat;
@@ -42,8 +38,6 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TAudioFileWriter;
 import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
-import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
 
 
 /**
@@ -56,7 +50,7 @@ public class WaveAudioFileWriter
 
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	    {
-	        WaveTool.WAVE
+	        AudioFileFormat.Type.WAVE
 	    };
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
@@ -66,15 +60,15 @@ public class WaveAudioFileWriter
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	    {
 	        // Encoding, SampleRate, sampleSizeInBits, channels, frameSize, frameRate, bigEndian
-	        new AudioFormat(WaveTool.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(WaveTool.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(WaveTool.ULAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(WaveTool.ULAW, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(WaveTool.ALAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(WaveTool.ALAW, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(WaveTool.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-	        new AudioFormat(WaveTool.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
-	        new AudioFormat(WaveTool.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
 	        new AudioFormat(WaveTool.GSM0610, ALL, ALL, ALL, ALL, ALL, false),
 	        new AudioFormat(WaveTool.GSM0610, ALL, ALL, ALL, ALL, ALL, true),
 	    };
@@ -91,33 +85,14 @@ public class WaveAudioFileWriter
 	}
 
 
-	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    File file)
-	throws	IOException {
-		// TODO: (generalized) check if either seek is possible
-		//       or length is not required in header
-		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
-		return new WaveAudioOutputStream(audioFormat,
-		                                 lLengthInBytes,
-		                                 dataOutputStream);
-	}
-
-	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		OutputStream outputStream)
-		throws	IOException {
-		// it should be thrown an exception if it is tried to write
-		// to a stream but lLengthInFrames is AudioSystem.NOT_SPECIFIED
-		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
-		return new WaveAudioOutputStream(audioFormat,
-		                                 lLengthInBytes,
-		                                 dataOutputStream);
-	}
+	protected AudioOutputStream getAudioOutputStream(AudioFormat audioFormat,
+	        long lLengthInBytes,
+	        AudioFileFormat.Type fileType,
+	        TDataOutputStream dataOutputStream)	throws	IOException {
+	            return new WaveAudioOutputStream(audioFormat,
+	                                             lLengthInBytes,
+	                                             dataOutputStream);
+	        }
 
 }
 

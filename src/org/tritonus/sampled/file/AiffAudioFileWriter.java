@@ -26,11 +26,7 @@
 package	org.tritonus.sampled.file;
 
 
-import	java.io.File;
-import	java.io.InputStream;
 import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.io.DataOutputStream;
 import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioFileFormat;
@@ -42,8 +38,6 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TAudioFileWriter;
 import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
-import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
 
 
 /**
@@ -56,8 +50,8 @@ public class AiffAudioFileWriter extends TAudioFileWriter {
 
 	private static final AudioFileFormat.Type[] FILE_TYPES =
 	    {
-	        AiffTool.AIFF,
-	        AiffTool.AIFC
+	        AudioFileFormat.Type.AIFF,
+	        AudioFileFormat.Type.AIFC
 	    };
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
@@ -66,13 +60,13 @@ public class AiffAudioFileWriter extends TAudioFileWriter {
 	//            AudioSystem.NOT_SPECIFIED into account !
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	    {
-	        new AudioFormat(AiffTool.PCM, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AiffTool.PCM, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AiffTool.ULAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AiffTool.ULAW, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AiffTool.PCM, ALL, 16, ALL, ALL, ALL, true),
-	        new AudioFormat(AiffTool.PCM, ALL, 24, ALL, ALL, ALL, true),
-	        new AudioFormat(AiffTool.PCM, ALL, 32, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, true),
 	    };
 
 	public AiffAudioFileWriter() {
@@ -87,34 +81,15 @@ public class AiffAudioFileWriter extends TAudioFileWriter {
 	}
 
 
-	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    File file)
-	throws	IOException {
-		// TODO: (generalized) check if either seek is possible
-		//       or length is not required in header
-		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
-		return new AiffAudioOutputStream(audioFormat, fileType,
-		                                 lLengthInBytes,
-		                                 dataOutputStream);
-	}
-
-	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    OutputStream outputStream)
-	throws	IOException {
-		// it should be thrown an exception if it is tried to write
-		// to a stream but lLengthInFrames is AudioSystem.NOT_SPECIFIED
-		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
-		return new AiffAudioOutputStream(audioFormat, fileType,
-		                                 lLengthInBytes,
-		                                 dataOutputStream);
-	}
+	protected AudioOutputStream getAudioOutputStream(AudioFormat audioFormat,
+	        long lLengthInBytes,
+	        AudioFileFormat.Type fileType,
+	        TDataOutputStream dataOutputStream)	throws	IOException {
+	            return new AiffAudioOutputStream(audioFormat, fileType,
+	                                             lLengthInBytes,
+	                                             dataOutputStream);
+	        }
 
 }
 
-/*** WaveAudioFileWriter.java ***/
+/*** AiffAudioFileWriter.java ***/

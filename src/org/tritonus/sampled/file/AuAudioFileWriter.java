@@ -27,11 +27,7 @@
 package	org.tritonus.sampled.file;
 
 
-import	java.io.File;
-import	java.io.InputStream;
 import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.io.DataOutputStream;
 import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioFileFormat;
@@ -43,8 +39,6 @@ import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TAudioFileWriter;
 import	org.tritonus.share.sampled.file.TDataOutputStream;
-import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
-import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
 
 
 /**
@@ -57,7 +51,7 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 
 	private static final AudioFileFormat.Type[] FILE_TYPES =
 	    {
-	        AuTool.AU
+	        AudioFileFormat.Type.AU
 	    };
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
@@ -66,21 +60,20 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 	//            AudioSystem.NOT_SPECIFIED into account !
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	    {
-	        // IDEA: allow other number of channels that 1 and 2 ?
-	        new AudioFormat(AuTool.PCM, ALL, 8, ALL, ALL, ALL, true),
-	        new AudioFormat(AuTool.PCM, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
 
-	        new AudioFormat(AuTool.ULAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AuTool.ULAW, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true),
 
-	        new AudioFormat(AuTool.ALAW, ALL, 8, ALL, ALL, ALL, false),
-	        new AudioFormat(AuTool.ALAW, ALL, 8, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, false),
+	        new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, true),
 
-	        new AudioFormat(AuTool.PCM, ALL, 16, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
 
-	        new AudioFormat(AuTool.PCM, ALL, 24, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, true),
 
-	        new AudioFormat(AuTool.PCM, ALL, 32, ALL, ALL, ALL, true),
+	        new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, true),
 	    };
 
 	public AuAudioFileWriter() {
@@ -93,34 +86,14 @@ public class AuAudioFileWriter extends TAudioFileWriter {
 	        AudioFileFormat.Type fileType) {
 		return AuTool.getFormatCode(format)!=AuTool.SND_FORMAT_UNSPECIFIED;
 	}
-
-	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    File file)
-	throws	IOException {
-		// TODO: (generalized) check if either seek is possible
-		//       or length is not required in header
-		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
-		return new AuAudioOutputStream(audioFormat,
-		                               lLengthInBytes,
-		                               dataOutputStream);
-	}
-
-	protected AudioOutputStream getAudioOutputStream(
-	    AudioFormat audioFormat,
-	    long lLengthInBytes,
-	    AudioFileFormat.Type fileType,
-	    OutputStream outputStream)
-	throws	IOException {
-		// it should be thrown an exception if it is tried to write
-		// to a stream but lLengthInFrames is AudioSystem.NOT_SPECIFIED
-		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
-		return new AuAudioOutputStream(audioFormat,
-		                               lLengthInBytes,
-		                               dataOutputStream);
-	}
+	protected AudioOutputStream getAudioOutputStream(AudioFormat audioFormat,
+	        long lLengthInBytes,
+	        AudioFileFormat.Type fileType,
+	        TDataOutputStream dataOutputStream)	throws	IOException {
+	            return new AuAudioOutputStream(audioFormat,
+	                                           lLengthInBytes,
+	                                           dataOutputStream);
+	        }
 
 }
 

@@ -28,8 +28,6 @@ package	org.tritonus.sampled.file;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioSystem;
-import	org.tritonus.share.sampled.Encodings;
-import	org.tritonus.share.sampled.AudioFileTypes;
 
 
 /**
@@ -59,12 +57,6 @@ public class AuTool {
 	public static final int	SND_FORMAT_ADPCM_G723_5 = 26;
 	public static final int	SND_FORMAT_ALAW_8 = 27;
 
-	public static AudioFormat.Encoding PCM=Encodings.getEncoding("PCM_SIGNED");
-	public static AudioFormat.Encoding ULAW=Encodings.getEncoding("ULAW");
-	public static AudioFormat.Encoding ALAW=Encodings.getEncoding("ALAW");
-
-	public static AudioFileFormat.Type AU=AudioFileTypes.getType("AU", "au");
-
 	public static int getFormatCode(AudioFormat format) {
 		AudioFormat.Encoding encoding = format.getEncoding();
 		int nSampleSize = format.getSampleSizeInBits();
@@ -76,9 +68,9 @@ public class AuTool {
 		                        || format.getChannels()!=AudioSystem.NOT_SPECIFIED
 		                        || format.getFrameSize()==nSampleSize/8*format.getChannels());
 
-		if (encoding.equals(ULAW) && nSampleSize == 8 && frameSizeOK) {
+		if (encoding.equals(AudioFormat.Encoding.ULAW) && nSampleSize == 8 && frameSizeOK) {
 			return SND_FORMAT_MULAW_8;
-		} else if (encoding.equals(PCM) && frameSizeOK) {
+		} else if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && frameSizeOK) {
 			if (nSampleSize == 8) {
 				return SND_FORMAT_LINEAR_8;
 			} else if (nSampleSize == 16 && bigEndian) {
@@ -88,7 +80,7 @@ public class AuTool {
 			} else if (nSampleSize == 32 && bigEndian) {
 				return SND_FORMAT_LINEAR_32;
 			}
-		} else if (encoding.equals(ALAW) && nSampleSize == 8 && frameSizeOK) {
+		} else if (encoding.equals(AudioFormat.Encoding.ALAW) && nSampleSize == 8 && frameSizeOK) {
 			return SND_FORMAT_ALAW_8;
 		}
 		return SND_FORMAT_UNSPECIFIED;

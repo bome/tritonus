@@ -56,21 +56,24 @@ public class AuAudioFileReader extends TAudioFileReader {
 		DataInputStream	dataInputStream = new DataInputStream(inputStream);
 		int	nMagic = dataInputStream.readInt();
 		if (nMagic != AuTool.AU_HEADER_MAGIC) {
-			throw new UnsupportedAudioFileException("not an AU file: wrong header magic");
+			throw new UnsupportedAudioFileException(
+			    "not an AU file: wrong header magic");
 		}
 		int nDataOffset = dataInputStream.readInt();
 		if (TDebug.TraceAudioFileReader) {
 			TDebug.out("AuAudioFileReader.getAudioFileFormat(): data offset: " + nDataOffset);
 		}
 		if (nDataOffset < AuTool.DATA_OFFSET) {
-			throw new UnsupportedAudioFileException("not an AU file: data offset must be 24 or greater");
+			throw new UnsupportedAudioFileException(
+			    "not an AU file: data offset must be 24 or greater");
 		}
 		int nDataLength = dataInputStream.readInt();
 		if (TDebug.TraceAudioFileReader) {
 			TDebug.out("AuAudioFileReader.getAudioFileFormat(): data length: " + nDataLength);
 		}
 		if (nDataLength < -1) {
-			throw new UnsupportedAudioFileException("not an AU file: data length must be positive, 0 or -1 for unknown");
+			throw new UnsupportedAudioFileException(
+			    "not an AU file: data length must be positive, 0 or -1 for unknown");
 		}
 		AudioFormat.Encoding encoding = null;
 		int nSampleSize = 0;
@@ -78,46 +81,53 @@ public class AuAudioFileReader extends TAudioFileReader {
 		switch (nEncoding) {
 		case AuTool.SND_FORMAT_MULAW_8:		// 8-bit uLaw G.711
 
-			encoding = AuTool.ULAW;
+
+
+			encoding = AudioFormat.Encoding.ULAW;
 			nSampleSize = 8;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_8:
-			encoding = AuTool.PCM;
+			encoding = AudioFormat.Encoding.PCM_SIGNED;
 			nSampleSize = 8;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_16:
-			encoding = AuTool.PCM;
+			encoding = AudioFormat.Encoding.PCM_SIGNED;
 			nSampleSize = 16;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_24:
-			encoding = AuTool.PCM;
+			encoding = AudioFormat.Encoding.PCM_SIGNED;
 			nSampleSize = 24;
 			break;
 
 		case AuTool.SND_FORMAT_LINEAR_32:
-			encoding = AuTool.PCM;
+			encoding = AudioFormat.Encoding.PCM_SIGNED;
 			nSampleSize = 32;
 			break;
 
 		case AuTool.SND_FORMAT_ALAW_8:	// 8-bit aLaw G.711
 
-			encoding = AuTool.ALAW;
+
+
+			encoding = AudioFormat.Encoding.ALAW;
 			nSampleSize = 8;
 			break;
 		}
 		if (nSampleSize == 0) {
-			throw new UnsupportedAudioFileException("unsupported AU file: unknown encoding " + nEncoding);
+			throw new UnsupportedAudioFileException(
+			    "unsupported AU file: unknown encoding " + nEncoding);
 		}
 		int nSampleRate = dataInputStream.readInt();
 		if (nSampleRate <= 0) {
-			throw new UnsupportedAudioFileException("corrupt AU file: sample rate must be positive");
+			throw new UnsupportedAudioFileException(
+			    "corrupt AU file: sample rate must be positive");
 		}
 		int nNumChannels = dataInputStream.readInt();
 		if (nNumChannels <= 0) {
-			throw new UnsupportedAudioFileException("corrupt AU file: number of channels must be positive");
+			throw new UnsupportedAudioFileException(
+			    "corrupt AU file: number of channels must be positive");
 		}
 		// skip  header information field
 		inputStream.skip(nDataOffset - AuTool.DATA_OFFSET);
@@ -128,7 +138,7 @@ public class AuAudioFileReader extends TAudioFileReader {
 		                                     (nSampleSize * nNumChannels) / 8,
 		                                     (float) nSampleRate,
 		                                     true);
-		return new TAudioFileFormat(AuTool.AU,
+		return new TAudioFileFormat(AudioFileFormat.Type.AU,
 		                            format,
 		                            nDataLength / format.getFrameSize(),
 		                            nDataLength + nDataOffset);

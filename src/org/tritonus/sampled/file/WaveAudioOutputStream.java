@@ -56,7 +56,8 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		      dataOutputStream,
 		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
 		// wave cannot store more than 4GB
-		if (lLength != AudioSystem.NOT_SPECIFIED && (lLength+WaveTool.DATA_OFFSET)>0xFFFFFFFFl) {
+		if (lLength != AudioSystem.NOT_SPECIFIED 
+		    && (lLength+WaveTool.DATA_OFFSET)>0xFFFFFFFFl) {
 			if (TDebug.TraceAudioOutputStream) {
 				TDebug.out("WaveAudioOutputStream: Length exceeds 4GB: "
 				           +lLength+"=0x"+Long.toHexString(lLength)
@@ -92,7 +93,8 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 		// if patching the header, and the length has not been known at first
 		// writing of the header, just truncate the size fields, don't throw an exception
-		if (lLength != AudioSystem.NOT_SPECIFIED && lLength+dataOffset>0xFFFFFFFFl) {
+		if (lLength != AudioSystem.NOT_SPECIFIED 
+		    && lLength+dataOffset>0xFFFFFFFFl) {
 			lLength=0xFFFFFFFFl-dataOffset;
 		}
 
@@ -123,6 +125,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 			sampleSizeInBits=0; // MS standard
 		}
 
+
 		int avgBytesPerSec=((int) format.getSampleRate())/decodedSamplesPerBlock*format.getFrameSize();
 		dos.writeInt(WaveTool.WAVE_FMT_MAGIC);
 		dos.writeLittleEndian32(formatChunkSize);
@@ -139,6 +142,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		}
 
 		// write fact chunk
+
 
 		if (formatCode!=WaveTool.WAVE_FORMAT_PCM) {
 			// write "fact" chunk: number of samples
@@ -182,6 +186,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 			tdos.writeByte(0);
 			// DON'T adjust calculated length !
 		}
+
 
 		super.close();
 	}

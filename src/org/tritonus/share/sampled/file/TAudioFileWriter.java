@@ -213,12 +213,13 @@ public abstract class TAudioFileWriter
 			}
 		}
 		long	lLengthInBytes = AudioUtils.getLengthInBytes(audioInputStream);
+		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
 		AudioOutputStream	audioOutputStream =
 			getAudioOutputStream(
 				outputFormat,
 				lLengthInBytes,
 				fileType,
-				file);
+				dataOutputStream);
 		int written=writeImpl(audioInputStream,
 				 audioOutputStream,
 				 bNeedsConversion);
@@ -289,12 +290,13 @@ public abstract class TAudioFileWriter
 			}
 		}
 		long	lLengthInBytes = AudioUtils.getLengthInBytes(audioInputStream);
+		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
 		AudioOutputStream	audioOutputStream =
 			getAudioOutputStream(
 				outputFormat,
 				lLengthInBytes,
 				fileType,
-				outputStream);
+				dataOutputStream);
 		int written=writeImpl(audioInputStream,
 				 audioOutputStream,
 				 bNeedsConversion);
@@ -432,18 +434,8 @@ public abstract class TAudioFileWriter
 		AudioFormat audioFormat,
 		long lLengthInBytes,
 		AudioFileFormat.Type fileType,
-		File file)
+		TDataOutputStream dataOutputStream)
 		throws	IOException;
-
-
-
-	protected abstract AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		OutputStream outputStream)
-		throws	IOException;
-
 
 	private AudioFormat findConvertableFormat(
 		AudioFormat inputFormat,

@@ -26,11 +26,7 @@
 package	org.tritonus.sampled.file.gsm;
 
 
-import	java.io.File;
-import	java.io.InputStream;
 import	java.io.IOException;
-import	java.io.OutputStream;
-import	java.io.DataOutputStream;
 import	java.util.Arrays;
 
 import	javax.sound.sampled.AudioFileFormat;
@@ -43,8 +39,6 @@ import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TAudioFileWriter;
 import	org.tritonus.share.sampled.file.TDataOutputStream;
 import	org.tritonus.share.sampled.file.HeaderlessAudioOutputStream;
-import	org.tritonus.share.sampled.file.TSeekableDataOutputStream;
-import	org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
 import	org.tritonus.share.sampled.Encodings;
 import	org.tritonus.share.sampled.AudioFileTypes;
 
@@ -83,28 +77,14 @@ public class GSMAudioFileWriter
 		AudioFormat audioFormat,
 		long lLengthInBytes,
 		AudioFileFormat.Type fileType,
-		File file)
+		TDataOutputStream	dataOutputStream)
 		throws	IOException
 	{
-		TDataOutputStream	dataOutputStream = new TSeekableDataOutputStream(file);
 		return new HeaderlessAudioOutputStream(audioFormat,
 					       lLengthInBytes,
 					       dataOutputStream);
 	}
 
-	protected AudioOutputStream getAudioOutputStream(
-		AudioFormat audioFormat,
-		long lLengthInBytes,
-		AudioFileFormat.Type fileType,
-		OutputStream outputStream)
-		throws	IOException
-	{
-		TDataOutputStream	dataOutputStream = new TNonSeekableDataOutputStream(outputStream);
-		return new HeaderlessAudioOutputStream(audioFormat,
-					       lLengthInBytes,
-					       dataOutputStream);
-	}
-	
 }
 
 
