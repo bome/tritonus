@@ -107,6 +107,14 @@ extends TEncodingFormatConversionProvider
 // 	};
 
 
+	/* Default settings for encoding. */
+	private static final boolean DEFAULT_VBR = true;
+	private static final float DEFAULT_QUALITY = 0.5F;
+	private static final int DEFAULT_MAX_BITRATE = 256;
+	private static final int DEFAULT_NOM_BITRATE = 128;
+	private static final int DEFAULT_MIN_BITRATE = 32;
+
+
 
 	/**	Constructor.
 	 */
@@ -145,7 +153,7 @@ extends TEncodingFormatConversionProvider
 		{
 			if (targetFormat.getEncoding().equals(VORBIS))
 			{
-				if (TDebug.TraceAudioConverter) { TDebug.out("conversion supported; trying to create EncodedVorbisAudioInputStream"); }
+				if (TDebug.TraceAudioConverter) TDebug.out("conversion supported; trying to create EncodedVorbisAudioInputStream");
 				convertedAudioInputStream = new
 					EncodedVorbisAudioInputStream(
 						targetFormat,
@@ -248,17 +256,42 @@ extends TEncodingFormatConversionProvider
 			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedVorbisAudioInputStream.<init>(): begin"); }
 			m_decodedStream = inputStream;
 			m_abReadbuffer = new byte[READ * getFrameSize()];
+			Object property = null;
 
-			String	strUseVBR = System.getProperty("tritonus.vorbis.usevbr", "true");
-			boolean	bUseVBR = strUseVBR.toLowerCase().equals("true");
-			String	strQuality = System.getProperty("tritonus.vorbis.quality", "0.1");
-			float	fQuality = Float.parseFloat(strQuality);
-			String	strMaxBitrate = System.getProperty("tritonus.vorbis.maxbitrate", "256");
-			int	nMaxBitrate = Integer.parseInt(strMaxBitrate);
-			String	strNominalBitrate = System.getProperty("tritonus.vorbis.nominalbitrate", "128");
-			int	nNominalBitrate = Integer.parseInt(strNominalBitrate);
-			String	strMinBitrate = System.getProperty("tritonus.vorbis.minbitrate", "32");
-			int	nMinBitrate = Integer.parseInt(strMinBitrate);
+			property = outputFormat.getProperty("vbr");
+			boolean	bUseVBR = DEFAULT_VBR;
+			if (property instanceof Boolean)
+			{
+				bUseVBR = ((Boolean) property).booleanValue();
+			}
+
+			property = outputFormat.getProperty("quality");
+			float	fQuality = DEFAULT_QUALITY;
+			if (property instanceof Integer)
+			{
+				fQuality = ((Integer) property).intValue() / 10.0F;
+			}
+
+			property = outputFormat.getProperty("bitrate");
+			int	nNominalBitrate = DEFAULT_NOM_BITRATE;
+			if (property instanceof Integer)
+			{
+				nNominalBitrate = ((Integer) property).intValue() / 1024;
+			}
+
+			property = outputFormat.getProperty("vorbis.min_bitrate");
+			int	nMinBitrate = DEFAULT_MIN_BITRATE;
+			if (property instanceof Integer)
+			{
+				nMinBitrate = ((Integer) property).intValue() / 1024;
+			}
+
+			property = outputFormat.getProperty("vorbis.max_bitrate");
+			int	nMaxBitrate = DEFAULT_MAX_BITRATE;
+			if (property instanceof Integer)
+			{
+				nMaxBitrate = ((Integer) property).intValue() / 1024;
+			}
 
 			m_streamState = new StreamState();
 			m_page = new Page();
