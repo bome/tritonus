@@ -88,6 +88,7 @@ vpath %.java $(SRCDIR_PUB)/sampled/spi
 vpath %.java $(SRCDIR_PRIV)
 vpath %.java $(SRCDIR_PRIV)/core
 vpath %.java $(SRCDIR_PRIV)/lowlevel/alsa
+vpath %.java $(SRCDIR_PRIV)/lowlevel/cdda
 vpath %.java $(SRCDIR_PRIV)/lowlevel/esd
 vpath %.java $(SRCDIR_PRIV)/lowlevel/gsm
 vpath %.java $(SRCDIR_PRIV)/lowlevel/saint
@@ -124,6 +125,7 @@ vpath %.class $(OBJDIR_PUB)/sampled/spi
 vpath %.class $(OBJDIR_PRIV)
 vpath %.class $(OBJDIR_PRIV)/core
 vpath %.class $(OBJDIR_PRIV)/lowlevel/alsa
+vpath %.class $(OBJDIR_PRIV)/lowlevel/cdda
 vpath %.class $(OBJDIR_PRIV)/lowlevel/esd
 vpath %.class $(OBJDIR_PRIV)/lowlevel/gsm
 vpath %.class $(OBJDIR_PRIV)/lowlevel/saint
@@ -167,6 +169,7 @@ SRCTMP:=$(wildcard \
 	$(SRCDIR_PRIV)/share/sampled/file/*.java \
 	$(SRCDIR_PRIV)/share/sampled/mixer/*.java \
 	$(SRCDIR_PRIV)/lowlevel/alsa/*.java \
+	$(SRCDIR_PRIV)/lowlevel/cdda/*.java \
 	$(SRCDIR_PRIV)/lowlevel/esd/*.java \
 	$(SRCDIR_PRIV)/lowlevel/gsm/*.java \
 	$(SRCDIR_PRIV)/lowlevel/saint/*.java \
