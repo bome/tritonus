@@ -38,6 +38,7 @@ import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
+import	org.tritonus.sampled.file.gsm.GSMEncoding;
 import	org.tritonus.TDebug;
 
 /**
@@ -53,39 +54,29 @@ public class WaveAudioFileWriter
 	{
 		AudioFileFormat.Type.WAVE
 	};
+
+    private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	
 	// IMPORTANT: this array depends on the AudioFormat.match() algorithm which takes
 	//            AudioSystem.NOT_SPECIFIED into account !
 	private static final AudioFormat[]	AUDIO_FORMATS =
 	{
-		// IDEA: allow other number of channels that 1 and 2 ?
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
-		/*	Because there is only ony byte per sample,
-		 *	byte order doesn't matter. So we allow little-endian,
-		 *	too.
-		 */
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
+		// Encoding, SampleRate, sampleSizeInBits, channels, frameSize, frameRate, bigEndian
+		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+		new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
 
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.ULAW, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
+		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, false),
+		new AudioFormat(AudioFormat.Encoding.ULAW, ALL, 8, ALL, ALL, ALL, true),
 
-		new AudioFormat(AudioFormat.Encoding.ALAW, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.ALAW, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.ALAW, AudioSystem.NOT_SPECIFIED, 8, 1, 1, AudioSystem.NOT_SPECIFIED, true),
-		new AudioFormat(AudioFormat.Encoding.ALAW, AudioSystem.NOT_SPECIFIED, 8, 2, 2, AudioSystem.NOT_SPECIFIED, true),
+		new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, false),
+		new AudioFormat(AudioFormat.Encoding.ALAW, ALL, 8, ALL, ALL, ALL, true),
 
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 1, 2, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 16, 2, 4, AudioSystem.NOT_SPECIFIED, false),
+		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
+		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
 
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 24, 1, 3, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 24, 2, 6, AudioSystem.NOT_SPECIFIED, false),
-
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 32, 1, 4, AudioSystem.NOT_SPECIFIED, false),
-		new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, AudioSystem.NOT_SPECIFIED, 32, 2, 8, AudioSystem.NOT_SPECIFIED, false)
+		new AudioFormat(GSMEncoding.GSM0610, ALL, ALL, ALL, ALL, ALL, false),
+		new AudioFormat(GSMEncoding.GSM0610, ALL, ALL, ALL, ALL, ALL, true),
 	};
 	
 	public WaveAudioFileWriter()
