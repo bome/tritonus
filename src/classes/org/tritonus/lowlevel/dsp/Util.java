@@ -125,6 +125,42 @@ public class Util
 	}
 
 
+	/**	Converts frequency representation from omega to absolute.
+		This method converts a frequency represented in
+		omega ([-PI .. +PI]) to absolute frequency (f).
+
+		@param dOmega The frequency represented in omega
+		([-PI .. +PI]).
+
+		@param dSampleRate The sample rate (fs).
+
+		@return The absolute frequency represented in Hz (f).
+	 */
+	public static double omega2absolute(double dOmega, double dSampleRate)
+	{
+		double	dAbsolute = omega2relative(dOmega) * dSampleRate;
+		return dAbsolute;
+	}
+
+
+	/**	Converts frequency representation from absolute to omega.
+		This method converts a frequency represented relative to
+		the sample rate (f/fs) to omega ([-PI .. +PI]).
+
+		@param dAbsolute The absolute frequency expressed in Hz (f).
+
+		@param dSampleRate The sample rate (fs).
+
+		@return The frequency represented in omega
+		([-PI .. +PI]).
+	 */
+	public static double absolute2omega(double dAbsolute, double dSampleRate)
+	{
+		double	dOmega = relative2omega(dAbsolute / dSampleRate);
+		return dOmega;
+	}
+
+
 	/**	Quantize constants from double to float.
 	 */
 	public static float[] quantizeToFloat(double[] adConstants)
