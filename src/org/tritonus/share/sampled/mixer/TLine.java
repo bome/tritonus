@@ -85,6 +85,11 @@ public abstract class TLine
 	}
 
 
+	protected TMixer getMixer()
+	{
+		return m_mixer;
+	}
+
 
 	public Line.Info getLineInfo()
 	{
@@ -121,9 +126,9 @@ public abstract class TLine
 				TDebug.out("TLine.open(): opening");
 			}
 			openImpl();
-			if (m_mixer != null)
+			if (getMixer() != null)
 			{
-				m_mixer.registerOpenLine(this);
+				getMixer().registerOpenLine(this);
 			}
 			setOpen(true);
 		}
@@ -164,9 +169,9 @@ public abstract class TLine
 			{
 				TDebug.out("TLine.close(): closing");
 			}
-			if (m_mixer != null)
+			if (getMixer() != null)
 			{
-				m_mixer.unregisterOpenLine(this);
+				getMixer().unregisterOpenLine(this);
 			}
 			closeImpl();
 			setOpen(false);

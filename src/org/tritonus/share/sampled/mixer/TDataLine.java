@@ -48,6 +48,8 @@ public abstract class TDataLine
 	extends	TLine
 	implements	DataLine
 {
+	private static final int	DEFAULT_BUFFER_SIZE = 128000;
+
 	private AudioFormat		m_format;
 	private int			m_nBufferSize;
 	private boolean			m_bRunning;
@@ -272,8 +274,7 @@ public abstract class TDataLine
 
 	protected int getDefaultBufferSize()
 	{
-		// TODO: use symbolic constant
-		return 128000;
+		return DEFAULT_BUFFER_SIZE;
 	}
 
 
