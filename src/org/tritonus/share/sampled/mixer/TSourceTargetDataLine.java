@@ -94,6 +94,7 @@ public abstract class TSourceTargetDataLine
 
 
 	// IDEA: move to TDataLine or TLine?
+	// necessary and wise at all?
 	protected void finalize()
 	{
 		if (isOpen())
