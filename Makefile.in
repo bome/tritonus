@@ -182,7 +182,7 @@ $(LIBDEST_JL):	$(OBJ)
 
 
 $(LIBDEST_MP3SP):	$(OBJ)
-	jar cf $(LIBDEST_MP3SP) $(MP3SP_OBJ) -C src META-INF/services/
+	jar cf $(LIBDEST_MP3SP) $(MP3SP_OBJ) -C src/mp3sp META-INF/services/
 
 .PHONY: doc
 doc:	all 
