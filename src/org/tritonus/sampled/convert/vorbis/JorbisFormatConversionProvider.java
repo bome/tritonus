@@ -205,8 +205,6 @@ public class JorbisFormatConversionProvider
 	/*private*/public static class DecodedJorbisAudioInputStream
 	extends TAsynchronousFilteredAudioInputStream
 	{
-		// TODO: remove
-		public static boolean		DEBUG = false;
   		private static final int	BUFFER_MULTIPLE = 4;
   		private static final int	BUFFER_SIZE = BUFFER_MULTIPLE * 256 * 2;
   		private static final int	CONVSIZE = BUFFER_SIZE * 2;
@@ -238,19 +236,27 @@ public class JorbisFormatConversionProvider
 		private int			eos = 0;
 		private boolean			streamStillHasData = true;
 
-
+/*
+  if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): begin"); }
+  m_circularBuffer = new TCircularBuffer(
+  nBufferSize,
+  false,	// blocking read
+  true,	// blocking write
+  this);	// trigger
+  if (TDebug.TraceAudioConverter) { TDebug.out("TAsynchronousFilteredAudioInputStream.<init>(): end"); }
+*/
 
 		/**
 		 * Constructor.
 		 */
 		public DecodedJorbisAudioInputStream(AudioFormat outputFormat, AudioInputStream bitStream)
 		{
-			/*
-			 */
 			super(outputFormat, AudioSystem.NOT_SPECIFIED);
-			this.m_oggBitStream = bitStream;
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): begin"); }
+			m_oggBitStream = bitStream;
 			loopid = 1;
 			init_jorbis();
+			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedJorbisAudioInputStream.<init>(): end"); }
 		}
 
 
@@ -279,122 +285,15 @@ public class JorbisFormatConversionProvider
 		 */
 		public void execute()
 		{
+			if (TDebug.TraceAudioConverter) TDebug.out(">DecodedJorbisAudioInputStream.execute(): begin");
 			int bytes = 0;
 			// This code was developed by the jCraft group, slightly modifed by jOggPlayer developer
 			// and adapted by E.B from JavaZOOM to suit to JavaSound SPI.
 			// loop 1
-			if (streamStillHasData == true)
-			{
-				if (loopid == 1)
-				{
-					if (DEBUG) System.err.println("loop1");
-					eos = 0;
-					// Headers (+ Comments).
-					try
-					{
-						readHeaders();
-					}
-					catch (IOException ioe)
-					{
-						streamStillHasData = false;
-						return;
-					}
-					loopid = 2;
-				}
-				// loop 2
-				switch (eos)
-					//while (eos == 0)
-				{
-				case 0:
-					if (DEBUG) System.err.println("loop2");
-					// loop 3
-					switch (eos)
-						//while (eos == 0)
-					{
-					case 0:
-						int result = m_oggSyncState.pageout(m_oggPage);
-						if (DEBUG) System.err.println("loop3:"+result);
-						if (result == 0)
-						{
-							loopid = 2;
-							break;
-						} // need more data
-						if (result == -1)
-						{ // missing or corrupt data at this page position
-							if (DEBUG) System.err.println("Corrupt or missing data in bitstream; " + "continuing...");
-						}
-						else
-						{
-							m_oggStreamState.pagein(m_oggPage);
-							// Decoding !
-							if (DEBUG) System.err.println("Decoding");
-							while (true)
-							{
-								result = m_oggStreamState.packetout(m_oggPacket);
-								if (result == 0)
-								{
-									break;
-								} // need more data
-								if (result == -1)
-								{ // missing or corrupt data at this page position
-									// no reason to complain; already complained above
-								}
-								else
-								{
-									decodeDataPacket();
-								}
-							}
-							if (m_oggPage.eos() != 0)
-							{
-								eos = 1;
-							}
-						} // end else.
-						loopid = 3;
-						break;
-					default:
-						loopid = 2;
-						break;
-					} // end loop3 // end switch(eos)
-					if (loopid == 3) return;
-
-					if (eos == 0)
-					{
-						int index = m_oggSyncState.buffer(BUFFER_SIZE);
-						bytes = readFromStream(m_oggSyncState.data, index, BUFFER_SIZE);
-						if (DEBUG) System.err.println("More data : "+bytes);
-						if (bytes == -1)
-						{
-							if (DEBUG) System.err.println("Ogg Stream empty.");
-							streamStillHasData = false;
-							eos = 1;
-							//break;
-						}
-						else
-						{
-							m_oggSyncState.wrote(bytes);
-							if (bytes == 0)
-							{
-								eos = 1;
-							}
-						}
-					}
-					loopid = 2;
-					break;
-				default:
-					loopid = 1;
-					break;
-				} // end loop 2 // end switch(eos)
-				if (loopid == 2) return;
-
-				m_oggStreamState.clear();
-				m_vorbisBlock.clear();
-				m_vorbisDspState.clear();
-				m_vorbisInfo.clear();
-			} // end loop 1
-			else // no more data
+			if (streamStillHasData == false)
 			{
 				m_oggSyncState.clear();
-				if (DEBUG) System.out.println("Done Song.");
+				if (TDebug.TraceAudioConverter) System.out.println("Done Song.");
 				try
 				{
 					if (m_oggBitStream != null)
@@ -405,43 +304,144 @@ public class JorbisFormatConversionProvider
 				}
 				catch (Exception e)
 				{
-					if (DEBUG) e.printStackTrace();
+					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+				}
+				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+				return;
+			}
+			if (loopid == 1)
+			{
+				if (TDebug.TraceAudioConverter) TDebug.out("loop1 [reading headers]");
+				eos = 0;
+				// Headers (+ Comments).
+				try
+				{
+					readHeaders();
+				}
+				catch (IOException e)
+				{
+					// TDebug.out(e);
+					streamStillHasData = false;
+					if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+					return;
+				}
+				loopid = 2;
+			}
+			// loop 2
+			if (eos == 1)
+			{
+				loopid = 1;
+				m_oggStreamState.clear();
+				m_vorbisBlock.clear();
+				m_vorbisDspState.clear();
+				m_vorbisInfo.clear();
+				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+				return;
+			}
+			if (TDebug.TraceAudioConverter) TDebug.out("loop2 [Decoding]");
+			// loop 3
+			int result = 0;
+			try
+			{
+				readOggPage();
+			}
+			catch (IOException e)
+			{
+				streamStillHasData = false;
+				eos = 1;
+				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+				return;
+			}
+			if (TDebug.TraceAudioConverter) TDebug.out("page header length: " + m_oggPage.header_len);
+			if (TDebug.TraceAudioConverter) TDebug.out("page body length: " + m_oggPage.body_len);
+			m_oggStreamState.pagein(m_oggPage);
+			// Decoding !
+			while (true)
+			{
+				result = m_oggStreamState.packetout(m_oggPacket);
+				if (TDebug.TraceAudioConverter) TDebug.out("packetout(): " + result);
+				if (TDebug.TraceAudioConverter) TDebug.out("packet no: " + m_oggPacket.packetno);
+				if (TDebug.TraceAudioConverter) TDebug.out("packet length: " + m_oggPacket.bytes);
+				if (result == 0) // need more data
+				{
+					if (TDebug.TraceAudioConverter) TDebug.out("leaving packet decoding loop (needs another page)");
+					break;
+				}
+				else if (result == -1)
+				{ // missing or corrupt data at this page position
+					// DO NOTHING
+				}
+				else
+				{
+					decodeDataPacket();
 				}
 			}
+			if (m_oggPage.eos() != 0)
+			{
+				eos = 1;
+			}
+			loopid = 3;
+			if (loopid == 3)
+			{
+				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+				return;
+			}
+
+			if (loopid == 2)
+			{
+				if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
+				return;
+			}
+
+			m_oggStreamState.clear();
+			m_vorbisBlock.clear();
+			m_vorbisDspState.clear();
+			m_vorbisInfo.clear();
+			if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
 		}
 
 
 
-		/** Read all three vorbis headers.
-		 */
-		private void readHeaders()
+		/** Read and process all three vorbis headers.
+		    @return true if successful, false otherwise.
+		*/
+		private boolean readHeaders()
 			throws IOException
 		{
-			readIdentificationHeader();
-			readCommentAndCodebookHeaders();
+			boolean	bSuccess;
+			bSuccess = readIdentificationHeader();
+			if (! bSuccess)
+			{
+				return false;
+			}
+			bSuccess = readCommentAndCodebookHeaders();
+			if (! bSuccess)
+			{
+				return false;
+			}
 			processComments();
 			setupVorbisStructures();
+			return true;
 		}
 
 
 
-		private void readIdentificationHeader()
+		/**
+		   @return true if successful, false otherwise.
+		*/
+		private boolean readIdentificationHeader()
 			throws IOException
 		{
 			int nIndex = m_oggSyncState.buffer(BUFFER_SIZE);
 			int nBytes = readFromStream(m_oggSyncState.data, nIndex, BUFFER_SIZE);
 			if (nBytes == -1)
 			{
-				throw new IOException("Cannot get any data from selected Ogg bitstream.");
+				return false;
 			}
 			m_oggSyncState.wrote(nBytes);
 			if (m_oggSyncState.pageout(m_oggPage) != 1)
 			{
-				if (nBytes < BUFFER_SIZE)
-				{
-					throw new IOException("EOF");
-				}
-				throw new IOException("Input does not appear to be an Ogg bitstream.");
+				return false;
 			}
 			m_oggStreamState.init(m_oggPage.serialno());
 			m_vorbisInfo.init();
@@ -449,23 +449,27 @@ public class JorbisFormatConversionProvider
 			if (m_oggStreamState.pagein(m_oggPage) < 0)
 			{
 				// error; stream version mismatch perhaps
-				throw new IOException("Error reading first page of Ogg bitstream data.");
+				return false;
 			}
 			if (m_oggStreamState.packetout(m_oggPacket) != 1)
 			{
 				// no page? must not be vorbis
-				throw new IOException("Error reading initial header packet.");
+				return false;
 			}
 			if (m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket) < 0)
 			{
 				// error case; not a vorbis header
-				throw new IOException("This Ogg bitstream does not contain Vorbis audio data.");
+				return false;
 			}
+			return true;
 		}
 
 
 
-		private void readCommentAndCodebookHeaders()
+		/**
+		   @return true if successful, false otherwise.
+		*/
+		private boolean readCommentAndCodebookHeaders()
 			throws IOException
 		{
 			for (int i = 0; i < 2; i++)
@@ -473,10 +477,13 @@ public class JorbisFormatConversionProvider
 				readOggPacket();
 				m_vorbisInfo.synthesis_headerin(m_vorbisComment, m_oggPacket);
 			}
+			return true;
 		}
 
 
 
+		/**
+		 */
 		private void processComments()
 		{
 			byte[][] ptr = m_vorbisComment.user_comments;
@@ -499,14 +506,14 @@ public class JorbisFormatConversionProvider
 					String titleLabelValue = currComment.substring(6);
 					String miniDragLabel = currComment.substring(6);
 				}
-				if (DEBUG) System.err.println("Comment: " + currComment);
+				if (TDebug.TraceAudioConverter) TDebug.out("Comment: " + currComment);
 			}
 			currComment = "Bitstream: " + m_vorbisInfo.channels + " channel," + m_vorbisInfo.rate + "Hz";
 			m_songComments.add(currComment);
-			if (DEBUG) System.err.println(currComment);
-			if (DEBUG) currComment = "Encoded by: " + new String(m_vorbisComment.vendor, 0, m_vorbisComment.vendor.length - 1);
+			if (TDebug.TraceAudioConverter) TDebug.out(currComment);
+			if (TDebug.TraceAudioConverter) currComment = "Encoded by: " + new String(m_vorbisComment.vendor, 0, m_vorbisComment.vendor.length - 1);
 			m_songComments.add(currComment);
-			if (DEBUG) System.err.println(currComment);
+			if (TDebug.TraceAudioConverter) TDebug.out(currComment);
 		}
 
 
@@ -623,7 +630,7 @@ public class JorbisFormatConversionProvider
 					convbuffer[nPointer++] = (byte) ((nSample >>> 8) & 0xFF);
 					convbuffer[nPointer++] = (byte) ((nSample >>> 16) & 0xFF);
 					convbuffer[nPointer] = (byte) (nSample >> 24);
-		}
+				}
 				break;
 			}
 		}
@@ -696,36 +703,27 @@ public class JorbisFormatConversionProvider
 
 
 
-		/**
-		 * Reads from the m_oggBitStream a specified number of Bytes(buffersize_) worth
-		 * starting at index and puts them in the specified buffer[].
-		 *
-		 * @param buffer
-		 * @param index
-		 * @param bufferSize_
-		 * @return             the number of bytes read or -1 if error.
-		 */
-		// TODO: should not return -1 on exception, but propagate
-		// the exception
-		private int readFromStream(byte[] buffer, int index, int bufferSize_)
+		/** Read raw data from to ogg bitstream.
+		    Reads from  {@ #m_oggBitStream m_oggBitStream} a
+		    specified number of bytes into a buffer, starting
+		    at a specified buffer index.
+
+		    @param buffer the where the read data should be put into. Its length has to be at least nStart + nLength.
+		    @param nStart
+		    @param nLength the number of bytes to read
+		    @return the number of bytes read (maybe 0) or
+		    -1 if there is no more data in the stream.
+		*/
+		private int readFromStream(byte[] buffer, int nStart, int nLength)
+			throws IOException
 		{
-			int bytes = 0;
-			try
-			{
-				bytes = m_oggBitStream.read(buffer, index, bufferSize_);
-			}
-			catch (Exception e)
-			{
-				if (DEBUG) System.out.println("Cannot Read Selected Song");
-				bytes = -1;
-			}
-			return bytes;
+			return m_oggBitStream.read(buffer, nStart, nLength);
 		}
 
 
 
-		/** 
-		*/
+		/**
+		 */
 		private int getSampleSizeInBytes()
 		{
 			return getFormat().getFrameSize() / getFormat().getChannels();
