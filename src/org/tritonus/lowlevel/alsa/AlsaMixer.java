@@ -46,6 +46,7 @@ public class AlsaMixer
 			System.out.println("AlsaMixer.<clinit>(): loading native library tritonusalsa");
 		}
 		System.loadLibrary("tritonusalsa");
+		setTrace(TDebug.TraceAlsaMixerNative);
 	}
 
 
@@ -139,6 +140,8 @@ public class AlsaMixer
 	 */
 	public native int writeControl(int nIndex, String strName,
 				      int[] anValues);
+
+	private static native void setTrace(boolean bTrace);
 }
 
 
