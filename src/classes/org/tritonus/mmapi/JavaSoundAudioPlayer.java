@@ -40,18 +40,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.tritonus.mmapi.URLDataSource.URLSourceStream;
 
-/*
-  TODO (general):
-  - this player
-  - event delivery
-  - event generation
-  - StopTime, VolumeControl
-  - realize()/deallocate()
-  - properties
-  - rework playTone()
-  - test InputStreamDataSurce
-  - more player tests
- */
+
 
 /**
 */
@@ -64,6 +53,17 @@ implements Runnable
 	private AudioInputStream	m_audioInputStream;
 	private SourceDataLine		m_sourceDataLine;
 	private Thread			m_thread;
+
+	/**	Indicates if the SourceDataLine is started.
+		This is set to true after SourceDataLine.start()
+		has been called. It is set to false after (?)
+		SourceDataLine.stop() has been called.
+		This all is necessary to prevent writing data
+		to the SourceDataLine's buffer before start() has been
+		called (in this case, the data is discarded by the
+		SourceDataLine).
+	*/
+	private boolean			m_bLineStarted;
 
 
 
@@ -112,6 +112,11 @@ implements Runnable
 		throws Exception
 	{
 		getSourceDataLine().start();
+		m_bLineStarted = true;
+		synchronized (m_thread)
+		{
+			m_thread.notify();
+		}
 	}
 
 
@@ -142,9 +147,44 @@ implements Runnable
 
 	public void run()
 	{
+		int	nBytesRead = 0;
+		int	nBytesWritten;
 		byte[]	abBuffer = new byte[BUFFER_SIZE];
-		while (true)
+		try
 		{
+			while (! m_bLineStarted)
+			{
+				try
+				{
+					synchronized (m_thread)
+					{
+						m_thread.wait();
+					}
+				}
+				catch (InterruptedException e)
+				{
+					// IGNORED
+				}
+			}
+			while (nBytesRead != -1)
+			{
+				nBytesRead = getAudioInputStream().read(abBuffer);
+				if (nBytesRead >= 0)
+				{
+					nBytesWritten = getSourceDataLine().write(abBuffer, 0, nBytesRead);
+				}
+			}
+			getSourceDataLine().drain();
+			getSourceDataLine().stop();
+			getSourceDataLine().close();
+			postEndOfMediaEvent();
+
+			// TODO:
+			// JavaSoundAudioPlayer.this.stop();
+		}
+		catch (IOException e)
+		{
+			// IDEA: deliver ERROR event?
 		}
 	}
 
