@@ -21,22 +21,22 @@ import	javax.microedition.media.protocol.SourceStream;
 
 
 public class URLDataSource
-extends DataSource
+extends TDataSource
 {
 	private static final Control[]	EMPTY_CONTROL_ARRAY = new Control[0];
-	private TControllable	m_controllable;
 	// has to be set in connect()
 	private String		m_strContentType = null;
-	private boolean		m_bConnected = false;
+	// private boolean		m_bConnected = false;
 	private boolean		m_bStarted = false;
 	private URL		m_url;
 	private SourceStream	m_sourceStream;
+
+
 
 	public URLDataSource(String strLocator)
 		throws MediaException
 	{
 		super(strLocator);
-		m_controllable = new TControllable(EMPTY_CONTROL_ARRAY);
 	}
 
 
@@ -54,7 +54,7 @@ extends DataSource
 	public void connect()
 		throws IOException
 	{
-		if (m_bConnected)
+		if (isConnected())
 		{
 			return;
 		}
@@ -78,7 +78,7 @@ extends DataSource
 	// idempotent??
 	public void disconnect()
 	{
-		if (! m_bConnected)
+		if (! isConnected())
 		{
 			return;
 		}
@@ -98,7 +98,7 @@ extends DataSource
 		{
 			return;
 		}
-		if (! m_bConnected)
+		if (! isConnected())
 		{
 			throw new RuntimeException("this DataSource is not connected");
 		}
@@ -128,26 +128,6 @@ extends DataSource
 		{
 			return new SourceStream[0];
 		}
-	}
-
-
-
-	// Controllable methods
-
-	// TODO: spec says controls are available only if DataSource is connected.
-	public Control getControl(String strType)
-	{
-		Control	control = m_controllable.getControl(strType);
-		return control;
-	}
-
-
-
-	// TODO: spec says controls are available only if DataSource is connected.
-	public Control[] getControls()
-	{
-		Control[]	aControls = m_controllable.getControls();
-		return aControls;
 	}
 
 
@@ -229,6 +209,16 @@ extends DataSource
 		{
 			// TODO:
 			return NOT_SEEKABLE;
+		}
+
+
+
+		/**
+		   controls can be queried at any time.
+		 */
+		protected boolean isStateLegalForControls()
+		{
+			return true;
 		}
 
 	}

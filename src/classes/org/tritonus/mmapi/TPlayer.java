@@ -21,6 +21,7 @@ implements Player
 {
 	private TimeBase	m_timeBase;
 	private Vector		m_listeners;
+	private int		m_nState;
 
 
 
@@ -34,13 +35,14 @@ implements Player
 	{
 		super(aControls);
 		m_listeners = new Vector();
+		m_nState = UNREALIZED;
 	}
 
 
 
 	// Player methods
 
-		// TODO:
+	// TODO:
 	public void realize()
 		throws MediaException
 	{
@@ -48,7 +50,7 @@ implements Player
 
 
 
-		// TODO:
+	// TODO:
 	public void prefetch()
 		throws MediaException
 	{
@@ -56,7 +58,7 @@ implements Player
 
 
 
-		// TODO:
+	// TODO:
 	public void start()
 		throws MediaException
 	{
@@ -64,21 +66,21 @@ implements Player
 
 
 
-		// TODO:
+	// TODO:
 	public void stop()
 	{
 	}
 
 
 
-		// TODO:
+	// TODO:
 	public void deallocate()
 	{
 	}
 
 
 
-		// TODO:
+	// TODO:
 	public void close()
 	{
 	}
@@ -105,7 +107,7 @@ implements Player
 
 
 
-		// TODO:
+	// TODO:
 	public long setMediaTime(long lNow)
 	{
 		return -1;
@@ -113,7 +115,7 @@ implements Player
 
 
 
-		// TODO:
+	// TODO:
 	public long getMediaTime()
 	{
 		return -1;
@@ -121,15 +123,14 @@ implements Player
 
 
 
-		// TODO:
+	// TODO:
 	public int getState()
 	{
-		return -1;
+		return m_nState;
 	}
 
 
-
-		// TODO:
+	// TODO:
 	public long getDuration()
 	{
 		return -1;
@@ -166,6 +167,13 @@ implements Player
 	{
 		// TODO:
 		return null;
+	}
+
+
+	protected boolean isStateLegalForControls()
+	{
+		int	nState = getState();
+		return nState != UNREALIZED && nState != CLOSED;
 	}
 }
 
