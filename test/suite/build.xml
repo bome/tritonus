@@ -140,6 +140,37 @@
   </target>
 
 
+  <target name="test-silence"
+	  depends="compile">
+
+    <junit fork="no" printsummary="yes">
+      <classpath>
+	<fileset dir="${basedir}/../../dist">
+	  <include name="tritonus_jorbis.jar"/>
+	  <include name="tritonus_share.jar"/>
+	  <include name="tritonus_aos.jar"/>
+	</fileset>
+      </classpath>
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.VorbisSilenceTestCase" />
+    </junit>
+
+    <junit fork="no" printsummary="yes">
+      <classpath>
+	<fileset dir="${basedir}/../../dist">
+	  <include name="tritonus_vorbis.jar"/>
+	  <include name="tritonus_share.jar"/>
+	  <include name="tritonus_aos.jar"/>
+	</fileset>
+      </classpath>
+      <classpath refid="run.classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.VorbisSilenceTestCase" />
+    </junit>
+  </target>
+
+
   <target name="clean" depends="init">
     <delete dir="${build.dir}"/>
   </target>
