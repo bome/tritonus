@@ -96,13 +96,6 @@ extends	Esd
 
 
 
-	/**	Sets the volume for this stream.
-	 *	The values for the volume should be normalized
-	 *	to 256 (256 means 0 dB).
-	 */
-	public native void setVolume(int nLeft, int nRight);
-
-
 	private static native void setTrace(boolean bTrace);
 }
 
