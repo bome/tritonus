@@ -3,8 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
- *
+ *  Copyright (c) 1999 - 2002 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -19,9 +18,7 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
-
 
 package	org.tritonus.sampled.mixer.alsa;
 
@@ -31,6 +28,7 @@ import	javax.sound.sampled.spi.MixerProvider;
 
 import	org.tritonus.lowlevel.alsa.Alsa;
 import	org.tritonus.lowlevel.alsa.AlsaCtl;
+import	org.tritonus.lowlevel.alsa.AlsaCtlCardInfo;
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.mixer.TMixerProvider;
 
@@ -82,8 +80,7 @@ public class AlsaDataLineMixerProvider
 			AlsaCtl	ctl = null;
 			try
 			{
-				ctl = new AlsaCtl(strPcmName,
-						  0 /* TODO: is this open mode or direction? */);
+				ctl = new AlsaCtl(strPcmName, 0);
 			}
 			catch (Exception e)
 			{
@@ -91,18 +88,13 @@ public class AlsaDataLineMixerProvider
 				continue;
 			}
 			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): calling getCardInfo()..."); }
-			int[]	anValues = new int[2];
-			String[]	astrValues = new String[6];
-			ctl.getCardInfo(anValues, astrValues);
+			AlsaCtlCardInfo	cardInfo = new AlsaCtlCardInfo();
+			ctl.getCardInfo(cardInfo);
 			if (TDebug.TraceMixerProvider)
 			{
 				TDebug.out("AlsaDataLineMixerProvider.staticInit(): ALSA sound card:");
-				TDebug.out("AlsaDataLineMixerProvider.staticInit(): id: " + astrValues[0]);
-				TDebug.out("AlsaDataLineMixerProvider.staticInit(): abbreviation: " + astrValues[1]);
-				TDebug.out("AlsaDataLineMixerProvider.staticInit(): name: " + astrValues[2]);
-				TDebug.out("AlsaDataLineMixerProvider.staticInit(): long name: " + astrValues[3]);
-				TDebug.out("AlsaDataLineMixerProvider.staticInit(): mixer id: " + astrValues[4]);
-				TDebug.out("AlsaDataLineMixerProvider.staticInit(): mixer name: " + astrValues[5]);
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): card: " + cardInfo.getCard());
+				TDebug.out("AlsaDataLineMixerProvider.staticInit(): id: " + cardInfo.getId());
 			}
 			int[]	anDevices = ctl.getPcmDevices();
 			if (TDebug.TraceMixerProvider) { TDebug.out("AlsaDataLineMixerProvider.staticInit(): num devices: " + anDevices.length); }
