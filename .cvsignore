@@ -1,0 +1,9 @@
+Makefile
+javax
+org
+javazoom
+config.status
+config.log
+config.cache
+*.jar
+
