@@ -7,7 +7,7 @@
 
 
 
-jstreambuf::jstreambuf(JNIEnv* env, jobject obj)
+jstreambuf::jstreambuf(JNIEnv* env, jobject obj, int nBufferSize)
 {
 	cerr << "jstreambuf: constructor\n";
 	m_pJNIEnv = env;
@@ -29,20 +29,27 @@ jstreambuf::jstreambuf(JNIEnv* env, jobject obj)
 	}
 	if (m_pJNIEnv->IsInstanceOf(m_object, outputStreamClass) == JNI_TRUE)
 	{
-	m_writeMethodID = m_pJNIEnv->GetMethodID(m_class, "write", "([BII)V");
-	cerr << "write method: " << m_writeMethodID << endl;
+		m_writeMethodID = m_pJNIEnv->GetMethodID(m_class, "write", "([BII)V");
+		cerr << "write method: " << m_writeMethodID << endl;
 	}
 	if (m_pJNIEnv->IsInstanceOf(m_object, inputStreamClass) == JNI_TRUE)
 	{
-	m_readMethodID = m_pJNIEnv->GetMethodID(m_class, "read", "([BII)I");
-	cerr << "read method: " << m_writeMethodID << endl;
+		m_readMethodID = m_pJNIEnv->GetMethodID(m_class, "read", "([BII)I");
+		cerr << "read method: " << m_writeMethodID << endl;
 	}
+	m_pcBuffer = new char[nBufferSize];
+	setp(m_pcBuffer, m_pcBuffer + (nBufferSize - 1));
 }
 
 
 
 jstreambuf::~jstreambuf()
 {
+	sync();
+	if (m_pcBuffer)
+	{
+		delete[] m_pcBuffer;
+	}
 	m_pJNIEnv->DeleteGlobalRef(m_object);
 }
 
@@ -52,9 +59,36 @@ int
 jstreambuf::sync()
 {
 	cerr << "jstreambuf: sync()\n";
-	cerr << "jstreambuf: pbase: " << pbase() << "\n";
-	cerr << "jstreambuf: pptr: " << pptr() << "\n";
-	return 0;
+	// cerr << "jstreambuf: pbase: " << pbase() << "\n";
+	// cerr << "jstreambuf: pptr: " << pptr() << "\n";
+	if (flushBuffer() == EOF)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+
+int
+jstreambuf::flushBuffer()
+{
+	cerr << "jstreambuf: flushBuffer()\n";
+	// cerr << "jstreambuf: pbase: " << pbase() << "\n";
+	// cerr << "jstreambuf: pptr: " << pptr() << "\n";
+	int	nBytes = pptr() - pbase();
+	if (doWrite(pbase(), nBytes) != nBytes)
+	{
+		return EOF;
+	}
+	else
+	{
+		pbump(-nBytes);
+		return nBytes;
+	}
 }
 
 
@@ -63,15 +97,36 @@ int
 jstreambuf::overflow(int ch)
 {
 	cerr << "jstreambuf: overflow()\n";
-	return 0;
+	if (ch != EOF)
+	{
+		*pptr() = ch;
+		pbump(1);
+	}
+	if (flushBuffer() == EOF)
+	{
+		return EOF;
+	}
+	else
+	{
+		return ch;
+	}
 }
 
 
-
+/*
 streamsize
 jstreambuf::xsputn(const char* text, streamsize n)
 {
-	// cerr << "jstreambuf: xsputn(.., " << n << ") for " << m_object << "\n";
+	cerr << "jstreambuf: xsputn(.., " << n << ") for " << m_object << "\n";
+	return doWrite(text, n);
+}
+*/
+
+
+streamsize
+jstreambuf::doWrite(const char* text, streamsize n)
+{
+	cerr << "jstreambuf::doWrite(.., " << n << ") for " << m_object << "\n";
 	jbyteArray	byteArray = m_pJNIEnv->NewByteArray(n);
 	if (byteArray == NULL)
 	{
