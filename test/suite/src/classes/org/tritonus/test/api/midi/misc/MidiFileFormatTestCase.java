@@ -77,6 +77,28 @@ extends TestCase
 	}
 
 
+	public void testNoMap()
+	{
+		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L);
+		Map<String, Object> propReturn = fileFormat.properties();
+		assertNotNull(propReturn);
+		assertTrue(propReturn.isEmpty());
+		Object result = propReturn.get("bitrate");
+		assertNull(result);
+	}
+
+
+	public void testNullMap()
+	{
+		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L,
+													   null);
+		Map<String, Object> propReturn = fileFormat.properties();
+		assertTrue(propReturn.isEmpty());
+		Object result = propReturn.get("bitrate");
+		assertNull(result);
+	}
+
+
 	public void testEmptyMap()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
