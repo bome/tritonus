@@ -1,5 +1,5 @@
 /*
- *	TEncodingConversionProvider.java
+ *	TEncodingFormatConversionProvider.java
  */
 
 /*
@@ -60,11 +60,11 @@ import	org.tritonus.util.ArraySet;
  *
  * @author Florian Bomers
  */
-public abstract class TEncodingConversionProvider
+public abstract class TEncodingFormatConversionProvider
 	extends		TSimpleFormatConversionProvider
 {
 
-	protected TEncodingConversionProvider(
+	protected TEncodingFormatConversionProvider(
 		Collection sourceFormats,
 		Collection targetFormats)
 	{
@@ -167,4 +167,4 @@ public abstract class TEncodingConversionProvider
 
 }
 
-/*** TEncodingConversionProvider.java ***/
+/*** TEncodingFormatConversionProvider.java ***/

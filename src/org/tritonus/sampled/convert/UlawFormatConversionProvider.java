@@ -50,7 +50,8 @@ import	org.tritonus.sampled.TConversionTool;
  * @author Florian Bomers
  */
 
-public class UlawFormatConversionProvider extends TEncodingConversionProvider
+public class UlawFormatConversionProvider
+	extends TEncodingFormatConversionProvider
 {
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	

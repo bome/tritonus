@@ -67,7 +67,9 @@ import	org.tritonus.sampled.TConversionTool;
  * @author Florian Bomers
  */
 
-public class PCM2PCMConversionProvider extends TEncodingConversionProvider {
+public class PCM2PCMConversionProvider
+	extends TEncodingFormatConversionProvider
+{
 
     private static final int ALL=AudioSystem.NOT_SPECIFIED;
     private static final AudioFormat[]	OUTPUT_FORMATS = {
