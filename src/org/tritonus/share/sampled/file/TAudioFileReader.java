@@ -4,6 +4,7 @@
 
 /*
  *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -40,6 +41,7 @@ import	java.net.URL;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioFileFormat;
+import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.UnsupportedAudioFileException;
 import	javax.sound.sampled.spi.AudioFileReader;
 
@@ -55,9 +57,17 @@ import	org.tritonus.share.TDebug;
 public abstract class TAudioFileReader
 	extends	AudioFileReader
 {
+	//$$fb I choose this method of telling inheriting classes
+	// the length of the file - if the inputstream originates
+	// from a file.
+	// This is useful for streamed formats and AudioFileWriter
+	// that are not capable of backpatching (like Sun JDK1.3 wave writer)
+	private long m_fileLengthInBytes=AudioSystem.NOT_SPECIFIED;
+	
 	public AudioFileFormat getAudioFileFormat(File file)
 		throws	UnsupportedAudioFileException, IOException
 	{
+		m_fileLengthInBytes=file.length();
 		InputStream	inputStream = new FileInputStream(file);
 		try
 		{
@@ -91,6 +101,7 @@ public abstract class TAudioFileReader
 	public AudioInputStream getAudioInputStream(File file)
 		throws	UnsupportedAudioFileException, IOException
 	{
+		m_fileLengthInBytes=file.length();
 		InputStream	inputStream = new FileInputStream(file);
 		try
 		{
@@ -155,6 +166,15 @@ public abstract class TAudioFileReader
 		return new AudioInputStream(inputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
 	}
 
+	/**
+	 * If the InputStream that is passed to getAudioFileFormat
+	 * originates from a file, the file size is returned.
+	 * Otherwise, AudioSystem.NOT_SPECIFIED is returned.
+	 */
+	protected long getFileLengthInBytes() {
+		return m_fileLengthInBytes;
+	}
+	
 
 
 	public static int readLittleEndianInt(InputStream is)
@@ -184,6 +204,7 @@ public abstract class TAudioFileReader
 		}
 		return (short) ((b1 << 8) + (b0 << 0));
 	}
+	
 	
 /*
  * C O N V E R T   F R O M   I E E E   E X T E N D E D  

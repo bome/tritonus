@@ -4,6 +4,7 @@
 
 /*
  *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 2001 by Florian Bomers <florian@bome.com>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -68,7 +69,7 @@ public class GSMAudioFileReader
 		{
 			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream): begin");
 		}
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, null);
+		AudioFileFormat	audioFileFormat = getAudioFileFormatImpl(inputStream /*, null*/);
 		if (TDebug.TraceAudioFileReader)
 		{
 			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream): end");
@@ -78,22 +79,22 @@ public class GSMAudioFileReader
 
 
 
-	private AudioFileFormat getAudioFileFormat(InputStream inputStream, byte[] abHeader)
+	private AudioFileFormat getAudioFileFormatImpl(InputStream inputStream /*, byte[] abHeader*/)
 		throws	UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader)
 		{
-			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream, byte[]): begin");
+			TDebug.out("GSMAudioFileReader.getAudioFileFormatImpl(InputStream /*, byte[]*/): begin");
 		}
 		int	b0 = inputStream.read();
 		if (b0 < 0)
 		{
 			throw new EOFException();
 		}
-		if (abHeader != null)
+		/*if (abHeader != null)
 		{
 			abHeader[0] = (byte) b0;
-		}
+		}*/
 
 		/*
 		 *	Check for magic number.
@@ -102,6 +103,28 @@ public class GSMAudioFileReader
 		{
 			throw new UnsupportedAudioFileException("not a GSM stream: wrong magic number");
 		}
+
+		// calculate frame size
+		// not specifying it causes Sun's Wave file writer to write rubbish
+		int nByteSize=AudioSystem.NOT_SPECIFIED;
+		int nFrameSize=AudioSystem.NOT_SPECIFIED;
+
+		if (getFileLengthInBytes()!=AudioSystem.NOT_SPECIFIED) {
+			long lByteSize=getFileLengthInBytes();
+			long lFrameSize=lByteSize/33;
+			// need to handle overflow
+			if (lByteSize>Integer.MAX_VALUE) {
+				nByteSize=Integer.MAX_VALUE;
+			} else {
+				nByteSize=(int) lByteSize;
+			}
+			if (lFrameSize>Integer.MAX_VALUE) {
+				nFrameSize=Integer.MAX_VALUE;
+			} else {
+				nFrameSize=(int) lFrameSize;
+			}
+		}
+		
 
 		AudioFormat	format = new AudioFormat(
 			Encodings.getEncoding("GSM0610"),
@@ -115,15 +138,14 @@ public class GSMAudioFileReader
 			new TAudioFileFormat(
 				AudioFileTypes.getType("GSM","gsm"), 
 				format, 
-				AudioSystem.NOT_SPECIFIED, 
-				AudioSystem.NOT_SPECIFIED);
+				nFrameSize, 
+				nByteSize);
 		if (TDebug.TraceAudioFileReader)
 		{
-			TDebug.out("GSMAudioFileReader.getAudioFileFormat(InputStream, byte[]): end");
+			TDebug.out("GSMAudioFileReader.getAudioFileFormatImpl(InputStream /*, byte[]*/): end");
 		}
 		return audioFileFormat;
 	}
-
 
 
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
@@ -133,7 +155,36 @@ public class GSMAudioFileReader
 		{
 			TDebug.out("GSMAudioFileReader.getAudioInputStream(): begin");
 		}
-		byte[]	abHeader = new byte[1];
+		//$$fb 2001-04-16: Using this approach with SequenceInputStream may seem
+		// nice, but it doesn't work well. In one call to read(byte[]), 
+		// SequenceInputStream only reads from the current stream and may
+		// return less bytes than are actually available. I consider this as
+		// a bug in SequenceInputstream.
+		// Now, you say, this doesn't cause a problem, as you use readFully
+		// in the implementation of TCircularBuffer. I explain how I had the 
+		// problem (and needed some hours to find out where the actual problem was!):
+		//
+		// I tried to decode a gsm file to wav. The frame size is 33 bytes.
+		// The sequence stream has 1 byte in the first stream and the rest
+		// in the second stream.
+		// AudioSystem.getAudioInputStream returns an AudioInputStream based
+		// on the sequence stream.
+		// Now, TCircularBuffer creates a DataInputStream on this AudioInputStream
+		// and calls readFully(33) [meaning a byte array, requesting 33 bytes].
+		// what happens: readFully calls read(33) on the AudioInputStream. The underlying
+		// sequence stream returns 1 byte - this is from the first stream.
+		// Now, readFully wants to read the remaining bytes of the AudioInputStream:
+		// read(32) and this leads to a nice exception in AudioInputStream, because
+		// the requested data is not an integral frame size.
+		// 2 solutions:
+		// - increase this ByteArrayInputStream's size to 33 bytes
+		// - use a BufferedInputStream
+		// I prefer the latter. It also only uses 1 byte of memory.
+		//
+		// Anyway, I also updated our implementation of AudioInputStream to deal
+		// with such problems. But it doesn't help much in other implementations.
+		//
+		/*byte[]	abHeader = new byte[1];
 		AudioFileFormat	audioFileFormat =
 			getAudioFileFormat(
 				inputStream,
@@ -146,14 +197,17 @@ public class GSMAudioFileReader
 			new AudioInputStream(
 				sequenceInputStream,
 				audioFileFormat.getFormat(),
-				audioFileFormat.getFrameLength());
-/*
+				audioFileFormat.getFrameLength());*/
+		BufferedInputStream bufferedInputStream=new BufferedInputStream(inputStream, 1);
+		bufferedInputStream.mark(1);
+		AudioFileFormat	audioFileFormat = getAudioFileFormatImpl(bufferedInputStream);
+		bufferedInputStream.reset();
 		AudioInputStream	audioInputStream =
 			new AudioInputStream(
-				inputStream,
+				bufferedInputStream,
 				audioFileFormat.getFormat(),
 				audioFileFormat.getFrameLength());
-*/
+		
 		if (TDebug.TraceAudioFileReader)
 		{
 			TDebug.out("GSMAudioFileReader.getAudioInputStream(): end");
