@@ -10,7 +10,7 @@ JAVAEXTLIBPATH=$(JAVADIR)/$(REL_JAVAEXTLIBPATH)
 OSNAME=@OSNAME@
 ARCHNAME=@ARCHNAME@
 CC=@CC@
-CPPFLAGS=-Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
+CPPFLAGS=-g -Wall -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -28,6 +28,7 @@ LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/esd/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
 LIBS=-lesd -L../common -ltritonuscommon
+#LIBS=-Wl,-rpath-link,.:../common -lesd -L../common -ltritonuscommon
 
 JAVAH = @JAVAH@
 
