@@ -56,7 +56,10 @@ JNIOBJ=\
 OBJ=\
 	$(JNIOBJ) \
 	common.o \
+	init.o \
 	HandleFieldHandler.o
+
+
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
@@ -109,7 +112,7 @@ JNICLASSES=\
 all: $(LIBDEST)
 
 $(LIBDEST):	$(OBJ)
-	$(CXX) -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
+	$(CXX) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
