@@ -12,6 +12,9 @@ IDEAS
 TODO
 ----
 
+- binary dists: esd, alsa
+- use aspectj!!!
+- add "formatted for 80 cols" header to all files
 - in src/lib/alsa, change constants_check.h to constants_check.c and include it into the object list of in Makefile.in. This is to isolate its effects.
 - rename DEBUG to debug_flag for all native libs
 - separate static inner classes in all native/lowlevel classes
@@ -21,7 +24,6 @@ TODO
 - make a note in INSTALL that for hand-installation only desired components should be installed. For automatic install, anyway. (see midishare exception)
 - check freetts/Tritonus interaction
 - integrate ogg/vorbis
-- remove jesd
 - test suite for classes (not necessarily interfaces) in javax.sound
 - FloatControl.shift() [check behaviour of Sun impl]
 - fix bug in AlsaMixer.readControlList()
