@@ -18,7 +18,6 @@ TODO (1 - important, 3 - nice to have)
 ----
 
 general
-1 - debug why the jdk1.4.1 does not use external default providers
 2 - use aspectj!!!
 3 - add "formatted for 80 cols" header to all files
 3 - check freetts/Tritonus interaction
@@ -34,7 +33,7 @@ lowlevel, native
 documentation, distibution
 3 - cleanup web pages: contemporary doctype, weblint, ...
 1 - binary dists: esd, alsa, SRC, AOS
-1 - binary distribution of ALSA stuff. Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
+3 - Separate into tritonus_midi_alsa.jar and tritonus_sampled_alsa.jar
 1 - some documentation "how to use Tritonus", explaining general options (precompiled, compile yourself from cvs)
 1 - make a note in INSTALL that for hand-installation only desired components should be installed. For automatic install, anyway. (see midishare exception)
 3 - review cdda distribution README
