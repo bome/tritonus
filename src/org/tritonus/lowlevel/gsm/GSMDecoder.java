@@ -45,19 +45,40 @@ public final class GSMDecoder
 	private static final int	MAX_WORD = 32767;
 
 
-	private int	dp0[] = new int[280];
+	private int[]	dp0 = new int[280];
 
-	private int	u[] = new int[8];
-	private int	LARpp[][] = new int[2][8];
+	private int[]	u = new int[8];
+	private int[][]	LARpp = new int[2][8];
 	private int	j;
 
 	private int	nrp;
-	private int	v[] = new int[9];
+	private int[]	v = new int[9];
 	private int	msr;
 
 
 	// hack used for adapting calling conventions
 	private byte[]	m_abFrame;
+
+	// only to reduce memory allocations
+	// (formerly allocated once for each frame to decode)
+	private int[]	m_LARc = new int[8];
+	private int[]	m_Nc = new int[4];
+	private int[]	m_Mc = new int[4];
+	private int[]	m_bc = new int[4];
+	private int[]	m_xmaxc = new int[4];
+	private int[]	m_xmc = new int[13 * 4];
+
+	private int[]	m_erp = new int[40];
+	private int[]	m_wt = new int[160];
+
+	private int[]	m_xMp = new int[13];
+
+	private int[]	m_result = new int[2];
+
+	private	int[]	m_LARp = new int[8];
+
+	private int[]	m_s = new int[160];
+
 
 
 	public void GSM()
@@ -92,14 +113,13 @@ public final class GSMDecoder
 		int[]	anDecodedData = decode(m_abFrame);
 		for (int i = 0; i < 160; i++)
 		{
-			//$$fb 2000-08-13: adapted to new TConversionTool functions
 			TConversionTool.intToBytes16(anDecodedData[i], abBuffer, i * 2 + nBufferStart, bBigEndian);
 		}
 	}
 
 
 
-	public final int[] decode(byte c[])
+	private final int[] decode(byte[] c)
 		throws InvalidGSMFrameException
 	{
 		if (c.length != 33)
@@ -113,120 +133,113 @@ public final class GSMDecoder
 		{
 			throw new InvalidGSMFrameException();
 		}
- 
-		int	LARc[] = new int[8];
-		int	Nc[] = new int[4];
-		int	Mc[] = new int[4];
-		int	bc[] = new int[4];
-		int	xmaxc[] = new int[4];
-		int	xmc[] = new int[13 * 4];
 
-		LARc[0]  = ((c[i++] & 0xF) << 2);           /* 1 */
-		LARc[0] |= ((c[i] >> 6) & 0x3);
-		LARc[1]  = (c[i++] & 0x3F);
-		LARc[2]  = ((c[i] >> 3) & 0x1F);
-		LARc[3]  = ((c[i++] & 0x7) << 2);
-		LARc[3] |= ((c[i] >> 6) & 0x3);
-		LARc[4]  = ((c[i] >> 2) & 0xF);
-		LARc[5]  = ((c[i++] & 0x3) << 2);
-		LARc[5] |= ((c[i] >> 6) & 0x3);
-		LARc[6]  = ((c[i] >> 3) & 0x7);
-		LARc[7]  = (c[i++] & 0x7);
-		Nc[0]  = ((c[i] >> 1) & 0x7F);
-		bc[0]  = ((c[i++] & 0x1) << 1);
-		bc[0] |= ((c[i] >> 7) & 0x1);
-		Mc[0]  = ((c[i] >> 5) & 0x3);
-		xmaxc[0]  = ((c[i++] & 0x1F) << 1);
-		xmaxc[0] |= ((c[i] >> 7) & 0x1);
-		xmc[0]  = ((c[i] >> 4) & 0x7);
-		xmc[1]  = ((c[i] >> 1) & 0x7);
-		xmc[2]  = ((c[i++] & 0x1) << 2);
-		xmc[2] |= ((c[i] >> 6) & 0x3);
-		xmc[3]  = ((c[i] >> 3) & 0x7);
-		xmc[4]  = (c[i++] & 0x7);
-		xmc[5]  = ((c[i] >> 5) & 0x7);
-		xmc[6]  = ((c[i] >> 2) & 0x7);
-		xmc[7]  = ((c[i++] & 0x3) << 1);            /* 10 */
-		xmc[7] |= ((c[i] >> 7) & 0x1);
-		xmc[8]  = ((c[i] >> 4) & 0x7);
-		xmc[9]  = ((c[i] >> 1) & 0x7);
-		xmc[10]  = ((c[i++] & 0x1) << 2);
-		xmc[10] |= ((c[i] >> 6) & 0x3);
-		xmc[11]  = ((c[i] >> 3) & 0x7);
-		xmc[12]  = (c[i++] & 0x7);
-		Nc[1]  = ((c[i] >> 1) & 0x7F);
-		bc[1]  = ((c[i++] & 0x1) << 1);
-		bc[1] |= ((c[i] >> 7) & 0x1);
-		Mc[1]  = ((c[i] >> 5) & 0x3);
-		xmaxc[1]  = ((c[i++] & 0x1F) << 1);
-		xmaxc[1] |= ((c[i] >> 7) & 0x1);
-		xmc[13]  = ((c[i] >> 4) & 0x7);
-		xmc[14]  = ((c[i] >> 1) & 0x7);
-		xmc[15]  = ((c[i++] & 0x1) << 2);
-		xmc[15] |= ((c[i] >> 6) & 0x3);
-		xmc[16]  = ((c[i] >> 3) & 0x7);
-		xmc[17]  = (c[i++] & 0x7);
-		xmc[18]  = ((c[i] >> 5) & 0x7);
-		xmc[19]  = ((c[i] >> 2) & 0x7);
-		xmc[20]  = ((c[i++] & 0x3) << 1);
-		xmc[20] |= ((c[i] >> 7) & 0x1);
-		xmc[21]  = ((c[i] >> 4) & 0x7);
-		xmc[22]  = ((c[i] >> 1) & 0x7);
-		xmc[23]  = ((c[i++] & 0x1) << 2);
-		xmc[23] |= ((c[i] >> 6) & 0x3);
-		xmc[24]  = ((c[i] >> 3) & 0x7);
-		xmc[25]  = (c[i++] & 0x7);
-		Nc[2]  = ((c[i] >> 1) & 0x7F);
-		bc[2]  = ((c[i++] & 0x1) << 1);             /* 20 */
-		bc[2] |= ((c[i] >> 7) & 0x1);
-		Mc[2]  = ((c[i] >> 5) & 0x3);
-		xmaxc[2]  = ((c[i++] & 0x1F) << 1);
-		xmaxc[2] |= ((c[i] >> 7) & 0x1);
-		xmc[26]  = ((c[i] >> 4) & 0x7);
-		xmc[27]  = ((c[i] >> 1) & 0x7);
-		xmc[28]  = ((c[i++] & 0x1) << 2);
-		xmc[28] |= ((c[i] >> 6) & 0x3);
-		xmc[29]  = ((c[i] >> 3) & 0x7);
-		xmc[30]  = (c[i++] & 0x7);
-		xmc[31]  = ((c[i] >> 5) & 0x7);
-		xmc[32]  = ((c[i] >> 2) & 0x7);
-		xmc[33]  = ((c[i++] & 0x3) << 1);
-		xmc[33] |= ((c[i] >> 7) & 0x1);
-		xmc[34]  = ((c[i] >> 4) & 0x7);
-		xmc[35]  = ((c[i] >> 1) & 0x7);
-		xmc[36]  = ((c[i++] & 0x1) << 2);
-		xmc[36] |= ((c[i] >> 6) & 0x3);
-		xmc[37]  = ((c[i] >> 3) & 0x7);
-		xmc[38]  = (c[i++] & 0x7);
-		Nc[3]  = ((c[i] >> 1) & 0x7F);
-		bc[3]  = ((c[i++] & 0x1) << 1);
-		bc[3] |= ((c[i] >> 7) & 0x1);
-		Mc[3]  = ((c[i] >> 5) & 0x3);
-		xmaxc[3]  = ((c[i++] & 0x1F) << 1);
-		xmaxc[3] |= ((c[i] >> 7) & 0x1);
-		xmc[39]  = ((c[i] >> 4) & 0x7);
-		xmc[40]  = ((c[i] >> 1) & 0x7);
-		xmc[41]  = ((c[i++] & 0x1) << 2);
-		xmc[41] |= ((c[i] >> 6) & 0x3);
-		xmc[42]  = ((c[i] >> 3) & 0x7);
-		xmc[43]  = (c[i++] & 0x7);                  /* 30  */
-		xmc[44]  = ((c[i] >> 5) & 0x7);
-		xmc[45]  = ((c[i] >> 2) & 0x7);
-		xmc[46]  = ((c[i++] & 0x3) << 1);
-		xmc[46] |= ((c[i] >> 7) & 0x1);
-		xmc[47]  = ((c[i] >> 4) & 0x7);
-		xmc[48]  = ((c[i] >> 1) & 0x7);
-		xmc[49]  = ((c[i++] & 0x1) << 2);
-		xmc[49] |= ((c[i] >> 6) & 0x3);
-		xmc[50]  = ((c[i] >> 3) & 0x7);
-		xmc[51]  = (c[i] & 0x7);                    /* 33 */
+		m_LARc[0]  = ((c[i++] & 0xF) << 2);           /* 1 */
+		m_LARc[0] |= ((c[i] >> 6) & 0x3);
+		m_LARc[1]  = (c[i++] & 0x3F);
+		m_LARc[2]  = ((c[i] >> 3) & 0x1F);
+		m_LARc[3]  = ((c[i++] & 0x7) << 2);
+		m_LARc[3] |= ((c[i] >> 6) & 0x3);
+		m_LARc[4]  = ((c[i] >> 2) & 0xF);
+		m_LARc[5]  = ((c[i++] & 0x3) << 2);
+		m_LARc[5] |= ((c[i] >> 6) & 0x3);
+		m_LARc[6]  = ((c[i] >> 3) & 0x7);
+		m_LARc[7]  = (c[i++] & 0x7);
+		m_Nc[0]  = ((c[i] >> 1) & 0x7F);
+		m_bc[0]  = ((c[i++] & 0x1) << 1);
+		m_bc[0] |= ((c[i] >> 7) & 0x1);
+		m_Mc[0]  = ((c[i] >> 5) & 0x3);
+		m_xmaxc[0]  = ((c[i++] & 0x1F) << 1);
+		m_xmaxc[0] |= ((c[i] >> 7) & 0x1);
+		m_xmc[0]  = ((c[i] >> 4) & 0x7);
+		m_xmc[1]  = ((c[i] >> 1) & 0x7);
+		m_xmc[2]  = ((c[i++] & 0x1) << 2);
+		m_xmc[2] |= ((c[i] >> 6) & 0x3);
+		m_xmc[3]  = ((c[i] >> 3) & 0x7);
+		m_xmc[4]  = (c[i++] & 0x7);
+		m_xmc[5]  = ((c[i] >> 5) & 0x7);
+		m_xmc[6]  = ((c[i] >> 2) & 0x7);
+		m_xmc[7]  = ((c[i++] & 0x3) << 1);            /* 10 */
+		m_xmc[7] |= ((c[i] >> 7) & 0x1);
+		m_xmc[8]  = ((c[i] >> 4) & 0x7);
+		m_xmc[9]  = ((c[i] >> 1) & 0x7);
+		m_xmc[10]  = ((c[i++] & 0x1) << 2);
+		m_xmc[10] |= ((c[i] >> 6) & 0x3);
+		m_xmc[11]  = ((c[i] >> 3) & 0x7);
+		m_xmc[12]  = (c[i++] & 0x7);
+		m_Nc[1]  = ((c[i] >> 1) & 0x7F);
+		m_bc[1]  = ((c[i++] & 0x1) << 1);
+		m_bc[1] |= ((c[i] >> 7) & 0x1);
+		m_Mc[1]  = ((c[i] >> 5) & 0x3);
+		m_xmaxc[1]  = ((c[i++] & 0x1F) << 1);
+		m_xmaxc[1] |= ((c[i] >> 7) & 0x1);
+		m_xmc[13]  = ((c[i] >> 4) & 0x7);
+		m_xmc[14]  = ((c[i] >> 1) & 0x7);
+		m_xmc[15]  = ((c[i++] & 0x1) << 2);
+		m_xmc[15] |= ((c[i] >> 6) & 0x3);
+		m_xmc[16]  = ((c[i] >> 3) & 0x7);
+		m_xmc[17]  = (c[i++] & 0x7);
+		m_xmc[18]  = ((c[i] >> 5) & 0x7);
+		m_xmc[19]  = ((c[i] >> 2) & 0x7);
+		m_xmc[20]  = ((c[i++] & 0x3) << 1);
+		m_xmc[20] |= ((c[i] >> 7) & 0x1);
+		m_xmc[21]  = ((c[i] >> 4) & 0x7);
+		m_xmc[22]  = ((c[i] >> 1) & 0x7);
+		m_xmc[23]  = ((c[i++] & 0x1) << 2);
+		m_xmc[23] |= ((c[i] >> 6) & 0x3);
+		m_xmc[24]  = ((c[i] >> 3) & 0x7);
+		m_xmc[25]  = (c[i++] & 0x7);
+		m_Nc[2]  = ((c[i] >> 1) & 0x7F);
+		m_bc[2]  = ((c[i++] & 0x1) << 1);             /* 20 */
+		m_bc[2] |= ((c[i] >> 7) & 0x1);
+		m_Mc[2]  = ((c[i] >> 5) & 0x3);
+		m_xmaxc[2]  = ((c[i++] & 0x1F) << 1);
+		m_xmaxc[2] |= ((c[i] >> 7) & 0x1);
+		m_xmc[26]  = ((c[i] >> 4) & 0x7);
+		m_xmc[27]  = ((c[i] >> 1) & 0x7);
+		m_xmc[28]  = ((c[i++] & 0x1) << 2);
+		m_xmc[28] |= ((c[i] >> 6) & 0x3);
+		m_xmc[29]  = ((c[i] >> 3) & 0x7);
+		m_xmc[30]  = (c[i++] & 0x7);
+		m_xmc[31]  = ((c[i] >> 5) & 0x7);
+		m_xmc[32]  = ((c[i] >> 2) & 0x7);
+		m_xmc[33]  = ((c[i++] & 0x3) << 1);
+		m_xmc[33] |= ((c[i] >> 7) & 0x1);
+		m_xmc[34]  = ((c[i] >> 4) & 0x7);
+		m_xmc[35]  = ((c[i] >> 1) & 0x7);
+		m_xmc[36]  = ((c[i++] & 0x1) << 2);
+		m_xmc[36] |= ((c[i] >> 6) & 0x3);
+		m_xmc[37]  = ((c[i] >> 3) & 0x7);
+		m_xmc[38]  = (c[i++] & 0x7);
+		m_Nc[3]  = ((c[i] >> 1) & 0x7F);
+		m_bc[3]  = ((c[i++] & 0x1) << 1);
+		m_bc[3] |= ((c[i] >> 7) & 0x1);
+		m_Mc[3]  = ((c[i] >> 5) & 0x3);
+		m_xmaxc[3]  = ((c[i++] & 0x1F) << 1);
+		m_xmaxc[3] |= ((c[i] >> 7) & 0x1);
+		m_xmc[39]  = ((c[i] >> 4) & 0x7);
+		m_xmc[40]  = ((c[i] >> 1) & 0x7);
+		m_xmc[41]  = ((c[i++] & 0x1) << 2);
+		m_xmc[41] |= ((c[i] >> 6) & 0x3);
+		m_xmc[42]  = ((c[i] >> 3) & 0x7);
+		m_xmc[43]  = (c[i++] & 0x7);                  /* 30  */
+		m_xmc[44]  = ((c[i] >> 5) & 0x7);
+		m_xmc[45]  = ((c[i] >> 2) & 0x7);
+		m_xmc[46]  = ((c[i++] & 0x3) << 1);
+		m_xmc[46] |= ((c[i] >> 7) & 0x1);
+		m_xmc[47]  = ((c[i] >> 4) & 0x7);
+		m_xmc[48]  = ((c[i] >> 1) & 0x7);
+		m_xmc[49]  = ((c[i++] & 0x1) << 2);
+		m_xmc[49] |= ((c[i] >> 6) & 0x3);
+		m_xmc[50]  = ((c[i] >> 3) & 0x7);
+		m_xmc[51]  = (c[i] & 0x7);                    /* 33 */
    
-		return decoder(LARc, Nc, bc, Mc, xmaxc, xmc);
+		return decoder(m_LARc, m_Nc, m_bc, m_Mc, m_xmaxc, m_xmc);
 	}
 
 
 
-	public final static void print(String name, int data[])
+	public final static void print(String name, int[] data)
 	{
 		System.out.print("["+name+":");
 		for(int i=0;i<data.length;i++)
@@ -252,16 +265,15 @@ public final class GSMDecoder
 
 
 
-	private final int[] decoder(int LARcr[], 
-				    int Ncr[], 
-				    int bcr[], 
-				    int Mcr[], 
-				    int xmaxcr[], 
-				    int xMcr[])
+	private final int[] decoder(int[] LARcr, 
+				    int[] Ncr, 
+				    int[] bcr, 
+				    int[] Mcr, 
+				    int[] xmaxcr, 
+				    int[] xMcr)
 	{
 		int	j, k;
-		int	erp[] = new int[40];
-		int	wt[] = new int[160];
+
 		// drp is just dp0+120
 
 		//print("LARcr",LARcr);
@@ -271,57 +283,54 @@ public final class GSMDecoder
 		//print("xmaxcr",xmaxcr);
 		//print("xMcr",xMcr);
 
-		for (j=0;j<4;j++)
+		for (j = 0; j < 4; j++)
 		{
 			// find out what is done with xMcr
-			RPEDecoding(xmaxcr[j],Mcr[j],xMcr,j*13,erp);
+			RPEDecoding(xmaxcr[j], Mcr[j], xMcr, j * 13, m_erp);
 
 			//print("erp",erp);
 
-			longTermSynthesisFiltering(Ncr[j],bcr[j],erp,dp0);
+			longTermSynthesisFiltering(Ncr[j], bcr[j], m_erp, dp0);
       
-			for (k=0;k<40;k++)
+			for (k = 0; k < 40; k++)
 			{
-				wt[j*40+k] = dp0[120+k];
+				m_wt[j * 40 + k] = dp0[120 + k];
 			}
 
 		}
 
 		//print("LARcr",LARcr);
-    
+
 		//print("wt",wt);
-    
-		int s[] = shortTermSynthesisFilter(LARcr,wt);
+
+		int[]	s = shortTermSynthesisFilter(LARcr, m_wt);
 
 		//print("s",s);
-    
+
 		postprocessing(s);
 
 		return s;
-    
 	}
 
 
 
 	private final void RPEDecoding(int xmaxcr,
 				       int Mcr,
-				       int xMcr[],
+				       int[] xMcr,
 				       int xMcrOffset,
-				       int erp[])
+				       int[] erp)
 	{
-		int expAndMant[];
-		int xMp[] = new int[13];
+		int[] expAndMant;
 
 		expAndMant = xmaxcToExpAndMant(xmaxcr);
 
 		//System.out.println("[e&m:"+expAndMant[0]+","+expAndMant[1]+"]");
 
-		APCMInverseQuantization(xMcr,xMcrOffset,expAndMant[0],expAndMant[1],xMp);
+		APCMInverseQuantization(xMcr, xMcrOffset, expAndMant[0], expAndMant[1], m_xMp);
 
 		//print("xMp",xMp);
 
-		RPE_grid_positioning( Mcr, xMp, erp);
-
+		RPE_grid_positioning( Mcr, m_xMp, erp);
 	}
 
 
@@ -355,13 +364,12 @@ public final class GSMDecoder
 		//assert(exp>=-4 && exp <= 6);
 		//assert(mant>=0 && mant<=7);
 
-		int result[] = new int[2];
-		result[0] = exp;
-		result[1] = mant;
+		m_result[0] = exp;
+		m_result[1] = mant;
 
-		return result;
-
+		return m_result;
 	}
+
 
 
 	//private void assert(boolean test) {
@@ -372,11 +380,11 @@ public final class GSMDecoder
 
 
 
-	private final void APCMInverseQuantization(int xMc[], 
+	private final void APCMInverseQuantization(int[] xMc,
 						   int xMcOffset,
 						   int exp,
 						   int mant,
-						   int xMp[])
+						   int[] xMp)
 	{
 		int i,p;
 		int temp, temp1, temp2, temp3;
@@ -424,7 +432,7 @@ public final class GSMDecoder
 
 	private final static int saturate(int x)
 	{
-		return (x<MIN_WORD ? MIN_WORD : (x>MAX_WORD?MAX_WORD: x));
+		return (x < MIN_WORD ? MIN_WORD : (x > MAX_WORD ? MAX_WORD: x));
 	}
 
 
@@ -482,11 +490,10 @@ public final class GSMDecoder
 
 	private final void longTermSynthesisFiltering(int Ncr,
 						      int bcr,
-						      int erp[],
-						      int dp0[])
+						      int[] erp,
+						      int[] dp0)
 	{
 		int ltmp;
-		int k;
 		int brp, drpp, Nr;
 
 		Nr = Ncr < 40 || Ncr > 120 ? nrp : Ncr;
@@ -494,19 +501,22 @@ public final class GSMDecoder
 
 		brp = QLB[bcr];
 
-		for (k=0;k<=39;k++) {
-			drpp = mult_r(brp,dp0[120+(k-Nr)]);
-			dp0[120+k] = add(erp[k],drpp);
+		for (int k = 0; k <= 39; k++)
+		{
+			drpp = mult_r(brp,dp0[120 + (k - Nr)]);
+			dp0[120 + k] = add(erp[k], drpp);
 		}
 
-		for (k=0;k<=119;k++) dp0[k]=dp0[40+k];
-
+		for (int k = 0; k <= 119; k++)
+		{
+			dp0[k] = dp0[40 + k];
+		}
 	}
 
 
 
-	private final int[] shortTermSynthesisFilter(int LARcr[],
-						     int wt[])
+	private final int[] shortTermSynthesisFilter(int[] LARcr,
+						     int[] wt)
 	{
 
 
@@ -515,41 +525,37 @@ public final class GSMDecoder
 
 
 
-		int LARpp_j[] = LARpp[j];
-		int LARpp_j_1[] = LARpp[j^=1];
-
-		int LARp[] = new int[8];
-
-		int s[] = new int[160];
+		int[]	LARpp_j = LARpp[j];
+		int[]	LARpp_j_1 = LARpp[j^=1];
 
 		decodingOfTheCodedLogAreaRatios(LARcr,LARpp_j);
 
 		//print("LARpp_j",LARpp_j);
     
-		Coefficients_0_12(LARpp_j_1,LARpp_j,LARp);
-		LARp_to_rp(LARp);
-		shortTermSynthesisFiltering(LARp,13,wt,s,0);
+		Coefficients_0_12(LARpp_j_1,LARpp_j, m_LARp);
+		LARp_to_rp(m_LARp);
+		shortTermSynthesisFiltering(m_LARp, 13, wt, m_s, 0);
 
-		Coefficients_13_26( LARpp_j_1, LARpp_j, LARp);
-		LARp_to_rp( LARp );
-		shortTermSynthesisFiltering( LARp, 14, wt, s, 13);
+		Coefficients_13_26( LARpp_j_1, LARpp_j, m_LARp);
+		LARp_to_rp(m_LARp);
+		shortTermSynthesisFiltering( m_LARp, 14, wt, m_s, 13);
 
-		Coefficients_27_39( LARpp_j_1, LARpp_j, LARp);
-		LARp_to_rp( LARp );
-		shortTermSynthesisFiltering( LARp, 13, wt, s, 27 );
+		Coefficients_27_39( LARpp_j_1, LARpp_j, m_LARp);
+		LARp_to_rp( m_LARp );
+		shortTermSynthesisFiltering( m_LARp, 13, wt, m_s, 27 );
 
-		Coefficients_40_159( LARpp_j, LARp );
-		LARp_to_rp( LARp );
-		shortTermSynthesisFiltering( LARp, 120, wt, s, 40);
+		Coefficients_40_159( LARpp_j, m_LARp );
+		LARp_to_rp( m_LARp );
+		shortTermSynthesisFiltering( m_LARp, 120, wt, m_s, 40);
 
-		return s;
+		return m_s;
 
 	}
 
 
 
-	public final static void decodingOfTheCodedLogAreaRatios(int LARc[],
-								 int LARpp[])
+	public final static void decodingOfTheCodedLogAreaRatios(int[] LARc,
+								 int[] LARpp)
 	{
 		int temp1;
 		int ltmp;
@@ -614,14 +620,11 @@ public final class GSMDecoder
 
 
 
-	private final static void Coefficients_0_12(int LARpp_j_1[],
-						    int LARpp_j[],
-						    int LARp[])
+	private final static void Coefficients_0_12(int[] LARpp_j_1,
+						    int[] LARpp_j,
+						    int[] LARp)
 	{
-		int i;
-		int ltmp;
-    
-		for(i=0;i<8;i++)
+		for(int i = 0; i < 8; i++)
 		{
 			LARp[i] = add((LARpp_j_1[i]>>2),(LARpp_j[i]>>2));
 			LARp[i] = add(LARp[i],(LARpp_j_1[i]>>1));
@@ -630,14 +633,11 @@ public final class GSMDecoder
 
 
 
-	private final static void Coefficients_13_26(int LARpp_j_1[],
-						     int LARpp_j[],
-						     int LARp[])
+	private final static void Coefficients_13_26(int[] LARpp_j_1,
+						     int[] LARpp_j,
+						     int[] LARp)
 	{
-		int i;
-		int ltmp;
-    
-		for(i=0;i<8;i++)
+		for(int i = 0; i < 8; i++)
 		{
 			LARp[i] = add((LARpp_j_1[i]>>1),(LARpp_j[i]>>1));
 		}
@@ -645,14 +645,11 @@ public final class GSMDecoder
 
 
 
-	private final static void Coefficients_27_39(int LARpp_j_1[],
-						     int LARpp_j[],
-						     int LARp[])
+	private final static void Coefficients_27_39(int[] LARpp_j_1,
+						     int[] LARpp_j,
+						     int[] LARp)
 	{
-		int i;
-		int ltmp;
-    
-		for(i=0;i<8;i++)
+		for(int i = 0; i < 8; i++)
 		{
 			LARp[i] = add((LARpp_j_1[i]>>2),(LARpp_j[i]>>2));
 			LARp[i] = add(LARp[i],(LARpp_j[i]>>1));
@@ -661,13 +658,10 @@ public final class GSMDecoder
 
 
   
-	private final static void Coefficients_40_159(int LARpp_j[],
-						      int LARp[])
+	private final static void Coefficients_40_159(int[] LARpp_j,
+						      int[] LARp)
 	{
-		int i;
-		int ltmp;
-    
-		for(i=0;i<8;i++)
+		for(int i = 0; i < 8; i++)
 		{
 			LARp[i] = LARpp_j[i];
 		}
@@ -675,15 +669,14 @@ public final class GSMDecoder
 
 
 
-	private final static void LARp_to_rp(int LARp[])
+	private final static void LARp_to_rp(int[] LARp)
 	{
 
-		int i;
 		int temp;
 
-		for(i=0;i<8;i++)
+		for(int i = 0; i < 8; i++)
 		{
-			if(LARp[i]<0)
+			if(LARp[i] < 0)
 			{
 				temp = ((LARp[i]==MIN_WORD)?MAX_WORD:-LARp[i]);
 				LARp[i] = (- ((temp < 11059) ? temp << 1
@@ -703,33 +696,32 @@ public final class GSMDecoder
 
 
 	//      shortTermSynthesisFiltering(LARp,13,wt,s,0);
-	private final void shortTermSynthesisFiltering(int rrp[],
+	private final void shortTermSynthesisFiltering(int[] rrp,
 						       int k,
-						       int wt[],
-						       int sr[],
+						       int[] wt,
+						       int[] sr,
 						       int off)
 	{
-		int i;
 		int sri, tmp1, tmp2;
 		int woff = off;
 		int soff = off;
 
-		while (k-->0)
+		while (k-- > 0)
 		{
 			sri = wt[woff++];
-			for (i=8;i-->0;)
+			for (int i = 8; i-- > 0;)
 			{
 				tmp1 = rrp[i];
 				tmp2 = v[i];
-				tmp2 = ((tmp1==MIN_WORD && tmp2 == MIN_WORD
+				tmp2 = ((tmp1 == MIN_WORD && tmp2 == MIN_WORD
 					 ? MAX_WORD
-					 : saturate((tmp1*tmp2 + 16384)>>15)));
+					 : saturate((tmp1 * tmp2 + 16384) >> 15)));
 				sri = sub(sri,tmp2);
 
 				tmp1 = ((tmp1 == MIN_WORD && sri == MIN_WORD
 					 ? MAX_WORD
-					 : saturate( (tmp1 *sri+16384) >>15)));
-				v[i+1]=add(v[i],tmp1);
+					 : saturate( (tmp1 * sri + 16384) >> 15)));
+				v[i + 1] = add(v[i], tmp1);
 			}
 			sr[soff++] = v[0] = sri;
 		}
@@ -737,24 +729,24 @@ public final class GSMDecoder
 
 
 
-	private final void postprocessing(int s[])
+	private final void postprocessing(int[] s)
 	{
-		int k,soff=0;
-		int tmp;
-		for(k=160;k-->0;soff++)
+		int	soff=0;
+		int	tmp;
+		for(int k = 160; k-- > 0; soff++)
 		{
-			tmp = mult_r(msr,(28180));
-			msr = add(s[soff],tmp);
+			tmp = mult_r(msr, (28180));
+			msr = add(s[soff], tmp);
 			//s[soff]=(add(msr,msr) & 0xfff8);
-			s[soff]=saturate(add(msr,msr) & ~0x7);
+			s[soff] = saturate(add(msr, msr) & ~0x7);
 		}
 	}
 
 
 
 	private final static void RPE_grid_positioning(int Mc,
-						       int xMp[],
-						       int ep[])
+						       int[] xMp,
+						       int[] ep)
 	{
 		int i = 13;
     
