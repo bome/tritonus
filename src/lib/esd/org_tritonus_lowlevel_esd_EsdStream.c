@@ -24,6 +24,7 @@
 
 
 #include	<assert.h>
+#include	<errno.h>
 #include	<stdio.h>
 #include	<unistd.h>
 #include	<esd.h>
@@ -106,16 +107,20 @@ Java_org_tritonus_lowlevel_esd_EsdStream_open
 	int		nPlayerId;
 	char		name[20];
 	sprintf(name, "trit%d", (int) obj);	// DANGEROUS!!
-	printf("name: %s\n", name);
+	// printf("name: %s\n", name);
+	errno = 0;
+	//perror("abc");
 	nFd = esd_play_stream/*_fallback*/(nFormat, nSampleRate, NULL, name);
 	if (nFd < 0)
 	{
 		// TODO: error message
-		// cerr << "cannot create esd stream\n";
+		printf("Java_org_tritonus_lowlevel_esd_EsdStream_open: cannot create esd stream\n");
+		perror("abc");
 		// jclass	cls = (*env)->FindClass(env, "org/tritonus_lowlevel/nas/DeviceAttributes");
 		// (*env)->ThrowNew(env, cls, "exc: cannot create esd stream");
 	}
-	printf("fd: %d\n", nFd);
+	// printf("fd: %d\n", nFd);
+	//perror("abc");
 	setNativeFd(env, obj, nFd);
 	nPlayerId = get_player_id(name);
 	if (nPlayerId < 0)

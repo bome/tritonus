@@ -39,6 +39,9 @@ import	java.util.Iterator;
 
 import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.spi.MidiDeviceProvider;
+import	org.tritonus.util.GlobalInfo;
+
+
 
 public class MshSequencerProvider
 	extends		MidiDeviceProvider
@@ -48,7 +51,11 @@ public class MshSequencerProvider
 
 	public MshSequencerProvider()
 	{
-		m_info = new MidiDevice.Info("Tritonus MidiShare sequencer", "Tritonus is free software. See http://www.tritonus.org/", "this sequencer uses MidiShare", "0.0");
+		m_info = new MidiDevice.Info(
+			"Tritonus MidiShare sequencer",
+			GlobalInfo.getVendor(),
+			"this sequencer uses MidiShare",
+			GlobalInfo.getVersion());
 	}
 
 

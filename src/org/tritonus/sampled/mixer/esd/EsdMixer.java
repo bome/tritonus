@@ -46,6 +46,7 @@ import	javax.sound.sampled.Mixer;
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.mixer.TMixer;
 import	org.tritonus.sampled.mixer.TSoftClip;
+import	org.tritonus.util.GlobalInfo;
 
 
 
@@ -101,9 +102,9 @@ public class EsdMixer
 	{
 		super(new Mixer.Info(
 			"Esd Mixer",
-			"Tritonus is free software. See http://www.tritonus.org/",
+			GlobalInfo.getVendor(),
 			"Mixer for the Enlightened Sound Daemon (esd) running on the local machine",
-			"0.2.0"),
+			GlobalInfo.getVersion()),
 		      new Line.Info(Mixer.class),
 		      Arrays.asList(FORMATS),
 		      Arrays.asList(FORMATS),

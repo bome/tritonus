@@ -184,6 +184,7 @@ public class AudioSystem
 	{
 		if (info == null)
 		{
+			// TODO: this currently always yields null!!!
 			info = TAudioConfig.getDefaultMixerInfo();
 		}
 		GetMixerMixerProviderAction	action = new GetMixerMixerProviderAction(info);

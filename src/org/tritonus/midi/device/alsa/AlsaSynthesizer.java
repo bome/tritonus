@@ -45,6 +45,7 @@ import	javax.sound.midi.Patch;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.util.GlobalInfo;
 
 
 
@@ -61,12 +62,13 @@ public class AlsaSynthesizer
 
 	public AlsaSynthesizer(int nClient, int nPort)
 	{
-		super(new MidiDevice.Info(
-			"ALSA Synthesizer (" + nClient + ":" + nPort + ")",
-			"Tritonus is free software. See http://www.tritonus.org/",
-			"Synthesizer based on the ALSA sequencer",
-			"0.1.0"),
-		      nClient, nPort, false, true);
+		super(
+			new MidiDevice.Info(
+				"ALSA Synthesizer (" + nClient + ":" + nPort + ")",
+				GlobalInfo.getVendor(),
+				"Synthesizer based on the ALSA sequencer",
+				GlobalInfo.getVersion()),
+			nClient, nPort, false, true);
 		m_channels = new ArrayList();
 	}
 

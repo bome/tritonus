@@ -35,6 +35,7 @@ import	javax.sound.midi.spi.MidiDeviceProvider;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
+import	org.tritonus.util.GlobalInfo;
 
 
 
@@ -48,7 +49,11 @@ public class AlsaSequencerProvider
 
 	public AlsaSequencerProvider()
 	{
-		m_info = new MidiDevice.Info("Tritonus ALSA sequencer", "Tritonus is free software. See http://www.tritonus.org/", "this sequencer uses the ALSA sequencer", "0.0");
+		m_info = new MidiDevice.Info(
+			"Tritonus ALSA sequencer",
+			GlobalInfo.getVendor(),
+			"this sequencer uses the ALSA sequencer",
+			GlobalInfo.getVersion());
 	}
 
 

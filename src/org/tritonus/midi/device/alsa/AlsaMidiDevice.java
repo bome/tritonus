@@ -40,6 +40,7 @@ import	javax.sound.midi.Transmitter;
 import	org.tritonus.TDebug;
 import	org.tritonus.lowlevel.alsa.ASequencer;
 import	org.tritonus.midi.device.TMidiDevice;
+import	org.tritonus.util.GlobalInfo;
 
 
 
@@ -97,9 +98,9 @@ public class AlsaMidiDevice
 	public AlsaMidiDevice(int nClient, int nPort, boolean bUseIn, boolean bUseOut)
 	{
 		this(new MidiDevice.Info("ALSA MIDI port (" + nClient + ":" + nPort + ")",
-					 "Tritonus is free software. See http://www.tritonus.org/",
+					 GlobalInfo.getVendor(),
 					 "ALSA MIDI port (" + nClient + ":" + nPort + ")",
-					 "0.3"),
+					 GlobalInfo.getVersion()),
 		     nClient, nPort, bUseIn, bUseOut);
 	}
 
