@@ -37,6 +37,7 @@ import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.share.sampled.Encodings;
+import	org.tritonus.share.sampled.TConversionTool;
 import	org.tritonus.share.sampled.convert.TMatrixFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
@@ -410,7 +411,7 @@ public class MpegFormatConversionProvider
 	}
 
 
-
+	// TODO: ask Florian if these methods are of general interest
 	private static AudioFormat setUnspecifiedFieldsFromProto(
 		AudioFormat incomplete,
 		AudioFormat prototype)
@@ -440,6 +441,7 @@ public class MpegFormatConversionProvider
 	}
 
 
+
 	public static class DecodedMpegAudioInputStream
 	extends		TAsynchronousFilteredAudioInputStream
 	{
@@ -453,7 +455,7 @@ public class MpegFormatConversionProvider
 		public DecodedMpegAudioInputStream(AudioFormat outputFormat, AudioInputStream inputStream)
 		{
 			// TODO: try to find out length (possible?)
-			super(outputFormat, -1);
+			super(outputFormat, AudioSystem.NOT_SPECIFIED);
 			m_encodedStream = inputStream;
 			m_bitstream = new Bitstream(inputStream);
 			m_decoder = new Decoder(null);
@@ -539,6 +541,8 @@ public class MpegFormatConversionProvider
 
 			public void append(int nChannel, short sValue)
 			{
+				// TODO: replace by TConversionTool methods
+/*
 				byte	bFirstByte;
 				byte	bSecondByte;
 				if (m_bIsBigEndian)
@@ -553,6 +557,8 @@ public class MpegFormatConversionProvider
 				}
 				m_abBuffer[m_anBufferPointers[nChannel]] = bFirstByte;
 				m_abBuffer[m_anBufferPointers[nChannel] + 1] = bSecondByte;
+*/
+				TConversionTool.shortToBytes16(sValue, m_abBuffer, m_anBufferPointers[nChannel], m_bIsBigEndian);
 				m_anBufferPointers[nChannel] += m_nChannels * 2;
 			}
 
