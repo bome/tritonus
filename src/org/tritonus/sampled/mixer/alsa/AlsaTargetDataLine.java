@@ -1,9 +1,11 @@
 /*
  *	AlsaTargetDataLine.java
+ *
+ *	This file is part of Tritonus.
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -46,25 +48,14 @@ import	org.tritonus.share.sampled.mixer.TSourceTargetDataLine;
 
 
 public class AlsaTargetDataLine
-	extends		TSourceTargetDataLine
+	extends		AlsaBaseDataLine
 	implements	TargetDataLine
 {
-	private AlsaPcm			m_alsaPcm;
-	private boolean			m_bSwapBytes;
 	private byte[]			m_abSwapBuffer;
 
-	/*
-	 *	Only used if m_bSwapBytes is true.
-	 */
-	private int			m_nBytesPerSample;
-
-	private byte[]			m_abFragmentBuffer;
-	private int			m_nFragmentBufferUsedBytes;
-	private int			m_nFragmentSize = 1024;
 
 
-
-	public AlsaTargetDataLine(TMixer mixer, AudioFormat format, int nBufferSize)
+	public AlsaTargetDataLine(AlsaMixer mixer, AudioFormat format, int nBufferSize)
 		throws	LineUnavailableException
 	{
 		// TODO: use an info object that represents the mixer's capabilities (all possible formats for the line)
@@ -77,116 +68,19 @@ public class AlsaTargetDataLine
 	}
 
 
-
-	protected void openImpl()
-		throws	LineUnavailableException
+	protected int getAlsaStreamType()
 	{
-		if (TDebug.TraceTargetDataLine)
-		{
-			TDebug.out("AlsaTargetDataLine.openImpl(): called.");
-		}
-
-		/*
-		 *	Checks that a format is set.
-		 *	Sets the buffer size to a default value if not
-		 *	already set.
-		 */
-		checkOpen();
-		AudioFormat	format = getFormat();
-		AudioFormat.Encoding	encoding  = format.getEncoding();
-		boolean			bBigEndian = format.isBigEndian();
-		m_bSwapBytes = false;
-		if (format.getSampleSizeInBits() == 16 && bBigEndian)
-		{
-			m_bSwapBytes = true;
-			bBigEndian = false;
-		}
-		else if (format.getSampleSizeInBits() == 8 &&
-			 encoding.equals(AudioFormat.Encoding.PCM_SIGNED))
-		{
-			m_bSwapBytes = true;
-			encoding = AudioFormat.Encoding.PCM_UNSIGNED;
-		}
-		if (m_bSwapBytes)
-		{
-			format = new AudioFormat(encoding,
-						 format.getSampleRate(),
-						 format.getSampleSizeInBits(),
-						 format.getChannels(),
-						 format.getFrameSize(),
-						 format.getFrameRate(),
-						 bBigEndian);
-			m_nBytesPerSample = format.getFrameSize() / format.getChannels();
-		}
-		int	nOutFormat = AlsaUtils.getAlsaFormat(format);
-
-		try
-		{
-			// m_alsaPcm = new AlsaPcm(0, 0, AlsaPcm.SND_PCM_OPEN_CAPTURE);
-		}
-		catch (Exception e)
-		{
-			if (TDebug.TraceAllExceptions)
-			{
-				TDebug.out(e);
-			}
-			throw new LineUnavailableException();
-		}
-		int	nReturn;
-		// outputStatus();
-		nReturn = 0;
-/*
-		nReturn = m_alsaPcm.setChannelParams(
-			AlsaPcm.SND_PCM_CHANNEL_CAPTURE,
-			AlsaPcm.SND_PCM_MODE_BLOCK,
-			true,
-			nOutFormat,
-			(int) format.getSampleRate(),
-			format.getChannels(),
-			0,
-			AlsaPcm.SND_PCM_START_DATA,
-			AlsaPcm.SND_PCM_STOP_ROLLOVER,
-			false,
-			false,
-			m_nFragmentSize,
-			2,
-			1000);
-*/
-		if (nReturn != 0)
-		{
-			TDebug.out("setChannelParams: " + Alsa.getStringError(nReturn));
-		}
-		outputStatus();
-		// nReturn = m_alsaPcm.prepareChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
-		if (nReturn != 0)
-		{
-			TDebug.out("prepareChannel: " + Alsa.getStringError(nReturn));
-		}
-		outputStatus();
-		if (m_abFragmentBuffer == null)
-		{
-			m_abFragmentBuffer = new byte[m_nFragmentSize];
-		}
-		m_nFragmentBufferUsedBytes = 0;
+		return AlsaPcm.SND_PCM_STREAM_CAPTURE;
 	}
 
 
-
-	protected void closeImpl()
-	{
-		if (TDebug.TraceTargetDataLine)
-		{
-			TDebug.out("AlsaTargetDataLine.closeImpl(): called.");
-		}
-		m_alsaPcm.close();
-	}
 
 
 
 /*
   public void start()
   {
-  // m_alsaPcm.goCapture();
+  // getAlsaPcm().goCapture();
   setStarted(true);
   setActive(true);
   if (TDebug.TraceSourceDataLine)
@@ -196,27 +90,6 @@ public class AlsaTargetDataLine
   }
 */
 
-	private void outputStatus()
-	{
-		int	nReturn;
-		int[]	anValues = new int[9];
-		long[]	alValues = new long[2];
-
-		nReturn = 0;
-/*
-		nReturn = m_alsaPcm.getChannelStatus(
-			AlsaPcm.SND_PCM_CHANNEL_CAPTURE,
-			anValues,
-			alValues);
-*/
-		if (nReturn != 0)
-		{
-			TDebug.out("getChannelStatus: " + Alsa.getStringError(nReturn));
-		}
-		TDebug.out("Mode: " + anValues[0]);
-		TDebug.out("Status: " + anValues[1]);
-	}
-
 
 
 	protected void stopImpl()
@@ -225,7 +98,7 @@ public class AlsaTargetDataLine
 		{
 			TDebug.out("AlsaTargetDataLine.stopImpl(): called.");
 		}
-		int	nReturn = 0; //m_alsaPcm.flushChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
+		int	nReturn = 0; //getAlsaPcm().flushChannel(AlsaPcm.SND_PCM_CHANNEL_CAPTURE);
 		if (nReturn != 0)
 		{
 			TDebug.out("flushChannel: " + Alsa.getStringError(nReturn));
@@ -251,7 +124,6 @@ public class AlsaTargetDataLine
 			TDebug.out("AlsaTargetDataLine.read(): called.");
 			TDebug.out("AlsaTargetDataLine.read(): wanted length: " + nLength);
 		}
-		outputStatus();
 		int	nOriginalOffset = nOffset;
 		if (nLength > 0 && !isActive())
 		{
@@ -269,7 +141,7 @@ public class AlsaTargetDataLine
 		{
 			TDebug.out("AlsaTargetDataLine.read(): read (bytes): " + nBytesRead);
 		}
-		if (m_bSwapBytes && nBytesRead > 0)
+		if (getSwapBytes() && nBytesRead > 0)
 		{
 			TConversionTool.swapOrder16(abData, nOriginalOffset, nBytesRead / 2);
 		}
@@ -278,115 +150,40 @@ public class AlsaTargetDataLine
 
 
 
+
+
+	// TODO: check if should block
 	public int readImpl(byte[] abData, int nOffset, int nLength)
 	{
 		if (TDebug.TraceTargetDataLine)
 		{
-			TDebug.out("AlsaTargetDataLine.readImpl(): length: " + nLength);
+			TDebug.out("AlsaTargetDataLine.readImpl(): called.");
+			TDebug.out("AlsaTargetDataLine.readImpl(): wanted length: " + nLength);
 		}
-		// TODO: recheck semantics of start()/active
+		int	nOriginalOffset = nOffset;
 		if (nLength > 0 && !isActive())
 		{
 			start();
 		}
-		int		nRemainingLength = nLength;
-		if (m_nFragmentBufferUsedBytes > 0)
+		if (!isOpen())
 		{
 			if (TDebug.TraceTargetDataLine)
 			{
-				TDebug.out("AlsaTargetDataLine.readImpl(): current used fragment buffer length: " + m_nFragmentBufferUsedBytes);
+				TDebug.out("AlsaTargetDataLine.readImpl(): stream closed");
 			}
-			/*
-			 *	Try to use buffer
-			 */
-			int	nCopyLength = Math.min(m_nFragmentBufferUsedBytes, nRemainingLength);
-			System.arraycopy(m_abFragmentBuffer, nCopyLength, abData, nOffset, nCopyLength);
-			// TODO: move data in fragment buffer!!
-			m_nFragmentBufferUsedBytes -= nCopyLength;
-			nOffset += nCopyLength;
-			nRemainingLength -= nCopyLength;
+		}
+		int	nBytesRead = (int) getAlsaPcm().readi(abData, nOffset, nLength);
+		if (nBytesRead < 0)
+		{
+			TDebug.out("AlsaTargetDataLine.readImpl(): " + Alsa.getStringError(nBytesRead));
 		}
 		if (TDebug.TraceTargetDataLine)
 		{
-			TDebug.out("AlsaTargetDataLine.readImpl(): remaining length: " + nRemainingLength);
+			TDebug.out("AlsaTargetDataLine.readImpl(): read (bytes): " + nBytesRead);
 		}
-		int	nDirectLength = nRemainingLength - (nRemainingLength % m_nFragmentSize);
-		if (TDebug.TraceTargetDataLine)
-		{
-			TDebug.out("AlsaTargetDataLine.readImpl(): direct length: " + nDirectLength);
-		}
-		if (nDirectLength > 0)
-		{
-			int	nRead = m_alsaPcm.read(abData, nOffset, /*m_nFragmentSize*/nDirectLength);
-			if (nRead < 0)
-			{
-				TDebug.out("AlsaTargetDataLine.readImpl(): " + Alsa.getStringError(nRead));
-			}
-			// TODO: check if nRead == nDirectLength
-			nOffset += nDirectLength;
-			nRemainingLength -= nDirectLength;
-		}
-		if (nRemainingLength > 0)
-		{
-			if (TDebug.TraceTargetDataLine)
-			{
-				TDebug.out("AlsaTargetDataLine.readImpl(): remaining length: " + nRemainingLength);
-			}
-			int	nRead = m_alsaPcm.read(m_abFragmentBuffer, 0, m_abFragmentBuffer.length);
-			if (nRead < 0)
-			{
-				TDebug.out("AlsaTargetDataLine.read(): " + Alsa.getStringError(nRead));
-			}
-			m_nFragmentBufferUsedBytes = m_abFragmentBuffer.length;
-			System.arraycopy(m_abFragmentBuffer, 0, abData, nOffset, nRemainingLength);
-		}
-/*
-  if (m_abFragmentBuffer.length == m_nFragmentBufferUsedBytes)
-  {
-  int	nWritten = m_alsaPcm.read(m_abFragmentBuffer, 0, m_abFragmentBuffer.length);
-  if (nWritten < 0)
-  {
-  TDebug.out("AlsaTargetDataLine.read(): " + Alsa.getStringError(nWritten));
-  }
-  m_nFragmentBufferUsedBytes = 0;
-  }
-*/
-		return nLength;
+		return nBytesRead;
 	}
 
-
-/*	// TODO: check if should block
-	public int readImpl(byte[] abData, int nOffset, int nLength)
-	{
-	if (TDebug.TraceTargetDataLine)
-	{
-	TDebug.out("AlsaTargetDataLine.readImpl(): called.");
-	TDebug.out("AlsaTargetDataLine.readImpl(): wanted length: " + nLength);
-	}
-	int	nOriginalOffset = nOffset;
-	if (nLength > 0 && !isActive())
-	{
-	start();
-	}
-	if (!isOpen())
-	{
-	if (TDebug.TraceTargetDataLine)
-	{
-	TDebug.out("AlsaTargetDataLine.readImpl(): stream closed");
-	}
-	}
-	int	nBytesRead = m_alsaPcm.read(abData, nOffset, nLength);
-	if (nBytesRead < 0)
-	{
-	TDebug.out("AlsaTargetDataLine.redaImpl(): " + Alsa.getStringError(nBytesRead));
-	}
-	if (TDebug.TraceTargetDataLine)
-	{
-	TDebug.out("AlsaTargetDataLine.readImpl(): read (bytes): " + nBytesRead);
-	}
-	return nBytesRead;
-	}
-*/
 
 
 
@@ -533,8 +330,8 @@ public class AlsaTargetDataLine
 */
 
 
+		}
 	}
-}
 
 
 
