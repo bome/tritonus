@@ -48,7 +48,6 @@ import	org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import	org.tritonus.share.sampled.AudioFormats;
 import	org.tritonus.share.sampled.Encodings;
-//import	org.tritonus.share.TCircularBuffer;
 
 
 
@@ -172,6 +171,11 @@ public class GSMFormatConversionProvider
 	public static class DecodedGSMAudioInputStream
 	extends		TAsynchronousFilteredAudioInputStream
 	{
+		/*
+		  Seems like DataInputStream (opposite to InputStream) is only needed for
+		  readFully(). readFully-behavious should perhaps be implemented in
+		  AudioInputStream anyway (so this construct may become obsolete).
+		 */
 		private DataInputStream		m_encodedStream;
 		private GSMDecoder		m_decoder;
 
@@ -196,7 +200,6 @@ public class GSMFormatConversionProvider
 			m_decoder = new GSMDecoder();
 			m_abFrameBuffer = new byte[ENCODED_GSM_FRAME_SIZE];
 			m_abBuffer = new byte[BUFFER_SIZE];
-
 		}
 
 
@@ -223,10 +226,16 @@ public class GSMFormatConversionProvider
 				m_circularBuffer.close();
 				return;
 			}
+			/*
 			int[]	anDecodedData = null;
 			try
 			{
+				long	l1 = System.currentTimeMillis();
+				long	l2 = System.currentTimeMillis();
 				anDecodedData = m_decoder.decode(m_abFrameBuffer);
+				long	l3 = System.currentTimeMillis();
+				// System.out.println("GSM decode [fake] (ms): " + (l2 - l1));
+				System.out.println("GSM decode (ms): " + (l3 - l1));
 			}
 			catch (InvalidGSMFrameException e)
 			{
@@ -237,11 +246,40 @@ public class GSMFormatConversionProvider
 				m_circularBuffer.close();
 				return;
 			}
+			long	l4 = System.currentTimeMillis();
 			for (int i = 0; i < 160; i++)
 			{
 			        //$$fb 2000-08-13: adapted to new TConversionTool functions
 			        TConversionTool.intToBytes16(anDecodedData[i], m_abBuffer, i * 2, isBigEndian());
+
 			}
+			long	l5 = System.currentTimeMillis();
+			System.out.println("GSM TConv (ms): " + (l5 - l4));
+			*/
+
+/// start new version
+			try
+			{
+				long	l1 = System.currentTimeMillis();
+				m_decoder.decode(m_abFrameBuffer, 0,
+						 m_abBuffer, 0, isBigEndian());
+				// testing test hack
+				// m_abBuffer[0] = 0;
+				long	l2 = System.currentTimeMillis();
+				System.out.println("GSM decode (ms): " + (l2 - l1));
+			}
+			catch (InvalidGSMFrameException e)
+			{
+				if (TDebug.TraceAllExceptions)
+				{
+					TDebug.out(e);
+				}
+				m_circularBuffer.close();
+				return;
+			}
+
+/// end new version
+
 			m_circularBuffer.write(m_abBuffer);
 			if (TDebug.TraceAudioConverter)
 			{
