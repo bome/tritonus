@@ -25,6 +25,7 @@ import	junit.framework.TestCase;
 import	javax.microedition.media.Controllable;
 import	javax.microedition.media.Manager;
 import	javax.microedition.media.Player;
+import	javax.microedition.media.PlayerListener;
 
 
 /**	TestCase for javax.microedition.media.Player.
@@ -298,27 +299,16 @@ extends TestCase
 		// CLOSED
 		player.close();
 		callPlayerMethod(player, realizeMethod, "realize()", "CLOSED");
-		// prefetch()
 		callPlayerMethod(player, prefetchMethod, "prefetch()", "CLOSED");
-		// start()
 		callPlayerMethod(player, startMethod, "start()", "CLOSED");
-		// stop()
 		callPlayerMethod(player, stopMethod, "stop()", "CLOSED");
-		// deallocate()
 		callPlayerMethod(player, deallocateMethod, "deallocate()", "CLOSED");
-		// setTimeBase()
 		callPlayerMethod(player, setTimeBaseMethod, "setTimeBase()", "CLOSED");
-		// getTimeBase()
 		callPlayerMethod(player, getTimeBaseMethod, "getTimeBase()", "CLOSED");
-		// setMediaTime()
 		callPlayerMethod(player, setMediaTimeMethod, "setMediaTime()", "CLOSED");
-		// getMediaTime()
 		callPlayerMethod(player, getMediaTimeMethod, "getMediaTime()", "CLOSED");
-		// getDuration()
 		callPlayerMethod(player, getDurationMethod, "getDuration()", "CLOSED");
-		// getContentType()
 		callPlayerMethod(player, getContentTypeMethod, "getContentType()", "CLOSED");
-		// setLoopCount()
 		callPlayerMethod(player, setLoopCountMethod, "setLoopCount()", "CLOSED");
 	}
 
@@ -348,70 +338,123 @@ extends TestCase
 	}
 
 
-
-// 	public void testGetSupportedContentTypes()
-// 		throws Exception
-// 	{
-// 		String[]	astrTypes = Manager.getSupportedContentTypes();
-// 		assertTrue("returned array is null", astrTypes != null);
-// 		assertTrue("returned array has length 0", astrTypes.length > 0);
-// 		for (int i = 0; i < astrTypes.length; i++)
-// 		{
-// 			assertTrue("array element is null", astrTypes[i] != null);
-// 			assertTrue("array element (String) has length 0", astrTypes[i].length() > 0);
-// 		}
-// 	}
-
-
-
-// 	public void testGetSupportedProtocols()
-// 		throws Exception
-// 	{
-// 		String[]	astrProtocols = Manager.getSupportedProtocols();
-// 		assertTrue("returned array is null", astrProtocols != null);
-// 		assertTrue("returned array has length 0", astrProtocols.length > 0);
-// 		for (int i = 0; i < astrProtocols.length; i++)
-// 		{
-// 			assertTrue("array element is null", astrProtocols[i] != null);
-// 			assertTrue("array element (String) has length 0", astrProtocols[i].length() > 0);
-// 		}
-// 		assertTrue("http protocol not supported", Util.arrayContains(astrProtocols, "http"));
-// 		assertTrue("ftp protocol not supported", Util.arrayContains(astrProtocols, "ftp"));
-// 		assertTrue("file protocol not supported", Util.arrayContains(astrProtocols, "file"));
-// 		assertTrue("rtp protocol not supported", Util.arrayContains(astrProtocols, "rtp"));
-// 		assertTrue("capture protocol not supported", Util.arrayContains(astrProtocols, "capture"));
-// 	}
+	/**	Basic PlayerListener tests.
+		Here, the following is tested:
+		- the management of the list of player listeners (add/remove)
+		- Basic callback
+		- correct player argument in callback
+	*/
+	public void testPlayerListenerBasic()
+		throws Exception
+	{
+		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
+		Player	player = Manager.createPlayer(strLocator);
+		TestPlayerListener	listener = new TestPlayerListener();
+		player.prefetch();
+		player.addPlayerListener(listener);
+		player.start();
+		assertTrue("basic callback", listener.isCalled());
+		assertEquals("player callback parameter", player, listener.getPlayer());
+		player.stop();
+		player.removePlayerListener(listener);
+		listener.reset();
+		player.start();
+		assertTrue("removing of PlayerListener", listener.isCalled());
+	}
 
 
 
-// 	public void testCreateDataSource()
-// 		throws Exception
-// 	{
-// 		DataSource	dataSource = null;
-// 		String[]	astrProtocols = Manager.getSupportedProtocols();
-// 		String		strLocator = null;
-// 		if (Util.arrayContains(astrProtocols, "file"))
-// 		{
-// 			strLocator = "file:///vmlinux";
-// 			dataSource = Manager.createDataSource(strLocator);
-// 		}
-// 		if (Util.arrayContains(astrProtocols, "http"))
-// 		{
-// 			strLocator = "http://www.tritonus.org/index.html";
-// 			dataSource = Manager.createDataSource(strLocator);
-// 		}
-// 		if (Util.arrayContains(astrProtocols, "ftp"))
-// 		{
-// 			strLocator = "ftp://ftp.debian.org/";
-// 			dataSource = Manager.createDataSource(strLocator);
-// 		}
-// 	}
+	/**	Event PlayerListener tests.
+		Here, specific events are tested.
+	*/
+	public void testPlayerListenerEvent()
+		throws Exception
+	{
+		String	strLocator = "file:/home/matthias/java/tritonus/test/suite/sounds/test.wav";
+		Player	player = Manager.createPlayer(strLocator);
+		TestPlayerListener	listener = new TestPlayerListener();
+	}
+
+
+
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+
 
 
 	private static interface TestMethod
 	{
 		public void callMethod(Player player)
 			throws Exception;
+	}
+
+
+
+	private static class TestPlayerListener
+	implements PlayerListener
+	{
+		private int		m_nCalls;
+		private Player		m_player;
+		private String		m_strEvent;
+		private Object		m_eventData;
+
+
+
+		public TestPlayerListener()
+		{
+			reset();
+		}
+
+
+		public void playerUpdate(Player player,
+					 String strEvent,
+					 Object eventData)
+		{
+			m_nCalls++;
+			m_player = player;
+			m_strEvent = strEvent;
+			m_eventData = eventData;
+		}
+
+
+
+		public boolean isCalled()
+		{
+			return getCalls() > 0;
+		}
+
+
+
+		public int getCalls()
+		{
+			return m_nCalls;
+		}
+
+
+
+		public Player getPlayer()
+		{
+			return m_player;
+		}
+
+
+		public String getEvent()
+		{
+			return m_strEvent;
+		}
+
+
+		public Object getEventData()
+		{
+			return m_eventData;
+		}
+
+
+
+		public void reset()
+		{
+			m_nCalls = 0;
+		}
 	}
 }
 
