@@ -37,15 +37,31 @@ import	org.tritonus.lowlevel.alsa.AlsaSeq;
 
 
 
-
+/**	Handles input from an ALSA port.
+ */
 public class AlsaMidiIn
 	extends		Thread
 {
+	/**	ALSA client used to receive events.
+	 */
 	private AlsaSeq			m_alsaSeq;
-	private int			m_nSourceClient;
-	private int			m_nSourcePort;
+
+	/**	ALSA port number (belonging to the client represented be
+		m_alsaSeq) used to receive events.
+	*/
 	private int			m_nDestPort;
+
+	/**	ALSA client number to subscribe to to receive events.
+	 */
+	private int			m_nSourceClient;
+
+	/**	ALSA port number (belonging to m_nSourceClient) to
+		subscribe to to receive events.
+	*/
+	private int			m_nSourcePort;
+
 	private AlsaMidiInListener	m_listener;
+
 	private AlsaSeq.Event		m_event = new AlsaSeq.Event();
 
 	// used to query event for detailed information
@@ -54,17 +70,35 @@ public class AlsaMidiIn
 
 
 
-	/**
-	   Does establish a subscription where events are routed directely
-	   (not getting a timestamp).
+	/**	Receives events without timestamping them.
+		Does establish a subscription where events are routed directely
+		(not getting a timestamp).
+
+		@param alsaSeq The client that should be used to receive
+		events.
+
+		@param nDestPort The port number that should be used to receive
+		events. This port has to exist on the client represented by
+		alsaSeq.
+
+		@param nSourceClient The client number that should be listened
+		to. This and nSourcePort must exist prior to calling this
+		constructor. The port has to allow read subscriptions.
+
+		@param nSourcePort  The port number that should be listened
+		to. This and nSourceClient must exist prior to calling this
+		constructor. The port has to allow read subscriptions.
+
+		@param listener The listener that should receive the
+		MidiMessage objects created here from received events.
 	*/
-	public AlsaMidiIn(AlsaSeq aSequencer,
+	public AlsaMidiIn(AlsaSeq alsaSeq,
 			  int nDestPort,
 			  int nSourceClient,
 			  int nSourcePort,
 			  AlsaMidiInListener listener)
 	{
-		this(aSequencer,
+		this(alsaSeq,
 		     nDestPort,
 		     nSourceClient,
 		     nSourcePort,
@@ -78,7 +112,7 @@ public class AlsaMidiIn
 	   Does establish a subscription where events are routed through
 	   a queue to get a timestamp.
 	*/
-	public AlsaMidiIn(AlsaSeq aSequencer,
+	public AlsaMidiIn(AlsaSeq alsaSeq,
 			  int nDestPort,
 			  int nSourceClient,
 			  int nSourcePort,
@@ -89,23 +123,27 @@ public class AlsaMidiIn
 		m_nSourceClient = nSourceClient;
 		m_nSourcePort = nSourcePort;
 		m_listener = listener;
-		m_alsaSeq = aSequencer;
+		m_alsaSeq = alsaSeq;
 		m_nDestPort = nDestPort;
 		if (nTimestampingQueue >= 0)
 		{
-			getAlsaSeq().subscribePort(
-				nSourceClient, nSourcePort,
-				getAlsaSeq().getClientId(), nDestPort,
-				nTimestampingQueue,
-				false,		// exclusive
-				bRealtime,	// realtime
-				true);		// convert time
+			AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+			portSubscribe.setSender(nSourceClient, nSourcePort);
+			portSubscribe.setDest(getAlsaSeq().getClientId(), nDestPort);
+			portSubscribe.setQueue(nTimestampingQueue);
+			portSubscribe.setExclusive(false);
+			portSubscribe.setTimeUpdate(true);
+			portSubscribe.setTimeReal(bRealtime);
+			getAlsaSeq().subscribePort(portSubscribe);
+			portSubscribe.free();
 		}
 		else
 		{
-			getAlsaSeq().subscribePort(
-				nSourceClient, nSourcePort,
-				getAlsaSeq().getClientId(), nDestPort);
+			AlsaSeq.PortSubscribe	portSubscribe = new AlsaSeq.PortSubscribe();
+			portSubscribe.setSender(nSourceClient, nSourcePort);
+			portSubscribe.setDest(getAlsaSeq().getClientId(), nDestPort);
+			getAlsaSeq().subscribePort(portSubscribe);
+			portSubscribe.free();
 		}
 		setDaemon(true);
 	}
@@ -133,13 +171,14 @@ public class AlsaMidiIn
 			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.run(): got event: " + event); }
 			if (event != null)
 			{
-				MidiMessage	m = event.getMessage();
-				if (m instanceof MetaMessage)
+				MidiMessage	message = event.getMessage();
+				long		lTimestamp = event.getTick();
+				if (message instanceof MetaMessage)
 				{
-					MetaMessage	me = (MetaMessage) m;
+					MetaMessage	me = (MetaMessage) message;
 					if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.run(): MetaMessage.getData().length: " + me.getData().length); }
 				}
-				m_listener.dequeueEvent(event);
+				m_listener.dequeueEvent(message, lTimestamp);
 			}
 			else
 			{
@@ -221,6 +260,9 @@ public class AlsaMidiIn
 		case AlsaSeq.SND_SEQ_EVENT_PGMCHANGE:
 		case AlsaSeq.SND_SEQ_EVENT_CHANPRESS:
 		case AlsaSeq.SND_SEQ_EVENT_PITCHBEND:
+		case AlsaSeq.SND_SEQ_EVENT_QFRAME:
+		case AlsaSeq.SND_SEQ_EVENT_SONGPOS:
+		case AlsaSeq.SND_SEQ_EVENT_SONGSEL:
 		{
 			m_event.getControl(m_anValues);
 			int	nCommand = -1;
@@ -256,6 +298,27 @@ public class AlsaMidiIn
 				nData1 = m_anValues[2] & 0x7F;
 				nData2 = (m_anValues[2] >> 7) & 0x7F;
 				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_QFRAME:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): MTC event"); }
+				nCommand = ShortMessage.MIDI_TIME_CODE;
+				nData1 = m_anValues[2] & 0x7F;
+				nData2 = 0;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_SONGPOS:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): song position event"); }
+				nCommand = ShortMessage.SONG_POSITION_POINTER;
+				nData1 = m_anValues[2] & 0x7F;
+				nData2 = (m_anValues[2] >> 7) & 0x7F;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_SONGSEL:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): song select event"); }
+				nCommand = ShortMessage.SONG_SELECT;
+				nData1 = m_anValues[2] & 0x7F;
+				nData2 = 0;
+				break;
 			}
 			ShortMessage	shortMessage = new ShortMessage();
 			try
@@ -269,12 +332,49 @@ public class AlsaMidiIn
 			message = shortMessage;
 		}
 		break;
-///
+
+		// status-only events
+		case AlsaSeq.SND_SEQ_EVENT_TUNE_REQUEST:
 		case AlsaSeq.SND_SEQ_EVENT_CLOCK:
+		case AlsaSeq.SND_SEQ_EVENT_START:
+		case AlsaSeq.SND_SEQ_EVENT_CONTINUE:
+		case AlsaSeq.SND_SEQ_EVENT_STOP:
+		case AlsaSeq.SND_SEQ_EVENT_SENSING:
+		case AlsaSeq.SND_SEQ_EVENT_RESET:
 		{
-			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): clock event"); }
+			int	nStatus = -1;
+			switch (nType)
+			{
+			case AlsaSeq.SND_SEQ_EVENT_TUNE_REQUEST:
+				nStatus = ShortMessage.TUNE_REQUEST;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_CLOCK:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): clock event"); }
+				nStatus = ShortMessage.TIMING_CLOCK;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_START:
+				nStatus = ShortMessage.START;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_CONTINUE:
+				nStatus = ShortMessage.CONTINUE;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_STOP:
+				nStatus = ShortMessage.STOP;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_SENSING:
+				nStatus = ShortMessage.ACTIVE_SENSING;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_RESET:
+				nStatus = ShortMessage.SYSTEM_RESET;
+				break;
+			}
 			ShortMessage	shortMessage = new ShortMessage();
-			int	nStatus = ShortMessage.TIMING_CLOCK;
 			try
 			{
 				shortMessage.setMessage(nStatus);
@@ -287,7 +387,6 @@ public class AlsaMidiIn
 			break;
 		}
 
-///
 		case AlsaSeq.SND_SEQ_EVENT_USR_VAR4:
 		{
 			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): meta event"); }
@@ -371,7 +470,7 @@ public class AlsaMidiIn
 	 */
 	public static interface AlsaMidiInListener
 	{
-		public void dequeueEvent(MidiEvent event);
+		public void dequeueEvent(MidiMessage message, long lTimestamp);
 	}
 }
 
