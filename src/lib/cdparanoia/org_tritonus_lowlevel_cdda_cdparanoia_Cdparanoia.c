@@ -16,15 +16,15 @@ void swab(void*, void*, ssize_t);
 #include "org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.h"
 #include "handle_t.h"
 
-// default value taken over from cdparanoia main.c
+// default value taken over from cdparanoia's main.c
 static const int	MAX_RETRIES = 20;
 
-
+static int	sm_nParanoiaMode = 0;
 
 static int
 getParanoiaMode()
 {
-	return PARANOIA_MODE_FULL ^ PARANOIA_MODE_NEVERSKIP;
+	return sm_nParanoiaMode;
 }
 
 
@@ -52,18 +52,22 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 	cd_dev = (*env)->GetStringUTFChars(env, strDevice, NULL);
 	if (cd_dev == NULL)
 	{
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): GetStringUTFChars() failed.\n"); }
 		return -1;
 	}
-	(*env)->ReleaseStringUTFChars(env, strDevice, cd_dev);
-	nParanoiaMode = getParanoiaMode();
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): device name: %s\n", cd_dev); }
 	cdrom = cdda_identify(cd_dev, 0, NULL);
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): device name: %s\n", cd_dev); }
+	(*env)->ReleaseStringUTFChars(env, strDevice, cd_dev);
 	if (cdrom == NULL)
 	{
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): cdda_identify() failed.\n"); }
 		return -1;
 	}
 	nReturn = cdda_open(cdrom);
 	if (nReturn < 0)
 	{
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): cdda_open() failed.\n"); }
 		return -1;
 	}
 
@@ -72,16 +76,21 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open
 	pHandle = (handle_t*) malloc(sizeof(handle_t));
 	if (pHandle == NULL)
 	{
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): malloc() failed.\n"); }
+		cdda_close(cdrom);
 		return -1;
 	}
 	pHandle->drive = cdrom;
 	pHandle->paranoia = paranoia_init(pHandle->drive);
 	if (pHandle->paranoia == NULL)
 	{
+		if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): paranoia_init() failed.\n"); }
 		cdda_close(pHandle->drive);
 		free(pHandle);
 		return -1;
 	}
+	nParanoiaMode = getParanoiaMode();
+	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_open(): paranoia mode: %d\n", nParanoiaMode); }
 	paranoia_modeset(pHandle->paranoia, nParanoiaMode);
 
 	setHandle(env, obj, pHandle);
@@ -308,6 +317,27 @@ Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_setTrace
 {
 	debug_flag = bTrace;
 	debug_file = stderr;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia
+ * Method:    setParanoiaMode
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia_setParanoiaMode
+(JNIEnv* env, jclass cls, jboolean bParanoiaMode)
+{
+	if (bParanoiaMode == JNI_TRUE)
+	{
+		sm_nParanoiaMode = PARANOIA_MODE_FULL ^ PARANOIA_MODE_NEVERSKIP;
+	}
+	else
+	{
+		sm_nParanoiaMode = PARANOIA_MODE_DISABLE;
+	}
 }
 
 
