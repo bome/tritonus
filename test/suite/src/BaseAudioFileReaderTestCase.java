@@ -49,9 +49,15 @@ extends TestCase
 	private static final boolean	DEBUG = true;
 	private static final String	RESOURCE_BASENAME = "audiofilereader";
 
+	/**	Precision for float comparisons.
+	 */
+	private static final float	DELTA = 0.1F;
+
+
 	private ResourceBundle		m_resourceBundle;
 	private String			m_strResourcePrefix;
 	private AudioFileReader		m_audioFileReader;
+	private boolean			m_bCheckRealLengths;
 
 
 
@@ -59,6 +65,7 @@ extends TestCase
 	{
 		super(strName);
 		m_resourceBundle = loadResourceBundle(RESOURCE_BASENAME);
+		setCheckRealLengths(true);
 	}
 
 
@@ -66,6 +73,20 @@ extends TestCase
 	protected void setResourcePrefix(String strResourcePrefix)
 	{
 		m_strResourcePrefix = strResourcePrefix;
+	}
+
+
+
+	protected void setCheckRealLengths(boolean bCheckRealLengths)
+	{
+		m_bCheckRealLengths = bCheckRealLengths;
+	}
+
+
+
+	private boolean getCheckRealLengths()
+	{
+		return m_bCheckRealLengths;
 	}
 
 
@@ -92,7 +113,7 @@ extends TestCase
 	{
 		File	file = new File(getFilename());
 		AudioFileFormat	audioFileFormat = getAudioFileReader().getAudioFileFormat(file);
-		checkAudioFileFormat(audioFileFormat);
+		checkAudioFileFormat(audioFileFormat, true);
 	}
 
 
@@ -102,7 +123,7 @@ extends TestCase
 	{
 		URL	url = new URL("file:" + getFilename());
 		AudioFileFormat	audioFileFormat = getAudioFileReader().getAudioFileFormat(url);
-		checkAudioFileFormat(audioFileFormat);
+		checkAudioFileFormat(audioFileFormat, false);
 	}
 
 
@@ -112,24 +133,31 @@ extends TestCase
 	{
 		InputStream	inputStream = new FileInputStream(getFilename());
 		AudioFileFormat	audioFileFormat = getAudioFileReader().getAudioFileFormat(inputStream);
-		checkAudioFileFormat(audioFileFormat);
+		checkAudioFileFormat(audioFileFormat, false);
 	}
 
 
 
-	private void checkAudioFileFormat(AudioFileFormat audioFileFormat)
+	private void checkAudioFileFormat(AudioFileFormat audioFileFormat, boolean bRealLengthExpected)
 		throws Exception
 	{
-		assertTrue(audioFileFormat.getType().equals(getType()));
-		assertTrue(audioFileFormat.getByteLength() == getByteLength());
-		assertTrue(audioFileFormat.getFormat().getEncoding().equals(getEncoding()));
-		assertTrue(audioFileFormat.getFormat().getSampleRate() == getSampleRate());
-		assertTrue(audioFileFormat.getFormat().getSampleSizeInBits() == getSampleSizeInBits());
-		assertTrue(audioFileFormat.getFormat().getChannels() == getChannels());
-		assertTrue(audioFileFormat.getFormat().getFrameSize() == getFrameSize());
-		assertTrue(audioFileFormat.getFormat().getFrameRate() == getFrameRate());
-		assertTrue(audioFileFormat.getFormat().isBigEndian() == getBigEndian());
-		assertTrue(audioFileFormat.getFrameLength() == getFrameLength());
+		assertEquals("type",
+			     getType(),
+			     audioFileFormat.getType());
+		checkAudioFormat(audioFileFormat.getFormat());
+		long	lExpectedByteLength = AudioSystem.NOT_SPECIFIED;
+		long	lExpectedFrameLength = AudioSystem.NOT_SPECIFIED;
+		if (getCheckRealLengths() || bRealLengthExpected)
+		{
+			lExpectedByteLength = getByteLength();
+			lExpectedFrameLength = getFrameLength();
+		}
+		assertEquals("byte length",
+			     lExpectedByteLength,
+			     audioFileFormat.getByteLength());
+		assertEquals("frame length",
+			     lExpectedFrameLength,
+			     audioFileFormat.getFrameLength());
 	}
 
 
@@ -139,7 +167,7 @@ extends TestCase
 	{
 		File	file = new File(getFilename());
 		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(file);
-		checkAudioInputStream(audioInputStream);
+		checkAudioInputStream(audioInputStream, true);
 	}
 
 
@@ -149,7 +177,7 @@ extends TestCase
 	{
 		URL	url = new URL("file:" + getFilename());
 		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(url);
-		checkAudioInputStream(audioInputStream);
+		checkAudioInputStream(audioInputStream, false);
 	}
 
 
@@ -159,22 +187,53 @@ extends TestCase
 	{
 		InputStream	inputStream = new FileInputStream(getFilename());
 		AudioInputStream	audioInputStream = getAudioFileReader().getAudioInputStream(inputStream);
-		checkAudioInputStream(audioInputStream);
+		checkAudioInputStream(audioInputStream, false);
 	}
 
 
 
-	private void checkAudioInputStream(AudioInputStream audioInputStream)
+	private void checkAudioInputStream(AudioInputStream audioInputStream, boolean bRealLengthExpected)
 		throws Exception
 	{
-		assertTrue(audioInputStream.getFormat().getEncoding().equals(getEncoding()));
-		assertTrue(audioInputStream.getFormat().getSampleRate() == getSampleRate());
-		assertTrue(audioInputStream.getFormat().getSampleSizeInBits() == getSampleSizeInBits());
-		assertTrue(audioInputStream.getFormat().getChannels() == getChannels());
-		assertTrue(audioInputStream.getFormat().getFrameSize() == getFrameSize());
-		assertTrue(audioInputStream.getFormat().getFrameRate() == getFrameRate());
-		assertTrue(audioInputStream.getFormat().isBigEndian() == getBigEndian());
-		assertTrue(audioInputStream.getFrameLength() == getFrameLength());
+		checkAudioFormat(audioInputStream.getFormat());
+		long	lExpectedFrameLength = AudioSystem.NOT_SPECIFIED;
+		if (getCheckRealLengths() || bRealLengthExpected)
+		{
+			lExpectedFrameLength = getFrameLength();
+		}
+		assertEquals("frame length",
+			     lExpectedFrameLength,
+			     audioInputStream.getFrameLength());
+	}
+
+
+
+	private void checkAudioFormat(AudioFormat audioFormat)
+		throws Exception
+	{
+		assertEquals("encoding",
+			     getEncoding(),
+			     audioFormat.getEncoding());
+		assertEquals("sample rate",
+			     getSampleRate(),
+			     audioFormat.getSampleRate(),
+			     DELTA);
+		assertEquals("sample size (bits)",
+			     getSampleSizeInBits(),
+			     audioFormat.getSampleSizeInBits());
+		assertEquals("channels",
+			     getChannels(),
+			     audioFormat.getChannels());
+		assertEquals("frame size",
+			     getFrameSize(),
+			     audioFormat.getFrameSize());
+		assertEquals("frame rate",
+			     getFrameRate(),
+			     audioFormat.getFrameRate(),
+			     DELTA);
+		assertEquals("big endian",
+			     getBigEndian(),
+			     audioFormat.isBigEndian());
 	}
 
 
