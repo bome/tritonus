@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999,2000 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -340,6 +340,23 @@ public class ASequencer0
 	 *	nTempo: microseconds/beat
 	 */
 	public native void setQueueTempo(int nQueue, int nResolution, int nTempo);
+
+
+	/**	Get information about a queue.
+	 *	Calls snd_seq_get_queue_status()
+	 *	and put the data elements of the returned event
+	 *	into the passed arrays.
+	 *	anValues[0]	number of events (= queue size)
+	 *	anValues[1]	running flag
+	 *	anValues[2]	flags
+	 *
+	 *	alValues[0]	tick
+	 *	alValues[1]	time
+	 */
+	public native void getQueueStatus(int nQueue,
+					  int[] anValues,
+					  long[] alValues);
+
 
 	public native void subscribePort(
 		int nSenderClient, int nSenderPort,

@@ -138,6 +138,38 @@ public class ASequencer
 
 
 
+	/**	Get the playback position of a sequencer queue.
+	 *
+	 *	@return the current playback position in ticks
+	 */
+	public long getQueuePositionTick(int nQueue)
+	{
+		int[]	anValues = new int[3];
+		long[]	alValues = new long[2];
+		getQueueStatus(nQueue,
+			       anValues,
+			       alValues);
+		return alValues[0];
+	}
+
+
+
+	/**	Get the playback position of a sequencer queue.
+	 *
+	 *	@return the current playback position in nanoseconds
+	 */
+	public long getQueuePositionTime(int nQueue)
+	{
+		int[]	anValues = new int[3];
+		long[]	alValues = new long[2];
+		getQueueStatus(nQueue,
+			       anValues,
+			       alValues);
+		return alValues[1];
+	}
+
+
+
 	public void startQueue(int nSourcePort, int nQueue)
 	{
 		controlQueue(SND_SEQ_EVENT_START, nSourcePort, nQueue);
@@ -152,12 +184,48 @@ public class ASequencer
 
 
 
+	/**	Set the playback position of a sequencer queue.
+	 *
+	 *	@param lTick the desired playback position in ticks
+	 */
+	public void setQueuePositionTick(int nSourcePort, int nQueue,
+					 long lTick)
+	{
+		controlQueue(SND_SEQ_EVENT_SETPOS_TICK, nSourcePort, nQueue,
+			     lTick);
+	}
+
+
+
+	/**	Set the playback position of a sequencer queue.
+	 *
+	 *	@param lTick the desired playback position in nanoseconds
+	 */
+	public void setQueuePositionTime(int nSourcePort, int nQueue,
+					 long lTime)
+	{
+		controlQueue(SND_SEQ_EVENT_SETPOS_TIME, nSourcePort, nQueue,
+			     lTime);
+	}
+
+
+
 	public void controlQueue(int nType, int nSourcePort, int nQueue)
 	{
 		sendQueueControlEvent(
 			nType, SND_SEQ_TIME_STAMP_REAL | SND_SEQ_TIME_MODE_REL, 0, SND_SEQ_QUEUE_DIRECT, 0L,
 			nSourcePort, SND_SEQ_CLIENT_SYSTEM, SND_SEQ_PORT_SYSTEM_TIMER,
 			nQueue, 0, 0);
+	}
+
+
+	public void controlQueue(int nType, int nSourcePort, int nQueue,
+				 long lTime)
+	{
+		sendQueueControlEvent(
+			nType, SND_SEQ_TIME_STAMP_REAL | SND_SEQ_TIME_MODE_REL, 0, SND_SEQ_QUEUE_DIRECT, 0L,
+			nSourcePort, SND_SEQ_CLIENT_SYSTEM, SND_SEQ_PORT_SYSTEM_TIMER,
+			nQueue, 0, lTime);
 	}
 
 

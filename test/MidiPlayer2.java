@@ -240,7 +240,7 @@ public class MidiPlayer2
 					}
 			});
 
-		sequencer.addControllerEventListener(
+		int[]	anControllers = sequencer.addControllerEventListener(
 			new ControllerEventListener()
 			{
 				public void controlChange(ShortMessage message)
@@ -252,6 +252,12 @@ public class MidiPlayer2
 			},
 				null);
 
+		System.out.println("Listened controllers:");
+		for (int i = 0; i < anControllers.length; i++)
+		{
+			System.out.print(anControllers[i] + " ");
+		}
+		System.out.println("");
 
 		/*
 		 *	Next step is to tell the Sequencer which

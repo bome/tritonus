@@ -263,22 +263,21 @@ public class AlsaSequencer
 	public long getTickLength()
 	{
 		// TODO:
-		return 0;
+		return -1;
 	}
 
 
 
 	public long getTickPosition()
 	{
-		// TODO:
-		return 0;
+		return m_aSequencer.getQueuePositionTick();
 	}
 
 
 
 	public void setTickPosition(long lTick)
 	{
-		// TODO:
+		m_controlASequencer.setQueuePositionTick(getControlPort(), getQueue(), lTick);
 	}
 
 
@@ -286,22 +285,23 @@ public class AlsaSequencer
 	public long getMicrosecondLength()
 	{
 		// TODO:
-		return 0;
+		return -1;
 	}
 
 
 
 	public long getMicrosecondPosition()
 	{
-		// TODO:
-		return 0;
+		long	lNanoSeconds = m_aSequencer.getQueuePositionTime() / 1000;
+		return lNanoSeconds / 1000;
 	}
 
 
 
 	public void setMicrosecondPosition(long lMicroseconds)
 	{
-		// TODO:
+		long	lNanoSeconds = lMicroseconds * 1000;
+		m_controlASequencer.setQueuePositionTime(getControlPort(), getQueue(), lNanoSeconds);
 	}
 
 

@@ -587,6 +587,57 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextPortInfo
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_ASequencer0
+ * Method:    getQueueStatus
+ * Signature: (I[I[J)V
+ */
+JNIEXPORT void JNICALL
+Java_org_tritonus_lowlevel_alsa_ASequencer0_getQueueStatus
+(JNIEnv *env, jobject obj, jint nQueue, jintArray anValues, jlongArray alValues)
+{
+	jint*	values = NULL;
+	jlong*	lvalues = NULL;
+	int	nLength;
+	snd_seq_queue_status_t	queueStatus;
+	snd_seq_t*	seq = getNativeSeq(env, obj);
+	int		nReturn = snd_seq_get_queue_status(seq, nQueue, &queueStatus);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_seq_get_queue_status failed");
+	}
+	nLength = (*env)->GetArrayLength(env, anValues);
+	if (nLength < 3)
+	{
+		throwRuntimeException(env, "array does not have enough elements (3 required)");
+	}
+	values = (*env)->GetIntArrayElements(env, anValues, NULL);
+	if (values == NULL)
+	{
+		throwRuntimeException(env, "GetIntArrayElements failed");
+	}
+	values[0] = queueStatus.events;
+	values[1] = queueStatus.running;
+	values[2] = queueStatus.flags;
+	(*env)->ReleaseIntArrayElements(env, anValues, values, 0);
+
+	nLength = (*env)->GetArrayLength(env, alValues);
+	if (nLength < 2)
+	{
+		throwRuntimeException(env, "array does not have enough elements (2 required)");
+	}
+	lvalues = (*env)->GetLongArrayElements(env, alValues, NULL);
+	if (lvalues == NULL)
+	{
+		throwRuntimeException(env, "GetLongArrayElements failed");
+	}
+	lvalues[0] = queueStatus.tick;
+	lvalues[1] = (jlong) queueStatus.time.tv_sec * 1000000000 + queueStatus.time.tv_nsec;
+	(*env)->ReleaseLongArrayElements(env, alValues, lvalues, 0);
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_ASequencer0
  * Method:    getSystemInfo
  * Signature: ([I)V
  */
@@ -868,11 +919,11 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_sendQueueControlEvent
 	{
 		event.data.queue.param.value = nControlValue;
 	}
-	else if (0/*(event.flags & SND_SEQ_TIME_STAMP_MASK) == SND_SEQ_TIME_STAMP_TICK*/)
+	else if (nType == SND_SEQ_EVENT_SETPOS_TICK)
 	{
 		event.data.queue.param.time.tick = lTime;
 	}
-	else
+	else if (nType == SND_SEQ_EVENT_SETPOS_TIME)
 	{
 		event.data.queue.param.time.time.tv_sec = lTime / 1000000000;
 		event.data.queue.param.time.time.tv_nsec = lTime % 1000000000;
