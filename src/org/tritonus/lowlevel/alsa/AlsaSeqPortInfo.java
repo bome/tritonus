@@ -21,19 +21,25 @@
  *
  */
 
-
 package	org.tritonus.lowlevel.alsa;
 
-
-import	java.lang.UnsupportedOperationException;
-import	java.util.Iterator;
-
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public class AlsaSeqPortInfo
 {
+	static
+	{
+		Alsa.loadNativeLibrary();
+		if (TDebug.TraceAlsaSeqNative)
+		{
+			setTrace(true);
+		}
+	}
+
+
+
 	/**
 	 *	Holds the pointer to snd_seq_port_info_t
 	 *	for the native code.
@@ -113,6 +119,8 @@ public class AlsaSeqPortInfo
 
 
 	public native int getPortSpecified();
+
+	private static native void setTrace(boolean bTrace);
 }
 
 

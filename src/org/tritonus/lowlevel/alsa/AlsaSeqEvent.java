@@ -21,14 +21,10 @@
  *
  */
 
-
 package	org.tritonus.lowlevel.alsa;
 
+import org.tritonus.share.TDebug;
 
-import	java.lang.UnsupportedOperationException;
-import	java.util.Iterator;
-
-import	org.tritonus.share.TDebug;
 
 
 /**	Event for the sequencer.
@@ -37,6 +33,17 @@ import	org.tritonus.share.TDebug;
  */
 public class AlsaSeqEvent
 {
+	static
+	{
+		Alsa.loadNativeLibrary();
+		if (TDebug.TraceAlsaSeqNative)
+		{
+			setTrace(true);
+		}
+	}
+
+
+
 	/**
 	 *	Holds the pointer to snd_seq_event_t
 	 *	for the native code.
@@ -185,6 +192,8 @@ public class AlsaSeqEvent
 	public native void setControl(int nChannel, int nParam, int nValue);
 	public native void setQueueControl(int nControlQueue, int nControlValue, long lControlTime);
 	public native void setVar(byte[] abData, int nOffset, int nLength);
+
+	private static native void setTrace(boolean bTrace);
 }
 
 

@@ -23,9 +23,6 @@
 
 package	org.tritonus.lowlevel.alsa;
 
-import java.lang.UnsupportedOperationException;
-import java.util.Iterator;
-
 import org.tritonus.share.TDebug;
 
 
@@ -34,6 +31,17 @@ import org.tritonus.share.TDebug;
  */
 public class AlsaSeqRemoveEvents
 {
+	static
+	{
+		Alsa.loadNativeLibrary();
+		if (TDebug.TraceAlsaSeqNative)
+		{
+			setTrace(true);
+		}
+	}
+
+
+
 	/**
 	 *	Holds the pointer to snd_seq_queue_timer_t
 	 *	for the native code.

@@ -21,14 +21,9 @@
  *
  */
 
-
 package	org.tritonus.lowlevel.alsa;
 
-
-import	java.lang.UnsupportedOperationException;
-import	java.util.Iterator;
-
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
@@ -38,6 +33,17 @@ import	org.tritonus.share.TDebug;
  */
 public class AlsaSeqSystemInfo
 {
+	static
+	{
+		Alsa.loadNativeLibrary();
+		if (TDebug.TraceAlsaSeqNative)
+		{
+			setTrace(true);
+		}
+	}
+
+
+
 	/**
 	 *	Holds the pointer to snd_seq_system_info_t
 	 *	for the native code.
@@ -95,6 +101,8 @@ public class AlsaSeqSystemInfo
 
 
 	public native int getCurrentQueues();
+
+	private static native void setTrace(boolean bTrace);
 }
 
 

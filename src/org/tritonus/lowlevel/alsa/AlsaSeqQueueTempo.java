@@ -21,19 +21,25 @@
  *
  */
 
-
 package	org.tritonus.lowlevel.alsa;
 
-
-import	java.lang.UnsupportedOperationException;
-import	java.util.Iterator;
-
-import	org.tritonus.share.TDebug;
+import org.tritonus.share.TDebug;
 
 
 
 public class AlsaSeqQueueTempo
 {
+	static
+	{
+		Alsa.loadNativeLibrary();
+		if (TDebug.TraceAlsaSeqNative)
+		{
+			setTrace(true);
+		}
+	}
+
+
+
 	/**
 	 *	Holds the pointer to snd_seq_queue_tempo_t
 	 *	for the native code.
@@ -73,6 +79,8 @@ public class AlsaSeqQueueTempo
 	public native int getPpq();
 	public native void setTempo(int nTempo);
 	public native void setPpq(int nPpq);
+
+	private static native void setTrace(boolean bTrace);
 }
 
 
