@@ -42,7 +42,7 @@ import	javax.sound.midi.spi.MidiDeviceProvider;
 
 import	org.tritonus.share.GlobalInfo;
 import	org.tritonus.share.TDebug;
-import	org.tritonus.share.midi.TMidiDeviceInfo;
+import	org.tritonus.share.midi.TMidiDevice;
 
 
 public class MshSequencerProvider
@@ -68,7 +68,7 @@ public class MshSequencerProvider
 		{
 			if (m_info == null)
 			{
-				m_info = new TMidiDeviceInfo(
+				m_info = new TMidiDevice.Info(
 					"Tritonus MidiShare sequencer",
 					GlobalInfo.getVendor(),
 					"this sequencer uses MidiShare",

@@ -460,9 +460,9 @@ final public class MshSequencer
 		}
 	}
 	
-	protected  float getTempoNative() {return 0;}
+	protected  float getTempoImpl() {return 0;}
 	
-	protected  void setTempoNative(float fMPQ){}
+	protected  void setTempoImpl(float fMPQ){}
 
 
 }

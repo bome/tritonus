@@ -47,9 +47,7 @@ import	javax.sound.midi.Receiver;
 import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.share.TDebug;
-// import	org.tritonus.lowlevel.alsa.ASequencer;
 import	org.tritonus.share.midi.TMidiDevice;
-import	org.tritonus.share.midi.TMidiDeviceInfo;
 import	org.tritonus.share.GlobalInfo;
 
 import	grame.midishare.Midi;
@@ -73,7 +71,7 @@ public class MshMidiDevice
 	
 	public MshMidiDevice()
 	{
-		super(new TMidiDeviceInfo("MidiShare MIDI client",
+		super(new TMidiDevice.Info("MidiShare MIDI client",
 					 GlobalInfo.getVendor(),
 					 "this client uses MidiShare",
 					 GlobalInfo.getVersion()));
