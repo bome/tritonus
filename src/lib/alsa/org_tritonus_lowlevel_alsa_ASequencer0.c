@@ -546,7 +546,7 @@ Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo
 	if (DEBUG)
 	{
 		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): begin\n");
-		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): client: %d\n", nClient);
+		printf("Java_org_tritonus_lowlevel_alsa_ASequencer0_getNextClientInfo(): client: %d\n", (int) nClient);
 	}
 	seq = getNativeSeq(env, obj);
 	memset(&clientInfo, 0, sizeof(clientInfo));
