@@ -1,20 +1,38 @@
+<?xml version="1.0"?>
+<!-- If a tool complains that project.dtd is not available,
+     run the following command in the top level directory:
+     ant -f build-dtd.xml
+-->
+<!DOCTYPE project SYSTEM "../../project.dtd">
+
 <project name="tritonus_tests" default="compile" basedir=".">
   <target name="init">
-    <property name="src" value="src" />
-    <property name="build" value="." />
+    <property name="src.dir" value="src/classes" />
+    <property name="build.dir" value=".build" />
+    <path id="classpath">
+      <pathelement location="${basedir}"/>
+      <pathelement location="${build.dir}"/>
+      <pathelement path="${java.class.path}"/>
+    </path>
   </target>
 
 
   <target name="prepare" depends="init">
-    <mkdir dir="${build}" />
+    <mkdir dir="${build.dir}" />
   </target>
 
 
   <target name="compile" depends="prepare">
-    <javac srcdir="${src}"
-	   destdir="${build}"
-	   excludes="AlsaSeqTestCase.java,AlsaCtlTestCase.java,AlsaMixerTestCase.java"/>
+    <javac srcdir="${src.dir}"
+	   destdir="${build.dir}"
+	   excludes="org/tritonus/test/alsa/"
+	   debug="on">
+      <exclude name="AlsaCtlTestCase.java"/>
+      <exclude name="AlsaMixerTestCase.java"/>
+      <exclude name="AlsaSeqTestCase.java"/>
+    </javac>
   </target>
+
 
   <target name="test"
 	  depends="test-audiofilereader,test-dataoutputstream,test-audiooutputstream">
@@ -23,19 +41,17 @@
   <target name="test-audiofilereader"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
+      <classpath refid="classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
-      <test name="AiffAudioFileReaderTestCase" />
-      <test name="AuAudioFileReaderTestCase" />
-      <test name="AuZeroDataLengthAudioFileReaderTestCase" />
-      <test name="WaveAudioFileReaderTestCase" />
-      <test name="GSMAudioFileReaderTestCase" />
-      <test name="Mp3AudioFileReaderTestCase" />
-<!--
-      <test name="VorbisAudioFileReaderTestCase" />
--->
+      <test name="org.tritonus.test.AiffAudioFileReaderTestCase" />
+      <test name="org.tritonus.test.AuAudioFileReaderTestCase" />
+      <test name="org.tritonus.test.AuZeroDataLengthAudioFileReaderTestCase" />
+      <test name="org.tritonus.test.WaveAudioFileReaderTestCase" />
+      <test name="org.tritonus.test.GSMAudioFileReaderTestCase" />
+      <test name="org.tritonus.test.VorbisAudioFileReaderTestCase" />
     </junit>
   </target>
 
@@ -43,11 +59,12 @@
   <target name="test-audiooutputstream"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
+      <classpath refid="classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
-      <test name="AuAudioOutputStreamTestCase" />
+      <test name="org.tritonus.test.AuAudioOutputStreamTestCase" />
     </junit>
   </target>
 
@@ -55,11 +72,12 @@
   <target name="test-dataoutputstream"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
+      <classpath refid="classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
-      <test name="TDataOutputStreamTestCase" />
+      <test name="org.tritonus.test.TDataOutputStreamTestCase" />
     </junit>
   </target>
 
@@ -67,20 +85,35 @@
   <target name="test-midi"
 	  depends="compile">
     <junit fork="no" printsummary="yes">
+      <classpath refid="classpath"/>
       <!--sysproperty key="tritonus.TraceAudioFileReader" value="true" /-->
       <!--sysproperty key="tritonus.TraceAudioSystem" value="true" /-->
       <!--sysproperty key="tritonus.TraceService" value="true" /-->
       <formatter type="plain" />
-      <test name="MidiMessageTestCase" />
+      <test name="org.tritonus.test.MidiMessageTestCase" />
     </junit>
   </target>
 
 
-  <target name="test-control"
-	  depends="compile">
+  <target name="test-control" depends="compile">
     <junit fork="no" printsummary="yes">
+      <classpath refid="classpath"/>
       <formatter type="plain" />
-      <test name="ControlTestCase" />
+      <test name="org.tritonus.test.ControlTestCase" />
     </junit>
+  </target>
+
+
+  <target name="test-circularbuffer" depends="compile">
+    <junit fork="no" printsummary="yes">
+      <classpath refid="classpath"/>
+      <formatter type="plain" />
+      <test name="org.tritonus.test.TCircularBufferTestCase" />
+    </junit>
+  </target>
+
+
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}"/>
   </target>
 </project>
