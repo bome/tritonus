@@ -118,6 +118,21 @@ srcdir=.
 DISTFILES=ConvertJDK117 INSTALL LGPL Makefile.in NEWS README README.midi README.mp3 config.guess config.sub configure.in configure  doc src test util #new
 SUBDIRS=@SUBDIRS@
 CONVERTTARGETS = @CONVERTTARGETS@
+MP3SP_OBJ = \
+$(OBJDIR_PRIV)/sampled/file/TAudioFileFormat.class \
+$(OBJDIR_PRIV)/sampled/file/TAudioFileReader.class \
+$(OBJDIR_PRIV)/sampled/file/MpegAudioFileReader.class \
+$(OBJDIR_PRIV)/sampled/file/MpegAudioFileReader.class \
+$(OBJDIR_PRIV)/sampled/file/MpegEncoding.class \
+$(OBJDIR_PRIV)/sampled/file/MpegFileFormatType.class \
+$(OBJDIR_PRIV)/sampled/convert/MpegFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TMatrixFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TSimpleFormatConversionProvider.class \
+$(OBJDIR_PRIV)/sampled/convert/TFormatConversionProvider.class \
+$(OBJDIR_PRIV)/TDebug.class \
+$(OBJDIR_PRIV)/util/ArraySet.class \
+$(OBJDIR_PRIV)/util/TCircularBuffer.class
+
 
 #----------------- rules -------------------
 
@@ -156,6 +171,10 @@ mp3jars:	all
 	mkdir -p META-INF/services
 	cp src/META-INF/Services/* META-INF/services/
 	jar cf mp3.jar org/tritonus javazoom META-INF/
+
+.PHONY: mp3sp
+mp3sp:	all
+	jar cf mp3sp.jar $(MP3SP_OBJ)
 
 .PHONY: doc
 doc:	all 

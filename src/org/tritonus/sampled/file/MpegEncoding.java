@@ -32,13 +32,12 @@ import	org.tritonus.TDebug;
 
 
 
-/**	
- * Encodings used by the MPEG audio decoder.
+/**	Encodings used by the MPEG audio decoder.
  *
- * @author Matthias Pfisterer
+ *	@author Matthias Pfisterer
  */
 public class MpegEncoding
-extends	AudioFormat.Encoding
+	extends		AudioFormat.Encoding
 {
 	public static final AudioFormat.Encoding	MPEG1L1 = new MpegEncoding("MPEG1L1");
 	public static final AudioFormat.Encoding	MPEG1L2 = new MpegEncoding("MPEG1L2");

@@ -31,10 +31,9 @@ import	javax.sound.sampled.AudioFileFormat;
 import	org.tritonus.TDebug;
 
 
-/**	
- * FileFormatTypes used by the MPEG audio decoder.
+/**	FileFormatTypes used by the MPEG audio decoder.
  *
- * @author Matthias Pfisterer
+ *	@author Matthias Pfisterer
  */
  
 public class MpegFileFormatType
