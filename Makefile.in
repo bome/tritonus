@@ -217,14 +217,6 @@ all: builddir $(CONVERTTARGETS) $(LIBS) @JAR_INDEX@
 	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
 	@rm -rf $(DESTDIR)/META-INF
 
-.PHONY: compileinitial
-compileinitial: $(CONVERTTARGETS) compileinitialimpl
-
-.PHONY: compileinitialimpl
-compileinitialimpl: builddir $(SRC)
-	export CLASSPATH=$(DESTDIR):$$CLASSPATH; $(JAVAC) -d $(DESTDIR) $(SRCTMP)
-	$(MAKE) all
-
 .PHONY: convert
 convert:
 	@if [ ! -f .converted ]; then ./ConvertJDK117; echo "" > .converted; fi
