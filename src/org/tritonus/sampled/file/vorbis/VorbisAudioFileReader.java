@@ -56,7 +56,7 @@ public class VorbisAudioFileReader
 	extends	TAudioFileReader
 {
 	// Note: this value is only an estimate
-	private static final int	MARK_LIMIT = 10000;
+	private static final int	MARK_LIMIT = 100000;
 
 
 
@@ -230,11 +230,12 @@ public class VorbisAudioFileReader
 		{
 			if (ptr[j] == null)
 				break;
-			System.err.println(new String(ptr[j], 0, ptr[j].length - 1));
+			TDebug.out(new String(ptr[j], 0, ptr[j].length - 1));
 		}
 		int	nChannels = vi.channels;
 		float	fSampleRate = vi.rate;
-		if (TDebug.TraceAudioFileReader) { TDebug.out("\nBitstream is " + vi.channels + " channel, " + vi.rate + "Hz"); }
+		if (TDebug.TraceAudioFileReader) { TDebug.out("\n"); }
+		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): Bitstream is " + vi.channels + " channel, " + vi.rate + "Hz"); }
 		if (TDebug.TraceAudioFileReader) { TDebug.out("Encoded by: " + new String(vc.vendor, 0, vc.vendor.length - 1) + "\n"); }
 
 		/*
@@ -263,6 +264,7 @@ public class VorbisAudioFileReader
 			AudioSystem.NOT_SPECIFIED,	// gsm: 33,
 			AudioSystem.NOT_SPECIFIED,	// gsm: 50.0F,
 			true);	// this value is chosen arbitrarily
+		if (TDebug.TraceAudioFileReader) { TDebug.out("VorbisAudioFileReader.getAudioFileFormat(): AudioFormat: " + format); }
 		AudioFileFormat	audioFileFormat =
 			new TAudioFileFormat(
 				AudioFileTypes.getType("Ogg","ogg"),
