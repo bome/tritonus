@@ -1,2 +1,9 @@
 # for the vorbis codec
-org.tritonus.sampled.convert.vorbis.VorbisFormatConversionProvider
+
+# native decoder/encoder
+#org.tritonus.sampled.convert.vorbis.VorbisFormatConversionProvider
+
+# pure-java decoder
+org.tritonus.sampled.convert.vorbis.JorbisFormatConversionProvider
+
+#end
