@@ -29,14 +29,20 @@ import javax.microedition.media.Player;
 
 public class AudioPlayer
 {
+	private static final boolean	DEBUG = true;
+
+
 	public static void main(String[] args)
 	{
 		String	strLocator = args[0];
 		try
 		{
 			Player	player = Manager.createPlayer(strLocator);
-			System.out.println("player: " + player);
+			if (DEBUG) { out("player: " + player); }
+			player.realize();
+			player.prefetch();
 			player.start();
+			if (DEBUG) { out("returned from start"); }
 		}
 		catch (IOException e)
 		{
@@ -46,6 +52,12 @@ public class AudioPlayer
 		{
 			e.printStackTrace();
 		}
+	}
+
+
+	private static void out(String strMessage)
+	{
+		System.out.println(strMessage);
 	}
 }
 
