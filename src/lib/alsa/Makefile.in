@@ -59,7 +59,8 @@ JNIOBJ=\
 
 OBJ=\
 	$(JNIOBJ) \
-	init.o
+	init.o \
+	../common/common.o
 
 
 

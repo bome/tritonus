@@ -27,7 +27,7 @@ LIBDEST=$(LIBBASENAME).so.1.0
 LIBDEST_ABSOLUTE=@SRC_ABSOLUTE_PATH@/src/lib/esd/$(LIBDEST)
 #or LIBDEST_ABSOLUTE=$(CURDIR)/$(LIBDEST)
 
-LIBS=-lesd -L../common -ltritonuscommon
+LIBS=-lesd
 
 JAVAH = @JAVAH@
 
@@ -36,7 +36,8 @@ JNIOBJ=\
 	org_tritonus_lowlevel_esd_EsdStream.o
 
 OBJ=\
-	$(JNIOBJ)
+	$(JNIOBJ) \
+	../common/common.o
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
 
