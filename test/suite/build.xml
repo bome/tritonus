@@ -1,14 +1,7 @@
 <project name="tritonus_tests" default="compile" basedir=".">
   <target name="init">
-    <tstamp/>
     <property name="src" value="src" />
     <property name="build" value="." />
-    <property name="dist"  value="." />
-    <!--
-    Remove the next line if you don't have jikes.
-    In this case, javac will be used for compiling.
-    -->
-    <property name="build.compiler" value="jikes" />
   </target>
 
 
