@@ -41,11 +41,31 @@ import javax.sound.sampled.spi.FormatConversionProvider;
 import org.tritonus.share.sampled.Encodings;
 
 
-
 public class BaseFormatConversionProviderTestCase
 extends BaseProviderTestCase
 {
 	private static final AudioFormat.Encoding[]	EMPTY_ENCODING_ARRAY = new AudioFormat.Encoding[0];
+	private static final AudioFormat.Encoding[]	ALL_ENCODINGS = new AudioFormat.Encoding[]
+	{
+		AudioFormat.Encoding.PCM_SIGNED,
+		AudioFormat.Encoding.PCM_UNSIGNED,
+		AudioFormat.Encoding.ULAW,
+		AudioFormat.Encoding.ALAW,
+		Encodings.getEncoding("GSM0610"),
+		Encodings.getEncoding("MPEG1L1"),
+		Encodings.getEncoding("MPEG1L2"),
+		Encodings.getEncoding("MPEG1L3"),
+		Encodings.getEncoding("MPEG2L1"),
+		Encodings.getEncoding("MPEG2L2"),
+		Encodings.getEncoding("MPEG2L3"),
+		Encodings.getEncoding("MPEG2DOT5L1"),
+		Encodings.getEncoding("MPEG2DOT5L2"),
+		Encodings.getEncoding("MPEG2DOT5L3"),
+		Encodings.getEncoding("VORBIS"),
+	};
+
+
+
 
 	private static final boolean	DEBUG = true;
 	private static final String	RESOURCE_BASENAME = "formatconversionprovider";
@@ -148,6 +168,21 @@ extends BaseProviderTestCase
 				}
 				assertTrue("expected encoding supported",
 					   bSupported);
+			}
+			AudioFormat.Encoding[] aUnexpectedEncodings = getUnexpectedEncodings(bSource);
+			for (int i = 0; i < aUnexpectedEncodings.length; i++)
+			{
+				boolean	bSupported;
+				if (bSource)
+				{
+					bSupported = getFormatConversionProvider().isSourceEncodingSupported(aUnexpectedEncodings[i]);
+				}
+				else
+				{
+					bSupported = getFormatConversionProvider().isTargetEncodingSupported(aUnexpectedEncodings[i]);
+				}
+				assertTrue("unexpected encoding supported",
+					   ! bSupported);
 			}
 		}
 	}
@@ -306,20 +341,6 @@ extends BaseProviderTestCase
 
 
 
-// 	private AudioFormat.Encoding[] getSourceEncodings()
-// 	{
-// 		return getEncodings("sourceEncodings");
-// 	}
-
-
-
-// 	private AudioFormat.Encoding[] getTargetEncodings()
-// 	{
-// 		return getEncodings("targetEncodings");
-// 	}
-
-
-
 	private AudioFormat.Encoding[] getEncodings(boolean bSource)
 	{
 		if (bSource)
@@ -330,6 +351,34 @@ extends BaseProviderTestCase
 		{
 			return getEncodings("targetEncodings");
 		}
+	}
+
+
+
+	private AudioFormat.Encoding[] getUnexpectedEncodings(boolean bSource)
+	{
+		AudioFormat.Encoding[]	aExpectedEncodings;
+		if (bSource)
+		{
+			aExpectedEncodings = getEncodings("sourceEncodings");
+		}
+		else
+		{
+			aExpectedEncodings = getEncodings("targetEncodings");
+		}
+		List	expectedEncodings = Arrays.asList(aExpectedEncodings);
+		AudioFormat.Encoding[]	aAllEncodings = ALL_ENCODINGS;
+		AudioFormat.Encoding[]	aUnexpectedEncodings = new AudioFormat.Encoding[aAllEncodings.length - aExpectedEncodings.length];
+		int	nIndex = 0;
+		for (int i = 0; i < aAllEncodings.length; i++)
+		{
+			if (! expectedEncodings.contains(aAllEncodings[i]))
+			{
+				aUnexpectedEncodings[nIndex] = aAllEncodings[i];
+				nIndex++;
+			} 
+		}
+		return aUnexpectedEncodings;
 	}
 
 
