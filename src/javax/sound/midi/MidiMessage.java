@@ -22,6 +22,7 @@
 
 package	javax.sound.midi;
 
+import	org.tritonus.share.TDebug;
 import	org.tritonus.share.midi.MidiUtils;
 
 
@@ -151,7 +152,7 @@ implements Cloneable
 		synchronized (this)
 		{
 			data = new byte[nLength];
-			System.arraycopy(data, 0, abData, 0, nLength);
+			System.arraycopy(abData, 0, data, 0, nLength);
 			length = nLength;
 		}
 	}
@@ -168,7 +169,7 @@ implements Cloneable
 		to the value returned by {@link #getLength() getLength()}.
 
 		@return An array of bytes representing the MIDI message.
-	 */
+	*/
 	public byte[] getMessage()
 	{
 		byte[]	abData = new byte[length];
@@ -213,6 +214,22 @@ implements Cloneable
 		@return A new MidiMessage object that is a copy of this one.
 	*/
 	public abstract Object clone();
+
+
+
+	/**	Print content of data[].
+		This method is used for debugging.
+	*/
+	private void outputData()
+	{
+		String	strMessage = "MidiMessage.outputData(): data: [";
+		for (int i  = 0; i < data.length; i++)
+		{
+			strMessage += (data[i] + ", ");
+		}
+		strMessage += "]";
+		TDebug.out(strMessage);
+	}
 }
 
 
