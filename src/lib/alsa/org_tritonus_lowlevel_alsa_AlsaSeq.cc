@@ -17,14 +17,16 @@ static HandleFieldHandler<snd_seq_t*>	handler;
 
 
 
+snd_seq_client_info_t*
+getClientInfoNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_event_t*
 getEventNativeHandle(JNIEnv* env, jobject obj);
 void
 setEventNativeHandle(JNIEnv* env, jobject obj, snd_seq_event_t* handle);
-snd_seq_client_info_t*
-getClientInfoNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_port_info_t*
 getPortInfoNativeHandle(JNIEnv* env, jobject obj);
+snd_seq_port_subscribe_t*
+getPortSubscribeNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_queue_info_t*
 getQueueInfoNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_queue_status_t*
@@ -33,6 +35,8 @@ snd_seq_queue_tempo_t*
 getQueueTempoNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_queue_timer_t*
 getQueueTimerNativeHandle(JNIEnv* env, jobject obj);
+snd_seq_remove_events_t*
+getRemoveEventsNativeHandle(JNIEnv* env, jobject obj);
 snd_seq_system_info_t*
 getSystemInfoNativeHandle(JNIEnv* env, jobject obj);
 
@@ -54,7 +58,6 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_open
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): begin\n"); }
 	nReturn = snd_seq_open(&seq, "hw", SND_SEQ_OPEN_DUPLEX, 0);
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_open(): snd_seq_open() returns: %d\n", nReturn); }
-	// perror("abc");
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_open() failed");
@@ -757,50 +760,81 @@ Java_org_tritonus_lowlevel_alsa_AlsaSeq_setQueueTimer
 
 /*
  * Class:     org_tritonus_lowlevel_alsa_AlsaSeq
- * Method:    subscribePort
- * Signature: (IIIIIZZZIII)V
+ * Method:    getPortSubscription
+ * Signature: (Lorg/tritonus/lowlevel/alsa/AlsaSeq$PortSubscribe;)I
  */
-JNIEXPORT void JNICALL
-Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort
-(JNIEnv* env, jobject obj,
- jint nSenderClient, jint nSenderPort, jint nDestClient, jint nDestPort,
- jint nQueue, jboolean bExclusive, jboolean bRealtime, jboolean bConvertTime,
- jint nMidiChannels, jint nMidiVoices, jint nSynthVoices)
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription
+(JNIEnv* env, jobject obj, jobject portSubscribeObj)
 {
 	snd_seq_t*			seq;
-	snd_seq_port_subscribe_t*	subs;
-	snd_seq_addr_t			sender;
-	snd_seq_addr_t			dest;
+	snd_seq_port_subscribe_t*	pPortSubscribe;
+	int				nReturn;
+
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription(): begin\n"); }
+	seq = handler.getHandle(env, obj);
+	pPortSubscribe = getPortSubscribeNativeHandle(env, portSubscribeObj);
+	nReturn = snd_seq_get_port_subscription(seq, pPortSubscribe);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_seq_get_port_subscription() failed");
+	}
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_getPortSubscription(): end\n"); }
+	return (jint) nReturn;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaSeq
+ * Method:    subscribePort
+ * Signature: (Lorg/tritonus/lowlevel/alsa/AlsaSeq$PortSubscribe;)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort
+(JNIEnv* env, jobject obj, jobject portSubscribeObj)
+{
+	snd_seq_t*			seq;
+	snd_seq_port_subscribe_t*	pPortSubscribe;
 	int				nReturn;
 
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort(): begin\n"); }
 	seq = handler.getHandle(env, obj);
-	snd_seq_port_subscribe_alloca(&subs);
-	// memset(&subs, 0, sizeof(subs));
-
-	sender.client = nSenderClient;
-	sender.port = nSenderPort;
-	snd_seq_port_subscribe_set_sender(subs, &sender);
-
-	dest.client = nDestClient;
-	dest.port = nDestPort;
-	snd_seq_port_subscribe_set_dest(subs, &dest);
-
-	snd_seq_port_subscribe_set_queue(subs, nQueue);
-	snd_seq_port_subscribe_set_exclusive(subs, bExclusive);
-	snd_seq_port_subscribe_set_time_update(subs, bConvertTime);
-	snd_seq_port_subscribe_set_time_real(subs, bRealtime);
-/* TODO: what happened to this?
-	subs.midi_channels = nMidiChannels;
-	subs.midi_voices = nMidiVoices;
-	subs.synth_voices = nSynthVoices;
-*/
-	nReturn = snd_seq_subscribe_port(seq, subs);
+	pPortSubscribe = getPortSubscribeNativeHandle(env, portSubscribeObj);
+	nReturn = snd_seq_subscribe_port(seq, pPortSubscribe);
 	if (nReturn < 0)
 	{
 		throwRuntimeException(env, "snd_seq_subscribe_port() failed");
 	}
 	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_subscribePort(): end\n"); }
+	return (jint) nReturn;
+}
+
+
+
+/*
+ * Class:     org_tritonus_lowlevel_alsa_AlsaSeq
+ * Method:    unsubscribePort
+ * Signature: (Lorg/tritonus/lowlevel/alsa/AlsaSeq$PortSubscribe;)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort
+(JNIEnv* env, jobject obj, jobject portSubscribeObj)
+{
+	snd_seq_t*			seq;
+	snd_seq_port_subscribe_t*	pPortSubscribe;
+	int				nReturn;
+
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort(): begin\n"); }
+	seq = handler.getHandle(env, obj);
+	pPortSubscribe = getPortSubscribeNativeHandle(env, portSubscribeObj);
+	nReturn = snd_seq_unsubscribe_port(seq, pPortSubscribe);
+	if (nReturn < 0)
+	{
+		throwRuntimeException(env, "snd_seq_unsubscribe_port() failed");
+	}
+	if (DEBUG) { (void) fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaSeq_unsubscribePort(): end\n"); }
+	return (jint) nReturn;
 }
 
 
