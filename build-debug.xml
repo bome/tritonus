@@ -20,10 +20,15 @@
   <target name="compile" depends="prepare">
     <!-- Here, the compilation is separated into parts due to an obscure problem. Memory shortage? -->
     <ajc srcdir="${src}"
-	   destdir="${build}"
-	   includes="javax/sound/,org/tritonus/core/,org/tritonus/share/,org/tritonus/debug/AJDebug.java" />
+	 destdir="${build}"
+	 debug="on"
+	 includes="javax/sound/,org/tritonus/core/,org/tritonus/share/,org/tritonus/debug/AJDebug.java,org/tritonus/debug/Utils.java" 
+	 excludes="org/tritonus/share/sampled/AudioSystemShadow.java" >
+    </ajc>
+
     <ajc srcdir="${src}"
 	 destdir="${build}"
+	 debug="on"
 	 includes="org/tritonus/lowlevel/,org/tritonus/midi/,org/tritonus/sampled/"
 	 excludes="org/tritonus/sampled/convert/javalayer/,org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/midi/device/midishare/" >
       <classpath>
@@ -42,19 +47,29 @@
   <target name="compile-javalayer-dependent"
 	  depends="prepare"
 	  if="javalayer-present">
-    <javac srcdir="${src}"
-	   destdir="${build}"
-	   depend="yes"
-	   includes="org/tritonus/sampled/convert/javalayer/" />
+    <ajc srcdir="${src}"
+	 destdir="${build}"
+	 debug="on"
+	 includes="org/tritonus/sampled/convert/javalayer/" >
+      <classpath>
+	<pathelement path="${classpath}"/>
+	<pathelement location="build"/>
+      </classpath>
+    </ajc>
   </target>
 
   <target name="compile-jorbis-dependent"
 	  depends="prepare"
 	  if="jorbis-present">
-    <javac srcdir="${src}"
-	   destdir="${build}"
-	   depend="yes"
-	   includes="org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/" />
+    <ajc srcdir="${src}"
+	 destdir="${build}"
+	 debug="on"
+	 includes="org/tritonus/sampled/convert/vorbis/,org/tritonus/sampled/file/vorbis/,org/tritonus/debug/AJDebugVorbis.java" >
+      <classpath>
+	<pathelement path="${classpath}"/>
+	<pathelement location="build"/>
+      </classpath>
+    </ajc>
   </target>
 
   <target name="compile-midishare-dependent"

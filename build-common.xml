@@ -171,20 +171,25 @@
   </target>
 
 
-  <target name="dist-jorbis-dependent"
-	  depends="compile,compile-jorbis-dependent"
-	  if="jorbis-present" >
+<target name="dist-jorbis-dependent"
+	depends="compile-jorbis-dependent"
+	if="jorbis-present" >
 
-    <!-- VORBIS: -->
-    <jar jarfile="${dist}/tritonus_vorbis.jar" >
-      <fileset dir="${build}" >
-	<include name="org/tritonus/sampled/convert/vorbis/" />
-	<include name="org/tritonus/sampled/file/vorbis/" />
-      </fileset>
-      <fileset
-	       dir="${src}/packaging/tritonus_vorbis" />
-    </jar>
-  </target>
+  <!-- VORBIS: -->
+  <jar jarfile="${dist}/tritonus_vorbis.jar" >
+    <fileset dir="${build}" >
+      <include name="org/tritonus/sampled/convert/vorbis/" />
+      <include name="org/tritonus/sampled/file/vorbis/" />
+      <!-- This is a hack needed for the debug build. Files in this
+      directory aren't needed for the release build. However, it
+      should do no harm if files laying around are included.
+      -->
+      <include name="org/tritonus/debug/" />
+    </fileset>
+    <fileset
+	     dir="${src}/packaging/tritonus_vorbis" />
+  </jar>
+</target>
 
 
   <target name="dist-midishare-dependent"
