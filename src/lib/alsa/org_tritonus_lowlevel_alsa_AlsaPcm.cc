@@ -657,6 +657,8 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei
 	if (DEBUG) { printf("Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei(): trying to write (frames): %lld\n", lFrameCount); }
 	lWritten = snd_pcm_writei(handle, data + lOffset, lFrameCount);
 	if (DEBUG) { printf("Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei(): Written: %ld\n", lWritten); }
+	// we can do a JNI_ABORT because we know the data wasn't altered.
+	// This may improve performance (no copying back).
 	env->ReleaseByteArrayElements(abData, data, JNI_ABORT);
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_writei(): end\n"); }
 	return lWritten;
@@ -680,14 +682,19 @@ Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): begin\n"); }
 	handle = handler.getHandle(env, obj);
 	data = env->GetByteArrayElements(abData, NULL);
+	printf("native array: %p\n", data);
 	if (data == NULL)
 	{
  		throwRuntimeException(env, "GetByteArrayElements() failed");
 	}
 	if (DEBUG) { printf("Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): trying to read (frames): %lld\n", lFrameCount); }
+	// To the ALSA method, frame count means number of complete PCM frames.
+	// Frame: sample data vector for all channels. For 16 Bit stereo data, one frame has a length of four bytes.
 	lRead = snd_pcm_readi(handle, data + lOffset, lFrameCount);
 	if (DEBUG) { printf("Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): Read: %ld\n", lRead); }
+	// printf("1\n");
 	env->ReleaseByteArrayElements(abData, data, 0);
+	// printf("2\n");
 	if (DEBUG) { fprintf(debug_file, "Java_org_tritonus_lowlevel_alsa_AlsaPcm_readi(): end\n"); }
 	return lRead;
 }
