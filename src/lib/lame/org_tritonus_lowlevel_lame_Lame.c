@@ -194,6 +194,17 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 	return result;
 }
 
+/*
+ * Class:     org_tritonus_lowlevel_lame_Lame
+ * Method:    nGetPCMBufferSize
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nGetPCMBufferSize
+(JNIEnv *env, jobject obj, jint wishedBufferSize) {
+	return wishedBufferSize;
+}
+
+
 typedef struct tagTwoChar {
     char a,b;
 } twoChar;
@@ -284,10 +295,10 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 
 /*
  * Class:     org_tritonus_lowlevel_lame_Lame
- * Method:    **************************************** encodeFinish
- * Signature: ([B)I                                    ////////////
+ * Method:    **************************************** nEncodeFinish
+ * Signature: ([B)I                                    /////////////
  */
-JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_encodeFinish
+JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeFinish
 (JNIEnv *env, jobject obj, jbyteArray buffer) {
 	int result=0;
 	LameConf* conf;
@@ -322,10 +333,10 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_encodeFinish
 
 /*
  * Class:     org_tritonus_lowlevel_lame_Lame
- * Method:    ************************************** close
+ * Method:    ************************************** nClose
  * Signature: ()V                                    //////
  */
-JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_close(JNIEnv * env, jobject obj) {
+JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_nClose(JNIEnv * env, jobject obj) {
 	LameConf* conf;
 
 	if (debug) {
@@ -340,7 +351,3 @@ JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_close(JNIEnv * env, 
 		free(conf);
 	}
 }
-
-
-
-

@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000,2001 by Florian Bomers <florian@bome.com>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -31,8 +31,10 @@ import javax.sound.sampled.AudioFormat;
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.Encodings;
 
-public class Lame
-{
+public class Lame {
+
+	// suggested maximum buffer size for an mpeg frame
+	private static final int DEFAULT_PCM_BUFFER_SIZE=2048*16;
 
 	// frame size=576 for MPEG2 and MPEG2.5
 	//           =576*2 for MPEG1
@@ -61,6 +63,7 @@ public class Lame
 
 	private static final int OUT_OF_MEMORY = -300;
 	private static final int NOT_INITIALIZED = -301;
+	private static final int LAME_ENC_NOT_FOUND = -302;
 
 	private static final String PROPERTY_PREFIX = "tritonus.lame.";
 
@@ -96,6 +99,21 @@ public class Lame
 	private int effChMode;
 	private int effSampleRate;
 	private int effEncoding;
+
+	private void handleNativeException(int resultCode) {
+		close();
+		if (resultCode==OUT_OF_MEMORY) {
+			throw new OutOfMemoryError("out of memory");
+		} 
+		else if (resultCode==NOT_INITIALIZED) {
+			throw new RuntimeException("not initialized");
+		}
+		else if (resultCode==LAME_ENC_NOT_FOUND) {
+			libAvailable=false;
+			linkError="lame_enc.dll not found";
+			throw new IllegalArgumentException(linkError);
+		}
+	}
 
 	/**
 	 * Initializes the decoder with 
@@ -138,18 +156,11 @@ public class Lame
 		int result=nInitParams(sourceFormat.getChannels(), (int) Math.round(sourceFormat.getSampleRate()), 
 				       bitRate, channelMode, quality,
 				       VBR, sourceFormat.isBigEndian());
-		if (result==OUT_OF_MEMORY) {
-			close();
-			throw new OutOfMemoryError("out of memory");
-		} else
-			if (result==NOT_INITIALIZED) {
-				close();
-				throw new RuntimeException("not initialized");
-			} else
-				if (result<0) {
-					close();
-					throw new IllegalArgumentException("parameters not supported by LAME (returned "+result+")");
-				}
+		if (result<0) {
+			handleNativeException(result);
+			throw new IllegalArgumentException(
+			   "parameters not supported by LAME (returned "+result+")");
+		}
 		// provide effective parameters to user-space
 		try {
 			System.setProperty(PROPERTY_PREFIX + "effective.quality", 
@@ -183,7 +194,32 @@ public class Lame
 				       int bitrate, int mode, int quality,
 				       boolean VBR, boolean bigEndian);
 
-	public native int nEncodeBuffer(byte[] pcm, int offset, 
+	/**
+	 * Returns the buffer needed pcm buffer size.
+	 * The passed parameter is a wished buffer size.
+	 * The implementation of the encoder may return
+	 * a lower or higher buffer size.
+	 * The encoder must be initalized (i.e. not closed) at this point.
+	 * A return value of <0 denotes an error.
+	 */
+	private native int nGetPCMBufferSize(int suggested);
+
+	public int getPCMBufferSize() {
+		int ret=nGetPCMBufferSize(DEFAULT_PCM_BUFFER_SIZE);
+		if (ret<0) {
+			handleNativeException(ret);
+			throw new RuntimeException("Unknown error in Lame.nGetPCMBufferSize(). Resultcode="+ret);
+		}
+		return ret;
+	}
+
+	public int getMP3BufferSize() {
+		// bad estimate :)
+		return getPCMBufferSize()/2;
+	}
+		
+
+	private native int nEncodeBuffer(byte[] pcm, int offset, 
 					int length, byte[] encoded);
 
 	/**
@@ -191,6 +227,7 @@ public class Lame
 	 * are wrong.
 	 * When the <code>encoded</code> array is too small, 
 	 * an ArrayIndexOutOfBoundsException is thrown.
+	 * <code>length</code> should be the value returned by getPCMBufferSize.
 	 * @return the number of bytes written to <code>encoded</code>. May be 0.
 	 */
 	public int encodeBuffer(byte[] pcm, int offset, int length, byte[] encoded)
@@ -202,15 +239,10 @@ public class Lame
 		int result=nEncodeBuffer(pcm, offset, length, encoded);
 //System.out.println("result="+result+" encoded bytes.  pcm="+pcm[0]+","+pcm[1]+"  mp3="+encoded[0]+","+encoded[1]);
 		if (result<0) {
-			if (result==OUT_OF_MEMORY) {
-				throw new OutOfMemoryError("out of memory");
-			} 
-			else if (result==NOT_INITIALIZED) {
-				throw new RuntimeException("not initialized");
-			}
 			if (result==-1) {
 				throw new ArrayIndexOutOfBoundsException("Encode buffer too small");
 			}
+			handleNativeException(result);
 			throw new RuntimeException("crucial error in encodeBuffer.");
 		}
 		return result;
@@ -221,13 +253,21 @@ public class Lame
 	 *
 	 * @return the number of bytes written to <code>encoded</code>
 	 */
-	public native int encodeFinish(byte[] encoded);
+	private native int nEncodeFinish(byte[] encoded);
+
+	public int encodeFinish(byte[] encoded) {
+		return nEncodeFinish(encoded);
+	}
 
 	/*
 	 * Deallocates resources used by the native library.
 	 * *MUST* be called !
 	 */
-	public native void close();
+	private native void nClose();
+
+	public void close() {
+		nClose();
+	}
 
 	/*
 	 * Returns whether the libraries are installed correctly.

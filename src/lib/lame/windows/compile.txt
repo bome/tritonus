@@ -12,10 +12,15 @@ Compiling the native lametritonus dll
    JDK1.3 installation.
 4. You can set the symbol _BLADEDLL when you want to link statically.
    You need to add lame_enc.dll to the Link section in Project Settings.
+   Static loading is not tested.
    Dynamic loading is recommended.
 5. Compile (either Release or Debug).
 
 Install the library in e.g.
-\JDK1.3\jre\bin\ext (for the JDK 1.3 plug-in)
+\JDK1.3\jre\bin\ext (for the JDK 1.3)
+\Program Files\JavaSoft\JRE\1.3.0_02\lib\ext (for JRE 1.3.0_02 - also for Java plugin)
+
+When your IE or NS supports Java 2 Version 1.3 or higher directly,
+you may need to install it in
 \WINNT\java\trustlib (for Internet Explorer)
 \Program Files\Netscape\Communicator\java\classes (for Netscape 4.6).

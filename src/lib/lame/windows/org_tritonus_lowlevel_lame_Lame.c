@@ -38,8 +38,8 @@ typedef struct tagLameConf {
 	BE_CONFIG beConfig;
 	HBE_STREAM hbeStream;
 	int dllType;
-	DWORD dwSamplesSize;
-	DWORD dwMP3BufferSize;
+	DWORD PCMBufferSize;
+	DWORD MP3BufferSize;
 	int channels;
 	int swapbytes;
 } LameConf;
@@ -242,8 +242,7 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 	conf->dllType=loadLameLibrary("lame_enc.dll");
 	if (!conf->dllType) {
 		free(conf);
-		//TODO: better error message
-		return org_tritonus_lowlevel_lame_Lame_OUT_OF_MEMORY;
+		return org_tritonus_lowlevel_lame_Lame_LAME_ENC_NOT_FOUND;
 	}
 #else
 	// first try with LAME style config
@@ -277,8 +276,8 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 		}
 		// Init the MP3 Stream
 		err = beInitStream(&(conf->beConfig), 
-				&(conf->dwSamplesSize), 
-				&(conf->dwMP3BufferSize),
+				&(conf->PCMBufferSize), 
+				&(conf->MP3BufferSize),
 				&(conf->hbeStream));
 	
 		// Check result
@@ -330,6 +329,31 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nInitParams
 	setNativeGlobalFlags(env, obj, conf);
 	return 0;
 }
+
+/*
+ * Class:     org_tritonus_lowlevel_lame_Lame
+ * Method:    nGetPCMBufferSize
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nGetPCMBufferSize
+  (JNIEnv *env, jobject obj, jint wishedBufferSize) {
+    int result=(int) wishedBufferSize;
+	LameConf* conf;
+	conf=getNativeGlobalFlags(env, obj);
+	if (conf!=NULL) {
+		if ((result % conf->PCMBufferSize)!=0) {
+			result=(result/conf->PCMBufferSize)*conf->PCMBufferSize;
+			if (result==0) {
+				result=conf->PCMBufferSize;
+			}
+		}
+	} else {
+		//throwRuntimeException(env, "not initialized");
+		return org_tritonus_lowlevel_lame_Lame_NOT_INITIALIZED;
+	}
+	return result;
+} 
+
 
 typedef struct tagTwoChar {
     char a,b;
@@ -403,8 +427,8 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 		// bladenc prefers a fixed buffer size. if necessary, call bladenc several times
 		while (pcmSamplesLength>0) {
 			pcmSize=pcmSamplesLength;
-			if (pcmSize>conf->dwSamplesSize) {
-				pcmSize=conf->dwSamplesSize;
+			if (pcmSize>conf->PCMBufferSize) {
+				pcmSize=conf->PCMBufferSize;
 			}
 			mp3Size=encodedArrayByteSize;
 			if (debug) {
@@ -455,10 +479,10 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeBuffer
 
 /*
  * Class:     org_tritonus_lowlevel_lame_Lame
- * Method:    **************************************** encodeFinish
+ * Method:    **************************************** nEncodeFinish
  * Signature: ([B)I                                    ////////////
  */
-JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_encodeFinish
+JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_nEncodeFinish
 (JNIEnv *env, jobject obj, jbyteArray buffer) {
 	int result=0;
 	LameConf* conf;
@@ -503,10 +527,10 @@ JNIEXPORT jint JNICALL Java_org_tritonus_lowlevel_lame_Lame_encodeFinish
 
 /*
  * Class:     org_tritonus_lowlevel_lame_Lame
- * Method:    ************************************** close
+ * Method:    ************************************** nClose
  * Signature: ()V                                    //////
  */
-JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_close(JNIEnv * env, jobject obj) {
+JNIEXPORT void JNICALL Java_org_tritonus_lowlevel_lame_Lame_nClose(JNIEnv * env, jobject obj) {
 	LameConf* conf;
 
 	if (debug) {

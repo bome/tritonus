@@ -68,10 +68,6 @@ import org.tritonus.lowlevel.lame.Lame;
 public class Mp3LameFormatConversionProvider
 	extends	TSimpleFormatConversionProvider {
 
-	// estimated maximum size for an mpeg encoded frame
-	private static final int ENCODER_MAX_FRAME_SIZE=2048*8;
-	private static final int ENCODER_PCM_BUFFER_SIZE=2048*16;
-
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 
 	private static final int MPEG_BITS_PER_SAMPLE=ALL; // TODO! should be 0...
@@ -354,8 +350,8 @@ public class Mp3LameFormatConversionProvider
 			super(targetFormat, -1);
 			pcmStream = sourceStream;
 			encoder=new Lame(sourceStream.getFormat());
-			pcmBuffer=new byte[ENCODER_PCM_BUFFER_SIZE];
-			encodedBuffer=new byte[ENCODER_MAX_FRAME_SIZE];
+			pcmBuffer=new byte[encoder.getPCMBufferSize()];
+			encodedBuffer=new byte[encoder.getMP3BufferSize()];
 		}
 
 		public void execute() {
