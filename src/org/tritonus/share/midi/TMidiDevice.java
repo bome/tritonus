@@ -258,6 +258,7 @@ public abstract class TMidiDevice
 	 */
 	protected void sendImpl(MidiMessage message, long lTimeStamp)
 	{
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.sendImpl(): begin"); }
 		Iterator	transmitters = m_transmitters.iterator();
 		while (transmitters.hasNext())
 		{
@@ -265,6 +266,7 @@ public abstract class TMidiDevice
 			MidiMessage	copiedMessage = (MidiMessage) message.clone();
 			transmitter.send(copiedMessage, lTimeStamp);
 		}
+		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.sendImpl(): end"); }
 	}
 
 
