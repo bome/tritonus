@@ -8,10 +8,12 @@ package	org.tritonus.mmapi;
 import	java.util.Vector;
 
 import	javax.microedition.media.Control;
+import	javax.microedition.media.Manager;
 import	javax.microedition.media.MediaException;
 import	javax.microedition.media.Player;
 import	javax.microedition.media.PlayerListener;
 import	javax.microedition.media.TimeBase;
+import	javax.microedition.media.protocol.DataSource;
 
 
 
@@ -19,22 +21,26 @@ public abstract class TPlayer
 extends TControllable
 implements Player
 {
+	private DataSource	m_dataSource;
 	private TimeBase	m_timeBase;
 	private Vector		m_listeners;
 	private int		m_nState;
 
 
 
-	protected TPlayer()
+	protected TPlayer(DataSource dataSource)
 	{
-		this(new Control[0]);
+		this(dataSource,
+		     new Control[0]);
 	}
 
 
 
-	protected TPlayer(Control[] aControls)
+	protected TPlayer(DataSource dataSource,
+			  Control[] aControls)
 	{
 		super(aControls);
+		m_dataSource = dataSource;
 		m_listeners = new Vector();
 		m_nState = UNREALIZED;
 		m_timeBase = getDefaultTimeBase();
@@ -50,8 +56,16 @@ implements Player
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
+
+		if (getState() == UNREALIZED)
+		{
+			doRealize();
+			setState(REALIZED);
+		}
 	}
 
+
+	protected abstract void doRealize();
 
 
 	// TODO:
@@ -60,8 +74,20 @@ implements Player
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
+
+		if (getState() == UNREALIZED)
+		{
+			realize();
+		}
+		if (getState() == REALIZED)
+		{
+			doPrefetch();
+			setState(PREFETCHED);
+		}
 	}
 
+
+	protected abstract void doPrefetch();
 
 
 	// TODO:
@@ -70,8 +96,20 @@ implements Player
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
+
+		if (getState() == UNREALIZED || getState() == REALIZED)
+		{
+			prefetch();
+		}
+		if (getState() == PREFETCHED)
+		{
+			setState(STARTED);
+			doStart();
+		}
 	}
 
+
+	protected abstract void doStart();
 
 
 	// TODO:
@@ -79,8 +117,16 @@ implements Player
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
+
+		if (getState() == STARTED)
+		{
+			doStop();
+			setState(PREFETCHED);
+		}
 	}
 
+
+	protected abstract void doStop();
 
 
 	// TODO:
@@ -88,17 +134,45 @@ implements Player
 	{
 		// The following check can throw an IllegalStateException.
 		checkStateNotClosed();
+
+
+		if (getState() == PREFETCHED)
+		{
+			doDeallocate();
+			setState(REALIZED);
+		}
+		// TODO: implement interrupting of realize()
 	}
 
 
+	protected abstract void doDeallocate();
 
-	// TODO:
+
 	public void close()
 	{
-		// The following check can throw an IllegalStateException.
-		checkStateRealized();
+		switch (getState())
+		{
+		case STARTED:
+			doStop();
+			// FALL THROUGH
+
+		case PREFETCHED:
+			doDeallocate();
+			// FALL THROUGH
+
+		case REALIZED:
+			// TODO:
+			// doDeallocate2();
+			// FALL THROUGH
+
+		case UNREALIZED:
+			doClose();
+			setState(CLOSED);
+		}
 	}
 
+
+	protected abstract void doClose();
 
 
 	/**	Set TimeBase for this player.
@@ -110,7 +184,7 @@ implements Player
 		this method (not really a good solution, but for now).
 
 		@see #getDefaultTimeBase()
-	 */
+	*/
 	public void setTimeBase(TimeBase timeBase)
 		throws MediaException
 	{
@@ -166,13 +240,26 @@ implements Player
 	// TODO:
 	public long getDuration()
 	{
+		checkStateNotClosed();
 		return -1;
+	}
+
+
+
+	/**	TODO:
+	 */
+	public String getContentType()
+	{
+		checkStateRealized();
+		DataSource	dataSource = getDataSource();
+		return dataSource.getContentType();
 	}
 
 
 
 	public void setLoopCount(int nCount)
 	{
+		checkStateNotStartedNotClosed();
 		// TODO:
 	}
 
@@ -180,9 +267,12 @@ implements Player
 
 	public void addPlayerListener(PlayerListener playerListener)
 	{
-		if (! m_listeners.contains(playerListener))
+		synchronized (m_listeners)
 		{
-			m_listeners.add(playerListener);
+			if (! m_listeners.contains(playerListener))
+			{
+				m_listeners.add(playerListener);
+			}
 		}
 	}
 
@@ -190,21 +280,24 @@ implements Player
 
 	public void removePlayerListener(PlayerListener playerListener)
 	{
-		m_listeners.remove(playerListener);
+		synchronized (m_listeners)
+		{
+			m_listeners.remove(playerListener);
+		}
 	}
 
 
-	/**	TODO:
-	 */
-	public String getContentType()
+	protected DataSource getDataSource()
 	{
-		// TODO:
-		return null;
+		return m_dataSource;
 	}
 
 
 
-	protected abstract TimeBase getDefaultTimeBase();
+	protected TimeBase getDefaultTimeBase()
+	{
+		return Manager.getSystemTimeBase();
+	}
 
 
 	protected boolean isStateLegalForControls()
@@ -213,6 +306,13 @@ implements Player
 		return nState != UNREALIZED && nState != CLOSED;
 	}
 
+
+
+	private void setState(int nState)
+	{
+		m_nState = nState;
+		// TODO: sent event
+	}
 
 
 	/**	Checks if the state is REALIZED, PREFETCHED or STARTED.
@@ -246,6 +346,23 @@ implements Player
 		if (nState == UNREALIZED || nState == STARTED || nState == CLOSED)
 		{
 			throw new IllegalStateException("state is UNREALIZED, STARTED or CLOSED. Required state is REALIZED or PREFETCHED STARTED.");
+		}
+	}
+
+
+
+	/**	Checks if the state is UNREALIZED, REALIZED, PREFETCHED or STARTED.
+		If this condition is not met (state CLOSED),
+		an IllegalStateException is throw.
+
+		@throws IllegalStateException Thrown if the state is CLOSED.
+	*/
+	private void checkStateNotStartedNotClosed()
+	{
+		int	nState = getState();
+		if (nState == STARTED || nState == CLOSED)
+		{
+			throw new IllegalStateException("state is STARTED or CLOSED. Required state is UNREALIZED, REALIZED or PREFETCHED.");
 		}
 	}
 
