@@ -37,6 +37,7 @@ import	java.util.Iterator;
 import	javax.sound.sampled.AudioFormat;
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioInputStream;
+import	javax.sound.sampled.AudioSystem;
 import	javax.sound.sampled.spi.AudioFileWriter;
 
 import	org.tritonus.share.TDebug;
@@ -61,6 +62,7 @@ import	org.tritonus.share.ArraySet;
 public abstract class TAudioFileWriter
 	extends		AudioFileWriter
 {
+	protected static final int	ALL = AudioSystem.NOT_SPECIFIED;
 
 	public static AudioFormat.Encoding PCM_SIGNED=Encodings.getEncoding("PCM_SIGNED");
 	public static AudioFormat.Encoding PCM_UNSIGNED=Encodings.getEncoding("PCM_UNSIGNED");
@@ -171,27 +173,18 @@ public abstract class TAudioFileWriter
 		}
 
 		AudioFormat	inputFormat = audioInputStream.getFormat();
-		if (TDebug.TraceAudioFileWriter)
-		{
-			TDebug.out("input format: " + inputFormat);
-		}
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("input format: " + inputFormat); }
 		AudioFormat	outputFormat = null;
 		boolean		bNeedsConversion = false;
 		if (isAudioFormatSupportedImpl(inputFormat, fileType))
 		{
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("input format is supported directely");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("input format is supported directely"); }
 			outputFormat = inputFormat;
 			bNeedsConversion = false;
 		}
 		else
 		{
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("input format is not supported directely; trying to find a convertable format");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("input format is not supported directely; trying to find a convertable format"); }
 			outputFormat = findConvertableFormat(inputFormat, fileType);
 			if (outputFormat != null)
 			{
@@ -205,10 +198,7 @@ public abstract class TAudioFileWriter
 			}
 			else
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< input format is not supported and not convertable.");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< input format is not supported and not convertable."); }
 				throw new IllegalArgumentException("format not supported and not convertable");
 			}
 		}
@@ -248,27 +238,18 @@ public abstract class TAudioFileWriter
 			TDebug.out("class: "+getClass().getName());
 		}
 		AudioFormat	inputFormat = audioInputStream.getFormat();
-		if (TDebug.TraceAudioFileWriter)
-		{
-			TDebug.out("input format: " + inputFormat);
-		}
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("input format: " + inputFormat); }
 		AudioFormat	outputFormat = null;
 		boolean		bNeedsConversion = false;
 		if (isAudioFormatSupportedImpl(inputFormat, fileType))
 		{
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("input format is supported directely");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("input format is supported directely"); }
 			outputFormat = inputFormat;
 			bNeedsConversion = false;
 		}
 		else
 		{
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("input format is not supported directely; trying to find a convertable format");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("input format is not supported directely; trying to find a convertable format"); }
 			outputFormat = findConvertableFormat(inputFormat, fileType);
 			if (outputFormat != null)
 			{
@@ -282,10 +263,7 @@ public abstract class TAudioFileWriter
 			}
 			else
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< format is not supported");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< format is not supported"); }
 				throw new IllegalArgumentException("format not supported and not convertable");
 			}
 		}
@@ -300,10 +278,7 @@ public abstract class TAudioFileWriter
 		int written=writeImpl(audioInputStream,
 				 audioOutputStream,
 				 bNeedsConversion);
-		if (TDebug.TraceAudioFileWriter)
-		{
-			TDebug.out("< wrote "+written+" bytes.");
-		}
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("< wrote "+written+" bytes."); }
 		return written;
 	}
 
@@ -332,16 +307,9 @@ public abstract class TAudioFileWriter
 		byte[]	abBuffer = new byte[nBufferSize];
 		while (true)
 		{
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("trying to read (bytes): " + abBuffer.length);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("trying to read (bytes): " + abBuffer.length); }
 			int	nBytesRead = audioInputStream.read(abBuffer);
-			if (TDebug.TraceAudioFileWriter)
-			{
-
-				TDebug.out("read (bytes): " + nBytesRead);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("read (bytes): " + nBytesRead); }
 			if (nBytesRead == -1)
 			{
 				break;
@@ -354,10 +322,7 @@ public abstract class TAudioFileWriter
 			int	nWritten = audioOutputStream.write(abBuffer, 0, nBytesRead);
 			nTotalWritten += nWritten;
 		}
-		if (TDebug.TraceAudioFileWriter)
-		{
-			TDebug.out("<TAudioFileWriter.writeImpl(): after main loop. Wrote "+nTotalWritten+" bytes");
-		}
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("<TAudioFileWriter.writeImpl(): after main loop. Wrote "+nTotalWritten+" bytes"); }
 		audioOutputStream.close();
 		// TODO: get bytes written for header etc. from AudioOutputStrem and add to nTotalWrittenBytes
 		return nTotalWritten;
@@ -406,25 +371,14 @@ public abstract class TAudioFileWriter
 		while (audioFormats.hasNext())
 		{
 			AudioFormat	handledFormat = (AudioFormat) audioFormats.next();
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("matching against format : " + handledFormat);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("matching against format : " + handledFormat); }
 			if (AudioFormats.matches(handledFormat, audioFormat))
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("<...succeeded.");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("<...succeeded."); }
 				return true;
 			}
 		}
-		if (TDebug.TraceAudioFileWriter) {
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("< ... failed");
-			}
-		}
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... failed"); }
 		return false;
 	}
 
@@ -441,15 +395,9 @@ public abstract class TAudioFileWriter
 		AudioFormat inputFormat,
 		AudioFileFormat.Type fileType)
 	{
-		if (TDebug.TraceAudioFileWriter)
-		{
-			TDebug.out("TAudioFileWriter.findConvertableFormat(): input format: " + inputFormat);
-		}
+		if (TDebug.TraceAudioFileWriter) { TDebug.out("TAudioFileWriter.findConvertableFormat(): input format: " + inputFormat); }
 		if (!isFileTypeSupported(fileType)) {
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("< input file type is not supported.");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("< input file type is not supported."); }
 			return null;
 		}
 		AudioFormat.Encoding	inputEncoding = inputFormat.getEncoding();
@@ -457,49 +405,28 @@ public abstract class TAudioFileWriter
 		    && inputFormat.getSampleSizeInBits() == 8)
 		{
 			AudioFormat outputFormat = convertFormat(inputFormat, true, false);
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("trying output format: " + outputFormat);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("trying output format: " + outputFormat); }
 			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< ... succeeded");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... succeeded"); }
 				return outputFormat;
 			}
 			//$$fb 2000-08-16: added trial of other endianness for 8bit. We try harder !
 			outputFormat = convertFormat(inputFormat, false, true);
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("trying output format: " + outputFormat);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("trying output format: " + outputFormat); }
 			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< ... succeeded");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... succeeded"); }
 				return outputFormat;
 			}
 			outputFormat = convertFormat(inputFormat, true, true);
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("trying output format: " + outputFormat);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("trying output format: " + outputFormat); }
 			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< ... succeeded");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... succeeded"); }
 				return outputFormat;
 			}
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("< ... failed");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... failed"); }
 			return null;
 		}
 		else if (inputEncoding.equals(PCM_SIGNED) &&
@@ -510,33 +437,21 @@ public abstract class TAudioFileWriter
 			// TODO: possible to allow all sample sized > 8 bit?
 			// $$ fb: don't think that this is necessary. Well, let's talk about that in 5 years :)
 			AudioFormat	outputFormat = convertFormat(inputFormat, false, true);
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("trying output format: " + outputFormat);
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("trying output format: " + outputFormat); }
 			if (isAudioFormatSupportedImpl(outputFormat, fileType))
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< ... succeeded");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... succeeded"); }
 				return outputFormat;
 			}
 			else
 			{
-				if (TDebug.TraceAudioFileWriter)
-				{
-					TDebug.out("< ... failed");
-				}
+				if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... failed"); }
 				return null;
 			}
 		}
 		else
 		{
-			if (TDebug.TraceAudioFileWriter)
-			{
-				TDebug.out("< ... failed");
-			}
+			if (TDebug.TraceAudioFileWriter) { TDebug.out("< ... failed"); }
 			return null;
 		}
 	}
