@@ -52,9 +52,8 @@ public class WaveTool {
 	public static final short WAVE_FORMAT_ULAW = 7;
 	public static final short WAVE_FORMAT_IMA_ADPCM = 17;
 	public static final short WAVE_FORMAT_G723_ADPCM = 20;
-	public static final short WAVE_FORMAT_GSM_610 = 49;
+	public static final short WAVE_FORMAT_GSM610 = 49;
 	public static final short WAVE_FORMAT_G721_ADPCM = 64;
-	public static final short WAVE_FORMAT_GSM610 = 0x0031;
 	public static final short WAVE_FORMAT_MPEG = 80;
 
 	public static final int MIN_FMT_CHUNK_LENGTH=14;
