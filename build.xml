@@ -23,7 +23,6 @@
       <exclude name="org/tritonus/sampled/convert/jorbis/" />
       <exclude name="org/tritonus/sampled/file/jorbis/" />
       <exclude name="org/tritonus/midi/device/midishare/" />
-      <!--exclude name="org/tritonus/sampled/cdda/" /-->
       <exclude name="org/tritonus/debug/" />
     </javac>
     <javac srcdir="${src.classes}"
