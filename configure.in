@@ -208,7 +208,8 @@ fi
 
 AC_OUTPUT(Makefile
 	src/lib/alsa/Makefile
-	src/lib/cdda/Makefile
+	src/lib/cdparanoia/Makefile
+	src/lib/cooked_ioctl/Makefile
 	src/lib/esd/Makefile
 	src/lib/lame/Makefile
 	src/lib/saint/Makefile
