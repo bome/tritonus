@@ -21,25 +21,10 @@
  */
 
 
-/* CONVENIENCE section */
-
 #include	<alsa/asoundlib.h>
-#include	"HandleFieldHandler.hh"
-
-static bool	debug_flag = false;
-static FILE*	debug_file = NULL;
-
-/* end CONVENIENCE section */
-
-
-#include	<jni.h>
-
-void
-throwRuntimeException(JNIEnv *env, const char* pStrMessage);
-void
-checkArrayLength(JNIEnv *env, jarray array, int nRequiredLength);
-void
-setStringArrayElement(JNIEnv *env, jobjectArray array, int nIndex, const char* string1);
+#include	"../common/HandleFieldHandler.hh"
+#include	"../common/common.h"
+#include	"../common/debug.h"
 
 
 /*** common.h ***/
