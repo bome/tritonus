@@ -229,6 +229,7 @@ extends TEncodingFormatConversionProvider
 		private float[][][]		_pcmf = null;
 		private int[]			_index = null;
 
+		// TODO: introduce state variable
 		private boolean			m_bHeadersExpected;
 
 
@@ -267,8 +268,7 @@ extends TEncodingFormatConversionProvider
 
 
 
-		/**
-		 * Main loop.
+		/** Callback from circular buffer.
 		 */
 		public void execute()
 		{
@@ -308,22 +308,28 @@ extends TEncodingFormatConversionProvider
 				}
 				decodeDataPacket();
 			}
-			if (m_oggPage.eos() != 0)
+			if (m_oggPacket.e_o_s != 0)
 			{
 				if (TDebug.TraceAudioConverter) TDebug.out("end of vorbis stream reached");
-				/* The end of the vorbis stream is reached.
-				   So we shut down the logical bitstream and
-				   vorbis structures.
-				*/
-				m_oggStreamState.clear();
-				m_vorbisBlock.clear();
-				m_vorbisDspState.clear();
-				m_vorbisInfo.clear();
-				m_bHeadersExpected = true;
+				shutDownLogicalStream();
 			}
 			if (TDebug.TraceAudioConverter) TDebug.out("<DecodedJorbisAudioInputStream.execute(): end");
 		}
 
+
+
+		/* The end of the vorbis stream is reached.
+		   So we shut down the logical bitstream and
+		   vorbis structures.
+		*/
+		private void shutDownLogicalStream()
+		{
+			m_oggStreamState.clear();
+			m_vorbisBlock.clear();
+			m_vorbisDspState.clear();
+			m_vorbisInfo.clear();
+			m_bHeadersExpected = true;
+		}
 
 
 

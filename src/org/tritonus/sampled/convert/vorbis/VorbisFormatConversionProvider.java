@@ -514,8 +514,8 @@ extends TEncodingFormatConversionProvider
   		private Block			m_vorbisBlock = null;
 
   		// private List			m_songComments = new ArrayList();
-		// is altered lated in a dubious way
-  		private int			convsize = -1; // BUFFER_SIZE * 2;
+		// is altered later in a dubious way
+  		private int				convsize = -1; // BUFFER_SIZE * 2;
 		// TODO: further checking
   		private byte[]			convbuffer = new byte[CONVSIZE];
 		private float[][]		m_aPcmOut;
@@ -560,8 +560,7 @@ extends TEncodingFormatConversionProvider
 
 
 
-		/**
-		 * Main loop.
+		/** Callback from circular buffer.
 		 */
 		public void execute()
 		{
@@ -605,7 +604,7 @@ extends TEncodingFormatConversionProvider
 				}
 				decodeDataPacket();
 			}
-			if (m_oggPage.isEos())
+			if (m_oggPacket.isEos())
 			{
 				if (TDebug.TraceAudioConverter) TDebug.out("end of vorbis stream reached");
 				/* The end of the vorbis stream is reached.
