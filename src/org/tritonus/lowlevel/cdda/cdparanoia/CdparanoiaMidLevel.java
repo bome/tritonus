@@ -118,6 +118,7 @@ public class CdparanoiaMidLevel
 				    anChannels);
 
 		int	nTracks = anValues[1] - anValues[0] + 1;
+		out.println("<tracklist>");
 		for (int i = 0; i < nTracks; i++)
 		{
 			out.print("<track");
@@ -129,6 +130,7 @@ public class CdparanoiaMidLevel
 			out.print(" pre=\"" + abPre[i] + "\"");
 			out.print(" channels=\"" + anChannels[i] + "\" />\n");
 		}
+		out.println("</tracklist>");
 		byte[]	abData = baos.toByteArray();
 		ByteArrayInputStream	bais = new ByteArrayInputStream(abData);
 		cdparanoia.close();
