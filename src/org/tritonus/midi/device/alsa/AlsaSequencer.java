@@ -79,7 +79,7 @@ public class AlsaSequencer
 	private AlsaSeq.Event		m_clockEvent;
 	private boolean			m_bRecording;
 	private Track			m_track;
-
+	private AlsaSeq.Event		m_allNotesOffEvent;
 
 
 	public AlsaSequencer(MidiDevice.Info info)
@@ -88,6 +88,7 @@ public class AlsaSequencer
 		      Arrays.asList(MASTER_SYNC_MODES),
 		      Arrays.asList(SLAVE_SYNC_MODES));
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.<init>(): begin"); }
+		setTempoInMPQ(500000);
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.<init>(): end"); }
 	}
 
@@ -207,6 +208,11 @@ public class AlsaSequencer
 			getRecordingPort(),		// source port
 			AlsaSeq.SND_SEQ_ADDRESS_SUBSCRIBERS,	// dest client
 			AlsaSeq.SND_SEQ_ADDRESS_UNKNOWN);	// dest port
+		m_allNotesOffEvent = new AlsaSeq.Event();
+		m_loaderThread = new LoaderThread();
+		m_loaderThread.start();
+		m_syncThread = new MasterSynchronizer();
+		m_syncThread.start();
 	}
 
 
@@ -231,6 +237,8 @@ public class AlsaSequencer
 		m_queueControlEvent = null;
 		m_clockEvent.free();
 		m_clockEvent = null;
+		m_allNotesOffEvent.free();
+		m_allNotesOffEvent = null;
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.closeImpl(): end"); }
 	}
 
@@ -239,15 +247,23 @@ public class AlsaSequencer
 	protected void startImpl()
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): begin"); }
-		// TODO: start may also be a re-start after pausing. In this case, the tempo shouldn't be altered
-		setTempoInMPQ(500000);
-		startQueue();
-		m_loaderThread = new LoaderThread();
-		m_loaderThread.start();
-		if (getSlaveSyncMode().equals(SyncMode.MIDI_SYNC))
+		if (getTickPosition() == 0)
 		{
-			m_syncThread = new MasterSynchronizer();
-			m_syncThread.start();
+			startQueue();
+		}
+		else
+		{
+			continueQueue();
+		}
+		synchronized (m_loaderThread)
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): notifying loader thread"); }
+			m_loaderThread.notify();
+		}
+		synchronized (m_syncThread)
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): notifying synchronizer thread"); }
+			m_syncThread.notify();
 		}
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.startImpl(): end"); }
 	}
@@ -258,6 +274,7 @@ public class AlsaSequencer
 	{
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): begin"); }
 		stopQueue();
+		sendAllNotesOff();
 		// should be in base class?
 		stopRecording();
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.stopImpl(): end"); }
@@ -270,7 +287,7 @@ public class AlsaSequencer
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): begin"); }
 		updateQueueStatus();
 		int	nStatus = getQueueStatus().getStatus();
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): queueu status: " + nStatus); }
+		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): queue status: " + nStatus); }
 		boolean	bRunning = nStatus != 0;
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.isRunning(): end"); }
 		return bRunning;
@@ -372,7 +389,7 @@ public class AlsaSequencer
 		}
 		else
 		{
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): ignored because sequencer is not open"); }
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): ignored because sequencer is not open"); }
 		}
 		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.setTickPosition(): end"); }
 	}
@@ -440,98 +457,23 @@ public class AlsaSequencer
 
 
 
-	public boolean getTrackMute(int nTrack)
+	protected void setTrackEnabledImpl(int nTrack, boolean bEnabled)
 	{
-		// TODO:
-		return false;
-	}
-
-
-
-	public void setTrackMute(int nTrack, boolean bMute)
-	{
-		// TODO:
-	}
-
-
-
-	public boolean getTrackSolo(int nTrack)
-	{
-		// TODO:
-		return false;
-	}
-
-
-
-	public void setTrackSolo(int nTrack, boolean bSolo)
-	{
-		// TODO:
-	}
-
-
-
-	private void loadSequenceToNative()
-	{
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): begin"); }
-		Sequence	sequence = getSequence();
-		Track[]	aTracks = sequence.getTracks();
-		int[]	anTrackPositions = new int[aTracks.length];
-		for (int i = 0; i < aTracks.length; i++)
+		/**	If the enabled state changes to true, the events
+			between	the current playback position and the current
+			loading position are enqueued.
+			If the enabled state of a track changed to false,
+			the events belonging to this track are removed from
+			the queue, besides the 'off'-events.
+		*/
+		if (bEnabled)
 		{
-			anTrackPositions[i] = 0;
+			// TODO: reload events
 		}
-		// this is used to get a useful tick value for the end of track message
-		long	lHighestTick = 0;
-		while (true)
+		else
 		{
-			boolean		bTrackPresent = false;
-			long		lBestTick = Long.MAX_VALUE;
-			int		nBestTrack = -1;
-			for (int nTrack = 0; nTrack < aTracks.length; nTrack++)
-			{
-				if (anTrackPositions[nTrack] < aTracks[nTrack].size())
-				{
-					bTrackPresent = true;
-					MidiEvent	event = aTracks[nTrack].get(anTrackPositions[nTrack]);
-					long		lTick = event.getTick();
-					if (lTick < lBestTick)
-					{
-						lBestTick = lTick;
-						nBestTrack = nTrack;
-					}
-				}
-			}
-			if (!bTrackPresent)
-			{
-				MetaMessage	metaMessage = new MetaMessage();
-				try
-				{
-					metaMessage.setMessage(0x2F, new byte[0], 0);
-				}
-				catch (InvalidMidiDataException e)
-				{
-					if (TDebug.TraceAllExceptions) { TDebug.out(e); }
-				}
-				if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): sending End of Track message with tick " + (lHighestTick + 1)); }
-				enqueueMessage(metaMessage, lHighestTick + 1);
-				break;
-			}
-			MidiEvent	event = aTracks[nBestTrack].get(anTrackPositions[nBestTrack]);
-			anTrackPositions[nBestTrack]++;
-			MidiMessage	message = event.getMessage();
-			long		lTick = event.getTick();
-			lHighestTick = Math.max(lHighestTick, lTick);
-			if (message instanceof MetaMessage && ((MetaMessage) message).getType() == 0x2F)
-			{
-				if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): ignoring End of Track message with tick " + lTick); }
-			}
-			else
-			{
-				if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): enqueueing event with tick " + lTick); }
-				enqueueMessage(message, lTick);
-			}
+			// TODO: remove events
 		}
-		if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): end"); }
 	}
 
 
@@ -539,7 +481,7 @@ public class AlsaSequencer
 	/*
 	  This method has to be synchronized because it is called
 	  from sendMessageTick() as well as from loadSequenceToNative().
-	 */
+	*/
 	private synchronized void enqueueMessage(MidiMessage message, long lTick)
 	{
 		m_playbackAlsaMidiOut.enqueueMessage(message, lTick);
@@ -562,7 +504,7 @@ public class AlsaSequencer
 		@param message the MidiMessage to put into the queue.
 
 		@param lTick the desired schedule time in ticks.
-	 */
+	*/
 	public void sendMessageTick(MidiMessage message, long lTick)
 	{
 		enqueueMessage(message, lTick);
@@ -577,6 +519,13 @@ public class AlsaSequencer
 
 
 
+	private void continueQueue()
+	{
+		controlQueue(AlsaSeq.SND_SEQ_EVENT_CONTINUE);
+	}
+
+
+
 	private void stopQueue()
 	{
 		controlQueue(AlsaSeq.SND_SEQ_EVENT_STOP);
@@ -586,7 +535,7 @@ public class AlsaSequencer
 
 	private void controlQueue(int nType)
 	{
-		int	nSourcePort = getRecordingPort();
+		int	nSourcePort = getPlaybackPort();
 		int	nQueue = getQueue();
 		sendQueueControlEvent(
 			nType, AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL, 0, AlsaSeq.SND_SEQ_QUEUE_DIRECT, 0L,
@@ -595,16 +544,46 @@ public class AlsaSequencer
 	}
 
 
+
 	// NOTE: also used for setting position
-	public void sendQueueControlEvent(
+	private void sendQueueControlEvent(
 		int nType, int nFlags, int nTag, int nQueue, long lTime,
 		int nSourcePort, int nDestClient, int nDestPort,
 		int nControlQueue, int nControlValue, long lControlTime)
 	{
 		m_queueControlEvent.setCommon(nType, nFlags, nTag, nQueue, lTime,
-		0, nSourcePort, nDestClient, nDestPort);
+					      0, nSourcePort, nDestClient, nDestPort);
 		m_queueControlEvent.setQueueControl(nControlQueue, nControlValue, lControlTime);
 		getPlaybackAlsaSeq().eventOutputDirect(m_queueControlEvent);
+	}
+
+
+
+	private void sendAllNotesOffEvent(int nChannel)
+	{
+		int	nSourcePort = getPlaybackPort();
+		m_allNotesOffEvent.setCommon(
+			AlsaSeq.SND_SEQ_EVENT_CONTROLLER,
+			AlsaSeq.SND_SEQ_TIME_STAMP_REAL | AlsaSeq.SND_SEQ_TIME_MODE_REL,
+			0,				// tag
+			AlsaSeq.SND_SEQ_QUEUE_DIRECT,	// queue
+			0L,				// time
+			0, nSourcePort,			// source
+			AlsaSeq.SND_SEQ_ADDRESS_SUBSCRIBERS,	// dest client
+			AlsaSeq.SND_SEQ_ADDRESS_UNKNOWN);	// dest port
+		m_allNotesOffEvent.setControl(nChannel, 0x78, 0);
+		getPlaybackAlsaSeq().eventOutputDirect(m_allNotesOffEvent);
+	}
+
+
+
+	private void sendAllNotesOff()
+	{
+		// TODO: check if [0..15] or [1..16]
+		for (int nChannel = 0; nChannel < 16; nChannel++)
+		{
+			sendAllNotesOffEvent(nChannel);
+		}
 	}
 
 
@@ -612,7 +591,7 @@ public class AlsaSequencer
 	/**	Receive a correctely timestamped event.
 		This method expects that the timestamp is in ticks,
 		appropriate for the Sequence currently running.
-	 */
+	*/
 	private void receiveTimestamped(MidiMessage message, long lTimestamp)
 	{
 		if (isRecording())
@@ -630,7 +609,7 @@ public class AlsaSequencer
 	/**	Receive an event from a Receiver.
 	 	This method is called by AlsaSequencer.AlsaSequencerReceiver
 		on receipt of a MidiMessage.
-	 */
+	*/
 	protected void receive(MidiMessage message, long lTimestamp)
 	{
 		lTimestamp = getTickPosition();
@@ -819,14 +798,106 @@ public class AlsaSequencer
 	private class LoaderThread
 		extends	Thread
 	{
-		public LoaderThread()
-		{
-		}
+		private long	m_lLoadingPosition;
+
 
 
 		public void run()
 		{
-			loadSequenceToNative();
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.run(): begin"); }
+			while (isOpen())
+			{
+				do
+				{
+					synchronized (this)
+					{
+						try
+						{
+							this.wait();
+						}
+						catch (InterruptedException e)
+						{
+							if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+						}
+					}
+				}
+				while (! isRunning());
+				loadSequenceToNative();
+			}
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.run(): end"); }
+		}
+
+
+
+		private void loadSequenceToNative()
+		{
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): begin"); }
+			Sequence	sequence = getSequence();
+			Track[]	aTracks = sequence.getTracks();
+			int[]	anTrackPositions = new int[aTracks.length];
+			for (int i = 0; i < aTracks.length; i++)
+			{
+				anTrackPositions[i] = 0;
+			}
+			// this is used to get a useful tick value for the end of track message
+			m_lLoadingPosition = 0;
+			while (isRunning())
+			{
+				boolean		bTrackPresent = false;
+				long		lBestTick = Long.MAX_VALUE;
+				int		nBestTrack = -1;
+				for (int nTrack = 0; nTrack < aTracks.length; nTrack++)
+				{
+					if (anTrackPositions[nTrack] < aTracks[nTrack].size())
+					{
+						bTrackPresent = true;
+						MidiEvent	event = aTracks[nTrack].get(anTrackPositions[nTrack]);
+						long		lTick = event.getTick();
+						if (lTick < lBestTick)
+						{
+							lBestTick = lTick;
+							nBestTrack = nTrack;
+						}
+					}
+				}
+				if (!bTrackPresent)
+				{
+					/*	No more events; send
+						end-of-track event.
+					*/
+					MetaMessage	metaMessage = new MetaMessage();
+					try
+					{
+						metaMessage.setMessage(0x2F, new byte[0], 0);
+					}
+					catch (InvalidMidiDataException e)
+					{
+						if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+					}
+					if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): sending End of Track message with tick " + (m_lLoadingPosition + 1)); }
+					enqueueMessage(metaMessage, m_lLoadingPosition + 1);
+					// leave the while (isRunning())-loop
+					break;
+				}
+				/**	The normal case: deliver the event
+					found to be the next.
+				*/
+				MidiEvent	event = aTracks[nBestTrack].get(anTrackPositions[nBestTrack]);
+				anTrackPositions[nBestTrack]++;
+				MidiMessage	message = event.getMessage();
+				long		lTick = event.getTick();
+				m_lLoadingPosition = Math.max(m_lLoadingPosition, lTick);
+				if (message instanceof MetaMessage && ((MetaMessage) message).getType() == 0x2F)
+				{
+					if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): ignoring End of Track message with tick " + lTick); }
+				}
+				else
+				{
+					if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): enqueueing event with tick " + lTick); }
+					enqueueMessage(message, lTick);
+				}
+			}
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.loadSequenceToNative(): end"); }
 		}
 	}
 
@@ -838,17 +909,40 @@ public class AlsaSequencer
 	{
 		public void run()
 		{
-			long	lTickMin = getTickPosition();
-			long	lTickMax = getSequence().getTickLength();
-			// TODO: more precise calculation; use double, also for loop variable
-			long	lTickStep = getSequence().getResolution() / 24;
-			for (long lTick = lTickMin; lTick < lTickMax; lTick += lTickStep)
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.MasterSynchronizer.run(): begin"); }
+			while (isOpen())
 			{
-				if (TDebug.TraceSequencer) { TDebug.out("MasterSynchronizer.run(): sending clock event with tick " + lTick); }
-				m_clockEvent.setTimestamp(lTick);
-				getRecordingAlsaSeq().eventOutput(m_clockEvent);
-				getRecordingAlsaSeq().drainOutput();
+				do
+				{
+					synchronized (this)
+					{
+						try
+						{
+							this.wait();
+						}
+						catch (InterruptedException e)
+						{
+							if (TDebug.TraceAllExceptions) { TDebug.out(e); }
+						}
+					}
+				}
+				while (! isRunning());
+				long	lTickMin = getTickPosition();
+				long	lTickMax = getSequence().getTickLength();
+				// TODO: more precise calculation; use double, also for loop variable
+				long	lTickStep = getSequence().getResolution() / 24;
+				long	lTick = lTickMin;
+				// TODO: ... && getS.Mode().equals(...)
+				while (lTick < lTickMax && isRunning())
+				{
+					if (TDebug.TraceSequencer) { TDebug.out("MasterSynchronizer.run(): sending clock event with tick " + lTick); }
+					m_clockEvent.setTimestamp(lTick);
+					getRecordingAlsaSeq().eventOutput(m_clockEvent);
+					getRecordingAlsaSeq().drainOutput();
+					lTick += lTickStep;
+				}
 			}
+			if (TDebug.TraceSequencer) { TDebug.out("AlsaSequencer.MasterSynchronizer.run(): end"); }
 		}
 	}
 }
