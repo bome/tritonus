@@ -27,6 +27,8 @@ package	javax.sound.midi;
 
 
 import	org.tritonus.share.TDebug;
+import	org.tritonus.share.midi.MidiUtils;
+
 
 
 
@@ -35,7 +37,6 @@ public class MetaMessage
 {
 	public static final int		META = 0xFF;
 
-	public int			m_nType;
 
 
 	public MetaMessage()
@@ -52,27 +53,36 @@ public class MetaMessage
 
 
 
-	public int getStatus()
-	{
-		return META;
-	}
-
-
-
-	public void setMessage(int nType, byte[] abData, int nLength)
+	public void setMessage(int nType, byte[] abData, int nDataLength)
 		throws	InvalidMidiDataException
 	{
-		m_nType = nType;
-		byte[]	abCompleteData = new byte[nLength];
-		System.arraycopy(abData, 0, abCompleteData, 0, nLength);
-		setMessage(abCompleteData, nLength);
+		if (nType > 127)
+		{
+			throw new InvalidMidiDataException("type must not exceed 127");
+		}
+		byte[]	abLength = MidiUtils.getVariableLengthQuantity(nDataLength);
+		int	nCompleteLength = 2 + abLength.length + nDataLength;
+		int	nDataStart = 2 + abLength.length;
+		byte[]	abCompleteData = new byte[nCompleteLength];
+		abCompleteData[0] = (byte) META;
+		abCompleteData[1] = (byte) nType;
+		System.arraycopy(abLength, 0, abCompleteData, 2, abLength.length);
+		System.arraycopy(abData, 0, abCompleteData, nDataStart, nDataLength);
+		setMessage(abCompleteData, nCompleteLength);
 	}
 
 
 
 	public int getType()
 	{
-		return m_nType;
+		if (data != null)
+		{
+			return MidiUtils.getUnsignedInteger(data[1]);
+		}
+		else
+		{
+			return -1;
+		}
 	}
 
 
