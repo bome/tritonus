@@ -41,7 +41,7 @@ import	javax.sound.sampled.spi.FormatConversionProvider;
 
 import	org.tritonus.TDebug;
 import	org.tritonus.sampled.Encodings;
-import	org.tritonus.util.TCircularBuffer;
+//import	org.tritonus.util.TCircularBuffer;
 
 import	javazoom.jl.decoder.Bitstream;
 import	javazoom.jl.decoder.BitstreamException;

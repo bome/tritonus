@@ -44,7 +44,7 @@ import	org.tritonus.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import	org.tritonus.sampled.convert.TEncodingFormatConversionProvider;
 import	org.tritonus.sampled.convert.TSimpleFormatConversionProvider;
 import	org.tritonus.sampled.Encodings;
-import	org.tritonus.util.TCircularBuffer;
+//import	org.tritonus.util.TCircularBuffer;
 
 
 
