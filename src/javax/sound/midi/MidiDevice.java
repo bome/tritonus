@@ -25,6 +25,8 @@
 
 package	javax.sound.midi;
 
+import java.util.List;
+
 
 
 public interface MidiDevice
@@ -65,6 +67,13 @@ public interface MidiDevice
 
 	public Transmitter getTransmitter()
 		throws	MidiUnavailableException;
+
+
+
+	public List<Receiver> getReceivers();
+
+
+	public List<Transmitter> getTransmitters();
 
 
 

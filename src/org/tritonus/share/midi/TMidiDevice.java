@@ -27,6 +27,7 @@ package	org.tritonus.share.midi;
 
 
 import	java.util.ArrayList;
+import	java.util.Collections;
 import	java.util.Iterator;
 import	java.util.List;
 
@@ -67,17 +68,21 @@ public abstract class TMidiDevice
 	 */
 	private boolean		m_bUseOut;
 
-	/**	The number of Receivers that refer to this MidiDevice.
-	 *	This is currently only maintained for information purposes.
+	/**	The list of Receiver objects that belong to this
+	 * 	MidiDevice.
 	 *
 	 *	@see #addReceiver
 	 *	@see #removeReceiver
 	 */
-	private int			m_nNumReceivers;
+	private List<Receiver>	m_receivers;
 
-	/**	The collection of Transmitter that refer to this MidiDevice.
+	/**	The list of Transmitter objects that belong to this
+	 * 	MidiDevice.
+	 *
+	 *	@see #addTransmitter
+	 *	@see #removeTransmitter
 	 */
-	private List			m_transmitters;
+	private List<Transmitter>	m_transmitters;
 
 
 
@@ -106,14 +111,12 @@ public abstract class TMidiDevice
 			   boolean bUseIn,
 			   boolean bUseOut)
 	{
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.<init>(): begin"); }
 		m_info = info;
 		m_bUseIn = bUseIn;
 		m_bUseOut = bUseOut;
 		m_bOpen = false;
-		m_nNumReceivers = 0;
-		m_transmitters = new ArrayList();
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.<init>(): end"); }
+		m_receivers = new ArrayList<Receiver>();
+		m_transmitters = new ArrayList<Transmitter>();
 	}
 
 
@@ -127,8 +130,6 @@ public abstract class TMidiDevice
 	 */
 	public MidiDevice.Info getDeviceInfo()
 	{
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.getDeviceInfo(): begin"); }
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.getDeviceInfo(): end"); }
 		return m_info;
 	}
 
@@ -293,6 +294,19 @@ public abstract class TMidiDevice
 	}
 
 
+
+	public List<Receiver> getReceivers()
+	{
+		return Collections.unmodifiableList(m_receivers);
+	}
+
+
+	public List<Transmitter> getTransmitters()
+	{
+		return Collections.unmodifiableList(m_transmitters);
+	}
+
+
 	/*
 	 *	Intended for overriding by subclasses to receive messages.
 	 *	This method is called by TMidiDevice.Receiver object on
@@ -305,16 +319,22 @@ public abstract class TMidiDevice
 
 
 
-	private void addReceiver()
+	private void addReceiver(Receiver receiver)
 	{
-		m_nNumReceivers++;
+		synchronized (m_receivers)
+		{
+			m_receivers.add(receiver);
+		}
 	}
 
 
 
-	private void removeReceiver()
+	private void removeReceiver(Receiver receiver)
 	{
-		m_nNumReceivers--;
+		synchronized (m_receivers)
+		{
+			m_receivers.remove(receiver);
+		}
 	}
 
 
@@ -404,7 +424,7 @@ public abstract class TMidiDevice
 
 		public TReceiver()
 		{
-			TMidiDevice.this.addReceiver();
+			TMidiDevice.this.addReceiver(this);
 			m_bOpen = true;
 		}
 
@@ -441,7 +461,7 @@ public abstract class TMidiDevice
 		 */
 		public void close()
 		{
-			TMidiDevice.this.removeReceiver();
+			TMidiDevice.this.removeReceiver(this);
 			m_bOpen = false;
 		}
 	}
@@ -452,12 +472,14 @@ public abstract class TMidiDevice
 	public class TTransmitter
 		implements	Transmitter
 	{
+		private boolean		m_bOpen;
 		private Receiver	m_receiver;
 
 
 
 		public TTransmitter()
 		{
+			m_bOpen = true;
 			TMidiDevice.this.addTransmitter(this);
 		}
 
@@ -482,7 +504,7 @@ public abstract class TMidiDevice
 
 		public void send(MidiMessage message, long lTimeStamp)
 		{
-			if (getReceiver() != null)
+			if (getReceiver() != null && m_bOpen)
 			{
 				getReceiver().send(message, lTimeStamp);
 			}
@@ -498,10 +520,13 @@ public abstract class TMidiDevice
 		public void close()
 		{
 			TMidiDevice.this.removeTransmitter(this);
-			synchronized (this)
-			{
-				m_receiver = null;
-			}
+			m_bOpen = false;
+			/* Previously, this method just set m_receiver to null
+			   instead of maintaining an open flag. This allows to exploit
+			   the behaviour of calling close(), the setReceiver() again,
+			   and the Transmitter is "reopened". TODO: write a test case
+			   for this scenario.
+			*/
 		}
 	}
 
