@@ -197,7 +197,6 @@ public abstract class TMidiDevice
 		If this is true, retrieving Transmitters is possible
 		and input from the physical port is passed to them.
 
-		@see #m_bUseIn
 		@see #getUseOut
 	 */
 	protected boolean getUseIn()
@@ -211,7 +210,6 @@ public abstract class TMidiDevice
 		If this is true, retrieving Receivers is possible
 		and output to them is passed to the physical port.
 
-		@see #m_bUseOut
 		@see #getUseIn
 	 */
 	protected boolean getUseOut()

@@ -5,7 +5,6 @@
 /*
  *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
  *
- *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
  *   by the Free Software Foundation; either version 2 of the License, or
@@ -19,7 +18,6 @@
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
  */
 
 package	org.tritonus.share.sampled;
@@ -180,8 +178,6 @@ import	org.tritonus.share.TDebug;
  * here</a>.
  *
  * @author Florian Bomers
- * @see FloatSampleInput
- * @see FloatSampleOutput
  */
 
 public class FloatSampleBuffer {

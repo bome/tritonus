@@ -114,7 +114,7 @@ public class AudioFormatSet extends ArraySet {
 	 * The first matching format is returned. If no element
 	 * matches <code>elem</code>, <code>null</code> is returned.
 	 * <p>
-	 * @see AudioFormats.matches(AudioFormat, AudioFormat)
+	 * @see AudioFormats#matches(AudioFormat, AudioFormat)
 	 */
 	public AudioFormat matches(AudioFormat elem) {
 		if (elem==null) {
