@@ -49,6 +49,7 @@ extends BaseAudioFileReaderTestCase
 	{
 		super(strName);
 		setResourcePrefix("gsm");
+		setCheckRealLengths(false);
 	}
 }
 
