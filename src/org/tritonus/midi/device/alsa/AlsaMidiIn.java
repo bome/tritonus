@@ -27,14 +27,10 @@ package	org.tritonus.midi.device.alsa;
 
 import	javax.sound.midi.InvalidMidiDataException;
 import	javax.sound.midi.MetaMessage;
-import	javax.sound.midi.MidiDevice;
 import	javax.sound.midi.MidiEvent;
 import	javax.sound.midi.MidiMessage;
-import	javax.sound.midi.MidiUnavailableException;
-import	javax.sound.midi.Receiver;
 import	javax.sound.midi.ShortMessage;
 import	javax.sound.midi.SysexMessage;
-import	javax.sound.midi.Transmitter;
 
 import	org.tritonus.share.TDebug;
 import	org.tritonus.lowlevel.alsa.AlsaSeq;
@@ -50,6 +46,12 @@ public class AlsaMidiIn
 	private int			m_nSourcePort;
 	private int			m_nDestPort;
 	private AlsaMidiInListener	m_listener;
+	private AlsaSeq.Event		m_event = new AlsaSeq.Event();
+
+	// used to query event for detailed information
+	private int[]			m_anValues = new int[5];
+	private long[]			m_alValues = new long[1];
+
 
 
 	/**
@@ -119,7 +121,7 @@ public class AlsaMidiIn
 
 	/**	The working part of the class.
 		Here, the thread repeats in blocking in a call to
-		AlsaSeq.getEvent() and calling the listener's
+		getEvent() and calling the listener's
 		dequeueEvent() method.
 	*/
 	public void run()
@@ -127,11 +129,8 @@ public class AlsaMidiIn
 		// TODO: recheck interupt mechanism
 		while (!interrupted())
 		{
-			// TODO: do we need a filter in AlsaSeq?
 			MidiEvent	event = getEvent();
 			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.run(): got event: " + event); }
-
-			// TODO: event == null indicates a serious bug
 			if (event != null)
 			{
 				MidiMessage	m = event.getMessage();
@@ -142,6 +141,10 @@ public class AlsaMidiIn
 				}
 				m_listener.dequeueEvent(event);
 			}
+			else
+			{
+				if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllWarnings) { TDebug.out("AlsaMidiIn.run(): received null from getEvent()"); }
+			}
 		}
 	}
 
@@ -149,20 +152,19 @@ public class AlsaMidiIn
 
 	private MidiEvent getEvent()
 	{
-		int[]	anValues = new int[13];
-		long[]	alValues = new long[1];
-		Object[]	aValues = new Object[1];
-		if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): before getEvent(int[], long[])"); }
+		if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): before getEvent(int[], long[])"); }
 		while (true)
 		{
-			boolean	bEventPresent = getAlsaSeq().getEvent(anValues, alValues, aValues);
-			if (bEventPresent)
+			int	nReturn = getAlsaSeq().eventInput(m_event);
+			if (nReturn >= 0)
 			{
 				break;
 			}
+
 			/*
 			 *	Sleep for 1 ms to enable scheduling.
 			 */
+			if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllWarnings) { TDebug.out("AlsaMidiIn.getEvent(): sleeping because got no event"); }
 			try
 			{
 				Thread.sleep(1);
@@ -172,170 +174,125 @@ public class AlsaMidiIn
 				if (TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 		}
-		// TDebug.out("after getEvent()");
 		MidiMessage	message = null;
-		int	nType = anValues[0];
+		int	nType = m_event.getType();
 		switch (nType)
 		{
 		case AlsaSeq.SND_SEQ_EVENT_NOTEON:
 		case AlsaSeq.SND_SEQ_EVENT_NOTEOFF:
+		case AlsaSeq.SND_SEQ_EVENT_KEYPRESS:
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): note event");
-			}
+			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): note/aftertouch event"); }
+			m_event.getNote(m_anValues);
 			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = (nType == AlsaSeq.SND_SEQ_EVENT_NOTEON) ? ShortMessage.NOTE_ON : ShortMessage.NOTE_OFF;
-			int	nChannel = anValues[8] & 0xF;
-			int	nKey = anValues[9] & 0x7F;
-			int	nVelocity = anValues[10] & 0x7F;
+			int	nCommand = -1;
+			switch (nType)
+			{
+			case AlsaSeq.SND_SEQ_EVENT_NOTEON:
+				nCommand = ShortMessage.NOTE_ON;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_NOTEOFF:
+				nCommand = ShortMessage.NOTE_OFF;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_KEYPRESS:
+				nCommand = ShortMessage.POLY_PRESSURE;
+				break;
+			}
+			int	nChannel = m_anValues[0] & 0xF;
+			int	nKey = m_anValues[1] & 0x7F;
+			int	nVelocity = m_anValues[2] & 0x7F;
 			try
 			{
 				shortMessage.setMessage(nCommand, nChannel, nKey, nVelocity);
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			message = shortMessage;
 			break;
 		}
 
-		case AlsaSeq.SND_SEQ_EVENT_KEYPRESS:
-		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): key pressure event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xA0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nKey = anValues[9] & 0x7F;
-			int	nValue = anValues[10] & 0x7F;
-			try
-			{
-				shortMessage.setMessage(nCommand, nChannel, nKey, nValue);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
-		}
-
+		// all event types that use snd_seq_ev_ctrl_t
+		// TODO: more
 		case AlsaSeq.SND_SEQ_EVENT_CONTROLLER:
-		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): controller event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xB0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nControl = anValues[9] & 0x7F;
-			int	nValue = anValues[10] & 0x7F;
-			try
-			{
-
-				shortMessage.setMessage(nCommand, nChannel, nControl, nValue);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
-		}
-
 		case AlsaSeq.SND_SEQ_EVENT_PGMCHANGE:
-		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): program change event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xC0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nProgram = anValues[10] & 0x7F;
-			try
-			{
-				shortMessage.setMessage(nCommand, nChannel, nProgram, 0);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
-			}
-			message = shortMessage;
-			break;
-		}
-
 		case AlsaSeq.SND_SEQ_EVENT_CHANPRESS:
-		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): channel pressure event");
-			}
-			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xD0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nPressure = anValues[10] & 0x7F;
-			try
-			{
-				// TODO: dirty: assuming time in ticks
-				shortMessage.setMessage(nCommand, nChannel, nPressure, 0);
-			}
-			catch (InvalidMidiDataException e)
-			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions) { TDebug.out(e); }
-			}
-			message = shortMessage;
-			break;
-		}
-
 		case AlsaSeq.SND_SEQ_EVENT_PITCHBEND:
 		{
-			if (TDebug.TraceAlsaSeq)
+			m_event.getControl(m_anValues);
+			int	nCommand = -1;
+			int	nChannel = m_anValues[0] & 0xF;
+			int	nData1 = -1;
+			int	nData2 = -1;
+			switch (nType)
 			{
-				TDebug.out("AlsaSeq.getEvent(): pitchbend event");
+			case AlsaSeq.SND_SEQ_EVENT_CONTROLLER:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): controller event"); }
+				nCommand = ShortMessage.CONTROL_CHANGE;
+				nData1 = m_anValues[1] & 0x7F;
+				nData2 = m_anValues[2] & 0x7F;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_PGMCHANGE:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): program change event"); }
+				nCommand = ShortMessage.PROGRAM_CHANGE;
+				nData1 = m_anValues[2] & 0x7F;
+				nData2 = 0;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_CHANPRESS:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): channel pressure event"); }
+				nCommand = ShortMessage.CHANNEL_PRESSURE;
+				nData1 = m_anValues[2] & 0x7F;
+				nData2 = 0;
+				break;
+
+			case AlsaSeq.SND_SEQ_EVENT_PITCHBEND:
+				if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): pitchbend event"); }
+				nCommand = ShortMessage.PITCH_BEND;
+				nData1 = m_anValues[2] & 0x7F;
+				nData2 = (m_anValues[2] >> 7) & 0x7F;
+				break;
 			}
 			ShortMessage	shortMessage = new ShortMessage();
-			int	nCommand = 0xE0;
-			int	nChannel = anValues[8] & 0xF;
-			int	nValueLow = anValues[10] & 0x7F;
-			int	nValueHigh = (anValues[10] >> 7) & 0x7F;
 			try
 			{
-				shortMessage.setMessage(nCommand, nChannel, nValueLow, nValueHigh);
+				shortMessage.setMessage(nCommand, nChannel, nData1, nData2);
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions)
-				{
-					TDebug.out(e);
-				}
+				if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllExceptions) { TDebug.out(e); }
+			}
+			message = shortMessage;
+		}
+		break;
+///
+		case AlsaSeq.SND_SEQ_EVENT_CLOCK:
+		{
+			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): clock event"); }
+			ShortMessage	shortMessage = new ShortMessage();
+			int	nStatus = ShortMessage.TIMING_CLOCK;
+			try
+			{
+				shortMessage.setMessage(nStatus);
+			}
+			catch (InvalidMidiDataException e)
+			{
+				if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			message = shortMessage;
 			break;
 		}
 
+///
 		case AlsaSeq.SND_SEQ_EVENT_USR_VAR4:
 		{
-			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): meta event"); }
+			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): meta event"); }
 			MetaMessage	metaMessage = new MetaMessage();
-			byte[]	abTransferData = (byte[]) aValues[0];
+			byte[]	abTransferData = m_event.getVar();
 			int	nMetaType = abTransferData[0];
 			byte[]	abData = new byte[abTransferData.length - 1];
 			System.arraycopy(abTransferData, 1, abData, 0, abTransferData.length - 1);
@@ -345,7 +302,7 @@ public class AlsaMidiIn
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions) { TDebug.out(e); }
+				if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			message = metaMessage;
 			break;
@@ -353,22 +310,19 @@ public class AlsaMidiIn
 
 		case AlsaSeq.SND_SEQ_EVENT_SYSEX:
 		{
-			if (TDebug.TraceAlsaSeq)
-			{
-				TDebug.out("AlsaSeq.getEvent(): sysex event");
-			}
+			if (TDebug.TraceAlsaMidiIn) { TDebug.out("AlsaMidiIn.getEvent(): sysex event"); }
 			SysexMessage	sysexMessage = new SysexMessage();
-			byte[]	abCompleteData = (byte[]) aValues[0];
+			byte[]	abCompleteData = m_event.getVar();
 			int	nStatus = 0;
 			int	nDataStart = 0;
-			if (abCompleteData[0] == 0xF0)
+			if (abCompleteData[0] == SysexMessage.SYSTEM_EXCLUSIVE)
 			{
-				nStatus = 0xF0;
+				nStatus = SysexMessage.SYSTEM_EXCLUSIVE;
 				nDataStart = 1;
 			}
 			else
 			{
-				nStatus = 0xF7;
+				nStatus = SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
 			}
 			byte[]	abData = new byte[abCompleteData.length - nDataStart];
 			System.arraycopy(abCompleteData, nDataStart, abData, 0, abCompleteData.length - 1);
@@ -378,14 +332,14 @@ public class AlsaMidiIn
 			}
 			catch (InvalidMidiDataException e)
 			{
-				if (TDebug.TraceAlsaSeq || TDebug.TraceAllExceptions) { TDebug.out(e); }
+				if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllExceptions) { TDebug.out(e); }
 			}
 			message = sysexMessage;
 			break;
 		}
 
 		default:
-			if (TDebug.TraceAlsaSeq) { TDebug.out("AlsaSeq.getEvent(): unknown event"); }
+			if (TDebug.TraceAlsaMidiIn || TDebug.TraceAllWarnings) { TDebug.out("AlsaMidiIn.getEvent(): unknown event"); }
 
 		}
 		if (message != null)
@@ -396,17 +350,13 @@ public class AlsaMidiIn
 			  Otherwise, if the timestamp is in realtime (ns),
 			  we put us in the tick value.
 			*/
-			long	lTick = 0L;
-			if ((anValues[1] & AlsaSeq.SND_SEQ_TIME_STAMP_MASK) == AlsaSeq.SND_SEQ_TIME_STAMP_TICK)
-			{
-				lTick = alValues[0];
-			}
-			else
+			long	lTimestamp = m_event.getTimestamp();
+			if ((m_event.getFlags() & AlsaSeq.SND_SEQ_TIME_STAMP_MASK) == AlsaSeq.SND_SEQ_TIME_STAMP_REAL)
 			{
 				// ns -> µs
-				lTick = alValues[0] / 1000;
+				lTimestamp /= 1000;
 			}
-			MidiEvent	event = new MidiEvent(message, lTick);
+			MidiEvent	event = new MidiEvent(message, lTimestamp);
 			return event;
 		}
 		else
