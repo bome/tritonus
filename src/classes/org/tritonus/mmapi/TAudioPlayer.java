@@ -43,6 +43,7 @@ extends TPlayer
 
 
 	protected void doRealize()
+		throws Exception
 	{
 	}
 
@@ -50,30 +51,35 @@ extends TPlayer
 
 	// TODO:
 	protected void doPrefetch()
+		throws Exception
 	{
 	}
 
 
 
 	protected void doStart()
+		throws Exception
 	{
 	}
 
 
 
 	protected void doStop()
+		throws Exception
 	{
 	}
 
 
 
 	protected void doDeallocate()
+		throws Exception
 	{
 	}
 
 
 
 	protected void doClose()
+		throws Exception
 	{
 	}
 }
