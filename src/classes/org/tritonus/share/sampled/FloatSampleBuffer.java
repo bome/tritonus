@@ -342,9 +342,18 @@ public class FloatSampleBuffer {
 	 *         for calling convertToByteArray(..) is called
 	 */
 	public int getByteArrayBufferSize(AudioFormat format) {
+		return getByteArrayBufferSize(format, getSampleCount());
+	}
+
+	/**
+	 * @param lenInSamples how many samples to be considered
+	 * @return the required size of the buffer for the given number of samples
+	 *         for calling convertToByteArray(..)
+	 */
+	public int getByteArrayBufferSize(AudioFormat format, int lenInSamples) {
 		// make sure this format is supported
 		FloatSampleTools.getFormatType(format);
-		return format.getFrameSize() * getSampleCount();
+		return format.getFrameSize() * lenInSamples;
 	}
 
 	/**
@@ -356,8 +365,24 @@ public class FloatSampleBuffer {
 	 * @return number of bytes written to <code>buffer</code>
 	 */
 	public int convertToByteArray(byte[] buffer, int offset, AudioFormat format) {
-		int byteCount = getByteArrayBufferSize(format);
-		if (offset + byteCount > buffer.length) {
+		return convertToByteArray(0, getSampleCount(), buffer, offset, format);
+	}
+
+	/**
+	 * Writes this sample buffer's audio data to <code>buffer</code>
+	 * as an interleaved byte array.
+	 * <code>buffer</code> must be large enough to hold all data.
+	 *
+	 * @param readOffset the sample offset from where samples are read from this FloatSampleBuffer
+	 * @param lenInSamples how many samples are converted
+	 * @param buffer the byte buffer written to
+	 * @param writeOffset the byte offset in buffer
+	 * @throws IllegalArgumentException when buffer is too small or <code>format</code> doesn't match
+	 * @return number of bytes written to <code>buffer</code>
+	 */
+	public int convertToByteArray(int readOffset, int lenInSamples, byte[] buffer, int writeOffset, AudioFormat format) {
+		int byteCount = getByteArrayBufferSize(format, lenInSamples);
+		if (writeOffset + byteCount > buffer.length) {
 			throw new IllegalArgumentException
 			("FloatSampleBuffer.convertToByteArray: buffer too small.");
 		}
@@ -369,7 +394,7 @@ public class FloatSampleBuffer {
 			throw new IllegalArgumentException
 			("FloatSampleBuffer.convertToByteArray: different channel count.");
 		}
-		FloatSampleTools.float2byte(channels, 0, buffer, offset, getSampleCount(),
+		FloatSampleTools.float2byte(channels, readOffset, buffer, writeOffset, lenInSamples,
 		                            format, getConvertDitherBits(FloatSampleTools.getFormatType(format)));
 
 		return byteCount;

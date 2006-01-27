@@ -624,11 +624,12 @@ public class FloatSampleTools {
 		    	                                   +" sampleCount="+sampleCount);
 		}
 		if (outByteOffset < 0
-		    || outByteOffset + (sampleCount * outByteStep) > output.length
+		    || outByteOffset + (sampleCount * outByteStep) >= (output.length + outByteStep)
 		    || outByteStep < getSampleSize(formatType)) {
 		    	throw new IllegalArgumentException("invalid output index: "
 		    	                                   +"output.length="+output.length
 		    	                                   +" outByteOffset="+outByteOffset
+		    	                                   +" outByteStep="+outByteStep
 		    	                                   +" sampleCount="+sampleCount
 		    	                                   +" format="+formatType2Str(formatType));
 		}
