@@ -282,7 +282,8 @@ Java_org_tritonus_lowlevel_ogg_Page_getHeader
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Page_getHeader(): begin\n"); }
 	handle = getHandle(env, obj);
 	byteArray = (*env)->NewByteArray(env, handle->header_len);
-	(*env)->SetByteArrayRegion(env, byteArray, 0, handle->header_len, handle->header);
+	(*env)->SetByteArrayRegion(env, byteArray, 0, handle->header_len,
+								(jbyte*) (handle->header));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Page_getHeader(): end\n"); }
 	return byteArray;
 }
@@ -304,7 +305,8 @@ Java_org_tritonus_lowlevel_ogg_Page_getBody
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Page_getBody(): begin\n"); }
 	handle = getHandle(env, obj);
 	byteArray = (*env)->NewByteArray(env, handle->body_len);
-	(*env)->SetByteArrayRegion(env, byteArray, 0, handle->body_len, handle->body);
+	(*env)->SetByteArrayRegion(env, byteArray, 0, handle->body_len,
+								(jbyte*) (handle->body));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Page_getBody(): end\n"); }
 	return byteArray;
 }

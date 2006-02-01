@@ -113,7 +113,8 @@ Java_org_tritonus_lowlevel_ogg_Packet_getData
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Packet_getData(): begin\n"); }
 	handle = getHandle(env, obj);
 	abData = (*env)->NewByteArray(env, handle->bytes);
-	(*env)->SetByteArrayRegion(env, abData, 0, handle->bytes, handle->packet);
+	(*env)->SetByteArrayRegion(env, abData, 0, handle->bytes,
+								(jbyte*) (handle->packet));
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Packet_getData(): end\n"); }
 	return abData;
 }

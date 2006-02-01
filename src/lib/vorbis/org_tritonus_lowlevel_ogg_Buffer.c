@@ -209,7 +209,7 @@ Java_org_tritonus_lowlevel_ogg_Buffer_readInit
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): buffer[0]: %d\n", buffer[0]); }
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): buffer[1]: %d\n", buffer[1]); }
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): buffer[2]: %d\n", buffer[2]); }
-	oggpack_readinit(handle, buffer, nBytes);
+	oggpack_readinit(handle, (unsigned char*) buffer, nBytes);
 	(*env)->ReleaseByteArrayElements(env, abBuffer, buffer, 0);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_readInit(): end\n"); }
 }
@@ -416,7 +416,8 @@ Java_org_tritonus_lowlevel_ogg_Buffer_getBuffer
 	handle = getHandle(env, obj);
 	buffer = oggpack_get_buffer(handle);
 	abBuffer = (*env)->NewByteArray(env, handle->storage);
-	(*env)->SetByteArrayRegion(env, abBuffer, 0, handle->storage, buffer);
+	(*env)->SetByteArrayRegion(env, abBuffer, 0, handle->storage,
+								(jbyte*) buffer);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_Buffer_getBuffer(): end\n"); }
 	return abBuffer;
 }

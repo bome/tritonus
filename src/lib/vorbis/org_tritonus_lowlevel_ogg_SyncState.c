@@ -170,7 +170,7 @@ Java_org_tritonus_lowlevel_ogg_SyncState_write
 	handle = getHandle(env, obj);
 	buffer = ogg_sync_buffer(handle, nBytes);
 	(*env)->GetByteArrayRegion(env, abBuffer,
-				   0, nBytes, buffer);
+				   0, nBytes, (jbyte*) buffer);
 	nReturn = ogg_sync_wrote(handle, nBytes);
 	if (debug_flag) { fprintf(debug_file, "Java_org_tritonus_lowlevel_ogg_SyncState_write(): end\n"); }
 	return nReturn;
