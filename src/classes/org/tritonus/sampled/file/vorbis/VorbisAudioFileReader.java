@@ -121,7 +121,7 @@ extends TAudioFileReader
 		// Get the serial number and set up the rest of decode.
 		// serialno first; use it to set up a logical stream
 		int nSerialNo = oggPage.getSerialNo();
-		TDebug.out("serial no.: " + nSerialNo);
+		if (TDebug.TraceAudioFileReader) TDebug.out("serial no.: " + nSerialNo);
 		oggStreamState.init(nSerialNo);
 
 		// extract the initial header from the first page and verify that the
