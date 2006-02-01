@@ -105,7 +105,6 @@ extends TAudioFileReader
 				// IDEA: throw EOFException?
 				oggSyncState.free();
 				oggStreamState.free();
-				oggPage.free();
 				oggPacket.free();
 				throw new UnsupportedAudioFileException("not a Vorbis stream: ended prematurely");
 			}
@@ -113,7 +112,6 @@ extends TAudioFileReader
 			if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): throwing exception"); }
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
       			throw new UnsupportedAudioFileException("not a Vorbis stream: not in Ogg bitstream format");
 		}
@@ -139,7 +137,6 @@ extends TAudioFileReader
 			// error; stream version mismatch perhaps
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: can't read first page of Ogg bitstream data");
 		}
@@ -151,7 +148,6 @@ extends TAudioFileReader
 			// no page? must not be vorbis
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: can't read initial header packet");
 		}
@@ -175,7 +171,6 @@ extends TAudioFileReader
 			if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): throwing exception"); }
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: first packet is not the identification header");
 		}
@@ -190,7 +185,6 @@ extends TAudioFileReader
 			if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): throwing exception"); }
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: not a vorbis header packet");
 		}
@@ -200,7 +194,6 @@ extends TAudioFileReader
 			if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): throwing exception"); }
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: initial packet not marked as beginning of stream");
 		}
@@ -212,7 +205,6 @@ extends TAudioFileReader
 			if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): throwing exception"); }
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: wrong vorbis version");
 		}
@@ -234,7 +226,7 @@ extends TAudioFileReader
 
 		if (fSampleRate < 1.0F ||
 		    nChannels < 1 ||
-		    blocksizes[0] < 8||
+		    blocksizes[0] < 8 ||
 		    blocksizes[1] < blocksizes[0] ||
 		    (abData[29] & 0x1) != 1)
 		{
@@ -242,14 +234,12 @@ extends TAudioFileReader
 			if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): throwing exception"); }
 			oggSyncState.free();
 			oggStreamState.free();
-			oggPage.free();
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: illegal values in initial header");
 		}
 
 		oggSyncState.free();
 		oggStreamState.free();
-		oggPage.free();
 		oggPacket.free();
 
 		/*
