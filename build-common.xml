@@ -137,10 +137,19 @@
 
   <!-- JAVASEQUENCER: -->
   <jar jarfile="${dist}/tritonus_javasequencer-${version}.jar" >
-	<fileset dir="${build}" >
-	  <include name="org/tritonus/midi/device/java/" />
-	</fileset>
-	<fileset dir="${src}/packaging/tritonus_javasequencer" />
+	  <fileset dir="${build}" >
+		  <include name="org/tritonus/midi/device/java/" />
+	  </fileset>
+	  <fileset dir="${src}/packaging/tritonus_javasequencer" />
+  </jar>
+
+  <!-- FLUIDSYNTH: -->
+  <jar jarfile="${dist}/tritonus_fluidsynth-${version}.jar" >
+	  <fileset dir="${build}" >
+		  <include name="org/tritonus/midi/device/fluidsynth/" />
+		  <include name="org/tritonus/midi/sb/fluidsynth/" />
+	  </fileset>
+	  <fileset dir="${src}/packaging/tritonus_fluidsynth" />
   </jar>
 
   <!-- AOS: AudioOutputStream stuff-->

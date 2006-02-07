@@ -126,6 +126,7 @@ AC_CHECK_LIB(mp3lame,lame_init_params,[SUBDIRS="$SUBDIRS src/lib/lame"; AC_MSG_R
 AC_CHECK_HEADER(linux/cdrom.h,[SUBDIRS="$SUBDIRS src/lib/cooked_ioctl"; AC_MSG_RESULT(Information: will build stuff for 'cooked ioctl' cdda)],[AC_MSG_RESULT(Information: will not build stuff for 'cooked ioctl' cdda)])
 AC_CHECK_HEADER(cdda_interface.h,[SUBDIRS="$SUBDIRS src/lib/cdparanoia"; AC_MSG_RESULT(Information: will build stuff for cdparanoia)],[AC_MSG_RESULT(Information: will not build stuff for cdparanoia)])
 AC_CHECK_HEADER(ogg/ogg.h,[SUBDIRS="$SUBDIRS src/lib/vorbis"; AC_MSG_RESULT(Information: will build stuff for vorbis)],[AC_MSG_RESULT(Information: will not build stuff for vorbis)])
+AC_CHECK_HEADER(fluidsynth.h,[SUBDIRS="$SUBDIRS src/lib/fluidsynth"; AC_MSG_RESULT(Information: will build stuff for fluidsynth)],[AC_MSG_RESULT(Information: will NOT build stuff for fluidsynth)])
 
 dnl AC_MSG_RESULT(hallo x${SUBDIRS}x)
 
@@ -227,5 +228,6 @@ AC_OUTPUT(Makefile
 	src/lib/lame/Makefile
 	src/lib/vorbis/Makefile
 	src/lib/pvorbis/Makefile
+	src/lib/fluidsynth/Makefile
 	doc/Makefile
 	test/Makefile)
