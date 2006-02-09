@@ -208,12 +208,8 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 {
 	//printf("3a\n");
 	//printf("4");
-	jclass fluidinstrclass = (*env)->FindClass(env, "org/tritonus/midi/sb/fluidsynth/FluidSoundbank$FluidInstrument");
-	if (!fluidinstrclass) printf("could not get class id");
-	//printf("5");
-	jmethodID initid = (*env)->GetMethodID(env, fluidinstrclass, "<init>", "(Lorg/tritonus/midi/sb/fluidsynth/FluidSoundbank;IILjava/lang/String;)V");
-	if (!initid) printf("could not get method id");
-	//printf("6");
+	jclass fluidinstrclass;
+	jmethodID initid;
 	int count = 0;
 	jobjectArray instruments;
 	jstring instrname;
@@ -222,6 +218,14 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 	fluid_sfont_t* sfont;
 	fluid_preset_t preset;
 	int offset;
+	int i = 0;
+
+	fluidinstrclass = (*env)->FindClass(env, "org/tritonus/midi/sb/fluidsynth/FluidSoundbank$FluidInstrument");
+	if (!fluidinstrclass) printf("could not get class id");
+	//printf("5");
+	initid = (*env)->GetMethodID(env, fluidinstrclass, "<init>", "(Lorg/tritonus/midi/sb/fluidsynth/FluidSoundbank;IILjava/lang/String;)V");
+	if (!initid) printf("could not get method id");
+	//printf("6");
 
 	sfont = fluid_synth_get_sfont_by_id(_synth, sfontID);
 	
@@ -246,7 +250,6 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 
 	sfont->iteration_start(sfont);
 
-	int i = 0;
 	while (sfont->iteration_next(sfont, &preset))
 	{
 		instrname = (*env)->NewStringUTF(env,
