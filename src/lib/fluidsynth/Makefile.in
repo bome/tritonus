@@ -43,7 +43,6 @@ JNIOBJ=\
 
 OBJ=\
 	$(JNIOBJ) \
-	fluidsynth_jni.o \
 	../common/common.o
 
 
