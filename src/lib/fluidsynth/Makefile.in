@@ -9,8 +9,8 @@ REL_JAVAEXTLIBPATH=@REL_JAVAEXTLIBPATH@
 JAVAEXTLIBPATH=$(JAVADIR)/$(REL_JAVAEXTLIBPATH)
 OSNAME=@OSNAME@
 ARCHNAME=@ARCHNAME@
-CC=@CC@
-CPPFLAGS=-g -Wall -Werror -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) -fPIC -D_REENTRANT #-pedantic
+CC=libtool --mode=compile @CC@
+CPPFLAGS=-g -Wall -Werror -I$(JAVADIR)/include -I$(JAVADIR)/include/$(OSNAME) #-fPIC -D_REENTRANT #-pedantic
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -18,6 +18,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 LN_S=@LN_S@
 RM_F=@RM_F@
 MKDIR_P=@MKDIR_P@
+
 
 OBJDIR=../../../@BUILD_DIR@
 vpath %.class $(OBJDIR)/org/tritonus/midi/device/fluidsynth
@@ -45,6 +46,7 @@ OBJ=\
 	$(JNIOBJ) \
 	../common/common.o
 
+LTOBJ:=$(OBJ:.o=.lo)
 
 
 JNIHEADERS:=$(JNIOBJ:.o=.h)
@@ -63,11 +65,13 @@ JNICLASSES=\
 all: $(LIBDEST)
 
 $(LIBDEST):	$(OBJ)
-#	$(CC) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
+	libtool --mode=link gcc -g -O -o $(LIBBASENAME).la $(LTOBJ) \
+                     -rpath /usr/lib $(LIBS)
+##	$(CC) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
 ##
-## !!!! modified temporarily for testing !!!!
+## use this for testing with a custom version of libfluidsynth
 ##
-	$(CC) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -Wl,--rpath -Wl,/usr/local/lib -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
+##	$(CC) -nostartfiles -shared -Wl,-soname,$(LIBBASENAME).so.1 -Wl,--rpath -Wl,/usr/local/lib -o $(LIBDEST) $(OBJ) -L/usr/lib $(LIBS)
 	$(RM_F) $(LIBBASENAME).so.1
 	$(LN_S) $(LIBBASENAME).so.1.0 $(LIBBASENAME).so.1
 	$(RM_F) $(LIBBASENAME).so
@@ -115,3 +119,4 @@ uninstall-link: uninstall
 .PHONY: clean
 clean:
 	rm -rf $(LIBDEST) $(JNIHEADERS) *.o *~
+	libtool --mode=clean $(RM_F) $(LTOBJ) $(LIBBASENAME).la

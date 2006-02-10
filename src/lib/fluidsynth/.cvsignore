@@ -2,4 +2,6 @@ Makefile
 org_tritonus_*.h
 *.o
 *.so*
-
+*.lo
+*.la
+.libs
