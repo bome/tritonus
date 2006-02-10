@@ -22,8 +22,8 @@ Which components do i need?
 What you need
 =============
 
-- jdk 1.4.x, 1.3.x or jdk1.2.x. Testing was done with the
-Sun jdk1.4.0-b92. Other versions may work.
+- jdk 1.5.x. Testing was done with the
+Sun jdk 1.5.0-b64. Other versions may work.
 If you want to compile Linux specific components, it is recommended to do
 it on a Linux system, so you need a j2sdk for Linux. Cross-compiling has not
 been tested.
@@ -70,9 +70,9 @@ For cdda:
 
 For the build process:
 - make (Testing done with GNU make 3.79)
-- ant (Testing done with Apache Ant 1.5; 1.4 should work, too. 
+- ant (Testing done with Apache Ant 1.6; 1.5 should work, too. 
   Get it from http://jakarta.apache.org/ant/ if not present in your distribution)
-- g++
+- gcc
 - libtool (currently not needed)
 - m4
 - cpp
