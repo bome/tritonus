@@ -54,8 +54,13 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     private MidiChannel channels[];
     private FluidSoundbank defaultSoundbank;
+    
     private int defaultbankSfontID;
-
+    
+    // native pointers *32 bit*!
+	private int settingsPtr;
+	private int synthPtr;
+	private int audioDriverPtr;
 
 
 	/**
@@ -76,6 +81,7 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
         if (newSynth() < 0) {
             throw new Exception("Low-level initialization of the synthesizer failed");
         }
+        System.out.println("FluidSynthesizer: " + Integer.toHexString(synthPtr));
         try
         {
             Receiver r = getReceiver();
@@ -91,17 +97,20 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     public void setDefaultSoundBank(int sfontID)
     {
-        defaultSoundbank = new FluidSoundbank(sfontID);
+	    defaultSoundbank = new FluidSoundbank(this, sfontID);
+	    defaultbankSfontID = sfontID;
     }
 
 
     protected void finalize(){
+        System.out.println("finalize: " + Integer.toHexString(synthPtr));
         deleteSynth();
     }
 
 
     public void close()
     {
+        System.out.println("close: " + Integer.toHexString(synthPtr));
         deleteSynth();
         super.close();
     }
@@ -178,7 +187,7 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     public Soundbank getDefaultSoundbank()
     {
-        return defaultSoundbank;
+       return defaultSoundbank;
     }
 
     public long getLatency()

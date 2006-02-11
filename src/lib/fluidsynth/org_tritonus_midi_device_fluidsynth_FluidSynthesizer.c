@@ -46,58 +46,50 @@
 //static int fluid_jni_get_preset_count(int sfontID);
 
 
-static fluid_settings_t* _settings = 0;
-static fluid_synth_t* _synth = 0;
-static fluid_audio_driver_t* _adriver = 0;
+static jclass fluidsynthclass;
+static jfieldID settingsPtrFieldID;
+static jfieldID synthPtrFieldID;
+static jfieldID audioDriverPtrFieldID;
 
-static void fluid_jni_delete_synth();
-
-
-
-static int fluid_jni_new_synth()
+static int get_fluidclassinfo(JNIEnv *env)
 {
-	if (_synth == 0)
+	if (fluidsynthclass == NULL)
 	{
-		_settings = new_fluid_settings();
-		if (_settings == 0) {
-			goto error_recovery;
-		}
-		
-		_synth = new_fluid_synth(_settings);
-		if (_synth == 0) {
-			goto error_recovery;
-		}
-		
-		_adriver = new_fluid_audio_driver(_settings, _synth);
-		if (_adriver == 0) {
-			goto error_recovery;
-		}
+		fluidsynthclass = (*env)->FindClass(env, "org/tritonus/midi/device/fluidsynth/FluidSynthesizer");
+		if (!fluidsynthclass)
+			return -1;
+		synthPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "synthPtr", "I");
+		settingsPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "settingsPtr", "I");
+		audioDriverPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "audioDriverPtr", "I");
 	}
 	return 0;
-
-error_recovery:
-	fluid_jni_delete_synth();
-	return -1;
 }
 
-
-static void fluid_jni_delete_synth()
+static fluid_synth_t* get_synth(JNIEnv *env, jobject obj)
 {
-	if (_adriver) {
-		delete_fluid_audio_driver(_adriver);
-		_adriver = 0;
-	}
-	if (_synth) {
-		delete_fluid_synth(_synth);
-		_synth = 0;
-	}
-	if (_settings) {
-		delete_fluid_settings(_settings);
-		_settings = 0;
-	}
+	get_fluidclassinfo(env);
+	return (fluid_synth_t*) (*env)->GetIntField(env, obj, synthPtrFieldID);
 }
 
-
+static void fluid_jni_delete_synth(JNIEnv *env, jobject obj, fluid_settings_t* settings, fluid_synth_t* synth, fluid_audio_driver_t* adriver)
+{
+	get_fluidclassinfo(env);
+	if (adriver)
+	{
+		delete_fluid_audio_driver(adriver);
+		(*env)->SetIntField(env, obj, audioDriverPtrFieldID, 0);
+	}
+	if (synth)
+	{
+		delete_fluid_synth(synth);
+		(*env)->SetIntField(env, obj, synthPtrFieldID, 0);
+	}
+	if (settings)
+	{
+		delete_fluid_settings(settings);
+		(*env)->SetIntField(env, obj, settingsPtrFieldID, (int) 0);
+	}
+}
 
 
 
@@ -109,7 +101,36 @@ static void fluid_jni_delete_synth()
 JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_newSynth
 (JNIEnv *env, jobject obj)
 {
-	return fluid_jni_new_synth();
+	fluid_synth_t* synth = NULL;
+	fluid_settings_t* settings = NULL;
+	fluid_audio_driver_t* adriver = NULL;
+
+	synth = get_synth(env, obj);
+	if (synth == 0)
+	{
+		settings = new_fluid_settings();
+		if (settings == 0) {
+			goto error_recovery;
+		}
+		
+		synth = new_fluid_synth(settings);
+		if (synth == 0) {
+			goto error_recovery;
+		}
+		
+		adriver = new_fluid_audio_driver(settings, synth);
+		if (adriver == 0) {
+			goto error_recovery;
+		}
+		(*env)->SetIntField(env, obj, settingsPtrFieldID, (int) settings);
+		(*env)->SetIntField(env, obj, synthPtrFieldID, (int) synth);
+		(*env)->SetIntField(env, obj, audioDriverPtrFieldID, (int) adriver);
+	}
+	return 0;
+
+error_recovery:
+	fluid_jni_delete_synth(env, obj, settings, synth, adriver);
+	return -1;
 }
 
 
@@ -121,7 +142,14 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_deleteSynth
 (JNIEnv *env, jobject obj)
 {
-	fluid_jni_delete_synth();
+	fluid_synth_t* synth;
+	fluid_settings_t* settings;
+	fluid_audio_driver_t* adriver;
+
+	synth = get_synth(env, obj);
+	settings = (fluid_settings_t*) (*env)->GetIntField(env, obj, settingsPtrFieldID);
+	adriver = (fluid_audio_driver_t*) (*env)->GetIntField(env, obj, audioDriverPtrFieldID);
+	fluid_jni_delete_synth(env, obj, settings, synth, adriver);
 }
 
 
@@ -134,9 +162,10 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 (JNIEnv *env, jobject obj, jint command, jint channel, jint data1, jint data2)
 {
 	fluid_midi_event_t* event;
+	fluid_synth_t* synth = get_synth(env, obj);
 
-	//printf("values: %d %d %d %d\n", command, channel, data1, data2);
-	//printf("1"); fflush(stdout);
+	printf("synth: %x, values: %d %d %d %d\n", synth, command, channel, data1, data2);
+	fflush(stdout);
 	event = new_fluid_midi_event();
 	if (!event)
 	{
@@ -156,7 +185,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	fluid_midi_event_get_velocity(event));
 	fflush(stdout);
 */
-	fluid_synth_handle_midi_event(_synth, event);
+	fluid_synth_handle_midi_event(synth, event);
 	//printf("4"); fflush(stdout);
 	delete_fluid_midi_event(event);
 	//printf("5\n"); fflush(stdout);
@@ -173,13 +202,15 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 {
 	const char *cfilename = (*env)->GetStringUTFChars(env, filename, 0);
 	int sfont_id;
-	if (_synth == 0)
+	fluid_synth_t* synth = get_synth(env, obj);
+
+	if (synth == 0)
 	{
 		sfont_id = -1;
 	}
 	else
 	{
-		sfont_id = fluid_synth_sfload(_synth, cfilename, 1);
+		sfont_id = fluid_synth_sfload(synth, cfilename, 1);
 	}
 	(*env)->ReleaseStringUTFChars(env, filename, cfilename);
 
@@ -195,7 +226,8 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_setBankOffset
 (JNIEnv *env, jobject obj, jint sfontID, jint offset)
 {
-	fluid_synth_set_bank_offset(_synth, sfontID, offset);
+	fluid_synth_t* synth = get_synth(env, obj);
+	fluid_synth_set_bank_offset(synth, sfontID, offset);
 }
 
 /*
@@ -208,6 +240,9 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 {
 	//printf("3a\n");
 	//printf("4");
+	jclass fluidsoundbankclass;
+	jfieldID synthFieldID;
+	jobject synthobj;
 	jclass fluidinstrclass;
 	jmethodID initid;
 	int count = 0;
@@ -219,6 +254,12 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 	fluid_preset_t preset;
 	int offset;
 	int i = 0;
+	fluid_synth_t* synth;
+	
+	fluidsoundbankclass = (*env)->FindClass(env, "org/tritonus/midi/sb/fluidsynth/FluidSoundbank");
+	synthFieldID = (*env)->GetFieldID(env, fluidsoundbankclass, "synth", "Lorg/tritonus/midi/device/fluidsynth/FluidSynthesizer;");
+	synthobj = (*env)->GetObjectField(env, obj, synthFieldID);
+	synth = get_synth(env, synthobj);
 
 	fluidinstrclass = (*env)->FindClass(env, "org/tritonus/midi/sb/fluidsynth/FluidSoundbank$FluidInstrument");
 	if (!fluidinstrclass) printf("could not get class id");
@@ -227,7 +268,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 	if (!initid) printf("could not get method id");
 	//printf("6");
 
-	sfont = fluid_synth_get_sfont_by_id(_synth, sfontID);
+	sfont = fluid_synth_get_sfont_by_id(synth, sfontID);
 	
 	if (sfont != NULL)
 	{
@@ -242,8 +283,8 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 	//printf("7");
 	instruments = (*env)->NewObjectArray(env, count, fluidinstrclass, NULL);
 
-	sfont = fluid_synth_get_sfont_by_id(_synth, sfontID);
-	offset = fluid_synth_get_bank_offset(_synth, sfontID);
+	sfont = fluid_synth_get_sfont_by_id(synth, sfontID);
+	offset = fluid_synth_get_bank_offset(synth, sfontID);
 
 	if (sfont == NULL)
 		return 0;
@@ -276,7 +317,8 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_setGain
 (JNIEnv *env, jobject obj, jfloat gain)
 {
-	fluid_synth_set_gain(_synth, (float) gain);
+	fluid_synth_t* synth = get_synth(env, obj);
+	fluid_synth_set_gain(synth, (float) gain);
 }
 
 
@@ -291,7 +333,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 /* $$mp: currently not functional because fluid_synth_set_reverb_preset() is not
          present in fluidsynth 1.0.6
 */
-	//fluid_synth_set_reverb_preset(_synth, (int) reverbPreset);
+	//fluid_synth_set_reverb_preset(synth, (int) reverbPreset);
 }
 
 
@@ -303,9 +345,10 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_getMaxPolyphony
 (JNIEnv *env, jobject obj)
 {
-	if (_synth)
+	fluid_synth_t* synth = get_synth(env, obj);
+	if (synth)
 	{
-		return fluid_synth_get_polyphony(_synth);
+		return fluid_synth_get_polyphony(synth);
 	}
 	else
 	{

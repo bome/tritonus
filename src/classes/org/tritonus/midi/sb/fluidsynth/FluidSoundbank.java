@@ -40,6 +40,7 @@ package org.tritonus.midi.sb.fluidsynth;
 
 import javax.sound.midi.*;
 import org.tritonus.share.TDebug;
+import org.tritonus.midi.device.fluidsynth.FluidSynthesizer;
 
 /**
  *
@@ -47,6 +48,7 @@ import org.tritonus.share.TDebug;
  */
 public class FluidSoundbank implements Soundbank
 {
+	private FluidSynthesizer synth;
     private int sfontID;
     private FluidInstrument[] instruments;
 
@@ -65,8 +67,9 @@ public class FluidSoundbank implements Soundbank
     }
 
 
-    public FluidSoundbank(int sfontID)
+    public FluidSoundbank(FluidSynthesizer synth, int sfontID)
     {
+	    this.synth = synth;
         this.sfontID = sfontID;
 		//TDebug.out("1");
         instruments = nGetInstruments(sfontID);
