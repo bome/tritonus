@@ -48,7 +48,6 @@ public class FluidSynthesizerProvider
 extends MidiDeviceProvider
 {
 	private static MidiDevice.Info		sm_info;
-	private static FluidSynthesizer synth = null;
 
 
 
@@ -92,16 +91,13 @@ extends MidiDeviceProvider
 		{
 			try
 			{
-				if (synth == null)
+				FluidSynthesizer synth = new FluidSynthesizer(sm_info);
+				String sfontFile =
+					System.getProperty("tritonus.fluidsynth.defaultsoundbank");
+				if (sfontFile != null && ! sfontFile.equals(""))
 				{
-					synth = new FluidSynthesizer(sm_info);
-					String sfontFile =
-						System.getProperty("tritonus.fluidsynth.defaultsoundbank");
-					if (sfontFile != null && ! sfontFile.equals(""))
-					{
-						int sfontID = synth.loadSoundFont(sfontFile);
-						synth.setDefaultSoundBank(sfontID);
-					}
+					int sfontID = synth.loadSoundFont(sfontFile);
+					synth.setDefaultSoundBank(sfontID);
 				}
 				device = synth;
 			}
