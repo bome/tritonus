@@ -29,9 +29,16 @@
 #define FALSE 0
 #define TRUE 1
 
+#ifndef _MSC_VER
+#define VARIADIC_MACROS
+#elif _MSC_VER >= 1400
+#define VARIADIC_MACROS
+#endif
+
+#ifdef VARIADIC_MACROS
 #define out(...) if (debug_flag) { fprintf(debug_file, __VA_ARGS__); \
 									fflush(debug_file); }
-
+#endif
 static int	debug_flag = FALSE;
 static FILE*	debug_file = NULL;
 
