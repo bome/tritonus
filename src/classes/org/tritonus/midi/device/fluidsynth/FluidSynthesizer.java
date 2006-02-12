@@ -6,6 +6,7 @@
 
 /*
  * Copyright (c) 2006 by Henri Manson
+ * Copyright (c) 2006 by Matthias Pfisterer
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +40,7 @@
 package org.tritonus.midi.device.fluidsynth;
 
 import javax.sound.midi.*;
+import org.tritonus.share.TDebug;
 import org.tritonus.share.midi.TMidiDevice;
 import org.tritonus.midi.sb.fluidsynth.FluidSoundbank;
 
@@ -47,11 +49,6 @@ TODO: implement openImpl() and closeImpl()
 */
 public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 {
-    static {
-        System.loadLibrary("tritonusfluid");
-    }
-
-
     private MidiChannel channels[];
     private FluidSoundbank defaultSoundbank;
     
@@ -61,6 +58,42 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 	private int settingsPtr;
 	private int synthPtr;
 	private int audioDriverPtr;
+
+
+
+	static
+	{
+		loadNativeLibrary();
+	}
+
+
+	/** Load the native library for fluidsynth.
+	 */
+	private static void loadNativeLibrary()
+	{
+		if (TDebug.TraceFluidNative) TDebug.out("FluidSynthesizer.loadNativeLibrary(): loading native library tritonusfluid");
+		try
+		{
+			System.loadLibrary("tritonusfluid");
+			// only reached if no exception occures
+			if (TDebug.TraceFluidNative)
+			{
+				setTrace(true);
+			}
+		}
+		catch (Error e)
+		{
+			if (TDebug.TraceFluidNative ||
+			    TDebug.TraceAllExceptions)
+			{
+				TDebug.out(e);
+			}
+			// throw e;
+		}
+		if (TDebug.TraceFluidNative) TDebug.out("FluidSynthesizer.loadNativeLibrary(): loaded");
+	}
+
+
 
 
 	/**
@@ -81,7 +114,7 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
         if (newSynth() < 0) {
             throw new Exception("Low-level initialization of the synthesizer failed");
         }
-        System.out.println("FluidSynthesizer: " + Integer.toHexString(synthPtr));
+        if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer: " + Integer.toHexString(synthPtr));
         try
         {
             Receiver r = getReceiver();
@@ -103,14 +136,14 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
 
     protected void finalize(){
-        System.out.println("finalize: " + Integer.toHexString(synthPtr));
+        if (TDebug.TraceSynthesizer) TDebug.out("finalize: " + Integer.toHexString(synthPtr));
         deleteSynth();
     }
 
 
     public void close()
     {
-        System.out.println("close: " + Integer.toHexString(synthPtr));
+        if (TDebug.TraceSynthesizer) TDebug.out("close: " + Integer.toHexString(synthPtr));
         deleteSynth();
         super.close();
     }
@@ -133,7 +166,8 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
     public native int loadSoundFont(String filename);
     public native void setBankOffset(int sfontID, int offset);
     public native void setGain(float gain);
-/* $$mp: currently not functional because fluid_synth_set_reverb_preset() is not
+
+	/* $$mp: currently not functional because fluid_synth_set_reverb_preset() is not
          present in fluidsynth 1.0.6
 */
     public native void setReverbPreset(int reverbPreset);
@@ -142,6 +176,14 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     protected native int newSynth();
     protected native void deleteSynth();
+
+	/** Sets tracing in the native code.
+	 * Note that this method can either be called directly or (recommended)
+	 * the system property "tritonus.TraceFluidNative" can be set to true.
+	 *
+	 * @see org.tritonus.share.TDebug
+	 */
+	public static native void setTrace(boolean bTrace);
 
     public boolean isSoundbankSupported(Soundbank soundbank)
     {

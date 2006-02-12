@@ -6,6 +6,7 @@
 
 /*
  * Copyright (c) 2006 by Henri Manson
+ * Copyright (c) 2006 by Matthias Pfisterer
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +42,8 @@
 
 #include "org_tritonus_midi_device_fluidsynth_FluidSynthesizer.h"
 #include "org_tritonus_midi_sb_fluidsynth_FluidSoundbank.h"
+#include "../common/common.h"
+#include "../common/debug.h"
 
 
 //static int fluid_jni_get_preset_count(int sfontID);
@@ -164,7 +167,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	fluid_midi_event_t* event;
 	fluid_synth_t* synth = get_synth(env, obj);
 
-	printf("synth: %x, values: %d %d %d %d\n", synth, command, channel, data1, data2);
+	out("synth: %p, values: %d %d %d %d\n", synth, command, channel, data1, data2);
 	fflush(stdout);
 	event = new_fluid_midi_event();
 	if (!event)
@@ -352,8 +355,20 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	}
 	else
 	{
-		return -99;
+		return -1;
 	}
+}
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    setTrace
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_setTrace
+(JNIEnv *env, jclass cls, jboolean bTrace)
+{
+	debug_flag = bTrace;
+	debug_file = stderr;
 }
 
 
