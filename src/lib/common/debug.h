@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999 - 2001 by Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
+ *  Copyright (c) 1999 - 2006 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -29,6 +29,8 @@
 #define FALSE 0
 #define TRUE 1
 
+#define out(...) if (debug_flag) { fprintf(debug_file, __VA_ARGS__); \
+									fflush(debug_file); }
 
 static int	debug_flag = FALSE;
 static FILE*	debug_file = NULL;
