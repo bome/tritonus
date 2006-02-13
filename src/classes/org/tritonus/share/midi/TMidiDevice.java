@@ -5,8 +5,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer
- *
+ *  Copyright (c) 1999 - 2006 by Matthias Pfisterer
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -59,18 +58,17 @@ implements MidiDevice
 
 	/**	A flag to store whether the device is "open".
 	 */
-	private boolean			m_bOpen;
+	private boolean			m_bDeviceOpen;
 
-	// TODO: rename to UseReceiver/UseTransmitter
 	/**	Whether to handle input from the physical port
 		and to allow Transmitters.
 	 */
-	private boolean		m_bUseIn;
+	private boolean		m_bUseTransmitter;
 
 	/**	Whether to handle output to the physical port
 		and to allow Receivers.
 	 */
-	private boolean		m_bUseOut;
+	private boolean		m_bUseReceiver;
 
 	/**	The list of Receiver objects that belong to this
 	 * 	MidiDevice.
@@ -112,13 +110,13 @@ implements MidiDevice
 	 *	@param info	The info object that describes this instance.
 	 */
 	public TMidiDevice(MidiDevice.Info info,
-			   boolean bUseIn,
-			   boolean bUseOut)
+			   boolean bUseTransmitter,
+			   boolean bUseReceiver)
 	{
 		m_info = info;
-		m_bUseIn = bUseIn;
-		m_bUseOut = bUseOut;
-		m_bOpen = false;
+		m_bUseTransmitter = bUseTransmitter;
+		m_bUseReceiver = bUseReceiver;
+		m_bDeviceOpen = false;
 		m_receivers = new ArrayList<Receiver>();
 		m_transmitters = new ArrayList<Transmitter>();
 	}
@@ -145,7 +143,7 @@ implements MidiDevice
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): begin"); }
 		if (! isOpen())
 		{
-			m_bOpen = true;
+			m_bDeviceOpen = true;
 			openImpl();
 		}
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): end"); }
@@ -160,8 +158,8 @@ implements MidiDevice
 	protected void openImpl()
 		throws MidiUnavailableException
 	{
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.openImpl(): begin"); }
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.openImpl(): end"); }
+		if (TDebug.TraceMidiDevice) TDebug.out("TMidiDevice.openImpl(): begin");
+		if (TDebug.TraceMidiDevice) TDebug.out("TMidiDevice.openImpl(): end");
 	}
 
 
@@ -173,7 +171,7 @@ implements MidiDevice
 		{
 			closeImpl();
 			// TODO: close all Receivers and Transmitters
-			m_bOpen = false;
+			m_bDeviceOpen = false;
 		}
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.close(): end"); }
 	}
@@ -186,15 +184,15 @@ implements MidiDevice
 	 */
 	protected void closeImpl()
 	{
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.closeImpl(): begin"); }
-		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.closeImpl(): end"); }
+		if (TDebug.TraceMidiDevice) TDebug.out("TMidiDevice.closeImpl(): begin");
+		if (TDebug.TraceMidiDevice) TDebug.out("TMidiDevice.closeImpl(): end");
 	}
 
 
 
 	public boolean isOpen()
 	{
-		return m_bOpen;
+		return m_bDeviceOpen;
 	}
 
 
@@ -205,9 +203,9 @@ implements MidiDevice
 
 		@see #getUseOut
 	 */
-	protected boolean getUseIn()
+	protected boolean getUseTransmitter()
 	{
-		return m_bUseIn;
+		return m_bUseTransmitter;
 	}
 
 
@@ -216,11 +214,11 @@ implements MidiDevice
 		If this is true, retrieving Receivers is possible
 		and output to them is passed to the physical port.
 
-		@see #getUseIn
+		@see #getUseTransmitter
 	 */
-	protected boolean getUseOut()
+	protected boolean getUseReceiver()
 	{
-		return m_bUseOut;
+		return m_bUseReceiver;
 	}
 
 
@@ -240,7 +238,7 @@ implements MidiDevice
 	public int getMaxReceivers()
 	{
 		int	nMaxReceivers = 0;
-		if (getUseOut())
+		if (getUseReceiver())
 		{
 		/*
 		 *	The value -1 means unlimited.
@@ -255,7 +253,7 @@ implements MidiDevice
 	public int getMaxTransmitters()
 	{
 		int	nMaxTransmitters = 0;
-		if (getUseIn())
+		if (getUseTransmitter())
 		{
 		/*
 		 *	The value -1 means unlimited.
@@ -274,7 +272,7 @@ implements MidiDevice
 	public Receiver getReceiver()
 		throws MidiUnavailableException
 	{
-		if (! getUseOut())
+		if (! getUseReceiver())
 		{
 			throw new MidiUnavailableException("Receivers are not supported by this device");
 		}
@@ -290,7 +288,7 @@ implements MidiDevice
 	public Transmitter getTransmitter()
 		throws MidiUnavailableException
 	{
-		if (! getUseIn())
+		if (! getUseTransmitter())
 		{
 			throw new MidiUnavailableException("Transmitters are not supported by this device");
 		}
@@ -323,7 +321,7 @@ implements MidiDevice
 
 
 
-	private void addReceiver(Receiver receiver)
+	protected void addReceiver(Receiver receiver)
 	{
 		synchronized (m_receivers)
 		{
@@ -333,7 +331,7 @@ implements MidiDevice
 
 
 
-	private void removeReceiver(Receiver receiver)
+	protected void removeReceiver(Receiver receiver)
 	{
 		synchronized (m_receivers)
 		{
@@ -344,7 +342,7 @@ implements MidiDevice
 
 
 
-	private void addTransmitter(Transmitter transmitter)
+	protected void addTransmitter(Transmitter transmitter)
 	{
 		synchronized (m_transmitters)
 		{
@@ -353,7 +351,7 @@ implements MidiDevice
 	}
 
 
-	private void removeTransmitter(Transmitter transmitter)
+	protected void removeTransmitter(Transmitter transmitter)
 	{
 		synchronized (m_transmitters)
 		{

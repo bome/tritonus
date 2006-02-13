@@ -167,7 +167,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 			0,
 			AlsaSeq.SND_SEQ_PORT_TYPE_APPLICATION,
 			0, 0, 0);
-		if (getUseIn())
+		if (getUseTransmitter())
 		{
 			/*
 			 *	AlsaMidiIn listens to incoming event on the
@@ -186,7 +186,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 				this);
 			m_alsaMidiIn.start();
 		}
-		if (getUseOut())
+		if (getUseReceiver())
 		{
 			// uses subscribers, immediately
 			m_alsaMidiOut = new AlsaMidiOut(getAlsaSeq(), getOwnPort());
@@ -204,7 +204,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 	protected void closeImpl()
 	{
 		if (TDebug.TraceMidiDevice) { TDebug.out("AlsaMidiDevice.closeImpl(): begin"); }
-		if (getUseIn())
+		if (getUseTransmitter())
 		{
 			m_alsaMidiIn.interrupt();
 			m_alsaMidiIn = null;
@@ -299,7 +299,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 	public Receiver getReceiver()
 		throws MidiUnavailableException
 	{
-		if (! getUseOut())
+		if (! getUseReceiver())
 		{
 			throw new MidiUnavailableException("Receivers are not supported by this device");
 		}
@@ -311,7 +311,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 	public Transmitter getTransmitter()
 		throws MidiUnavailableException
 	{
-		if (! getUseIn())
+		if (! getUseTransmitter())
 		{
 			throw new MidiUnavailableException("Transmitters are not supported by this device");
 		}
