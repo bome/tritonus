@@ -120,6 +120,15 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 		if (synth == 0) {
 			goto error_recovery;
 		}
+#ifdef VARIADIC_MACROS
+		out("newSynth: synth: %p\n", synth);
+#else
+		if (debug_flag)
+		{
+			fprintf(debug_file, "newSynth: synth: %p\n", synth);
+			fflush(debug_file);
+		}
+#endif
 		
 		adriver = new_fluid_audio_driver(settings, synth);
 		if (adriver == 0) {
@@ -150,6 +159,15 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	fluid_audio_driver_t* adriver;
 
 	synth = get_synth(env, obj);
+#ifdef VARIADIC_MACROS
+	out("deleteSynth: synth: %p\n", synth);
+#else
+	if (debug_flag)
+	{
+		fprintf(debug_file, "deleteSynth: synth: %p\n", synth);
+		fflush(debug_file);
+	}
+#endif
 	settings = (fluid_settings_t*) (*env)->GetIntField(env, obj, settingsPtrFieldID);
 	adriver = (fluid_audio_driver_t*) (*env)->GetIntField(env, obj, audioDriverPtrFieldID);
 	fluid_jni_delete_synth(env, obj, settings, synth, adriver);
@@ -168,38 +186,40 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	fluid_synth_t* synth = get_synth(env, obj);
 
 #ifdef VARIADIC_MACROS
-	out("synth: %p, values: %d %d %d %d\n", synth, command, channel, data1, data2);
+	out("nReceive: synth: %p, values: %x %d %d %d\n", synth, command, channel, data1, data2);
 #else
 	if (debug_flag)
 	{
-		fprintf(debug_file, "synth: %p, values: %d %d %d %d\n", synth, command, channel, data1, data2);
+		fprintf(debug_file, "synth: %p, values: %x %d %d %d\n", synth, command, channel, data1, data2);
 		fflush(debug_file);
 	}
 #endif
-	fflush(stdout);
-	event = new_fluid_midi_event();
-	if (!event)
+	if (synth)
 	{
-		printf("failed to instantiate fluid_midi_event_t\n");
-		return;
+		event = new_fluid_midi_event();
+		if (!event)
+		{
+			printf("failed to instantiate fluid_midi_event_t\n");
+			return;
+		}
+		//printf("2"); fflush(stdout);
+		fluid_midi_event_set_type(event, command);
+		fluid_midi_event_set_channel(event, channel);
+		fluid_midi_event_set_key(event, data1);
+		fluid_midi_event_set_velocity(event, data2);
+		//printf("3"); fflush(stdout);
+		/*printf("values2: %d %d %d %d\n",
+		fluid_midi_event_get_type(event),
+		fluid_midi_event_get_channel(event),
+		fluid_midi_event_get_key(event),
+		fluid_midi_event_get_velocity(event));
+		fflush(stdout);
+	*/
+		fluid_synth_handle_midi_event(synth, event);
+		//printf("4"); fflush(stdout);
+		delete_fluid_midi_event(event);
+		//printf("5\n"); fflush(stdout);
 	}
-	//printf("2"); fflush(stdout);
-	fluid_midi_event_set_type(event, command);
-	fluid_midi_event_set_channel(event, channel);
-	fluid_midi_event_set_key(event, data1);
-	fluid_midi_event_set_velocity(event, data2);
-	//printf("3"); fflush(stdout);
-	/*printf("values2: %d %d %d %d\n",
-	fluid_midi_event_get_type(event),
-	fluid_midi_event_get_channel(event),
-	fluid_midi_event_get_key(event),
-	fluid_midi_event_get_velocity(event));
-	fflush(stdout);
-*/
-	fluid_synth_handle_midi_event(synth, event);
-	//printf("4"); fflush(stdout);
-	delete_fluid_midi_event(event);
-	//printf("5\n"); fflush(stdout);
 }
 
 
@@ -271,52 +291,65 @@ JNIEXPORT jobjectArray JNICALL Java_org_tritonus_midi_sb_fluidsynth_FluidSoundba
 	synthFieldID = (*env)->GetFieldID(env, fluidsoundbankclass, "synth", "Lorg/tritonus/midi/device/fluidsynth/FluidSynthesizer;");
 	synthobj = (*env)->GetObjectField(env, obj, synthFieldID);
 	synth = get_synth(env, synthobj);
-
-	fluidinstrclass = (*env)->FindClass(env, "org/tritonus/midi/sb/fluidsynth/FluidSoundbank$FluidInstrument");
-	if (!fluidinstrclass) printf("could not get class id");
-	//printf("5");
-	initid = (*env)->GetMethodID(env, fluidinstrclass, "<init>", "(Lorg/tritonus/midi/sb/fluidsynth/FluidSoundbank;IILjava/lang/String;)V");
-	if (!initid) printf("could not get method id");
-	//printf("6");
-
-	sfont = fluid_synth_get_sfont_by_id(synth, sfontID);
-	
-	if (sfont != NULL)
+#ifdef VARIADIC_MACROS
+	out("nGetInstruments: synth: %p\n", synth);
+#else
+	if (debug_flag)
 	{
-		sfont->iteration_start(sfont);
+		fprintf(debug_file, "nGetInstruments: synth: %p\n", synth);
+		fflush(debug_file);
+	}
+#endif
+	if (synth)
+	{
+		fluidinstrclass = (*env)->FindClass(env, "org/tritonus/midi/sb/fluidsynth/FluidSoundbank$FluidInstrument");
+		if (!fluidinstrclass) printf("could not get class id");
+		//printf("5");
+		initid = (*env)->GetMethodID(env, fluidinstrclass, "<init>", "(Lorg/tritonus/midi/sb/fluidsynth/FluidSoundbank;IILjava/lang/String;)V");
+		if (!initid) printf("could not get method id");
+		//printf("6");
+
+		sfont = fluid_synth_get_sfont_by_id(synth, sfontID);
 		
+		if (sfont != NULL)
+		{
+			sfont->iteration_start(sfont);
+			
+			while (sfont->iteration_next(sfont, &preset))
+			{
+				count++;
+			}
+		}
+
+		//printf("7");
+		instruments = (*env)->NewObjectArray(env, count, fluidinstrclass, NULL);
+
+		sfont = fluid_synth_get_sfont_by_id(synth, sfontID);
+		offset = fluid_synth_get_bank_offset(synth, sfontID);
+
+		if (sfont == NULL)
+			return 0;
+
+		sfont->iteration_start(sfont);
+
 		while (sfont->iteration_next(sfont, &preset))
 		{
-			count++;
+			instrname = (*env)->NewStringUTF(env,
+	//									fluid_preset_get_name(&preset)
+										preset.get_name(&preset)
+											);
+			instrument = (*env)->NewObject(env, fluidinstrclass, initid, obj,
+	//			(jint) fluid_preset_get_banknum(&preset) + offset,
+				(jint) (preset.get_banknum(&preset) + offset),
+	//			(jint) fluid_preset_get_num(&preset),
+				(jint) (preset.get_num(&preset)),
+				(jobject) instrname);
+			(*env)->SetObjectArrayElement(env, instruments, i++, instrument);
 		}
+		return instruments;
 	}
-
-	//printf("7");
-	instruments = (*env)->NewObjectArray(env, count, fluidinstrclass, NULL);
-
-	sfont = fluid_synth_get_sfont_by_id(synth, sfontID);
-	offset = fluid_synth_get_bank_offset(synth, sfontID);
-
-	if (sfont == NULL)
-		return 0;
-
-	sfont->iteration_start(sfont);
-
-	while (sfont->iteration_next(sfont, &preset))
-	{
-		instrname = (*env)->NewStringUTF(env,
-//									fluid_preset_get_name(&preset)
-									preset.get_name(&preset)
-										);
-		instrument = (*env)->NewObject(env, fluidinstrclass, initid, obj,
-//			(jint) fluid_preset_get_banknum(&preset) + offset,
-			(jint) (preset.get_banknum(&preset) + offset),
-//			(jint) fluid_preset_get_num(&preset),
-			(jint) (preset.get_num(&preset)),
-			(jobject) instrname);
-		(*env)->SetObjectArrayElement(env, instruments, i++, instrument);
-	}
-	return instruments;
+	else
+		return NULL;
 }
 
 
