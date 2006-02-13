@@ -137,14 +137,17 @@ implements MidiDevice
 
 
 
-	public void open()
+	public synchronized void open()
 		throws MidiUnavailableException
 	{
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): begin"); }
 		if (! isOpen())
 		{
-			m_bDeviceOpen = true;
 			openImpl();
+			/* If openImpl() throws a MidiUnavailableException, m_bDeviceOpen
+			 * remains false.
+			 */
+			m_bDeviceOpen = true;
 		}
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.open(): end"); }
 	}
@@ -164,7 +167,7 @@ implements MidiDevice
 
 
 
-	public void close()
+	public synchronized void close()
 	{
 		if (TDebug.TraceMidiDevice) { TDebug.out("TMidiDevice.close(): begin"); }
 		if (isOpen())
