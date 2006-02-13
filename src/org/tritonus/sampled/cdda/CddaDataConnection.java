@@ -39,7 +39,6 @@ import javax.sound.sampled.AudioFormat;
 import org.tritonus.lowlevel.cdda.CddaMidLevel;
 import org.tritonus.lowlevel.cdda.CddaUtils;
 import org.tritonus.share.TDebug;
-import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
 
 
