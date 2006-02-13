@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.sound.midi.Sequence;
-import javax.sound.midi.MidiFileFormat;
 
 
 

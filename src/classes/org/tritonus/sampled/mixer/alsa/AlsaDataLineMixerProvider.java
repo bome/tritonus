@@ -28,9 +28,6 @@
 
 package org.tritonus.sampled.mixer.alsa;
 
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.spi.MixerProvider;
-
 import org.tritonus.lowlevel.alsa.Alsa;
 import org.tritonus.lowlevel.alsa.AlsaCtl;
 import org.tritonus.lowlevel.alsa.AlsaCtlCardInfo;

@@ -30,7 +30,6 @@
 package org.tritonus.sampled.convert.gsm;
 
 import java.io.DataInputStream;
-import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.Arrays;
@@ -46,7 +45,6 @@ import org.tritonus.lowlevel.gsm.GSMDecoder;
 import org.tritonus.lowlevel.gsm.Encoder;
 import org.tritonus.share.sampled.TConversionTool;
 import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
-import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider;
 import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import org.tritonus.share.sampled.AudioFormats;
 

@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.ArraySet;

@@ -32,8 +32,6 @@ package org.tritonus.lowlevel.cdda;
 
 import org.tritonus.lowlevel.cdda.CddaMidLevel;
 import org.tritonus.lowlevel.cdda.cdparanoia.CdparanoiaMidLevel;
-import org.tritonus.lowlevel.cdda.cooked_ioctl.CookedIoctlMidLevel;
-import org.tritonus.share.TDebug;
 
 
 

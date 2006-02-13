@@ -38,10 +38,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.Control;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.mixer.TDataLine;

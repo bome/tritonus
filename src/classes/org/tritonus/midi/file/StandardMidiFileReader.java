@@ -31,9 +31,7 @@ package org.tritonus.midi.file;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.DataInputStream;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.EOFException;
 import java.io.File;
 
 import java.net.URL;

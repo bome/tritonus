@@ -31,7 +31,6 @@ import java.util.Iterator;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import org.tritonus.share.StringHashedSet;
-import org.tritonus.share.TDebug;
 
 /**
  * This class is a proposal for generic handling of encodings.

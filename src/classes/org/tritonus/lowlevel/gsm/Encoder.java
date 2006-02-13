@@ -21,7 +21,6 @@
 package org.tritonus.lowlevel.gsm;
 
 import java.io.*;
-import java.lang.*;
 
 
 public class Encoder

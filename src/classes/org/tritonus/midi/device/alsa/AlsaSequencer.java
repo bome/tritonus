@@ -37,7 +37,6 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
@@ -51,8 +50,6 @@ import org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
 import org.tritonus.lowlevel.alsa.AlsaSeqQueueTempo;
 import org.tritonus.share.TDebug;
 import org.tritonus.share.midi.MidiUtils;
-import org.tritonus.share.midi.TMidiDevice.TReceiver;
-import org.tritonus.share.midi.TMidiDevice.TTransmitter;
 import org.tritonus.share.midi.TSequencer;
 
 

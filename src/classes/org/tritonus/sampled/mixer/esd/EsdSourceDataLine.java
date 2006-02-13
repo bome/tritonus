@@ -30,16 +30,12 @@
 
 package org.tritonus.sampled.mixer.esd;
 
-import java.io.IOException;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.BooleanControl;
-import javax.sound.sampled.Control;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.Mixer;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.lowlevel.esd.Esd;

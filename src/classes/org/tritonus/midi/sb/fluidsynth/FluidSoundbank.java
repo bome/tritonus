@@ -38,8 +38,11 @@
 
 package org.tritonus.midi.sb.fluidsynth;
 
-import javax.sound.midi.*;
-import org.tritonus.share.TDebug;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.Patch;
+import javax.sound.midi.Soundbank;
+import javax.sound.midi.SoundbankResource;
+
 import org.tritonus.midi.device.fluidsynth.FluidSynthesizer;
 
 /**

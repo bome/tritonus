@@ -40,7 +40,6 @@ import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 import org.tritonus.share.sampled.file.TAudioFileReader;
 
-import org.tritonus.lowlevel.ogg.Buffer;
 import org.tritonus.lowlevel.ogg.Page;
 import org.tritonus.lowlevel.ogg.Packet;
 import org.tritonus.lowlevel.ogg.SyncState;

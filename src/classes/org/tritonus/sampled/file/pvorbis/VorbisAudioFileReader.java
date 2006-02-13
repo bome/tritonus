@@ -40,7 +40,6 @@ import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 import org.tritonus.share.sampled.file.TAudioFileReader;
 
-import org.tritonus.lowlevel.pogg.Buffer;
 import org.tritonus.lowlevel.pogg.Page;
 import org.tritonus.lowlevel.pogg.Packet;
 import org.tritonus.lowlevel.pogg.SyncState;

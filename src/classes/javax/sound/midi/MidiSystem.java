@@ -46,7 +46,6 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.sound.midi.spi.MidiFileReader;
 import javax.sound.midi.spi.MidiFileWriter;
-import javax.sound.midi.spi.SoundbankReader;
 
 import org.tritonus.core.TMidiConfig;
 import org.tritonus.share.TDebug;

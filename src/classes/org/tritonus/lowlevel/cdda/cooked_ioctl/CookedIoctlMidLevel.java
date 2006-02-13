@@ -36,10 +36,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -47,14 +43,9 @@ import java.util.List;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.LineUnavailableException;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.lowlevel.cdda.CddaMidLevel;
-import org.tritonus.lowlevel.cdda.CddaUtils;
 import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 
 

@@ -40,11 +40,9 @@ import javax.sound.sampled.AudioInputStream;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.AudioFormats;
-import org.tritonus.share.sampled.TConversionTool;
 import org.tritonus.share.sampled.FloatSampleBuffer;
 import org.tritonus.share.sampled.AudioUtils;
 import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
-import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;
 import org.tritonus.share.ArraySet;
 
 /**

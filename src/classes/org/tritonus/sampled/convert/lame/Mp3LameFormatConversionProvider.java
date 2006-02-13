@@ -28,12 +28,8 @@
 
 package org.tritonus.sampled.convert.lame;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -41,10 +37,8 @@ import java.util.Iterator;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.spi.FormatConversionProvider;
 
 import org.tritonus.share.TDebug;
-import org.tritonus.share.TCircularBuffer;
 import org.tritonus.share.sampled.AudioFormatSet;
 import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
 import org.tritonus.share.sampled.convert.TAsynchronousFilteredAudioInputStream;

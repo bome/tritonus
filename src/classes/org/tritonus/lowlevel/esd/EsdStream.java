@@ -30,8 +30,6 @@
 
 package org.tritonus.lowlevel.esd;
 
-import java.io.IOException;
-
 import org.tritonus.share.TDebug;
 
 

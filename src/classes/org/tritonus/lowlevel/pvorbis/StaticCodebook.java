@@ -28,10 +28,6 @@
 
 package org.tritonus.lowlevel.pvorbis;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//import org.tritonus.lowlevel.pogg.Ogg;
 import org.tritonus.lowlevel.pogg.Buffer;
 import org.tritonus.share.TDebug;
 

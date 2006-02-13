@@ -30,16 +30,11 @@
 
 package org.tritonus.midi.device.alsa;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.Transmitter;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.midi.MidiUtils;

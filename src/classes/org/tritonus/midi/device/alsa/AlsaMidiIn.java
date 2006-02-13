@@ -41,7 +41,6 @@ import org.tritonus.share.TDebug;
 import org.tritonus.lowlevel.alsa.AlsaSeq;
 import org.tritonus.lowlevel.alsa.AlsaSeqEvent;
 import org.tritonus.lowlevel.alsa.AlsaSeqPortSubscribe;
-import org.tritonus.lowlevel.alsa.AlsaSeqQueueStatus;
 
 
 

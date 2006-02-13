@@ -31,11 +31,6 @@
 package org.tritonus.sampled.mixer.esd;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Iterator;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

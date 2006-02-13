@@ -30,15 +30,10 @@
 
 package org.tritonus.midi.device.alsa;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
 import org.tritonus.share.TDebug;
-import org.tritonus.lowlevel.alsa.AlsaSeq;
 import org.tritonus.share.GlobalInfo;
 import org.tritonus.share.midi.TMidiDevice;
 

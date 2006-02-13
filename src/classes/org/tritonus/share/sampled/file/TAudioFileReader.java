@@ -40,7 +40,6 @@ import java.io.EOFException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;

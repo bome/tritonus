@@ -32,7 +32,6 @@ package org.tritonus.sampled.file;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFileFormat;
 
 
 /**

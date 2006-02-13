@@ -29,21 +29,14 @@
 
 package org.tritonus.midi.device.java;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MetaMessage;
-import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
-import javax.sound.midi.Transmitter;
 import javax.sound.midi.InvalidMidiDataException;
 
 import org.tritonus.share.TDebug;

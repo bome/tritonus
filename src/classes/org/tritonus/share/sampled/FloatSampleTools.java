@@ -30,7 +30,7 @@ package org.tritonus.share.sampled;
 
 import java.util.*;
 import javax.sound.sampled.*;
-import org.tritonus.share.TDebug;
+
 
 /**
  * Utility functions for handling data in normalized float arrays.

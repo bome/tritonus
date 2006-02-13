@@ -37,8 +37,6 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
-import org.tritonus.share.TDebug;
-
 
 /* TODO: implement aquiring of a SourceDataLine, perhaps in a separate
    class TSoftwareSynthesizer.

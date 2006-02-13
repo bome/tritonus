@@ -20,8 +20,6 @@
 
 package org.tritonus.lowlevel.gsm;
 
-import java.io.*;
-
 
 
 public class Short_term
