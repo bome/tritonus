@@ -58,8 +58,8 @@ extends TestCase
 		throws Exception
 	{
 		Packet p = new Packet();
-		p.setData(new byte[3], 3);
-		p.setFlags(true, true, 99);
+		p.setData(new byte[3], 0, 3);
+		p.setFlags(true, true, 99, 100);
 		p.clear();
 		checkPacket(p, "clear test", false, false, 0, 0, null);
 	}
@@ -75,7 +75,7 @@ extends TestCase
 		{
 			abData[i] = (byte) i;
 		}
-		p.setData(abData, abData.length);
+		p.setData(abData, 0, abData.length);
 		checkPacket(p, "set data test", false, false, 0, 0, abData);
 	}
 
@@ -90,7 +90,7 @@ extends TestCase
 		{
 			abData[i] = (byte) i;
 		}
-		p.setData(abData, abData.length / 2);
+		p.setData(abData, 0, abData.length / 2);
 		byte[] abCompare = new byte[abData.length / 2];
 		System.arraycopy(abData, 0, abCompare, 0, abData.length / 2);
 		checkPacket(p, "set data truncated test", false, false, 0, 0, abCompare);
@@ -101,23 +101,23 @@ extends TestCase
 	public void testSetFlags()
 		throws Exception
 	{
-		checkFlags("set flags test 1", true, false, 65555L);
-		checkFlags("set flags test 2", false, true, 0);
-		checkFlags("set flags test 3", false, false, Long.MAX_VALUE);
-		checkFlags("set flags test 4", true, true, Long.MIN_VALUE);
+		checkFlags("set flags test 1", true, false, 65555L, 0);
+		checkFlags("set flags test 2", false, true, 0, 0);
+		checkFlags("set flags test 3", false, false, Long.MAX_VALUE, 0);
+		checkFlags("set flags test 4", true, true, Long.MIN_VALUE, 0);
 	}
 
 
 
 	private void checkFlags(String strMessage, boolean bBos, boolean bEos,
-							long lGranulePos)
+							long lGranulePos, long lPacketNo)
 		throws Exception
 	{
 		Packet p = new Packet();
 		byte[] abData = new byte[0];
-		p.setData(abData, abData.length);
-		p.setFlags(bBos, bEos, lGranulePos);
-		checkPacket(p, strMessage, bBos, bEos, lGranulePos, 0, abData);
+		p.setData(abData, 0, abData.length);
+		p.setFlags(bBos, bEos, lGranulePos, lPacketNo);
+		checkPacket(p, strMessage, bBos, bEos, lGranulePos, lPacketNo, abData);
 	}
 
 

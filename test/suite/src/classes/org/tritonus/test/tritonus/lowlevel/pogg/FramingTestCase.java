@@ -389,8 +389,8 @@ extends TestCase
 				abPacketData[j] = (byte)(i + j);
 			System.arraycopy(abPacketData, 0, data, inptr, len);
 			inptr += len;
-			op.setData(abPacketData, len);
-			op.setFlags(false, i + 1 == packets, granule_pos);
+			op.setData(abPacketData, 0, len);
+			op.setFlags(false, i + 1 == packets, granule_pos, 0);
 
 			granule_pos += 1024;
 
@@ -637,8 +637,8 @@ extends TestCase
 			{
 				abPacketData[j]= (byte) (i + j);
 			}
-			op.setData(abPacketData, len);
-			op.setFlags(false, i + 1 == pl.length, (i + 1) * 1000);
+			op.setData(abPacketData, 0, len);
+			op.setFlags(false, i + 1 == pl.length, (i + 1) * 1000, 0);
 
 			os_en.packetIn(op);
 		}
