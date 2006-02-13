@@ -52,7 +52,7 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
     private MidiChannel channels[];
     private FluidSoundbank defaultSoundbank;
     
-    private int defaultbankSfontID;
+	private int defaultbankSfontID;
     
     // native pointers *32 bit*!
 	private int settingsPtr;
@@ -95,18 +95,8 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
 
 
-
 	/**
-	 * Kept temporarily for compatibility.
-	 */
-    public FluidSynthesizer(MidiDevice.Info info, boolean bIn, boolean bOut) throws Exception
-    {
-		this(info);
-	}
-
-
-	/**
-	 * should become the new main constructor.
+	 * Constructor.
 	 */
     public FluidSynthesizer(MidiDevice.Info info) throws Exception
     {
