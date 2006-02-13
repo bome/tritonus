@@ -40,6 +40,7 @@
 package org.tritonus.midi.device.fluidsynth;
 
 import javax.sound.midi.*;
+
 import org.tritonus.share.TDebug;
 import org.tritonus.share.midi.TMidiDevice;
 import org.tritonus.midi.sb.fluidsynth.FluidSoundbank;
@@ -101,21 +102,42 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
     public FluidSynthesizer(MidiDevice.Info info) throws Exception
     {
         super(info, false, true);
-        if (newSynth() < 0) {
-            throw new Exception("Low-level initialization of the synthesizer failed");
+    }
+
+
+	protected void openImpl() 
+	throws MidiUnavailableException
+	{
+		if (newSynth() < 0)
+        {
+            throw new MidiUnavailableException("Low-level initialization of the synthesizer failed");
         }
         if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer: " + Integer.toHexString(synthPtr));
-        try
-        {
-            Receiver r = getReceiver();
-            channels = new FluidMidiChannel[16];
-            for (int i = 0; i < 16; i++)
-                channels[i] = new FluidMidiChannel(r, i);
-        }
-        catch (Exception e)
-        {
-        }
+
+        Receiver r = getReceiver();
+        channels = new FluidMidiChannel[16];
+        for (int i = 0; i < 16; i++)
+        	channels[i] = new FluidMidiChannel(r, i);
+
+            String sfontFile =
+			System.getProperty("tritonus.fluidsynth.defaultsoundbank");
+		if (sfontFile != null && ! sfontFile.equals(""))
+		{
+			int sfontID = loadSoundFont(sfontFile);
+			setDefaultSoundBank(sfontID);
+		}
     }
+
+
+    protected void closeImpl()
+    {
+        if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer.closeImpl(): "
+        		+ Integer.toHexString(synthPtr));
+        deleteSynth();
+        super.closeImpl();
+    }
+
+
 
 
     public void setDefaultSoundBank(int sfontID)
@@ -127,15 +149,7 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     protected void finalize(){
         if (TDebug.TraceSynthesizer) TDebug.out("finalize: " + Integer.toHexString(synthPtr));
-        deleteSynth();
-    }
-
-
-    public void close()
-    {
-        if (TDebug.TraceSynthesizer) TDebug.out("close: " + Integer.toHexString(synthPtr));
-        deleteSynth();
-        super.close();
+        close();
     }
 
 
@@ -157,9 +171,9 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
     public native void setBankOffset(int sfontID, int offset);
     public native void setGain(float gain);
 
-	/* $$mp: currently not functional because fluid_synth_set_reverb_preset() is not
-         present in fluidsynth 1.0.6
-*/
+	/* $$mp: currently not functional because fluid_synth_set_reverb_preset()
+	 * is not present in fluidsynth 1.0.6.
+	 */
     public native void setReverbPreset(int reverbPreset);
 
     public native int getMaxPolyphony();

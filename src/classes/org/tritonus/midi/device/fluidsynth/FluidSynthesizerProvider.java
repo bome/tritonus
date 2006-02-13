@@ -87,15 +87,7 @@ extends MidiDeviceProvider
 		{
 			try
 			{
-				FluidSynthesizer synth = new FluidSynthesizer(sm_info);
-				String sfontFile =
-					System.getProperty("tritonus.fluidsynth.defaultsoundbank");
-				if (sfontFile != null && ! sfontFile.equals(""))
-				{
-					int sfontID = synth.loadSoundFont(sfontFile);
-					synth.setDefaultSoundBank(sfontID);
-				}
-				device = synth;
+				device = new FluidSynthesizer(sm_info);
 			}
 			catch (Exception e)
 			{
