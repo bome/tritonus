@@ -106,8 +106,8 @@ implements Clip
 		// TOOD:
 		DataLine.Info	info = new DataLine.Info(Clip.class,
 							 audioFormat, -1/*nBufferSize*/);
-/*
   setLineInfo(info);
+  /*
   int	nFrameSize = audioFormat.getFrameSize();
   long	lTotalLength = audioInputStream.getFrameLength() * nFrameSize;
   int	nFormat = Esd.ESD_STREAM | Esd.ESD_PLAY | EsdUtils.getEsdFormat(audioFormat);

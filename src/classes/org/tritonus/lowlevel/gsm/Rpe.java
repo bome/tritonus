@@ -72,7 +72,6 @@ public class Rpe
 		short[] e)	/* signal [-5..0.39.44] IN  */ 
 	{
 		int     L_result = 0;
-		int     i = 0;
 
 		/*
 		 *  (e[-5..-1] and e[40..44] are allocated by the caller,
@@ -97,7 +96,6 @@ public class Rpe
 			 */
 
 		        /* #define STEP( i, H )    (e[ k + i ] * H) */
-			i = 0;
                 
 			L_result +=( e[ k + 0 ] * -134 )
 				+ ( e[ k + 1 ] * -374 )
@@ -133,7 +131,6 @@ public class Rpe
 		short[]    Mc_out,       /*                      OUT */   
 		int	   Mc_index)
 	{
-		int     m = 0;
 		int     L_result = 0;
 		int     EM = 0;     /* xxx should be L_EM? */
 		short   Mc = 0;

@@ -94,7 +94,7 @@ extends MidiMessage
 		{
 			throw new InvalidMidiDataException("type must not exceed 127");
 		}
-		byte[]	abLength = MidiUtils.getVariableLengthQuantity(nDataLength);
+		//byte[]	abLength = MidiUtils.getVariableLengthQuantity(nDataLength);
 		int	nCompleteLength = 2 + nDataLength;
 		byte[]	abCompleteData = new byte[nCompleteLength];
 		abCompleteData[0] = (byte) META;

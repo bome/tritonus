@@ -60,12 +60,12 @@ public class Complex implements java.io.Serializable, Cloneable
 	/**	
 	 *	@serial Real part of the Complex.
 	 */
-	private double re;
+	private double m_re;
 
 	/**
 	 *	@serial Imaginary part of the Complex.
 	 */
-	private double im;
+	private double m_im;
 
 	/**
 	 *	Serialization ID
@@ -94,8 +94,8 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex(Complex z)
 	{
-		re = z.re;
-		im = z.im;
+		m_re = z.m_re;
+		m_im = z.m_im;
 	}
 
 
@@ -107,8 +107,8 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex(double re, double im)
 	{
-		this.re = re;
-		this.im = im;
+		this.m_re = re;
+		this.m_im = im;
 	}
 
 
@@ -118,8 +118,8 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex(double re)
 	{
-		this.re = re;
-		this.im = 0.0;
+		this.m_re = re;
+		this.m_im = 0.0;
 	}
 
 
@@ -128,8 +128,8 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex()
 	{
-		re = 0.0;
-		im = 0.0;
+		m_re = 0.0;
+		m_im = 0.0;
 	}
 	
 
@@ -140,7 +140,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	private boolean isNaN()
 	{
-		return (Double.isNaN(re) || Double.isNaN(im));
+		return (Double.isNaN(m_re) || Double.isNaN(m_im));
 	}
 
 	
@@ -158,7 +158,7 @@ public class Complex implements java.io.Serializable, Cloneable
 		if (isNaN() && z.isNaN()) {
 			return true;
 		} else {
-			return (re == z.re  &&  im == z.im);
+			return (m_re == z.m_re  &&  m_im == z.m_im);
 		}
 	}
 
@@ -188,8 +188,8 @@ public class Complex implements java.io.Serializable, Cloneable
      */
     public int hashCode()
 	{
-		long re_bits = Double.doubleToLongBits(re);
-		long im_bits = Double.doubleToLongBits(im);
+		long re_bits = Double.doubleToLongBits(m_re);
+		long im_bits = Double.doubleToLongBits(m_im);
 		return (int)((re_bits^im_bits)^((re_bits^im_bits)>>32));
     }
 
@@ -199,7 +199,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public double real()
 	{
-		return re;
+		return m_re;
 	}
 
 
@@ -210,7 +210,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public double imag()
 	{
-		return im;
+		return m_im;
 	}
 	
 	
@@ -221,7 +221,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static double real(Complex z)
 	{
-		return z.re;
+		return z.m_re;
 	}
 
 
@@ -232,7 +232,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static double imag(Complex z)
 	{
-		return z.im;
+		return z.m_im;
 	}
 
 
@@ -244,7 +244,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex negative(Complex z)
 	{
-		return new Complex(-z.re, -z.im);
+		return new Complex(-z.m_re, -z.m_im);
 	}
 
 	
@@ -255,7 +255,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex conjugate(Complex z)
 	{
-		return new Complex(z.re, -z.im);
+		return new Complex(z.m_re, -z.m_im);
 	}
 
 	
@@ -267,7 +267,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex plus(Complex x, Complex y)
 	{
-		return new Complex(x.re+y.re, x.im+y.im);
+		return new Complex(x.m_re+y.m_re, x.m_im+y.m_im);
 	}
 
 	/** 
@@ -278,7 +278,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex plus(Complex x, double y)
 	{
-		return new Complex(x.re+y, x.im);
+		return new Complex(x.m_re+y, x.m_im);
 	}
 
 	/** 
@@ -289,7 +289,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex plus(double x, Complex y)
 	{
-		return new Complex(x+y.re, y.im);
+		return new Complex(x+y.m_re, y.m_im);
 	}
 
 	/** 
@@ -299,7 +299,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex plus(Complex y)
 	{
-		return new Complex(re+y.re, im+y.im);
+		return new Complex(m_re+y.m_re, m_im+y.m_im);
 	}
 
 	/** 
@@ -309,7 +309,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex plus(double y)
 	{
-		return new Complex(re+y, im);
+		return new Complex(m_re+y, m_im);
 	}
 	
 	/** 
@@ -319,7 +319,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex plusReverse(double x)
 	{
-		return new Complex(re+x, im);
+		return new Complex(m_re+x, m_im);
 	}
 
 
@@ -331,7 +331,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex minus(Complex x, Complex y)
 	{
-		return new Complex(x.re-y.re, x.im-y.im);
+		return new Complex(x.m_re-y.m_re, x.m_im-y.m_im);
 	}
 
 	/** 
@@ -342,7 +342,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex minus(Complex x, double y)
 	{
-		return new Complex(x.re-y, x.im);
+		return new Complex(x.m_re-y, x.m_im);
 	}
 	
 	/** 
@@ -353,7 +353,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex minus(double x, Complex y)
 	{
-		return new Complex(x-y.re, -y.im);
+		return new Complex(x-y.m_re, -y.m_im);
 	}
 
 	/** 
@@ -364,7 +364,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex minus(Complex y)
 	{
-		return new Complex(re-y.re, im-y.im);
+		return new Complex(m_re-y.m_re, m_im-y.m_im);
 	}
 
 	/** 
@@ -374,7 +374,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex minus(double y)
 	{
-		return new Complex(re-y, im);
+		return new Complex(m_re-y, m_im);
 	}
 
 
@@ -385,7 +385,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex minusReverse(double x)
 	{
-		return new Complex(x-re, -im);
+		return new Complex(x-m_re, -m_im);
 	}
 
 
@@ -397,8 +397,8 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex times(Complex x, Complex y)
 	{
-		Complex t = new Complex(x.re*y.re-x.im*y.im, x.re*y.im+x.im*y.re);
-		if (Double.isNaN(t.re) && Double.isNaN(t.im))
+		Complex t = new Complex(x.m_re*y.m_re-x.m_im*y.m_im, x.m_re*y.m_im+x.m_im*y.m_re);
+		if (Double.isNaN(t.m_re) && Double.isNaN(t.m_im))
 			timesNaN(x, y, t);
 		return t;
 	}
@@ -429,10 +429,10 @@ public class Complex implements java.io.Serializable, Cloneable
 	private static void timesNaN(Complex x, Complex y, Complex t)
 	{
 		boolean	recalc = false;
-		double	a = x.re;
-		double	b = x.im;
-		double	c = y.re;
-		double	d = y.im;
+		double	a = x.m_re;
+		double	b = x.m_im;
+		double	c = y.m_re;
+		double	d = y.m_im;
 
 		if (Double.isInfinite(a) || Double.isInfinite(b)) {
 			// x is infinite
@@ -465,8 +465,8 @@ public class Complex implements java.io.Serializable, Cloneable
 		}
 
 		if (recalc) {
-			t.re = Double.POSITIVE_INFINITY * (a*c - b*d);
-			t.im = Double.POSITIVE_INFINITY * (a*d + b*c);
+			t.m_re = Double.POSITIVE_INFINITY * (a*c - b*d);
+			t.m_im = Double.POSITIVE_INFINITY * (a*d + b*c);
 		}
 	}
 
@@ -479,7 +479,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex times(Complex x, double y)
 	{
-		return new Complex(x.re*y, x.im*y);
+		return new Complex(x.m_re*y, x.m_im*y);
 	}
 
 	/** 
@@ -490,7 +490,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex times(double x, Complex y)
 	{
-		return new Complex(x*y.re, x*y.im);
+		return new Complex(x*y.m_re, x*y.m_im);
 	}
 
 	/** 
@@ -510,7 +510,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex times(double y)
 	{
-		return new Complex(re*y, im*y);
+		return new Complex(m_re*y, m_im*y);
 	}
 
 	/** 
@@ -520,7 +520,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public Complex timesReverse(double x)
 	{
-		return new Complex(x*re, x*im);
+		return new Complex(x*m_re, x*m_im);
 	}
 
 
@@ -538,10 +538,10 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex over(Complex x, Complex y)
 	{
-		double	a = x.re;
-		double	b = x.im;
-		double	c = y.re;
-		double	d = y.im;
+		double	a = x.m_re;
+		double	b = x.m_im;
+		double	c = y.m_re;
+		double	d = y.m_im;
 
 		double scale = Math.max(Math.abs(c), Math.abs(d));
 		boolean isScaleFinite = isFinite(scale);
@@ -554,30 +554,30 @@ public class Complex implements java.io.Serializable, Cloneable
 		Complex z = new Complex((a*c+b*d)/den, (b*c-a*d)/den);
 		
 		if (isScaleFinite) {
-			z.re /= scale;
-			z.im /= scale;
+			z.m_re /= scale;
+			z.m_im /= scale;
 		}
 
 		// Recover infinities and zeros computed as NaN+iNaN.
-		if (Double.isNaN(z.re) && Double.isNaN(z.im)) {
+		if (Double.isNaN(z.m_re) && Double.isNaN(z.m_im)) {
 			if (den == 0.0  && (!Double.isNaN(a) || !Double.isNaN(b))) {
 				double s = copysign(Double.POSITIVE_INFINITY, c);
-				z.re = s * a;
-				z.im = s * b;
+				z.m_re = s * a;
+				z.m_im = s * b;
 			
 			} else if ((Double.isInfinite(a) || Double.isInfinite(b)) &&
 				isFinite(c) && isFinite(d)) {
 				a = copysign(Double.isInfinite(a)?1.0:0.0, a);
 				b = copysign(Double.isInfinite(b)?1.0:0.0, b);
-				z.re = Double.POSITIVE_INFINITY * (a*c + b*d);
-				z.im = Double.POSITIVE_INFINITY * (b*c - a*d);
+				z.m_re = Double.POSITIVE_INFINITY * (a*c + b*d);
+				z.m_im = Double.POSITIVE_INFINITY * (b*c - a*d);
 			
 			} else if (Double.isInfinite(scale)  &&
 				isFinite(a) && isFinite(b)) {
 				c = copysign(Double.isInfinite(c)?1.0:0.0, c);
 				d = copysign(Double.isInfinite(d)?1.0:0.0, d);
-				z.re = 0.0 * (a*c + b*d);
-				z.im = 0.0 * (b*c - a*d);
+				z.m_re = 0.0 * (a*c + b*d);
+				z.m_im = 0.0 * (b*c - a*d);
 			}
 		}
 		return z;
@@ -592,7 +592,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex over(Complex x, double y)
 	{
-		return new Complex(x.re/y, x.im/y);
+		return new Complex(x.m_re/y, x.m_im/y);
 	}
 
 	/** 
@@ -635,13 +635,13 @@ public class Complex implements java.io.Serializable, Cloneable
 	{
         double	den, t;
 		Complex z;
-        if (Math.abs(re) > Math.abs(im)) {
-            t = im / re;
-            den = re + im*t;
+        if (Math.abs(m_re) > Math.abs(m_im)) {
+            t = m_im / m_re;
+            den = m_re + m_im*t;
             z = new Complex(x/den, -x*t/den);
         } else {
-            t = re / im;
-            den = im + re*t;
+            t = m_re / m_im;
+            den = m_im + m_re*t;
             z = new Complex(x*t/den, -x/den);
         }
         return z;
@@ -656,8 +656,8 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static double abs(Complex z)
 	{
-		double x = Math.abs(z.re);
-		double y = Math.abs(z.im);
+		double x = Math.abs(z.m_re);
+		double y = Math.abs(z.m_im);
 		
 		if (Double.isInfinite(x) || Double.isInfinite(y))
 			return Double.POSITIVE_INFINITY;
@@ -683,7 +683,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static double argument(Complex z)
 	{
-		return Math.atan2(z.im, z.re);
+		return Math.atan2(z.m_im, z.m_re);
 	}
 
 	
@@ -699,46 +699,46 @@ public class Complex implements java.io.Serializable, Cloneable
 	{
 		Complex	result = new Complex();
 
-		if (Double.isInfinite(z.im)) {
-			result.re = Double.POSITIVE_INFINITY;
-			result.im = z.im;
-		} else if (Double.isNaN(z.re)) {
-			result.re = result.im = Double.NaN;
-		} else if (Double.isNaN(z.im)) {
-			if (Double.isInfinite(z.re)) {
-				if (z.re > 0) {
-					result.re = z.re;
-					result.im = z.im;
+		if (Double.isInfinite(z.m_im)) {
+			result.m_re = Double.POSITIVE_INFINITY;
+			result.m_im = z.m_im;
+		} else if (Double.isNaN(z.m_re)) {
+			result.m_re = result.m_im = Double.NaN;
+		} else if (Double.isNaN(z.m_im)) {
+			if (Double.isInfinite(z.m_re)) {
+				if (z.m_re > 0) {
+					result.m_re = z.m_re;
+					result.m_im = z.m_im;
 				} else {
-					result.re = z.im;
-					result.im = Double.POSITIVE_INFINITY;
+					result.m_re = z.m_im;
+					result.m_im = Double.POSITIVE_INFINITY;
 				}
 			} else {
-				result.re = result.im = Double.NaN;
+				result.m_re = result.m_im = Double.NaN;
 			}
 		} else {
 			// Numerically correct version of formula 3.7.27
 			// in the NBS Hanbook, as suggested by Pete Stewart.
 			double t = abs(z);
 		
-			if (Math.abs(z.re) <= Math.abs(z.im)) {
+			if (Math.abs(z.m_re) <= Math.abs(z.m_im)) {
 				// No cancellation in these formulas
-				result.re = Math.sqrt(0.5*(t+z.re));
-				result.im = Math.sqrt(0.5*(t-z.re));
+				result.m_re = Math.sqrt(0.5*(t+z.m_re));
+				result.m_im = Math.sqrt(0.5*(t-z.m_re));
 			} else {
 				// Stable computation of the above formulas
-				if (z.re > 0) {
-					result.re = t + z.re;
-					result.im = Math.abs(z.im)*Math.sqrt(0.5/result.re);
-					result.re = Math.sqrt(0.5*result.re);
+				if (z.m_re > 0) {
+					result.m_re = t + z.m_re;
+					result.m_im = Math.abs(z.m_im)*Math.sqrt(0.5/result.m_re);
+					result.m_re = Math.sqrt(0.5*result.m_re);
 				} else {
-					result.im = t - z.re;
-					result.re = Math.abs(z.im)*Math.sqrt(0.5/result.im);
-					result.im = Math.sqrt(0.5*result.im);
+					result.m_im = t - z.m_re;
+					result.m_re = Math.abs(z.m_im)*Math.sqrt(0.5/result.m_im);
+					result.m_im = Math.sqrt(0.5*result.m_im);
 				}
 			}
-			if (z.im < 0)
-				result.im = -result.im;
+			if (z.m_im < 0)
+				result.m_im = -result.m_im;
 		}
 		return result;
 	}
@@ -754,36 +754,36 @@ public class Complex implements java.io.Serializable, Cloneable
 	{
 		Complex result = new Complex();
 		
-		double r = Math.exp(z.re);
+		double r = Math.exp(z.m_re);
 
-		double cosa = Math.cos(z.im);
-		double sina = Math.sin(z.im);
-		if (Double.isInfinite(z.im) || Double.isNaN(z.im) || Math.abs(cosa)>1) {
+		double cosa = Math.cos(z.m_im);
+		double sina = Math.sin(z.m_im);
+		if (Double.isInfinite(z.m_im) || Double.isNaN(z.m_im) || Math.abs(cosa)>1) {
 			cosa = sina = Double.NaN;
 		
 		}
 
-		if (Double.isInfinite(z.re) || Double.isInfinite(r)) {
-			if (z.re < 0) {
+		if (Double.isInfinite(z.m_re) || Double.isInfinite(r)) {
+			if (z.m_re < 0) {
 				r = 0;
-				if (Double.isInfinite(z.im)  ||  Double.isNaN(z.im)) {
+				if (Double.isInfinite(z.m_im)  ||  Double.isNaN(z.m_im)) {
 					cosa = sina = 0;
 				} else {
 					cosa /= Double.POSITIVE_INFINITY;
 					sina /= Double.POSITIVE_INFINITY;
 				}
 			} else {
-				r = z.re;
-				if (Double.isNaN(z.im)) cosa = 1;
+				r = z.m_re;
+				if (Double.isNaN(z.m_im)) cosa = 1;
 			}
 		}
         
-		if (z.im == 0.0) {
-			result.re = r;
-			result.im = z.im;
+		if (z.m_im == 0.0) {
+			result.m_re = r;
+			result.m_im = z.m_im;
 		} else {
-			result.re = r*cosa;
-			result.im = r*sina;
+			result.m_re = r*cosa;
+			result.m_im = r*sina;
 		}
 		return result;
 	}
@@ -801,17 +801,17 @@ public class Complex implements java.io.Serializable, Cloneable
 	{
 		Complex	result = new Complex();
 
-		if (Double.isNaN(z.re)) {
-			result.re = result.im = z.re;
-			if (Double.isInfinite(z.im))
-				result.re = Double.POSITIVE_INFINITY;
-		} else if (Double.isNaN(z.im)) {
-			result.re = result.im = z.im;
-			if (Double.isInfinite(z.re))
-				result.re = Double.POSITIVE_INFINITY;
+		if (Double.isNaN(z.m_re)) {
+			result.m_re = result.m_im = z.m_re;
+			if (Double.isInfinite(z.m_im))
+				result.m_re = Double.POSITIVE_INFINITY;
+		} else if (Double.isNaN(z.m_im)) {
+			result.m_re = result.m_im = z.m_im;
+			if (Double.isInfinite(z.m_re))
+				result.m_re = Double.POSITIVE_INFINITY;
 		} else {
-			result.re = Math.log(abs(z));
-			result.im = argument(z);
+			result.m_re = Math.log(abs(z));
+			result.m_im = argument(z);
 		}
 		return result;
 	}
@@ -825,11 +825,11 @@ public class Complex implements java.io.Serializable, Cloneable
 	public static Complex sin(Complex z)
 	{
 		// sin(z) = -i*sinh(i*z)
-		Complex iz = new Complex(-z.im,z.re);
+		Complex iz = new Complex(-z.m_im,z.m_re);
 		Complex s = sinh(iz);
-		double re = s.im;
-		s.im = -s.re;
-		s.re = re;
+		double re = s.m_im;
+		s.m_im = -s.m_re;
+		s.m_re = re;
 		return s;
 	}
 
@@ -842,7 +842,7 @@ public class Complex implements java.io.Serializable, Cloneable
 	public static Complex cos(Complex z)
 	{
 		// cos(z) = cosh(i*z)
-		return cosh(new Complex(-z.im,z.re));
+		return cosh(new Complex(-z.m_im,z.m_re));
 	}
 
 	/** 
@@ -854,11 +854,11 @@ public class Complex implements java.io.Serializable, Cloneable
 	public static Complex tan(Complex z)
 	{
 		// tan = -i*tanh(i*z)
-		Complex iz = new Complex(-z.im,z.re);
+		Complex iz = new Complex(-z.m_im,z.m_re);
 		Complex s = tanh(iz);
-		double re = s.im;
-		s.im = -s.re;
-		s.re = re;
+		double re = s.m_im;
+		s.m_im = -s.m_re;
+		s.m_re = re;
 		return s;
 	}
 
@@ -878,39 +878,39 @@ public class Complex implements java.io.Serializable, Cloneable
 		double r = abs(z);
 
 		if (Double.isInfinite(r)) {
-			boolean infiniteX = Double.isInfinite(z.re);
-			boolean infiniteY = Double.isInfinite(z.im);
+			boolean infiniteX = Double.isInfinite(z.m_re);
+			boolean infiniteY = Double.isInfinite(z.m_im);
 			if (infiniteX) {
 				double  pi2 = 0.5*Math.PI;
-				result.re = (z.re>0 ? pi2 : -pi2);
-				if (infiniteY) result.re /= 2;
+				result.m_re = (z.m_re>0 ? pi2 : -pi2);
+				if (infiniteY) result.m_re /= 2;
 			} else if (infiniteY) {
-				result.re = z.re/Double.POSITIVE_INFINITY;
+				result.m_re = z.m_re/Double.POSITIVE_INFINITY;
 			}
-			if (Double.isNaN(z.im)) {
-				result.im = -z.re;
-				result.re = z.im;
+			if (Double.isNaN(z.m_im)) {
+				result.m_im = -z.m_re;
+				result.m_re = z.m_im;
 			} else {
-				result.im = z.im*Double.POSITIVE_INFINITY;
+				result.m_im = z.m_im*Double.POSITIVE_INFINITY;
 			}
 			return result;
 		} else if (Double.isNaN(r)) {
-			result.re = result.im = Double.NaN;
-			if (z.re == 0)  result.re = z.re;
+			result.m_re = result.m_im = Double.NaN;
+			if (z.m_re == 0)  result.m_re = z.m_re;
 		} else if (r < 2.58095e-08) {
 			// sqrt(6.0*dmach(3)) = 2.58095e-08
-			result.re = z.re;
-			result.im = z.im;
-		} else if (z.re == 0) {
-			result.re = 0;
-			result.im = Sfun.asinh(z.im);
+			result.m_re = z.m_re;
+			result.m_im = z.m_im;
+		} else if (z.m_re == 0) {
+			result.m_re = 0;
+			result.m_im = Sfun.asinh(z.m_im);
 		} else if (r <= 0.1) {
 			Complex z2 = times(z,z);
 			//log(eps)/log(rmax) = 8 where rmax = 0.1
 			for (int i = 1;  i <= 8;  i++) {
 				double twoi = 2*(8-i) + 1;
 				result = times(times(result,z2),twoi/(twoi+1.0));
-				result.re += 1.0/twoi;
+				result.m_re += 1.0/twoi;
 			}
 			result = result.times(z);
 		} else {
@@ -918,29 +918,29 @@ public class Complex implements java.io.Serializable, Cloneable
 			// asin(z) = -i*log(z+sqrt(1-z)*sqrt(1+z))
 			// or, since log(iz) = log(z) +i*pi/2,
 			// asin(z) = pi/2 - i*log(z+sqrt(z+1)*sqrt(z-1))
-			Complex w = ((z.im < 0) ? negative(z) : z);
+			Complex w = ((z.m_im < 0) ? negative(z) : z);
 			Complex sqzp1 = sqrt(plus(w,1.0));
-			if (sqzp1.im < 0.0)
+			if (sqzp1.m_im < 0.0)
 				sqzp1 = negative(sqzp1);
 			Complex sqzm1 = sqrt(minus(w,1.0));
 			result = log(plus(w,times(sqzp1,sqzm1)));
 
-			double rx = result.re;
-			result.re = 0.5*Math.PI + result.im;
-			result.im = -rx;
+			double rx = result.m_re;
+			result.m_re = 0.5*Math.PI + result.m_im;
+			result.m_im = -rx;
 		}
 
-		if (result.re > 0.5*Math.PI) {
-			result.re = Math.PI - result.re;
-			result.im = -result.im;
+		if (result.m_re > 0.5*Math.PI) {
+			result.m_re = Math.PI - result.m_re;
+			result.m_im = -result.m_im;
 		}
-		if (result.re < -0.5*Math.PI) {
-			result.re = -Math.PI - result.re;
-			result.im = -result.im;
+		if (result.m_re < -0.5*Math.PI) {
+			result.m_re = -Math.PI - result.m_re;
+			result.m_im = -result.m_im;
 		}
-		if (z.im < 0) {
-			result.re = -result.re;
-			result.im = -result.im;
+		if (z.m_im < 0) {
+			result.m_re = -result.m_re;
+			result.m_im = -result.m_im;
 		}
 		return result;
 	}
@@ -960,15 +960,15 @@ public class Complex implements java.io.Serializable, Cloneable
 		Complex	result = new Complex();
 		double r = abs(z);
 
-		if (Double.isInfinite(z.re) && Double.isNaN(z.im)) {
-			result.re = Double.NaN;
-			result.im = Double.NEGATIVE_INFINITY;
+		if (Double.isInfinite(z.m_re) && Double.isNaN(z.m_im)) {
+			result.m_re = Double.NaN;
+			result.m_im = Double.NEGATIVE_INFINITY;
 		} else if (Double.isInfinite(r)) {
-			result.re = Math.atan2(Math.abs(z.im),z.re);
-			result.im = z.im*Double.NEGATIVE_INFINITY;
+			result.m_re = Math.atan2(Math.abs(z.m_im),z.m_re);
+			result.m_im = z.m_im*Double.NEGATIVE_INFINITY;
 		} else if (r == 0) {
-			result.re = Math.PI/2;
-			result.im = -z.im;
+			result.m_re = Math.PI/2;
+			result.m_im = -z.m_im;
 		} else {
 			result = minus(Math.PI/2,asin(z));
 		}
@@ -991,34 +991,34 @@ public class Complex implements java.io.Serializable, Cloneable
 
 		if (Double.isInfinite(r)) {
 			double  pi2 = 0.5*Math.PI;
-			double im = (Double.isNaN(z.im) ? 0 : z.im);
-			result.re = (z.re<0 ? -pi2 : pi2);
-			result.im = (im<0 ? -1 : 1)/Double.POSITIVE_INFINITY;
-			if (Double.isNaN(z.re))  result.re = z.re;
+			double im = (Double.isNaN(z.m_im) ? 0 : z.m_im);
+			result.m_re = (z.m_re<0 ? -pi2 : pi2);
+			result.m_im = (im<0 ? -1 : 1)/Double.POSITIVE_INFINITY;
+			if (Double.isNaN(z.m_re))  result.m_re = z.m_re;
 		} else if (Double.isNaN(r)) {
-			result.re = result.im = Double.NaN;
-			if (z.im == 0)  result.im = z.im;
+			result.m_re = result.m_im = Double.NaN;
+			if (z.m_im == 0)  result.m_im = z.m_im;
 		} else if (r < 1.82501e-08) {
 			// sqrt(3.0*dmach(3)) = 1.82501e-08
-			result.re = z.re;
-			result.im = z.im;
+			result.m_re = z.m_re;
+			result.m_im = z.m_im;
 		} else if (r < 0.1) {
 			Complex z2 = times(z,z);
 			// -0.4343*log(dmach(3))+1 = 17
 			for (int k = 0;  k < 17;  k++) {
 				Complex temp = times(z2,result);
 				int twoi = 2*(17-k) - 1;
-				result.re = 1.0/twoi - temp.re;
-				result.im = -temp.im;
+				result.m_re = 1.0/twoi - temp.m_re;
+				result.m_im = -temp.m_im;
 			}
 			result = result.times(z);
 		} else if (r < 9.0072e+15) {
 			// 1.0/dmach(3) = 9.0072e+15
 			double r2 = r*r;
-			result.re = 0.5*Math.atan2(2*z.re,1.0-r2);
-			result.im = 0.25*Math.log((r2+2*z.im+1)/(r2-2*z.im+1));
+			result.m_re = 0.5*Math.atan2(2*z.m_re,1.0-r2);
+			result.m_im = 0.25*Math.log((r2+2*z.m_im+1)/(r2-2*z.m_im+1));
 		} else {
-			result.re = ((z.re < 0.0) ? -0.5*Math.PI : 0.5*Math.PI);
+			result.m_re = ((z.m_re < 0.0) ? -0.5*Math.PI : 0.5*Math.PI);
 		}
 		return result;
 	}
@@ -1031,28 +1031,28 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex sinh(Complex z)
 	{
-		double	coshx = Sfun.cosh(z.re);
-		double	sinhx = Sfun.sinh(z.re);
-		double	cosy  = Math.cos(z.im);
-		double	siny  = Math.sin(z.im);
+		double	coshx = Sfun.cosh(z.m_re);
+		double	sinhx = Sfun.sinh(z.m_re);
+		double	cosy  = Math.cos(z.m_im);
+		double	siny  = Math.sin(z.m_im);
 		boolean infiniteX = Double.isInfinite(coshx);
-		boolean infiniteY = Double.isInfinite(z.im);
+		boolean infiniteY = Double.isInfinite(z.m_im);
 		Complex result;
 
-		if (z.im == 0) {
-			result = new Complex(Sfun.sinh(z.re));
+		if (z.m_im == 0) {
+			result = new Complex(Sfun.sinh(z.m_re));
 		} else {
 			// A&S 4.5.49
 			result = new Complex(sinhx*cosy, coshx*siny);
 			if (infiniteY) {
-				result.im = Double.NaN;
-				if (z.re == 0)  result.re = 0;
+				result.m_im = Double.NaN;
+				if (z.m_re == 0)  result.m_re = 0;
 			}
 			if (infiniteX) {
-				result.re = z.re*cosy;
-				result.im = z.re*siny;
-				if (z.im == 0)  result.im = 0;
-				if (infiniteY) result.re = z.im;
+				result.m_re = z.m_re*cosy;
+				result.m_im = z.m_re*siny;
+				if (z.m_im == 0)  result.m_im = 0;
+				if (infiniteY) result.m_re = z.m_im;
 			}
 		}
 		return result;
@@ -1066,30 +1066,30 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex cosh(Complex z)
 	{
-		if (z.im == 0) {
-			return new Complex(Sfun.cosh(z.re));
+		if (z.m_im == 0) {
+			return new Complex(Sfun.cosh(z.m_re));
 		}
 		
-		double	coshx = Sfun.cosh(z.re);
-		double	sinhx = Sfun.sinh(z.re);
-		double	cosy  = Math.cos(z.im);
-		double	siny  = Math.sin(z.im);
+		double	coshx = Sfun.cosh(z.m_re);
+		double	sinhx = Sfun.sinh(z.m_re);
+		double	cosy  = Math.cos(z.m_im);
+		double	siny  = Math.sin(z.m_im);
 		boolean infiniteX = Double.isInfinite(coshx);
-		boolean infiniteY = Double.isInfinite(z.im);
+		boolean infiniteY = Double.isInfinite(z.m_im);
 
 		// A&S 4.5.50
 		Complex result = new Complex(coshx*cosy, sinhx*siny);
-		if (infiniteY) 	result.re = Double.NaN;
-		if (z.re == 0) {
-			result.im = 0;
+		if (infiniteY) 	result.m_re = Double.NaN;
+		if (z.m_re == 0) {
+			result.m_im = 0;
 		} else if (infiniteX) {
-			result.re = z.re*cosy;
-			result.im = z.re*siny;
-			if (z.im == 0)  result.im = 0;
-			if (Double.isNaN(z.im)) {
-				result.re = z.re;
+			result.m_re = z.m_re*cosy;
+			result.m_im = z.m_re*siny;
+			if (z.m_im == 0)  result.m_im = 0;
+			if (Double.isNaN(z.m_im)) {
+				result.m_re = z.m_re;
 			} else if (infiniteY) {
-				result.re = z.im;
+				result.m_re = z.m_im;
 			}
 		}
 		return result;
@@ -1103,26 +1103,26 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public static Complex tanh(Complex z)
 	{
-		double	sinh2x = Sfun.sinh(2*z.re);
+		double	sinh2x = Sfun.sinh(2*z.m_re);
 		
-		if (z.im == 0) {
-			return new Complex(Sfun.tanh(z.re));
+		if (z.m_im == 0) {
+			return new Complex(Sfun.tanh(z.m_re));
 		} else if (sinh2x == 0) {
-			return new Complex(0,Math.tan(z.im));
+			return new Complex(0,Math.tan(z.m_im));
 		}
 
-		double	cosh2x = Sfun.cosh(2*z.re);
-		double	cos2y  = Math.cos(2*z.im);
-		double	sin2y  = Math.sin(2*z.im);
+		double	cosh2x = Sfun.cosh(2*z.m_re);
+		double	cos2y  = Math.cos(2*z.m_im);
+		double	sin2y  = Math.sin(2*z.m_im);
 		boolean infiniteX = Double.isInfinite(cosh2x);
 
 		// Workaround for bug in JDK 1.2beta4
-		if (Double.isInfinite(z.im) || Double.isNaN(z.im)) {
+		if (Double.isInfinite(z.m_im) || Double.isNaN(z.m_im)) {
 			cos2y = sin2y = Double.NaN;  
 		}
 
 		if (infiniteX)
-			return new Complex(z.re > 0 ? 1 : -1);
+			return new Complex(z.m_re > 0 ? 1 : -1);
 
 		// A&S 4.5.51
 		double den = (cosh2x + cos2y);
@@ -1147,8 +1147,8 @@ public class Complex implements java.io.Serializable, Cloneable
 		} else {
 			double a = argument(z);
 			double e = Math.pow(absz, x);
-			result.re = e*Math.cos(x*a);
-			result.im = e*Math.sin(x*a);
+			result.m_re = e*Math.cos(x*a);
+			result.m_im = e*Math.sin(x*a);
 		}
 		return result;
 	}
@@ -1164,11 +1164,11 @@ public class Complex implements java.io.Serializable, Cloneable
 	public static Complex asinh(Complex z)
 	{
 		// asinh(z) = i*asin(-i*z)
-		Complex miz = new Complex(z.im,-z.re); 
+		Complex miz = new Complex(z.m_im,-z.m_re); 
 		Complex result = asin(miz);
-		double rx = result.im;
-		result.im = result.re;
-		result.re = -rx;
+		double rx = result.m_im;
+		result.m_im = result.m_re;
+		result.m_re = -rx;
 		return result;
 	}
 	
@@ -1184,12 +1184,12 @@ public class Complex implements java.io.Serializable, Cloneable
 	public static Complex acosh(Complex z)
 	{
 		Complex result = acos(z);
-		double rx = -result.im;
-		result.im = result.re;
-		result.re = rx;
-		if (result.re < 0 || isNegZero(result.re)) {
-			result.re = -result.re;
-			result.im = -result.im;		
+		double rx = -result.m_im;
+		result.m_im = result.m_re;
+		result.m_re = rx;
+		if (result.m_re < 0 || isNegZero(result.m_re)) {
+			result.m_re = -result.m_re;
+			result.m_im = -result.m_im;		
 		}
 		return result;
 	}
@@ -1215,11 +1215,11 @@ public class Complex implements java.io.Serializable, Cloneable
 	public static Complex atanh(Complex z)
 	{
 		// atanh(z) = i*atan(-i*z)
-		Complex miz = new Complex(z.im,-z.re); 
+		Complex miz = new Complex(z.m_im,-z.m_re); 
 		Complex result = atan(miz);
-		double rx = result.im;
-		result.im = result.re;
-		result.re = -rx;
+		double rx = result.m_im;
+		result.m_im = result.m_re;
+		result.m_re = -rx;
 		return result;
 
 	}
@@ -1246,14 +1246,14 @@ public class Complex implements java.io.Serializable, Cloneable
 	 */
 	public String toString()
 	{
-		if (im == 0.0)
-			return String.valueOf(re);
+		if (m_im == 0.0)
+			return String.valueOf(m_re);
 
-		if (re == 0.0)
-			return String.valueOf(im) + suffix;
+		if (m_re == 0.0)
+			return String.valueOf(m_im) + suffix;
 
-		String sign = (im < 0.0) ? "" : "+";
-		return (String.valueOf(re) + sign + String.valueOf(im) + suffix);
+		String sign = (m_im < 0.0) ? "" : "+";
+		return (String.valueOf(m_re) + sign + String.valueOf(m_im) + suffix);
 	}
 
 
@@ -1308,7 +1308,7 @@ public class Complex implements java.io.Serializable, Cloneable
 				} else {
 					if (!haveRealPart) {
 						// have the real part of the number
-						z.re = Double.valueOf(input.substring(iBeginNumber,k)).doubleValue();
+						z.m_re = Double.valueOf(input.substring(iBeginNumber,k)).doubleValue();
 						haveRealPart = true;
 						// perpare to part the imaginary part
 						iBeginNumber = k;
@@ -1331,10 +1331,10 @@ public class Complex implements java.io.Serializable, Cloneable
 				if (k+1 != input.length()) {
 					throw new NumberFormatException(input);
 				} else if (state == 0  ||  state == 1) {
-					z.im = sign;
+					z.m_im = sign;
 					return z;
 				} else if (state == 2  ||  state == 3  ||  state == 5) {
-					z.im = Double.valueOf(input.substring(iBeginNumber,k)).doubleValue();
+					z.m_im = Double.valueOf(input.substring(iBeginNumber,k)).doubleValue();
 					return z;
 				} else {
 					throw new NumberFormatException(input);
@@ -1356,7 +1356,7 @@ public class Complex implements java.io.Serializable, Cloneable
 		}
 
 		if (!haveRealPart) {
-			z.re = Double.valueOf(input).doubleValue();
+			z.m_re = Double.valueOf(input).doubleValue();
 			return z;
 		} else {
 			throw new NumberFormatException(input);

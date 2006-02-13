@@ -129,10 +129,8 @@ public class Encoder
 	    		// Remove the header. It gets mangled by the encoding.
 	    		stripAUHeader(from);
 
-	    		int check_stream = 0;
-	
 			// Read bytes till EOF.
-			while((check_stream = ulaw_input(from)) > 0)
+			while(ulaw_input(from) > 0)
 			{
 				//System.out.println("Entering Native method.");
 				gsm_encode();
@@ -189,10 +187,8 @@ public class Encoder
 		{
 			to = new FileOutputStream(output_file);
 
-			int check_stream = 0;
-	
 			// Read bytes till EOF.
-			while((check_stream = ulaw_input(input)) > 0)
+			while(ulaw_input(input) > 0)
 			{
 				gsm_encode();
 
@@ -383,7 +379,7 @@ public class Encoder
 		int	xmaxc_Mc_index = 0;
 		int	dp_dpp_point_dp0 = 120;
 
-		short[] ep = new short[40];
+		//short[] ep = new short[40];
 		short[] e  = new short[50];
 		short[] so = new short[160];
 
@@ -443,7 +439,7 @@ public class Encoder
 		int L_z2 = g_s.getL_z2();
 		int   mp = g_s.getMp();
 
-		short s1 = 0, msp = 0, lsp = 0, temp = 0, SO = 0;
+		short s1 = 0, msp = 0, lsp = 0, SO = 0;
 		int   L_s2 = 0, L_temp = 0;
 		int   k = 160;
 
@@ -529,8 +525,6 @@ public class Encoder
 		throws IOException
 	{
 		int i = 0;
-		byte output = 0;
-
 		for (i = 0; i < frame.length; i++)
 		{
 			out.write(frame[i]);

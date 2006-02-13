@@ -43,8 +43,6 @@ public class Lpc
 	{
 		int     i = 0, sp_index = 0;
 		short   temp = 0, smax = 0, scalauto = 0;
-		int     L_temp = 0;
-		int     L_temp2 = 0;
 
 		/*  Dynamic scaling of the array  s[0..159]
 		 */
@@ -228,7 +226,6 @@ public class Lpc
 		throws IllegalArgumentException
 	{
 		short   temp = 0;
-		int 	ltmp = 0;
 		int	r_index = 0;
 
 		short[] ACF = new short[9]; /* 0..8 */

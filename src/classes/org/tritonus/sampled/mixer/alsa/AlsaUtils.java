@@ -184,10 +184,6 @@ public class AlsaUtils
 
 	public static int getAlsaFormat(AudioFormat audioFormat)
 	{
-		int	nChannels = audioFormat.getChannels();
-		AudioFormat.Encoding	encoding = audioFormat.getEncoding();
-		int	nSampleSize = audioFormat.getSampleSizeInBits();
-
 		for (int nFormat = 0; nFormat < sm_aFormatTable.length; nFormat++)
 		{
 			if (sm_aFormatTable[nFormat] != null && AudioFormats.matches(sm_aFormatTable[nFormat], audioFormat))

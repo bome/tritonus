@@ -221,9 +221,11 @@ extends TAudioFileReader
 		if (TDebug.TraceAudioFileReader) { TDebug.out("rate: " + fSampleRate); }
 
 		// These are only used for error checking.
+		/*
 		int bitrate_upper = abData[16] + 256 * abData[17] + 65536 * abData[18] + 16777216 * abData[19];
 		int bitrate_nominal = abData[20] + 256 * abData[21] + 65536 * abData[22] + 16777216 * abData[23];
 		int bitrate_lower = abData[24] + 256 * abData[25] + 65536 * abData[26] + 16777216 * abData[27];
+		*/
 
 		int[] blocksizes = new int[2];
 		blocksizes[0] = 1 << (abData[28] & 0xF);

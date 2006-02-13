@@ -61,16 +61,16 @@ public class FilterDesign
 		int	nHalfLength = adFrequencyResponse.length;
 		int	nFullLength = nHalfLength * 2;
 		Complex[]	aFrequencyResponse = new Complex[nFullLength];
-		double	dScaleFactor = (double) (nFullLength - 1) / (double) nFullLength;
+		//double	dScaleFactor = (double) (nFullLength - 1) / (double) nFullLength;
 		for (int k = 0; k < nHalfLength; k++)
 		{
-			double	dPhase = -Math.PI * k * dScaleFactor;
+			//double	dPhase = -Math.PI * k * dScaleFactor;
 		}
 		// TODO: middle point has to be 0
 		// TOO: check loop bounds
 		for (int k = nHalfLength; k < nFullLength; k++)
 		{
-			double	dPhase = Math.PI - Math.PI * k * dScaleFactor;
+			//double	dPhase = Math.PI - Math.PI * k * dScaleFactor;
 		}
 		Complex[]	aComplexCoefficients = Util.IDFT(aFrequencyResponse);
 		double[]	aRealCoefficients = new double[nFullLength];

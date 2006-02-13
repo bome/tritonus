@@ -155,7 +155,6 @@ implements TargetDataLine
 			TDebug.out("AlsaTargetDataLine.readImpl(): wanted length: " + nLength);
 		}
 		int	nFrameSize = getFormat().getFrameSize();
-		int	nOriginalOffset = nOffset;
 		int	nFramesToRead = nLength / nFrameSize;
 		if (nLength > 0 && !isActive())
 		{

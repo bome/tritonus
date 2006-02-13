@@ -161,9 +161,9 @@ extends TAudioFileReader
 		float	fSampleRate = oggPacketBuffer.read(32);
 
 		// These are only used for error checking.
-		int bitrate_upper = oggPacketBuffer.read(32);
-		int bitrate_nominal = oggPacketBuffer.read(32);
-		int bitrate_lower = oggPacketBuffer.read(32);
+		/*int bitrate_upper =*/ oggPacketBuffer.read(32);
+		/*int bitrate_nominal =*/ oggPacketBuffer.read(32);
+		/*int bitrate_lower =*/ oggPacketBuffer.read(32);
 
 		int[] blocksizes = new int[2];
 		blocksizes[0] = 1 << oggPacketBuffer.read(4);

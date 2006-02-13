@@ -425,6 +425,7 @@ extends TEncodingFormatConversionProvider
 				}
 				currComment = (new String(ptr[j], 0, ptr[j].length - 1)).trim();
 				m_songComments.add(currComment);
+				/*
 				if (currComment.toUpperCase().startsWith("ARTIST"))
 				{
 					String artistLabelValue = currComment.substring(7);
@@ -434,6 +435,7 @@ extends TEncodingFormatConversionProvider
 					String titleLabelValue = currComment.substring(6);
 					String miniDragLabel = currComment.substring(6);
 				}
+				*/
 				if (TDebug.TraceAudioConverter) TDebug.out("Comment: " + currComment);
 			}
 			currComment = "Bitstream: " + m_vorbisInfo.channels + " channel," + m_vorbisInfo.rate + "Hz";

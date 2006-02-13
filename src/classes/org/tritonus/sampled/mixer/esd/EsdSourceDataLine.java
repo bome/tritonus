@@ -41,7 +41,6 @@ import org.tritonus.share.TDebug;
 import org.tritonus.lowlevel.esd.Esd;
 import org.tritonus.lowlevel.esd.EsdStream;
 import org.tritonus.share.sampled.TConversionTool;
-import org.tritonus.share.sampled.TVolumeUtils;
 import org.tritonus.share.sampled.mixer.TMixer;
 import org.tritonus.share.sampled.mixer.TBaseDataLine;
 
@@ -333,10 +332,12 @@ implements SourceDataLine
 		{
 			TDebug.out("EsdSourceDataLine.setGainImpl(): called: ");
 		}
+		/*
 		float	fLeftDb = m_fGain + m_fPan * 15.0F;
 		float	fRightDb = m_fGain - m_fPan * 15.0F;
 		float	fLeftLinear = (float) TVolumeUtils.log2lin(fLeftDb);
 		float	fRightLinear = (float) TVolumeUtils.log2lin(fRightDb);
+		*/
 // 		m_esdStream.setVolume((int) (fLeftLinear * 256),
 // 				      (int) (fRightLinear * 256));
 	}

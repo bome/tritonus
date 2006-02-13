@@ -121,7 +121,6 @@ implements VorbisConstants
 	 */
 	public String query(String strTag, int nIndex)
 	{
-		String strFullTag = strTag + "=";
 		int nCount = 0;
 		for (int i = 0; i < m_comments.size(); i++)
 		{

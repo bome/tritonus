@@ -125,7 +125,7 @@ public class AudioSystem
 		doMixerProviderIteration(action);
 		Mixer.Info[] infos = action.getMixerInfos();
 		// TDebug.out("MI length: " + infos.length);
-		return action.getMixerInfos();
+		return infos;
 	}
 
 

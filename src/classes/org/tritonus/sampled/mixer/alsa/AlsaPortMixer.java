@@ -278,8 +278,8 @@ extends TMixer
 			throw new IllegalArgumentException("no port for this info");
 		}
 		List<Control>	controls;
-		Control	c;
-		int	nDirection;
+		//Control	c;
+		//int	nDirection;
 		if (info.isSource())
 		{
 			controls = createSourcePortControls(element);

@@ -388,7 +388,6 @@ public final class GSMDecoder
 	{
 		int i,p;
 		int temp, temp1, temp2, temp3;
-		int ltmp;
 
 		//assert(mant >0 && mant <= 7 );
 
@@ -493,7 +492,6 @@ public final class GSMDecoder
 						      int[] erp,
 						      int[] dp0)
 	{
-		int ltmp;
 		int brp, drpp, Nr;
 
 		Nr = Ncr < 40 || Ncr > 120 ? nrp : Ncr;
@@ -558,7 +556,6 @@ public final class GSMDecoder
 								 int[] LARpp)
 	{
 		int temp1;
-		int ltmp;
 
 		// STEP(      0,  -32,  13107 );
 

@@ -299,7 +299,6 @@ extends AudioFileWriter
 			TDebug.out("class: "+getClass().getName());
 		}
 		int	nTotalWritten = 0;
-		AudioFormat	inputFormat = audioInputStream.getFormat();
 		AudioFormat	outputFormat = audioOutputStream.getFormat();
 
 		// TODO: handle case when frame size is unknown ?

@@ -250,7 +250,7 @@ implements Runnable
 			}
 			Track[]	aTracks = sequence.getTracks();
 			// this is used to get a useful time value for the end of track message
-			long	lHighestTime = 0;
+			//long	lHighestTime = 0;
 			while (m_nPhase == STATE_STARTED)
 			{
 				// searching for the next event

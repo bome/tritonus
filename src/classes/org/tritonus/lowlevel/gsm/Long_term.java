@@ -341,7 +341,6 @@ public class Long_term
 		)
 		throws IllegalArgumentException
 	{
-		int       ltmp;   /* for ADD */
 		short     brp, drpp, Nr;
 		short[]   drp = S.getDp0(); 
 

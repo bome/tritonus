@@ -126,7 +126,7 @@ public class Short_term
 		short[]  LARc,         /* coded log area ratio [0..7]  IN      */
 		short[]  LARpp)        /* out: decoded ..                      */
 	{
-		short   temp1 = 0, temp2 = 0;
+		short   temp1 = 0;
 		int 	index = 0;
 
 		/*  This procedure requires for efficient implementation
@@ -332,7 +332,6 @@ public class Short_term
 	{
 		short[] v_temp = S.getV();
 		short   sri = 0, tmp1 = 0, tmp2 = 0;
-		int     ltmp = 0;   /* for GSM_ADD  & GSM_SUB */
 
 		int 	index = wt_sr_index_start;
 
