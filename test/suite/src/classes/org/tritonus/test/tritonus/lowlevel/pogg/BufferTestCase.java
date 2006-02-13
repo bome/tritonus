@@ -22,10 +22,6 @@
 
 package org.tritonus.test.tritonus.lowlevel.pogg;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import junit.framework.TestCase;
 
 import org.tritonus.lowlevel.pogg.Buffer;

@@ -24,12 +24,10 @@ package org.tritonus.test.api.midi.midisystem;
 
 import junit.framework.TestCase;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Synthesizer;
+//import javax.sound.midi.Sequencer;
+//import javax.sound.midi.Synthesizer;
 
 
 

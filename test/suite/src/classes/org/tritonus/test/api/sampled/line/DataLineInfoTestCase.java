@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.SourceDataLine;
 

@@ -23,7 +23,6 @@
 package org.tritonus.test.tritonus.sampled.file;
 
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioSystem;
 
 import	org.tritonus.share.sampled.file.AudioOutputStream;
 import	org.tritonus.share.sampled.file.TDataOutputStream;

@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 
 import org.tritonus.share.sampled.AudioSystemShadow;
 import org.tritonus.share.sampled.file.TDataOutputStream;
-import org.tritonus.share.sampled.file.TSeekableDataOutputStream;
-import org.tritonus.share.sampled.file.TNonSeekableDataOutputStream;
 
 import org.tritonus.test.Util;
 

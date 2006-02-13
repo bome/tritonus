@@ -49,7 +49,8 @@ extends TestCase
 		throws Exception
 	{
 		String	strTypeName = "TeSt";
-		Control.Type	type = new TestControlType(strTypeName);
+		@SuppressWarnings("unused") Control.Type	type =
+			new TestControlType(strTypeName);
 	}
 
 

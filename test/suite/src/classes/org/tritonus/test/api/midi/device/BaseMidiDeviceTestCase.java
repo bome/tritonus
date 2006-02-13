@@ -23,7 +23,6 @@
 package org.tritonus.test.api.midi.device;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiSystem;
 
 import junit.framework.TestCase;

@@ -86,8 +86,8 @@ extends TestCase
 		assertTrue("array copying", abData2 != message.getDataField());
 		byte[]		abData3 = new byte[]{(byte) 128, 31, 1, 55, 55, 55};
 		int		nDesiredLength = 3;
-		message.setMessage(abData2, nDesiredLength);
- 		assertTrue("data content", Util.compareByteArrays(abData2, 0, message.getDataField(), 0, nDesiredLength));
+		message.setMessage(abData3, nDesiredLength);
+ 		assertTrue("data content", Util.compareByteArrays(abData3, 0, message.getDataField(), 0, nDesiredLength));
 		assertEquals("length field", nDesiredLength, message.getLengthField());
 	}
 

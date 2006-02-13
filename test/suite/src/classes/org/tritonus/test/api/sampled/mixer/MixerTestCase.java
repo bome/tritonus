@@ -22,11 +22,9 @@
 
 package org.tritonus.test.api.sampled.mixer;
 
-import java.util.List;
-
 import javax.sound.sampled.Mixer;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
+//import javax.sound.sampled.DataLine;
+//import javax.sound.sampled.Line;
 
 
 /** Class for tests of javax.sound.sampled.Mixer.

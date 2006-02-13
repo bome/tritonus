@@ -24,7 +24,7 @@ package org.tritonus.test.api.sampled.misc;
 
 import junit.framework.TestCase;
 
-import javax.sound.sampled.AudioFileFormat.Type;
+//import javax.sound.sampled.AudioFileFormat.Type;
 
 
 

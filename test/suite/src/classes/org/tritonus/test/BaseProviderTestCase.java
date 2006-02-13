@@ -22,19 +22,11 @@
 
 package org.tritonus.test;
 
-import	java.io.BufferedInputStream;
-import	java.io.File;
-import	java.io.FileInputStream;
-import	java.io.InputStream;
-
 import	java.util.MissingResourceException;
 import	java.util.ResourceBundle;
 
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
-import	javax.sound.sampled.AudioSystem;
-import	javax.sound.sampled.spi.AudioFileReader;
 
 import	junit.framework.TestCase;
 

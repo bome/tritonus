@@ -24,9 +24,6 @@ package org.tritonus.test.tritonus.share.midi;
 
 import junit.framework.TestCase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.sound.midi.Patch;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.Soundbank;

@@ -22,11 +22,6 @@
 
 package org.tritonus.test;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -387,7 +382,8 @@ extends BaseProviderTestCase
 	private AudioFormat.Encoding[] getEncodings(String strKey)
 	{
 		String	strEncodings = getResourceString(getResourcePrefix() + "." + strKey);
-		List		encodingsList = new ArrayList();
+		List<AudioFormat.Encoding> encodingsList =
+			new ArrayList<AudioFormat.Encoding>();
 		StringTokenizer	tokenizer = new StringTokenizer(strEncodings);
 		while (tokenizer.hasMoreTokens())
 		{

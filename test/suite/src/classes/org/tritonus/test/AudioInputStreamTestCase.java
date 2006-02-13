@@ -45,7 +45,7 @@ extends TestCase
 
 	public void testConstructorNullPointers()
 	{
-		AudioInputStream ais = null;
+		@SuppressWarnings("unused") AudioInputStream ais = null;
 		InputStream is = new ByteArrayInputStream(new byte[0]);
 		AudioFormat format = new AudioFormat(44100.0F, 16, 2, true, false);
 		try

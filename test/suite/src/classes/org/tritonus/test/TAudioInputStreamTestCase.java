@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.tritonus.share.sampled.convert.TAudioInputStream;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 
 
@@ -45,7 +44,7 @@ extends TestCase
 
 	public void testEmptyMap()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
 			AudioSystem.NOT_SPECIFIED,
@@ -60,7 +59,7 @@ extends TestCase
 
 	public void testCopying()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
@@ -76,12 +75,12 @@ extends TestCase
 
 	public void testUnmodifiable()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		TAudioInputStream fileFormat = new TAudioInputStream(
 			null, null,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
-		Map propReturn = fileFormat.properties();
+		Map<String, Object> propReturn = fileFormat.properties();
 		try
 		{
 			propReturn.put("author", "Matthias Pfisterer");
@@ -95,7 +94,7 @@ extends TestCase
 
 	public void testGet()
 	{
-		Map prop = new HashMap();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		prop.put("author", "Matthias Pfisterer");
 		TAudioInputStream fileFormat = new TAudioInputStream(

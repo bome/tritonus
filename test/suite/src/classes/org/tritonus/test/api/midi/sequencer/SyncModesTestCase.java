@@ -22,17 +22,8 @@
 
 package org.tritonus.test.api.midi.sequencer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Sequencer.SyncMode;
-import javax.sound.midi.InvalidMidiDataException;
 
 
 

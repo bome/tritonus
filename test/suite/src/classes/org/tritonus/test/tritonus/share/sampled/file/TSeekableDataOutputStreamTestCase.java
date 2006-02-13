@@ -22,10 +22,7 @@
 
 package org.tritonus.test.tritonus.share.sampled.file;
 
-import junit.framework.TestCase;
-
 import java.io.File;
-import java.io.OutputStream;
 
 import org.tritonus.share.sampled.file.TSeekableDataOutputStream;
 import org.tritonus.share.sampled.file.TDataOutputStream;

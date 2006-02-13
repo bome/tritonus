@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 
 

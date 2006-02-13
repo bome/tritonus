@@ -24,7 +24,6 @@ package org.tritonus.test.api.midi.spi;
 
 import junit.framework.TestCase;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 

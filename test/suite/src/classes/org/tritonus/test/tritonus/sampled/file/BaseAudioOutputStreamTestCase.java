@@ -22,15 +22,10 @@
 
 package org.tritonus.test.tritonus.sampled.file;
 
-import	java.io.BufferedInputStream;
 import	java.io.ByteArrayOutputStream;
 import	java.io.File;
-import	java.io.FileInputStream;
-import	java.io.InputStream;
-import	java.io.IOException;
 
 import	javax.sound.sampled.AudioFormat;
-import	javax.sound.sampled.AudioInputStream;
 import	javax.sound.sampled.AudioSystem;
 
 import	junit.framework.TestCase;

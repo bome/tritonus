@@ -23,7 +23,6 @@
 package org.tritonus.test.api.sampled.mixer;
 
 import javax.sound.sampled.Mixer;
-import javax.sound.sampled.Mixer.Info;
 import javax.sound.sampled.AudioSystem;
 
 import junit.framework.TestCase;

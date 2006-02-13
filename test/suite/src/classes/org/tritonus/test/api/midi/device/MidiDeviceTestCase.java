@@ -22,8 +22,6 @@
 
 package org.tritonus.test.api.midi.device;
 
-import java.util.List;
-
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
