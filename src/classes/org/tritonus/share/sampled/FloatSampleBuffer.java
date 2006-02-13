@@ -230,10 +230,12 @@ public class FloatSampleBuffer {
 		initFromByteArray(buffer, offset, byteCount, format);
 	}
 
+	@SuppressWarnings("hiding") 
 	protected void init(int channelCount, int sampleCount, float sampleRate) {
 		init(channelCount, sampleCount, sampleRate, LAZY_DEFAULT);
 	}
 
+	@SuppressWarnings("hiding") 
 	protected void init(int channelCount, int sampleCount, float sampleRate, boolean lazy) {
 		if (channelCount<0 || sampleCount<0) {
 			throw new IllegalArgumentException(
@@ -245,6 +247,7 @@ public class FloatSampleBuffer {
 		}
 	}
 
+	@SuppressWarnings("hiding") 
 	private void createChannels(int channelCount, int sampleCount, boolean lazy) {
 		this.sampleCount=sampleCount;
 		// lazy delete of all channels. Intentionally lazy !
@@ -323,6 +326,7 @@ public class FloatSampleBuffer {
 	 * Destroys any existing data and creates new channels.
 	 * It also destroys lazy removed channels and samples.
 	 */
+	@SuppressWarnings("hiding") 
 	public void reset(int channels, int sampleCount, float sampleRate) {
 		init(channels, sampleCount, sampleRate, false);
 	}
@@ -597,6 +601,7 @@ public class FloatSampleBuffer {
 	 * Be aware, this might cause clipping when converting back
 	 * to integer samples.
 	 */
+	@SuppressWarnings("hiding") 
 	public void mixDownChannels() {
 		float[] firstChannel=getChannel(0);
 		int sampleCount=getSampleCount();
