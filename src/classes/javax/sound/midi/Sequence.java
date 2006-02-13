@@ -99,6 +99,7 @@ public class Sequence
 
 
 
+	@SuppressWarnings("unchecked")
 	public Track createTrack()
 	{
 		Track	track = new Track();
@@ -120,6 +121,7 @@ public class Sequence
 
 
 
+	@SuppressWarnings("unchecked")
 	public Track[] getTracks()
 	{
 		synchronized (tracks)

@@ -35,7 +35,6 @@ import java.util.Arrays;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 
 import org.tritonus.share.sampled.file.AudioOutputStream;
 import org.tritonus.share.sampled.file.TAudioFileWriter;
@@ -55,7 +54,6 @@ extends TAudioFileWriter {
 	        AudioFileFormat.Type.WAVE
 	    };
 
-	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 
 	// IMPORTANT: this array depends on the AudioFormat.match() algorithm which takes
 	//            AudioSystem.NOT_SPECIFIED into account !

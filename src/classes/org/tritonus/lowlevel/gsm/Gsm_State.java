@@ -24,14 +24,14 @@ package org.tritonus.lowlevel.gsm;
 
 public class Gsm_State
 {
-	private short[]		dp0;	
+	private short[]		m_dp0;	
 	private short		z1;	/* preprocessing,   Offset_com.     */
 	private int		L_z2;	/*                  Offset_com.     */
 	private int		mp;	/*                  Preemphasis     */
 
 	private short[]		u;	/* short_term.java                  */
-	private short[][]	LARpp;	/*                                  */
-	private short		j;	/*                                  */
+	private short[][]	m_LARpp;	/*                                  */
+	private short		m_j;	/*                                  */
 
 	private short		nrp;	/* long_term.java, synthesis        */
 	private short[]		v;	/* short_term.java, synthesis       */
@@ -86,13 +86,13 @@ public class Gsm_State
 		{
 			for(col = 0; col < 8; ++col)
 			{
-				System.out.print("["+i+"]["+col+"] " +LARpp[i][col]);
+				System.out.print("["+i+"]["+col+"] " +m_LARpp[i][col]);
 				System.out.print(", ");
 			}
 			System.out.print("\n");
 		}
 		System.out.print("\n");
-		System.out.println("\nj: " + j);
+		System.out.println("\nj: " + m_j);
 		System.out.println("\nnrp: " + nrp);
 		System.out.println("\nv[]: ");
 		for(i = 0; i < v.length; ++i)
@@ -117,28 +117,28 @@ public class Gsm_State
 
 	public void setDp0(short[] lcl_arg0)
 	{
-		dp0 = lcl_arg0;
+		m_dp0 = lcl_arg0;
 	}
 
 
 
 	public void setDp0Indexed(int ix,short lcl_arg0)
 	{
-		dp0[ix] = lcl_arg0;
+		m_dp0[ix] = lcl_arg0;
 	}
 
 
 
 	public short[] getDp0()
 	{
-		return dp0;
+		return m_dp0;
 	}
 
 
 
 	public short getDp0Indexed(int ix)
 	{
-		return dp0[ix];
+		return m_dp0[ix];
 	}
 
 
@@ -210,37 +210,37 @@ public class Gsm_State
 
 	public void setLARpp(short[][] lcl_arg0)
 	{
-		LARpp = lcl_arg0;
+		m_LARpp = lcl_arg0;
 	}
 
 
 	public void setLARppIndexed(int ix,short[] lcl_arg0)
 	{
-		LARpp[ix] = lcl_arg0;
+		m_LARpp[ix] = lcl_arg0;
 	}
 
 
 	public short[][] getLARpp()
 	{
-		return LARpp;
+		return m_LARpp;
 	}
 
 
 	public short[] getLARppIndexed(int ix)
 	{
-		return LARpp[ix];
+		return m_LARpp[ix];
 	}
 
 
 	public void setJ(short lcl_arg0)
 	{
-		j = lcl_arg0;
+		m_j = lcl_arg0;
 	}
 
 
 	public short getJ()
 	{
-		return j;
+		return m_j;
 	}
 
 

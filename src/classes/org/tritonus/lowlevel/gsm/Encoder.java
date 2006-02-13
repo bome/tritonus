@@ -542,11 +542,11 @@ public class Encoder
 	/**
 	 * Used for debugging. 
 	 *
-	 * @param g_s The Gsm_State object to be viewed.
+	 * @param state The Gsm_State object to be viewed.
 	 */
-	private void dump_Gsm_State(Gsm_State g_s)
+	private void dump_Gsm_State(Gsm_State state)
 	{
-		g_s.dump_Gsm_State();
+		state.dump_Gsm_State();
 	}
 
 

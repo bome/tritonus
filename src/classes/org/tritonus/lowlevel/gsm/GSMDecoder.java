@@ -45,11 +45,11 @@ public final class GSMDecoder
 	private static final int	MAX_WORD = 32767;
 
 
-	private int[]	dp0 = new int[280];
+	private int[]	m_dp0 = new int[280];
 
 	private int[]	u = new int[8];
 	private int[][]	LARpp = new int[2][8];
-	private int	j;
+	private int	m_j;
 
 	private int	nrp;
 	private int[]	v = new int[9];
@@ -290,11 +290,11 @@ public final class GSMDecoder
 
 			//print("erp",erp);
 
-			longTermSynthesisFiltering(Ncr[j], bcr[j], m_erp, dp0);
+			longTermSynthesisFiltering(Ncr[j], bcr[j], m_erp, m_dp0);
       
 			for (k = 0; k < 40; k++)
 			{
-				m_wt[j * 40 + k] = dp0[120 + k];
+				m_wt[j * 40 + k] = m_dp0[120 + k];
 			}
 
 		}
@@ -525,8 +525,8 @@ public final class GSMDecoder
 
 
 
-		int[]	LARpp_j = LARpp[j];
-		int[]	LARpp_j_1 = LARpp[j^=1];
+		int[]	LARpp_j = LARpp[m_j];
+		int[]	LARpp_j_1 = LARpp[m_j^=1];
 
 		decodingOfTheCodedLogAreaRatios(LARcr,LARpp_j);
 

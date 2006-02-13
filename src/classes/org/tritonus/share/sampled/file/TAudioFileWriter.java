@@ -65,8 +65,8 @@ extends AudioFileWriter
 {
 	protected static final int	ALL = AudioSystem.NOT_SPECIFIED;
 
-	public static AudioFormat.Encoding PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
-	public static AudioFormat.Encoding PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
+	protected static final AudioFormat.Encoding	PCM_SIGNED = AudioFormat.Encoding.PCM_SIGNED;
+	protected static final AudioFormat.Encoding PCM_UNSIGNED = AudioFormat.Encoding.PCM_UNSIGNED;
 
 	/**	Buffer length for the loop in the write() method.
 	 *	This is in bytes. Perhaps it should be in frames to give an

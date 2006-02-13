@@ -64,7 +64,7 @@ extends TAudioInputStream {
 	 * and grows with the time - it always has the size of the
 	 * largest intermediate buffer ever needed.
 	 */
-	protected byte[] buffer=null;
+	protected byte[] m_buffer=null;
 
 	/**
 	 * For use of the more efficient method convertInPlace.
@@ -147,7 +147,7 @@ extends TAudioInputStream {
 
 
 	private void clearBuffer() {
-		buffer = null;
+		m_buffer = null;
 	}
 
 	public AudioInputStream getOriginalStream() {
@@ -186,10 +186,10 @@ extends TAudioInputStream {
 			readOffset=nOffset;
 		} else {
 			// assert that the buffer fits
-			if (buffer == null || buffer.length < originalBytes) {
-				buffer = new byte[originalBytes];
+			if (m_buffer == null || m_buffer.length < originalBytes) {
+				m_buffer = new byte[originalBytes];
 			}
-			readBuffer=buffer;
+			readBuffer=m_buffer;
 			readOffset=0;
 		}
 		int nBytesRead = originalStream.read(readBuffer, readOffset, originalBytes);
@@ -207,7 +207,7 @@ extends TAudioInputStream {
 			convertInPlace(abData, nOffset, nFramesRead);
 			nFramesConverted=nFramesRead;
 		} else {
-			nFramesConverted = convert(buffer, abData, nOffset, nFramesRead);
+			nFramesConverted = convert(m_buffer, abData, nOffset, nFramesRead);
 		}
 		if (TDebug.TraceAudioConverter) {
 			TDebug.out("< converted "+nFramesConverted+" frames");

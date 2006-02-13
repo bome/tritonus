@@ -35,7 +35,6 @@ import java.util.Arrays;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 
 import org.tritonus.share.sampled.file.AudioOutputStream;
 import org.tritonus.share.sampled.file.TAudioFileWriter;
@@ -56,8 +55,6 @@ public class AiffAudioFileWriter extends TAudioFileWriter {
 	        AudioFileFormat.Type.AIFC
 	    };
 
-	private static final int ALL=AudioSystem.NOT_SPECIFIED;
-	private static final AudioFormat.Encoding	PCM_SIGNED = AudioFormat.Encoding.PCM_SIGNED;
 	private static final AudioFormat.Encoding	ULAW = AudioFormat.Encoding.ULAW;
 	private static final AudioFormat.Encoding	IMA_ADPCM = new AudioFormat.Encoding("IMA_ADPCM");
 
