@@ -202,14 +202,16 @@ extends TEncodingFormatConversionProvider
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): new target format: " + newTargetFormat); }
 		// hacked together...
 		// ... only works for PCM target encoding ...
-		newTargetFormat = new AudioFormat(targetFormat.getEncoding(),
-						  sourceFormat.getSampleRate(),
-						  newTargetFormat.getSampleSizeInBits(),
-						  newTargetFormat.getChannels(),
-						  newTargetFormat.getFrameSize(),
-						  sourceFormat.getSampleRate(),
-						  newTargetFormat.isBigEndian());
-		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat); }
+		newTargetFormat = new AudioFormat(
+			targetFormat.getEncoding(),
+			sourceFormat.getSampleRate(),
+			newTargetFormat.getSampleSizeInBits(),
+			newTargetFormat.getChannels(),
+			newTargetFormat.getFrameSize(),
+			sourceFormat.getSampleRate(),
+			newTargetFormat.isBigEndian(),
+			targetFormat.properties());
+		if (TDebug.TraceAudioConverter) TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat);
 		return newTargetFormat;
 	}
 
@@ -253,7 +255,7 @@ extends TEncodingFormatConversionProvider
 			super(outputFormat,
 			      AudioSystem.NOT_SPECIFIED,
 			      262144, 16384);
-			if (TDebug.TraceAudioConverter) { TDebug.out(">EncodedVorbisAudioInputStream.<init>(): begin"); }
+			if (TDebug.TraceAudioConverter) TDebug.out(">EncodedVorbisAudioInputStream.<init>(): begin");
 			m_decodedStream = inputStream;
 			m_abReadbuffer = new byte[READ * getFrameSize()];
 			Object property = null;
@@ -263,6 +265,7 @@ extends TEncodingFormatConversionProvider
 			if (property instanceof Boolean)
 			{
 				bUseVBR = ((Boolean) property).booleanValue();
+				if (TDebug.TraceAudioConverter) TDebug.out("using VBR: " + bUseVBR);
 			}
 
 			property = outputFormat.getProperty("quality");
@@ -270,24 +273,30 @@ extends TEncodingFormatConversionProvider
 			if (property instanceof Integer)
 			{
 				fQuality = ((Integer) property).intValue() / 10.0F;
+				bUseVBR = true;
+				if (TDebug.TraceAudioConverter) TDebug.out("using quality (automatically switching VBR on): " + fQuality);
 			}
 
-			property = outputFormat.getProperty("bitrate");
 			int	nNominalBitrate = DEFAULT_NOM_BITRATE;
+			int	nMinBitrate = DEFAULT_MIN_BITRATE;
+			int	nMaxBitrate = DEFAULT_MAX_BITRATE;
+			property = outputFormat.getProperty("bitrate");
 			if (property instanceof Integer)
 			{
-				nNominalBitrate = ((Integer) property).intValue() / 1024;
+				nNominalBitrate = ((Integer) property).intValue() /*/ 1024*/;
+				nMinBitrate = nNominalBitrate;
+				nMaxBitrate = nNominalBitrate;
+				bUseVBR = false;
+				if (TDebug.TraceAudioConverter) TDebug.out("using nominal bitrate (automatically switching VBR off): " + nNominalBitrate);
 			}
 
 			property = outputFormat.getProperty("vorbis.min_bitrate");
-			int	nMinBitrate = DEFAULT_MIN_BITRATE;
 			if (property instanceof Integer)
 			{
-				nMinBitrate = ((Integer) property).intValue() / 1024;
+				nMinBitrate = ((Integer) property).intValue() /*/ 1024*/;
 			}
 
 			property = outputFormat.getProperty("vorbis.max_bitrate");
-			int	nMaxBitrate = DEFAULT_MAX_BITRATE;
 			if (property instanceof Integer)
 			{
 				nMaxBitrate = ((Integer) property).intValue() / 1024;
@@ -305,16 +314,18 @@ extends TEncodingFormatConversionProvider
 			m_info.init();
 
 			int	nSampleRate = (int) inputStream.getFormat().getSampleRate();
-			if (TDebug.TraceAudioConverter) { TDebug.out("sample rate: " + nSampleRate); }
-			if (TDebug.TraceAudioConverter) { TDebug.out("channels: " + getChannels()); }
+			if (TDebug.TraceAudioConverter) TDebug.out("sample rate: " + nSampleRate);
+			if (TDebug.TraceAudioConverter) TDebug.out("channels: " + getChannels());
 			if (bUseVBR)
 			{
+				if (TDebug.TraceAudioConverter) TDebug.out("using VBR with quality: " + fQuality);
 				m_info.encodeInitVBR(getChannels(),
 						 nSampleRate,
 						 fQuality);
 			}
 			else
 			{
+				if (TDebug.TraceAudioConverter) TDebug.out("using fixed bitrate(max/nom/min): " + nMaxBitrate + "/" + nNominalBitrate + "/" + nMinBitrate);
 				m_info.encodeInit(getChannels(),
 					      nSampleRate,
 					      nMaxBitrate,
