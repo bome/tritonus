@@ -103,6 +103,7 @@ public class Lame {
 	 * This field is long because on 64 bit architectures, the native
 	 * size of ints may be 64 bit.
 	 */
+	@SuppressWarnings("unused")
 	private long m_lNativeGlobalFlags;
 
 	// these fields are set upon successful initialization to show effective values.
@@ -160,13 +161,13 @@ public class Lame {
 		}
 		if (TDebug.TraceAudioConverter) {
 			TDebug.out("LAME parameters: channels="+sourceFormat.getChannels()
-				   +"  sample rate="+((int) Math.round(sourceFormat.getSampleRate())+"Hz")
+				   +"  sample rate="+(Math.round(sourceFormat.getSampleRate())+"Hz")
 				   +"  bitrate="+bitRate+"KBit/s");
 			TDebug.out("                 channelMode="+chmode2string(channelMode)
 				   +"   quality="+quality2string(quality)
 				   +"   VBR="+VBR+"  bigEndian="+sourceFormat.isBigEndian());
 		}
-		int result=nInitParams(sourceFormat.getChannels(), (int) Math.round(sourceFormat.getSampleRate()),
+		int result=nInitParams(sourceFormat.getChannels(), Math.round(sourceFormat.getSampleRate()),
 				       bitRate, channelMode, quality,
 				       VBR, sourceFormat.isBigEndian());
 		if (result<0) {

@@ -40,6 +40,7 @@ public class AlsaPcmHWParams
 	 *	for the native code.
 	 *	This must be long to be 64bit-clean.
 	 */
+	@SuppressWarnings("unused")
 	private long	m_lNativeHandle;
 
 
@@ -82,7 +83,7 @@ public class AlsaPcmHWParams
 		int	nReturn;
 
 		nReturn = getRate(alValues);
-		double	dRate = (double) -1;
+		double	dRate = -1;
 		if (nReturn >= 0)
 		{
 			dRate = (double) alValues[0] / (double) alValues[1];

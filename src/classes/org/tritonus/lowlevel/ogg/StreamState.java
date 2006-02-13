@@ -50,6 +50,7 @@ public class StreamState
 	 *	for the native code.
 	 *	This must be long to be 64bit-clean.
 	 */
+	@SuppressWarnings("unused")
 	private long	m_lNativeHandle;
 
 

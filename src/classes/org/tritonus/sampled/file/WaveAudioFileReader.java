@@ -135,7 +135,7 @@ public class WaveAudioFileReader extends TAudioFileReader
 		AudioFormat.Encoding encoding;
 		int sampleSizeInBits;
 		int frameSize=0;
-		float frameRate=(float) sampleRate;
+		float frameRate= sampleRate;
 
 		int cbSize = 0;
 		switch (formatCode) {
@@ -244,7 +244,7 @@ public class WaveAudioFileReader extends TAudioFileReader
 		advanceChunk(dis, chunkLength, read);
 		return new AudioFormat(
 		           encoding,
-		           (float) sampleRate,
+		           sampleRate,
 		           sampleSizeInBits,
 		           channelCount,
 		           frameSize,

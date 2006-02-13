@@ -188,6 +188,7 @@ public class AlsaPcm
 	 *	Holds the pointer to snd_pcm_t for the native code.
 	 *	This must be long to be 64bit-clean.
 	 */
+	@SuppressWarnings("unused")
 	private long	m_lNativeHandle;
 
 

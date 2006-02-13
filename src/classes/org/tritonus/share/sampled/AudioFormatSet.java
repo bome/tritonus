@@ -74,17 +74,17 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 	}
 
 	public boolean add(AudioFormat elem) {
-		if (elem==null || !(elem instanceof AudioFormat)) {
+		if (elem==null) {
 			return false;
 		}
 		return super.add(elem);
 	}
 
 	public boolean contains(AudioFormat elem) {
-		if (elem==null || !(elem instanceof AudioFormat)) {
+		if (elem==null) {
 			return false;
 		}
-		AudioFormat comp=(AudioFormat) elem;
+		AudioFormat comp= elem;
 		Iterator it=iterator();
 		while (it.hasNext()) {
 			if (AudioFormats.equals(comp, (AudioFormat) it.next())) {
@@ -95,10 +95,10 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 	}
 
 	public AudioFormat get(AudioFormat elem) {
-		if (elem==null || !(elem instanceof AudioFormat)) {
+		if (elem==null) {
 			return null;
 		}
-		AudioFormat comp=(AudioFormat) elem;
+		AudioFormat comp= elem;
 		Iterator it=iterator();
 		while (it.hasNext()) {
 			AudioFormat thisElem=(AudioFormat) it.next();
@@ -110,7 +110,7 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 	}
 
 	public AudioFormat getAudioFormat(AudioFormat elem) {
-		return (AudioFormat) get(elem);
+		return get(elem);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 
 	// $$mp: TODO: remove; should be obsolete
 	public AudioFormat[] toAudioFormatArray() {
-		return (AudioFormat[]) toArray(EMPTY_FORMAT_ARRAY);
+		return toArray(EMPTY_FORMAT_ARRAY);
 	}
 
 

@@ -40,6 +40,7 @@ extends	Esd
 	 *	This field is long because on 64 bit architectures, the native
 	 *	size of ints may be 64 bit.
 	 */
+	@SuppressWarnings("unused")
 	private long			m_lNativeFd;
 
 	/**	Holds the sample id.
@@ -47,6 +48,7 @@ extends	Esd
 	 *	This field is long because on 64 bit architectures, the native
 	 *	size of ints may be 64 bit.
 	 */
+	@SuppressWarnings("unused")
 	private long			m_lNativeId;
 
 

@@ -37,11 +37,6 @@ import org.tritonus.share.TDebug;
 public abstract class FloatControl
 extends Control
 {
-	private static final String	DEFAULT_TRUE_LABEL = "true";
-	private static final String	DEFAULT_FALSE_LABEL = "false";
-
-
-
 	private float		m_fValue;
 	private float		m_fMinimum;
 	private float		m_fMaximum;

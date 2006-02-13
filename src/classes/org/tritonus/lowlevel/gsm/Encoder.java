@@ -71,7 +71,7 @@ public class Encoder
 	 */
 	public static void stripAUHeader(InputStream in) 
 		throws Exception {
-		DataInputStream input = new DataInputStream( (InputStream) in );
+		DataInputStream input = new DataInputStream(in );
 	
 		/* Just read these bits from the stream and do nothing with them */
 		int magic = input.readInt();  	/* magic number SND_MAGIC ((int)0x2e736e64),

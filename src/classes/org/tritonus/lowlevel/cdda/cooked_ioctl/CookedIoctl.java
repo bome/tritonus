@@ -53,6 +53,7 @@ public class CookedIoctl
 	 *	This holds a file descriptor for the native code -
 	 *	do not touch!
 	 */
+	@SuppressWarnings("unused")
 	private long		m_lNativeHandle;
 
 

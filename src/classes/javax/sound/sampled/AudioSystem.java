@@ -54,7 +54,6 @@ public class AudioSystem
 {
 	public static final int		NOT_SPECIFIED = -1;
 
-	private static final AudioFormat[]	EMPTY_FORMAT_ARRAY = new AudioFormat[0];
 	private static final AudioFormat.Encoding[]	EMPTY_ENCODING_ARRAY = new AudioFormat.Encoding[0];
 	private static final AudioFileFormat.Type[]	EMPTY_TYPE_ARRAY = new AudioFileFormat.Type[0];
 	private static final Mixer.Info[]	EMPTY_MIXER_INFO_ARRAY = new Mixer.Info[0];
@@ -675,7 +674,7 @@ public class AudioSystem
 		AudioFormat.Encoding targetEncoding,
 		AudioInputStream sourceStream)
 	{
-		return getAudioInputStreamImpl((Object) targetEncoding,
+		return getAudioInputStreamImpl(targetEncoding,
 					       sourceStream);
 	}
 
@@ -724,7 +723,7 @@ public class AudioSystem
 		AudioFormat targetFormat,
 		AudioInputStream sourceStream)
 	{
-		return getAudioInputStreamImpl((Object) targetFormat,
+		return getAudioInputStreamImpl(targetFormat,
 					       sourceStream);
 	}
 

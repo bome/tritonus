@@ -57,6 +57,7 @@ public class Cdparanoia
 	 *	This holds a pointer for the native code -
 	 *	do not touch!
 	 */
+	@SuppressWarnings("unused")
 	private long		m_lNativeHandle;
 
 

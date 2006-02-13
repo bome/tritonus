@@ -300,13 +300,6 @@ implements CddaMidLevel
 
 
 
-		private boolean isBigEndian()
-		{
-			return getFormat().isBigEndian();
-		}
-
-
-
 		public void close()
 			throws IOException
 		{

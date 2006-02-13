@@ -158,11 +158,11 @@ public class AuAudioFileReader extends TAudioFileReader
 		//String desc=readDescription(dataInputStream, nDataOffset - AuTool.DATA_OFFSET);
 
 		AudioFormat format = new AudioFormat(encoding,
-		                                     (float) nSampleRate,
+		                                     nSampleRate,
 		                                     nSampleSize,
 		                                     nNumChannels,
 		                                     calculateFrameSize(nSampleSize, nNumChannels),
-		                                     (float) nSampleRate,
+		                                     nSampleRate,
 		                                     true);
 		AudioFileFormat	audioFileFormat = new TAudioFileFormat(
 			AudioFileFormat.Type.AU,

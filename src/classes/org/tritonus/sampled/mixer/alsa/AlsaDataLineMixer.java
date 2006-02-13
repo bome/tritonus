@@ -134,7 +134,7 @@ extends TMixer
 		List<Line.Info>	targetLineInfos = new ArrayList<Line.Info>();
 		Line.Info	targetLineInfo = new DataLine.Info(
 			TargetDataLine.class,
-			(AudioFormat[]) targetFormats.toArray(EMPTY_AUDIOFORMAT_ARRAY),
+			targetFormats.toArray(EMPTY_AUDIOFORMAT_ARRAY),
 			AudioSystem.NOT_SPECIFIED,
 			AudioSystem.NOT_SPECIFIED);
 		targetLineInfos.add(targetLineInfo);

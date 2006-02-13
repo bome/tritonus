@@ -60,6 +60,9 @@ public class AlsaMixerElement
 
 
 	private AlsaMixer	m_mixer;
+
+
+	@SuppressWarnings("unused")
 	private long		m_lNativeHandle;
 
 

@@ -372,7 +372,7 @@ implements Runnable
 					MidiUtils.getUnsignedInteger(abData[1]) * 256 +
 					MidiUtils.getUnsignedInteger(abData[2]);
 				// TDebug.out("tempo (us/quarter note): " + nTempo);
-				setTempoInMPQ((float) nTempo);
+				setTempoInMPQ(nTempo);
 				// TODO: setTempoInMPQ() seems to be not thread-safe
 			}
 		}

@@ -740,7 +740,7 @@ extends TSequencer
 					int	nTempo = MidiUtils.getUnsignedInteger(abData[0]) * 65536 +
 						MidiUtils.getUnsignedInteger(abData[1]) * 256 +
 						MidiUtils.getUnsignedInteger(abData[2]);
-					setTempoInMPQ((float) nTempo);
+					setTempoInMPQ(nTempo);
 					break;
 				}
 			}

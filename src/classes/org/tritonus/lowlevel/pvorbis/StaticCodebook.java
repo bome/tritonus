@@ -232,7 +232,7 @@ implements VorbisConstants
 	 */
 	private int calculateMaptype1Quantvals()
 	{
-		int vals = (int) Math.floor(Math.pow((float) m_nEntries, 1.0f / m_nDimensions));
+		int vals = (int) Math.floor(Math.pow(m_nEntries, 1.0f / m_nDimensions));
 
 		/* the above *should* be reliable, but we'll not assume that FP is
 		   ever reliable when bitstream sync is at stake; verify via integer

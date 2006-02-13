@@ -36,8 +36,9 @@ import org.tritonus.share.TDebug;
  */
 public class AlsaCtl
 {
-	/** contains a pointer to snd_ctl_t
+	/** Contains a pointer to snd_ctl_t.
 	 */
+	@SuppressWarnings("unused")
 	private long	m_lNativeHandle;
 
 

@@ -381,6 +381,7 @@ public class AlsaSeq
 	/*
 	 *	This holds a pointer for the native code - do not touch!
 	 */
+	@SuppressWarnings("unused")
 	private long		m_lNativeHandle;
 
 
