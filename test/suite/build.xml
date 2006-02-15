@@ -78,7 +78,7 @@
 
 
   <target name="test-midi"
-	  depends="test-midi-message,test-midi-device,test-midi-misc,test-midi-midisystem,test-midi-spi">
+	  depends="test-midi-message,test-midi-device,test-midi-sequencer, test-midi-synthesizer,test-midi-misc,test-midi-midisystem,test-midi-spi">
   </target>
 
 
@@ -102,7 +102,34 @@
     </junit>
   </target>
 
+  <!-- TODO: change package of test cases -->
+  <target name="test-midi-sequencer"
+		  depends="compile-api">
+	  <junit fork="no" printsummary="yes">
+		  <classpath refid="run.classpath"/>
+		  <formatter type="plain" />
+		  <test name="org.tritonus.test.sequencer.IllegalStateTestCase" />
+		  <test name="org.tritonus.test.sequencer.SyncModesTestCase" />
+		  <test name="org.tritonus.test.sequencer.SequenceLengthTestCase" />
+		  <test name="org.tritonus.test.sequencer.TempoTestCase" />
+	  </junit>
+  </target>
 
+  <target name="test-midi-synthesizer"
+		  depends="compile-api">
+	  <junit fork="no" printsummary="yes">
+		  <classpath refid="run.classpath"/>
+		  <formatter type="plain" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.IllegalStateTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.GetMaxPolyphonyTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.GetLatencyTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.GetChannelsTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.GetVoiceStatusTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.GetDefaultSoundbankTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.WrongSoundbankTestCase" />
+	  </junit>
+  </target>
+  
   <target name="test-midi-midisystem"
 	  depends="compile-api">
     <junit fork="no" printsummary="yes">
@@ -323,19 +350,6 @@
       <classpath refid="run.classpath"/>
       <formatter type="plain" />
       <test name="org.tritonus.test.VorbisTruncateTestCase" />
-    </junit>
-  </target>
-
-
-  <target name="test-sequencer"
-		  depends="compile-api">
-    <junit fork="no" printsummary="yes">
-      <classpath refid="run.classpath"/>
-      <formatter type="plain" />
-      <test name="org.tritonus.test.sequencer.IllegalStateTestCase" />
-      <test name="org.tritonus.test.sequencer.SyncModesTestCase" />
-      <test name="org.tritonus.test.sequencer.SequenceLengthTestCase" />
-      <test name="org.tritonus.test.sequencer.TempoTestCase" />
     </junit>
   </target>
 
