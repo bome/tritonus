@@ -196,28 +196,34 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     public boolean loadAllInstruments(Soundbank soundbank)
     {
+    	checkSoundbank(soundbank);
         return true;
     }
 
     public void unloadAllInstruments(Soundbank soundbank)
     {
+    	checkSoundbank(soundbank);
     }
 
     public void unloadInstruments(Soundbank soundbank, Patch[] patchList)
     {
+    	checkSoundbank(soundbank);
     }
 
     public boolean loadInstruments(Soundbank soundbank, Patch[] patchList)
     {
+    	checkSoundbank(soundbank);
         return true;
     }
 
     public void unloadInstrument(Instrument instrument)
     {
+    	checkInstrument(instrument);
     }
 
     public boolean loadInstrument(Instrument instrument)
     {
+    	checkInstrument(instrument);
         return true;
     }
 
@@ -248,12 +254,38 @@ public class FluidSynthesizer extends TMidiDevice implements Synthesizer
 
     public VoiceStatus[] getVoiceStatus()
     {
-        return null;
+        return new VoiceStatus[0];
     }
 
     public boolean remapInstrument(Instrument from, Instrument to)
     {
+    	checkInstrument(from);
+    	checkInstrument(to);
         return true;
+    }
+
+    /** Checks if the soundbank is supported by this synthesizer implementation.
+     * 
+     * @param sb the soundbank to check
+     * @throws IllegalArgumentException if the soundbank is not supported
+     */
+    private void checkSoundbank(Soundbank sb)
+    {
+    	if (! isSoundbankSupported(sb))
+    		throw new IllegalArgumentException("soundbank is not supported");
+    }
+
+    /**
+     * Checks if the instrument belongs to a soundbank that is supported by this
+     * synthesizer implementation.
+     * 
+     * @param instr the instrument to check
+     * @throws IllegalArgumentException if the instrument's soundbank
+     * is not supported
+     */
+    private void checkInstrument(Instrument instr)
+    {
+    	checkSoundbank(instr.getSoundbank());
     }
 }
 
