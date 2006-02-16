@@ -114,21 +114,21 @@ implements AlsaMidiIn.AlsaMidiInListener
 
 
 
-	private AlsaSeq getAlsaSeq()
+	protected AlsaSeq getAlsaSeq()
 	{
 		return m_alsaSeq;
 	}
 
 
 
-	private int getOwnPort()
+	protected int getOwnPort()
 	{
 		return m_nOwnPort;
 	}
 
 
 
-	private int getPhysicalClient()
+	protected int getPhysicalClient()
 	{
 		return m_nPhysicalClient;
 	}
@@ -136,7 +136,7 @@ implements AlsaMidiIn.AlsaMidiInListener
 
 
 
-	private int getPhysicalPort()
+	protected int getPhysicalPort()
 	{
 		return m_nPhysicalPort;
 	}

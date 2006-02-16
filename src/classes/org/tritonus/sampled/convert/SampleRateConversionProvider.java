@@ -201,7 +201,7 @@ extends TSimpleFormatConversionProvider {
 		return result;
 	}
 
-	private static long convertLength(AudioFormat sourceFormat, AudioFormat targetFormat, long sourceLength) {
+	protected static long convertLength(AudioFormat sourceFormat, AudioFormat targetFormat, long sourceLength) {
 		if (sourceLength==AudioSystem.NOT_SPECIFIED) {
 			return sourceLength;
 		}

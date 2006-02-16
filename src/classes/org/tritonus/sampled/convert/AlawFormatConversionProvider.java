@@ -129,7 +129,7 @@ extends	TEncodingFormatConversionProvider {
 		return getConvertType(format)!=0;
 	}
 
-	private int getConvertType(AudioFormat af) {
+	protected int getConvertType(AudioFormat af) {
 		int result=0;
 		AudioFormat.Encoding encoding=af.getEncoding();
 		boolean bigEndian=af.isBigEndian();

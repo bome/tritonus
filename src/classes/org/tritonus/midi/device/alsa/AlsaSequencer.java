@@ -82,10 +82,10 @@ extends TSequencer
 	private AlsaMidiIn			m_playbackAlsaMidiIn;
 	private AlsaMidiOut			m_playbackAlsaMidiOut;
 	private AlsaMidiIn			m_recordingAlsaMidiIn;
-	private LoaderThread		m_loaderThread;
+	protected LoaderThread		m_loaderThread;
 	private Thread				m_syncThread;
 	private AlsaSeqEvent		m_queueControlEvent;
-	private AlsaSeqEvent		m_clockEvent;
+	protected AlsaSeqEvent		m_clockEvent;
 	private boolean				m_bRecording;
 	private Track				m_track;
 	private AlsaSeqEvent		m_allNotesOffEvent;
@@ -104,7 +104,7 @@ extends TSequencer
 
 
 
-	private int getPlaybackClient()
+	protected int getPlaybackClient()
 	{
 		int	nClient = getPlaybackAlsaSeq().getClientId();
 		return nClient;
@@ -112,14 +112,14 @@ extends TSequencer
 
 
 
-	private int getPlaybackPort()
+	protected int getPlaybackPort()
 	{
 		return m_nPlaybackPort;
 	}
 
 
 
-	private int getRecordingClient()
+	protected int getRecordingClient()
 	{
 		int	nClient = getRecordingAlsaSeq().getClientId();
 		return nClient;
@@ -127,14 +127,14 @@ extends TSequencer
 
 
 
-	private int getRecordingPort()
+	protected int getRecordingPort()
 	{
 		return m_nRecordingPort;
 	}
 
 
 
-	private int getQueue()
+	protected int getQueue()
 	{
 		return m_nQueue;
 	}
@@ -162,7 +162,7 @@ extends TSequencer
 
 
 
-	private AlsaSeq getRecordingAlsaSeq()
+	protected AlsaSeq getRecordingAlsaSeq()
 	{
 		return m_recordingAlsaSeq;
 	}
@@ -516,7 +516,7 @@ extends TSequencer
 	  This method has to be synchronized because it is called
 	  from sendMessageTick() as well as from loadSequenceToNative().
 	*/
-	private synchronized void enqueueMessage(MidiMessage message, long lTick)
+	protected synchronized void enqueueMessage(MidiMessage message, long lTick)
 	{
 		m_playbackAlsaMidiOut.enqueueMessage(message, lTick);
 	}
@@ -666,7 +666,7 @@ extends TSequencer
 		This method expects that the timestamp is in ticks,
 		appropriate for the Sequence currently running.
 	*/
-	private void receiveTimestamped(MidiMessage message, long lTimestamp)
+	protected void receiveTimestamped(MidiMessage message, long lTimestamp)
 	{
 		if (isRecording())
 		{

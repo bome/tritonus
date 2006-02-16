@@ -271,7 +271,7 @@ implements SourceDataLine
 	/**
 	 *	fGain is logarithmic!!
 	 */
-	private void setGain(float fGain)
+	protected void setGain(float fGain)
 	{
 		if (TDebug.TraceSourceDataLine)
 		{
@@ -288,7 +288,7 @@ implements SourceDataLine
 
 	/**
 	 */
-	private void setPan(float fPan)
+	protected void setPan(float fPan)
 	{
 		if (TDebug.TraceSourceDataLine)
 		{
@@ -305,7 +305,7 @@ implements SourceDataLine
 
 	/**
 	 */
-	private void setMuted(boolean bMuted)
+	protected void setMuted(boolean bMuted)
 	{
 		if (TDebug.TraceSourceDataLine)
 		{

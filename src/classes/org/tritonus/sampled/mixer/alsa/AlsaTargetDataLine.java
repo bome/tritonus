@@ -205,7 +205,7 @@ implements TargetDataLine
 	/**
 	 *	fGain is logarithmic!!
 	 */
-	private void setGain(float fGain)
+	protected void setGain(float fGain)
 	{
 	}
 

@@ -97,13 +97,13 @@ extends TEncodingFormatConversionProvider
 // 		new AudioFormat(PCM_SIGNED, -1.0F, 16, 1, 2, -1.0F, true),
 // 	};
 
-	private static final int[] indexTable =
+	static final int[] indexTable =
 	{
 		-1, -1, -1, -1, 2, 4, 6, 8,
 		-1, -1, -1, -1, 2, 4, 6, 8,
 	};
 
-	private static final int[] stepsizeTable =
+	static final int[] stepsizeTable =
 	{
 		7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
 		19, 21, 23, 25, 28, 31, 34, 37, 41, 45,

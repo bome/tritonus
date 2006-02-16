@@ -356,7 +356,7 @@ extends TSimpleFormatConversionProvider {
 		return "unknown";
 	}
 
-	private static String conversionType2Str(int conversionType) {
+	protected static String conversionType2Str(int conversionType) {
 		switch (conversionType) {
 		case CONVERT_NOT_POSSIBLE:
 			return "CONVERT_NOT_POSSIBLE";

@@ -204,7 +204,7 @@ implements SourceDataLine
 	/**
 	 *	dGain is logarithmic!!
 	 */
-	private void setGain(float dGain)
+	protected void setGain(float dGain)
 	{
 	}
 
