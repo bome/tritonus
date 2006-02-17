@@ -72,7 +72,10 @@ implements MidiChannel
 
 	public void programChange(int nBank, int nProgram)
 	{
-		controlChange(32, nBank);
+		int nBankMSB = nBank >> 7;
+		int nBankLSB = nBank & 0x7F;
+		controlChange(0, nBankMSB);
+		controlChange(32, nBankLSB);
 		programChange(nProgram);
 	}
 
@@ -97,7 +100,7 @@ implements MidiChannel
 
 	public boolean localControl(boolean bOn)
 	{
-		controlChange(122, bOn ? 0 : 127);
+		controlChange(122, bOn ? 127 : 0);
 		return getController(122) >= 64;
 	}
 
