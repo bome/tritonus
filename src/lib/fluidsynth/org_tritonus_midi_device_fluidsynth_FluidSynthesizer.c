@@ -400,6 +400,146 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	}
 }
 
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    noteOn
+ * Signature: (III)V
+ */
+JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_noteOn
+(JNIEnv *env, jobject obj, jint channel, jint key, jint velocity)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	if (synth)
+	{
+		fluid_synth_noteon(synth, channel, key, velocity);
+	}
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    noteOff
+ * Signature: (III)V
+ */
+JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_noteOff
+(JNIEnv *env, jobject obj, jint channel, jint key, jint velocity)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	if (synth)
+	{
+		/* There is no method noteoff that takes a velocity param. */
+		//fluid_synth_noteoff(synth, channel, key, velocity);
+		fluid_synth_noteoff(synth, channel, key);
+	}
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    controlChange
+ * Signature: (III)V
+ */
+JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_controlChange
+(JNIEnv *env, jobject obj, jint channel, jint controller, jint value)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	if (synth)
+	{
+		fluid_synth_cc(synth, channel, controller, value);
+	}
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    getController
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_getController
+(JNIEnv *env, jobject obj, jint channel, jint controller)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	int value = 0;
+	if (synth)
+	{
+		fluid_synth_get_cc(synth, channel, controller, &value);
+	}
+	return value;
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    programChange
+ * Signature: (II)V
+ */
+JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_programChange
+(JNIEnv *env, jobject obj, jint channel, jint program)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	if (synth)
+	{
+		fluid_synth_program_change(synth, channel, program);
+	}
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    getProgram
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_getProgram
+(JNIEnv *env, jobject obj, jint channel)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	unsigned int sfont;
+	unsigned int bank;
+	unsigned int program = 0;
+	if (synth)
+	{
+		fluid_synth_get_program(synth, channel, &sfont, &bank, &program);
+	}
+	return program;
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    setPitchBend
+ * Signature: (II)V
+ */
+JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_setPitchBend
+(JNIEnv *env, jobject obj, jint channel, jint bend)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	if (synth)
+	{
+		fluid_synth_pitch_bend(synth, channel, bend);
+	}
+}
+
+
+/*
+ * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
+ * Method:    getPitchBend
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer_getPitchBend
+(JNIEnv *env, jobject obj, jint channel)
+{
+	fluid_synth_t* synth = get_synth(env, obj);
+	int bend = 0;
+	if (synth)
+	{
+		fluid_synth_get_pitch_bend(synth, channel, &bend);
+	}
+	return bend;
+}
+
+
+
 /*
  * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
  * Method:    setTrace
