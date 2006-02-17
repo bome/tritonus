@@ -330,10 +330,14 @@ extends TEncodingFormatConversionProvider
 			if (property instanceof List)
 			{
 				if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.<init>(): comments present in target format"); }
-				List<String> comments = (List<String>) property;
+				List<?> comments = (List<?>) property;
 				for (int i = 0; i < comments.size(); i++)
 				{
-					m_comment.addComment(comments.get(i));
+					Object comm = comments.get(i);
+					if (comm instanceof String)
+					{
+						m_comment.addComment((String) comm);
+					}
 				}
 			}
 
