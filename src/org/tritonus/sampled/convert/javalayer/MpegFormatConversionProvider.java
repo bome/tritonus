@@ -327,7 +327,7 @@ extends TEncodingFormatConversionProvider
 
 
 
-		private boolean isBigEndian()
+		protected boolean isBigEndian()
 		{
 			return getFormat().isBigEndian();
 		}
