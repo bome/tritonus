@@ -383,6 +383,15 @@
     </junit>
   </target>
 
+  <target name="test-tmidichannel"
+		  depends="compile-tritonus">
+	  <junit fork="no" printsummary="yes">
+		  <classpath refid="run.classpath"/>
+		  <formatter type="plain" />
+		  <test name="org.tritonus.test.tritonus.share.midi.TMidiChannelTestCase" />
+	  </junit>
+  </target>
+
   <target name="test-audioinputstream"
 		  depends="compile-api">
     <junit fork="no" printsummary="yes">
