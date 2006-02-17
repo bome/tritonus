@@ -33,32 +33,27 @@ package org.tritonus.share.midi;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
 
-/* TODO: implement aquiring of a SourceDataLine, perhaps in a separate
-   class TSoftwareSynthesizer.
- */
-
-/**	Base class for Synthesizer implementations.  This base class is
-	for Synthesizer implementations that do not itself operate on
-	MIDI, but instread implement the MidiChannel interface. For these
-	implementations, MIDI behaviour is simulated on top of
-	MidiChannel.
-
-	@author Matthias Pfisterer
+/**
+ * Base class for Synthesizer implementations.
+ * 
+ * <p>
+ * This base class is for Synthesizer implementations that do not itself operate
+ * on MIDI, but instread implement the MidiChannel interface. For these
+ * implementations, MIDI behaviour is simulated on top of MidiChannel.
+ * </p>
+ * 
+ * @see javax.sound.midi.MidiChannel
+ *
+ * @author Matthias Pfisterer
  */
 public abstract class TDirectSynthesizer
 extends TMidiDevice
 implements Synthesizer
 {
-	/** Bank value from CC 0/32 per channel.
-	 */
-	private int[]	m_anBanks;
-
-
 	/**	Initialize this class.
 	 *	This sets the info from the passed one, sets the open status
 	 *	to false, the number of Receivers to zero and the collection
@@ -68,41 +63,26 @@ implements Synthesizer
 	 */
 	public TDirectSynthesizer(MidiDevice.Info info)
 	{
-		// no IN, only OUT
+		// no Transmitters, only Receivers
 		super(info, false, true);
-		m_anBanks = new int[16];
-		for (int i = 0; i < m_anBanks.length; i++)
-		{
-			m_anBanks[i] = -1;
-		}
 	}
 
 
-
-	// TODO: check if this is needed
 	/**
-	 *	Subclasses have to override this method to be notified of
-	 *	opening.
+	 * Obtains the MidiChannel with the specified number.
+	 *
+	 * @param nChannel the requested channel number (0..15)
+	 * @return the respective <code>MidiChannel</code> object
 	 */
-	protected void openImpl()
-		throws MidiUnavailableException
+	private MidiChannel getChannel(int nChannel)
 	{
+		return getChannels()[nChannel];
 	}
 
 
-
-	// TODO: check if this is needed
 	/**
-	 *	Subclasses have to override this method to be notified of
-	 *	closeing.
-	 */
-	protected void closeImpl()
-	{
-	}
-
-
-
-	/**
+	 * Handles MIDI messages coming in from Receivers.
+	 * 
 	 */
 	protected void receive(MidiMessage message, long lTimeStamp)
 	{
@@ -128,65 +108,11 @@ implements Synthesizer
 				break;
 
 			case ShortMessage.CONTROL_CHANGE:
-				switch (nData1)
-				{
-				case 0: // bank MSB
-					m_anBanks[nChannel] = nData2 << 7;
-					break;
-
-				case 32: // bank LSB
-					m_anBanks[nChannel] |= nData2;
-					break;
-
-				case 0x78:
-					getChannel(nChannel).allSoundOff();
-					break;
-
-				case 0x79:
-					getChannel(nChannel).resetAllControllers();
-					break;
-
-				case 0x7A:
-					getChannel(nChannel).localControl(nData2 == 0x7F);
-					break;
-
-				case 0x7B:
-					getChannel(nChannel).allNotesOff();
-					break;
-
-				case 0x7C: // omni off
-					getChannel(nChannel).setOmni(false);
-					break;
-
-				case 0x7D: // omni on
-					getChannel(nChannel).setOmni(true);
-					break;
-
-				case 0x7E: // mono on
-					getChannel(nChannel).setMono(true);
-					break;
-
-				case 0x7F: // poly on
-					getChannel(nChannel).setMono(false);
-					break;
-
-				default:
-					getChannel(nChannel).controlChange(nData1, nData2);
-					break;
-				}
+				getChannel(nChannel).controlChange(nData1, nData2);
 				break;
 
 			case ShortMessage.PROGRAM_CHANGE:
-				if (m_anBanks[nChannel] != -1)
-				{
-					getChannel(nChannel).programChange(m_anBanks[nChannel],
-													   nData1);
-					m_anBanks[nChannel] = -1;
-				}
-				else
-				{
-					getChannel(nChannel).programChange(nData1);
-				}
+				getChannel(nChannel).programChange(nData1);
 				break;
 
 			case ShortMessage.CHANNEL_PRESSURE:
@@ -201,13 +127,7 @@ implements Synthesizer
 			}
 		}
 	}
-
-	private MidiChannel getChannel(int nChannel)
-	{
-		return getChannels()[nChannel];
-	}
 }
-
 
 
 /*** TDirectSynthesizer.java ***/
