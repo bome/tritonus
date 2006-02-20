@@ -42,14 +42,12 @@ package org.tritonus.midi.device.fluidsynth;
 import javax.sound.midi.*;
 
 import org.tritonus.share.TDebug;
-import org.tritonus.share.midi.TMidiDevice;
 import org.tritonus.share.midi.TMidiChannel;
 import org.tritonus.share.midi.TDirectSynthesizer;
 import org.tritonus.midi.sb.fluidsynth.FluidSoundbank;
 
 
 public class FluidSynthesizer
-//extends TMidiDevice
 extends TDirectSynthesizer
 implements Synthesizer
 {
@@ -80,10 +78,7 @@ implements Synthesizer
 		{
 			System.loadLibrary("tritonusfluid");
 			// only reached if no exception occures
-			if (TDebug.TraceFluidNative)
-			{
-				setTrace(true);
-			}
+			setTrace(TDebug.TraceFluidNative);
 		}
 		catch (Error e)
 		{
@@ -104,7 +99,6 @@ implements Synthesizer
 	 */
     public FluidSynthesizer(MidiDevice.Info info) throws Exception
     {
-        //super(info, false, true);
         super(info);
     }
 
@@ -118,11 +112,9 @@ implements Synthesizer
         }
         if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer: " + Integer.toHexString(synthPtr));
 
-        Receiver r = getReceiver();
         channels = new MidiChannel[16];
         for (int i = 0; i < 16; i++)
         {
-        	//channels[i] = new FluidMidiChannel(r, i);
         	channels[i] = new NewFluidMidiChannel(i);
         }
 
@@ -159,21 +151,7 @@ implements Synthesizer
         close();
     }
 
-/*
-    protected void receive(MidiMessage message, long lTimeStamp)
-    {
-//        System.out.print("FluidSynth.receive: ");
-//        Juke.printHex(message.getMessage(), 0, message.getLength());
-//        System.out.println();
-        if (message instanceof ShortMessage)
-        {
-            ShortMessage sm = (ShortMessage) message;
-            nReceive(sm.getCommand(), sm.getChannel(), sm.getData1(), sm.getData2());
-        }
-    }
-*/
 
-    public native void nReceive(int command, int channel, int data1, int data2);
     public native int loadSoundFont(String filename);
     public native void setBankOffset(int sfontID, int offset);
     public native void setGain(float gain);
@@ -287,6 +265,7 @@ implements Synthesizer
 	 */
 	public static native void setTrace(boolean bTrace);
 
+
     public boolean isSoundbankSupported(Soundbank soundbank)
     {
         return (soundbank instanceof FluidSoundbank);
@@ -362,7 +341,8 @@ implements Synthesizer
         return true;
     }
 
-    /** Checks if the soundbank is supported by this synthesizer implementation.
+
+	/** Checks if the soundbank is supported by this synthesizer implementation.
      * 
      * @param sb the soundbank to check
      * @throws IllegalArgumentException if the soundbank is not supported
@@ -390,8 +370,6 @@ implements Synthesizer
     private class NewFluidMidiChannel
     extends TMidiChannel
 	{
-		private int		m_nChannel;
-
 		public NewFluidMidiChannel(int nChannel)
 		{
 			super(nChannel);

@@ -45,8 +45,8 @@
 #include "../common/common.h"
 #include "../common/debug.h"
 
-
-//static int fluid_jni_get_preset_count(int sfontID);
+/* non-API method of libfluidsynth */
+void fluid_log_config(void);
 
 
 static jclass fluidsynthclass;
@@ -539,7 +539,6 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 }
 
 
-
 /*
  * Class:     org_tritonus_midi_device_fluidsynth_FluidSynthesizer
  * Method:    setTrace
@@ -550,6 +549,12 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 {
 	debug_flag = bTrace;
 	debug_file = stderr;
+	if (!bTrace)
+	{
+		fluid_log_config();
+		fluid_set_log_function(FLUID_WARN, NULL, NULL);
+		fluid_set_log_function(FLUID_INFO, NULL, NULL);
+	}
 }
 
 
