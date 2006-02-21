@@ -63,6 +63,11 @@ public class FluidSoundbank implements Soundbank
             super(FluidSoundbank.this, new Patch(bank, program), name, null);
         }
 
+        public String toString()
+        {
+	        return "Instrument "  + getName() + " (bank " + getPatch().getBank() + " program " + getPatch().getProgram() + ")";
+        }
+        
         public Object getData()
         {
             return null;
