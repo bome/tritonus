@@ -46,7 +46,8 @@ extends BaseSynthesizerTestCase
 	{
 		WrongSoundbank sb = new WrongSoundbank();
 		Instrument instr = sb.new WrongInstrument();
-		Patch[] patchlist = new Patch[0];
+		Patch[] patchlist = new Patch[1];
+		patchlist[0] = new Patch(0, 0);
 
 		synth.open();
 		boolean bOpen = true;
@@ -172,12 +173,14 @@ extends BaseSynthesizerTestCase
 
 		public Instrument getInstrument(Patch patch)
 		{
-			return null;
+			return new WrongInstrument();
 		}
 
 		public Instrument[] getInstruments()
 		{
-			return new Instrument[0];
+			Instrument[] instruments = new Instrument[1];
+			instruments[0] = new WrongInstrument();
+			return instruments;
 		}
 
 		public String getName()
