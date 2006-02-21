@@ -71,7 +71,7 @@ static int get_fluidclassinfo(JNIEnv *env)
 static fluid_synth_t* get_synth(JNIEnv *env, jobject obj)
 {
 	get_fluidclassinfo(env);
-	return (fluid_synth_t*) (*env)->GetIntField(env, obj, synthPtrFieldID);
+	return (fluid_synth_t*) (*env)->GetLongField(env, obj, synthPtrFieldID);
 }
 
 static void fluid_jni_delete_synth(JNIEnv *env, jobject obj, fluid_settings_t* settings, fluid_synth_t* synth, fluid_audio_driver_t* adriver)
@@ -80,17 +80,17 @@ static void fluid_jni_delete_synth(JNIEnv *env, jobject obj, fluid_settings_t* s
 	if (adriver)
 	{
 		delete_fluid_audio_driver(adriver);
-		(*env)->SetIntField(env, obj, audioDriverPtrFieldID, 0);
+		(*env)->SetLongField(env, obj, audioDriverPtrFieldID, (jlong) 0);
 	}
 	if (synth)
 	{
 		delete_fluid_synth(synth);
-		(*env)->SetIntField(env, obj, synthPtrFieldID, 0);
+		(*env)->SetLongField(env, obj, synthPtrFieldID, (jlong) 0);
 	}
 	if (settings)
 	{
 		delete_fluid_settings(settings);
-		(*env)->SetIntField(env, obj, settingsPtrFieldID, (int) 0);
+		(*env)->SetLongField(env, obj, settingsPtrFieldID, (jlong) 0);
 	}
 }
 
@@ -134,9 +134,9 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 		if (adriver == 0) {
 			goto error_recovery;
 		}
-		(*env)->SetIntField(env, obj, settingsPtrFieldID, (int) settings);
-		(*env)->SetIntField(env, obj, synthPtrFieldID, (int) synth);
-		(*env)->SetIntField(env, obj, audioDriverPtrFieldID, (int) adriver);
+		(*env)->SetLongField(env, obj, settingsPtrFieldID, (jlong)  settings);
+		(*env)->SetLongField(env, obj, synthPtrFieldID, (jlong)  synth);
+		(*env)->SetLongField(env, obj, audioDriverPtrFieldID, (jlong) adriver);
 	}
 	return 0;
 
@@ -168,8 +168,8 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 		fflush(debug_file);
 	}
 #endif
-	settings = (fluid_settings_t*) (*env)->GetIntField(env, obj, settingsPtrFieldID);
-	adriver = (fluid_audio_driver_t*) (*env)->GetIntField(env, obj, audioDriverPtrFieldID);
+	settings = (fluid_settings_t*) (*env)->GetLongField(env, obj, settingsPtrFieldID);
+	adriver = (fluid_audio_driver_t*) (*env)->GetLongField(env, obj, audioDriverPtrFieldID);
 	fluid_jni_delete_synth(env, obj, settings, synth, adriver);
 }
 
@@ -478,7 +478,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 (JNIEnv *env, jobject obj, jint channel, jint program)
 {
 	fluid_synth_t* synth = get_synth(env, obj);
-	if (synth)
+	if (synth && channel != 9) // don't change drum channel
 	{
 		fluid_synth_program_change(synth, channel, program);
 	}
@@ -551,7 +551,8 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	debug_file = stderr;
 	if (!bTrace)
 	{
-		fluid_log_config();
+
+//		fluid_log_config();
 		fluid_set_log_function(FLUID_WARN, NULL, NULL);
 		fluid_set_log_function(FLUID_INFO, NULL, NULL);
 	}
