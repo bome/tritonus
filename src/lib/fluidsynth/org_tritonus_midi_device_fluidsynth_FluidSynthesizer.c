@@ -61,9 +61,9 @@ static int get_fluidclassinfo(JNIEnv *env)
 		fluidsynthclass = (*env)->FindClass(env, "org/tritonus/midi/device/fluidsynth/FluidSynthesizer");
 		if (!fluidsynthclass)
 			return -1;
-		synthPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "synthPtr", "I");
-		settingsPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "settingsPtr", "I");
-		audioDriverPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "audioDriverPtr", "I");
+		synthPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "synthPtr", "J");
+		settingsPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "settingsPtr", "J");
+		audioDriverPtrFieldID = (*env)->GetFieldID(env, fluidsynthclass, "audioDriverPtr", "J");
 	}
 	return 0;
 }
