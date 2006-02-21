@@ -56,10 +56,10 @@ implements Synthesizer
 
 	private int defaultbankSfontID;
     
-    // native pointers *32 bit*!
-	private int settingsPtr;
-	private int synthPtr;
-	private int audioDriverPtr;
+    // native pointers 64 bit maximum
+	private long settingsPtr;
+	private long synthPtr;
+	private long audioDriverPtr;
 
 
 
@@ -110,7 +110,7 @@ implements Synthesizer
         {
             throw new MidiUnavailableException("Low-level initialization of the synthesizer failed");
         }
-        if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer: " + Integer.toHexString(synthPtr));
+        if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer: " + Long.toHexString(synthPtr));
 
         channels = new MidiChannel[16];
         for (int i = 0; i < 16; i++)
@@ -124,6 +124,12 @@ implements Synthesizer
 		{
 			int sfontID = loadSoundFont(sfontFile);
 			setDefaultSoundBank(sfontID);
+	        String strBankOffset =
+				System.getProperty("tritonus.fluidsynth.defaultsoundbankoffset");
+			if (strBankOffset != null && ! strBankOffset.equals(""))
+			{
+				setBankOffset(sfontID, Integer.parseInt(strBankOffset));				
+			}
 		}
     }
 
@@ -131,7 +137,7 @@ implements Synthesizer
     protected void closeImpl()
     {
         if (TDebug.TraceSynthesizer) TDebug.out("FluidSynthesizer.closeImpl(): "
-        		+ Integer.toHexString(synthPtr));
+        		+ Long.toHexString(synthPtr));
         deleteSynth();
         super.closeImpl();
     }
@@ -147,10 +153,9 @@ implements Synthesizer
 
 
     protected void finalize(){
-        if (TDebug.TraceSynthesizer) TDebug.out("finalize: " + Integer.toHexString(synthPtr));
+        if (TDebug.TraceSynthesizer) TDebug.out("finalize: " + Long.toHexString(synthPtr));
         close();
     }
-
 
     public native int loadSoundFont(String filename);
     public native void setBankOffset(int sfontID, int offset);
