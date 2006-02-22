@@ -478,7 +478,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 (JNIEnv *env, jobject obj, jint channel, jint program)
 {
 	fluid_synth_t* synth = get_synth(env, obj);
-	if (synth && channel != 9) // don't change drum channel
+	if (synth)
 	{
 		fluid_synth_program_change(synth, channel, program);
 	}
@@ -549,6 +549,10 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 {
 	debug_flag = bTrace;
 	debug_file = stderr;
+	/* Don't try to turn of log levels in Win32 since fluid_log_config() is not an exported function
+	 * in the fluidsynth DLL and so causes a link error
+	 */
+#ifndef WIN32
 	if (!bTrace)
 	{
 		/* fluid_log_config() is not part of the public API of fluidsynth.
@@ -563,6 +567,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 		fluid_set_log_function(FLUID_WARN, NULL, NULL);
 		fluid_set_log_function(FLUID_INFO, NULL, NULL);
 	}
+#endif
 }
 
 
