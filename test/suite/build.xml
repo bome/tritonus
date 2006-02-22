@@ -127,6 +127,7 @@
 		  <test name="org.tritonus.test.api.midi.synthesizer.GetVoiceStatusTestCase" />
 		  <test name="org.tritonus.test.api.midi.synthesizer.GetDefaultSoundbankTestCase" />
 		  <test name="org.tritonus.test.api.midi.synthesizer.WrongSoundbankTestCase" />
+		  <test name="org.tritonus.test.api.midi.synthesizer.MidiChannelTestCase" />
 	  </junit>
   </target>
   
