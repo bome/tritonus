@@ -82,7 +82,7 @@ extends TestCase
 	 */
 	protected static String getMessagePrefix(Synthesizer seq)
 	{
-		return seq.getDeviceInfo().getName();
+		return seq.getDeviceInfo().getName() + ": ";
 	}
 }
 
