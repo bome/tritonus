@@ -71,7 +71,7 @@ static int get_fluidclassinfo(JNIEnv *env)
 static fluid_synth_t* get_synth(JNIEnv *env, jobject obj)
 {
 	get_fluidclassinfo(env);
-	return (fluid_synth_t*) (*env)->GetLongField(env, obj, synthPtrFieldID);
+	return (fluid_synth_t*) ((unsigned int) (*env)->GetLongField(env, obj, synthPtrFieldID));
 }
 
 static void fluid_jni_delete_synth(JNIEnv *env, jobject obj, fluid_settings_t* settings, fluid_synth_t* synth, fluid_audio_driver_t* adriver)
@@ -134,9 +134,9 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 		if (adriver == 0) {
 			goto error_recovery;
 		}
-		(*env)->SetLongField(env, obj, settingsPtrFieldID, (jlong)  settings);
-		(*env)->SetLongField(env, obj, synthPtrFieldID, (jlong)  synth);
-		(*env)->SetLongField(env, obj, audioDriverPtrFieldID, (jlong) adriver);
+		(*env)->SetLongField(env, obj, settingsPtrFieldID, (jlong) ((unsigned int) settings));
+		(*env)->SetLongField(env, obj, synthPtrFieldID, (jlong) ((unsigned int) synth));
+		(*env)->SetLongField(env, obj, audioDriverPtrFieldID, (jlong) ((unsigned int) adriver));
 	}
 	return 0;
 
@@ -168,8 +168,8 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 		fflush(debug_file);
 	}
 #endif
-	settings = (fluid_settings_t*) (*env)->GetLongField(env, obj, settingsPtrFieldID);
-	adriver = (fluid_audio_driver_t*) (*env)->GetLongField(env, obj, audioDriverPtrFieldID);
+	settings = (fluid_settings_t*) ((unsigned int) (*env)->GetLongField(env, obj, settingsPtrFieldID));
+	adriver = (fluid_audio_driver_t*) ((unsigned int) (*env)->GetLongField(env, obj, audioDriverPtrFieldID));
 	fluid_jni_delete_synth(env, obj, settings, synth, adriver);
 }
 
@@ -551,8 +551,15 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	debug_file = stderr;
 	if (!bTrace)
 	{
-
-//		fluid_log_config();
+		/* fluid_log_config() is not part of the public API of fluidsynth.
+		 * However, this call is necessary because of a bug in fluidsynth:
+		 * fluid_set_log_function() does not initialize the data structures.
+		 * This is only done with the first call to fluid_log() and then, log
+		 * functions that are NULL are initialized to the default, so that
+		 * setting them to NULL with fluid_set_log_function() previously has no
+		 * effect.
+		 */
+		fluid_log_config();
 		fluid_set_log_function(FLUID_WARN, NULL, NULL);
 		fluid_set_log_function(FLUID_INFO, NULL, NULL);
 	}
