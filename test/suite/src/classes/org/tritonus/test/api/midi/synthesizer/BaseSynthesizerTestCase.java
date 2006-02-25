@@ -57,7 +57,7 @@ extends TestCase
 				! (IGNORE_SUN_SYNTHESIZER &&
 				   device.getDeviceInfo().getVendor().indexOf("Sun") != -1))
 			{
-				System.out.println("testing seq: " + device);
+				System.out.println("testing synth: " + device);
 				checkSynthesizer((Synthesizer) device);
 			}
 		}
