@@ -186,11 +186,11 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	fluid_synth_t* synth = get_synth(env, obj);
 
 #ifdef VARIADIC_MACROS
-	out("nReceive: synth: %p, values: %x %d %d %d\n", synth, command, channel, data1, data2);
+	out("nReceive: synth: %p, values: %x %d %d %d\n", synth, (int) command, (int) channel, (int) data1, (int) data2);
 #else
 	if (debug_flag)
 	{
-		fprintf(debug_file, "synth: %p, values: %x %d %d %d\n", synth, command, channel, data1, data2);
+		fprintf(debug_file, "synth: %p, values: %x %d %d %d\n", synth, (int) command, (int) channel, (int) data1, (int) data2);
 		fflush(debug_file);
 	}
 #endif
