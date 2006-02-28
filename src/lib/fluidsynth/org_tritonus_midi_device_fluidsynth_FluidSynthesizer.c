@@ -552,7 +552,7 @@ JNIEXPORT void JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 	/* Don't try to turn of log levels in Win32 since fluid_log_config() is not an exported function
 	 * in the fluidsynth DLL and so causes a link error
 	 */
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	if (!bTrace)
 	{
 		/* fluid_log_config() is not part of the public API of fluidsynth.
