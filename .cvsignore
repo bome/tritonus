@@ -12,3 +12,6 @@ autom4te.cache
 tritonus-*.tar.gz
 project.dtd
 aclocal.m4
+.classpath
+.project
+.settings
