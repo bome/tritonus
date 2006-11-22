@@ -68,7 +68,7 @@ import org.tritonus.share.StringHashedSet;
 public class AudioFileTypes extends AudioFileFormat.Type {
 
 	/** contains all known types */
-	private static StringHashedSet types = new StringHashedSet();
+	private static StringHashedSet<AudioFileFormat.Type> types = new StringHashedSet<AudioFileFormat.Type>();
 
 	// initially add the standard types
 	static {
