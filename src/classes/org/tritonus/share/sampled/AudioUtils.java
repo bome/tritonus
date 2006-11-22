@@ -34,6 +34,7 @@ import java.util.Iterator;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.Mixer;
 
 
 
@@ -103,8 +104,16 @@ public class AudioUtils
 		return millis2Bytes(ms, format.getFrameRate(), format.getFrameSize());
 	}
 
-	public static long millis2Bytes(long ms, float frameRate, int frameSize) {
+	public static long millis2Bytes(long ms, double frameRate, int frameSize) {
 		return (long) (ms*frameRate/1000*frameSize);
+	}
+
+	public static long millis2Bytes(double ms, AudioFormat format) {
+		return millis2Bytes(ms, format.getFrameRate(), format.getFrameSize());
+	}
+
+	public static long millis2Bytes(double ms, double frameRate, int frameSize) {
+		return ((long) (ms*frameRate/1000.0))*frameSize;
 	}
 
 	/**
@@ -141,6 +150,42 @@ public class AudioUtils
 	*/
 	public static long frames2Millis(long frames, AudioFormat format) {
 		return (long) (frames/format.getFrameRate()*1000);
+	}
+	
+	/**
+	 * 
+	 * @param sr1 the first sample rate to compare
+	 * @param sr2 the second sample rate to compare
+	 * @return true if the sample rates are (almost) identical
+	 */
+	public static boolean sampleRateEquals(float sr1, float sr2) {
+		return Math.abs(sr1-sr2)<0.0000001;
+	}
+	
+	/**
+	 * @param format the audio format to test
+	 * @return true if the format is either PCM_SIGNED or PCM_UNSIGNED
+	 */
+	public static boolean isPCM(AudioFormat format) {
+		return format.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)
+			|| format.getEncoding().equals(AudioFormat.Encoding.PCM_UNSIGNED);
+	}
+	
+	/**
+	 * Return if the passed mixer info is the Java Sound Audio Engine.
+	 * @param mixerInfo the mixer info to query
+	 * @return true if the mixer info describes the Java Sound Audio Engine
+	 */
+	public static boolean isJavaSoundAudioEngine(Mixer.Info mixerInfo) {
+		return mixerInfo.getName().equals("Java Sound Audio Engine");
+	}
+	
+	/**
+	 * tries to guess if this program is running on a big endian platform
+	 * @return
+	 */
+	public static boolean isSystemBigEndian() {
+		return java.nio.ByteOrder.nativeOrder().equals(java.nio.ByteOrder.BIG_ENDIAN);
 	}
 
 
