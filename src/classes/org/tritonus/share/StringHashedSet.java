@@ -92,7 +92,7 @@ public class StringHashedSet<E> extends ArraySet<E>
 		return false;
 	}
 
-	public E get(E elem) {
+	public E get(Object elem) {
 		if (elem==null) {
 			return null;
 		}
@@ -106,6 +106,7 @@ public class StringHashedSet<E> extends ArraySet<E>
 		}
 		return null;
 	}
+
 }
 
 /*** StringHashedSet.java ***/
