@@ -67,7 +67,7 @@ import org.tritonus.share.StringHashedSet;
 public class Encodings extends AudioFormat.Encoding {
 
 	/** contains all known encodings */
-	private static StringHashedSet encodings = new StringHashedSet();
+	private static StringHashedSet<AudioFormat.Encoding> encodings = new StringHashedSet<AudioFormat.Encoding>();
 
 	// initially add the standard encodings
 	static {
@@ -148,8 +148,8 @@ public class Encodings extends AudioFormat.Encoding {
 	 * of file readers and file writers cannot be retrieved.
 	 */
 	public static AudioFormat.Encoding[] getEncodings() {
-		StringHashedSet iteratedSources=new StringHashedSet();
-		StringHashedSet retrievedTargets=new StringHashedSet();
+		StringHashedSet<AudioFormat.Encoding> iteratedSources=new StringHashedSet<AudioFormat.Encoding>();
+		StringHashedSet<AudioFormat.Encoding> retrievedTargets=new StringHashedSet<AudioFormat.Encoding>();
 		Iterator sourceFormats=encodings.iterator();
 		while (sourceFormats.hasNext()) {
 			AudioFormat.Encoding source=(AudioFormat.Encoding) sourceFormats.next();
@@ -161,14 +161,14 @@ public class Encodings extends AudioFormat.Encoding {
 
 
 	private static void iterateEncodings(AudioFormat.Encoding source,
-	                                     StringHashedSet iteratedSources,
-	                                     StringHashedSet retrievedTargets) {
+	                                     StringHashedSet<AudioFormat.Encoding> iteratedSources,
+	                                     StringHashedSet<AudioFormat.Encoding> retrievedTargets) {
 		if (!iteratedSources.contains(source)) {
 			iteratedSources.add(source);
 			AudioFormat.Encoding[] targets=AudioSystem.getTargetEncodings(source);
 			for (int i=0; i<targets.length; i++) {
 				AudioFormat.Encoding target=targets[i];
-				if (retrievedTargets.add(target.toString())) {
+				if (retrievedTargets.add(target)) {
 					iterateEncodings(target, iteratedSources,retrievedTargets);
 				}
 			}
