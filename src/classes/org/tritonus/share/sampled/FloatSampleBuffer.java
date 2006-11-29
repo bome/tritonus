@@ -256,6 +256,15 @@ public class FloatSampleBuffer {
 			createChannels(newChannelCount, newSampleCount, lazy);
 		}
 	}
+	
+	/**
+	 * Verify that the specified AudioFormat can be converted to and from.
+	 * If the format is not supported, an IllegalArgumentException is thrown.
+	 * @throws IllegalArgumentException if the format is not supported
+	 */
+	public static void checkFormatSupported(AudioFormat format) {
+		FloatSampleTools.getFormatType(format);
+	}
 
 	/**
 	 * Grow the channels array to allow at least channelCount elements. If
@@ -277,13 +286,14 @@ public class FloatSampleBuffer {
 
 	private final void createChannels(int newChannelCount, int newSampleCount,
 			boolean lazy) {
-		setSampleCountImpl(newSampleCount);
 		// shortcut
 		if (lazy && newChannelCount <= channelCount
 				&& newSampleCount <= this.sampleCount) {
+			setSampleCountImpl(newSampleCount);
 			setChannelCountImpl(newChannelCount);
 			return;
 		}
+		setSampleCountImpl(newSampleCount);
 		// grow the array, if necessary. Intentionally lazy here!
 		grow(newChannelCount, true);
 		// lazy delete of all channels. Intentionally lazy !
@@ -380,7 +390,7 @@ public class FloatSampleBuffer {
 	 */
 	public int getByteArrayBufferSize(AudioFormat format, int lenInSamples) {
 		// make sure this format is supported
-		FloatSampleTools.getFormatType(format);
+		checkFormatSupported(format);
 		return format.getFrameSize() * lenInSamples;
 	}
 
