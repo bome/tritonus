@@ -15,3 +15,4 @@ aclocal.m4
 .classpath
 .project
 .settings
+eclipse_build.xml
