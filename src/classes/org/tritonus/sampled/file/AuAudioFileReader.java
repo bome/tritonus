@@ -35,6 +35,8 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import java.util.*;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
@@ -153,9 +155,14 @@ public class AuAudioFileReader extends TAudioFileReader
 			    "corrupt AU file: number of channels must be positive");
 		}
 		// skip header information field
-		inputStream.skip(nDataOffset - AuTool.DATA_OFFSET);
+		//inputStream.skip(nDataOffset - AuTool.DATA_OFFSET);
 		// read header info field
-		//String desc=readDescription(dataInputStream, nDataOffset - AuTool.DATA_OFFSET);
+		String desc = readDescription(dataInputStream, nDataOffset - AuTool.DATA_OFFSET);
+		// add the description to the file format's properties
+		Map<String,Object> properties = new HashMap<String, Object>();
+		if (desc!="") {
+			properties.put("title", desc);
+		}
 
 		AudioFormat format = new AudioFormat(encoding,
 		                                     nSampleRate,
@@ -170,7 +177,8 @@ public class AuAudioFileReader extends TAudioFileReader
 			(nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
 			AudioSystem.NOT_SPECIFIED:(nDataLength / format.getFrameSize()),
 			(nDataLength==AuTool.AUDIO_UNKNOWN_SIZE)?
-			AudioSystem.NOT_SPECIFIED:(nDataLength + nDataOffset));
+			AudioSystem.NOT_SPECIFIED:(nDataLength + nDataOffset),
+			properties);
 		if (TDebug.TraceAudioFileReader) { TDebug.out("AuAudioFileReader.getAudioFileFormat(InputStream, long): begin"); }
 		return audioFileFormat;
 	}
