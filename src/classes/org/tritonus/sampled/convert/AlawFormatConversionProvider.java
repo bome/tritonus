@@ -125,7 +125,7 @@ extends	TEncodingFormatConversionProvider {
 	private static final int LITTLE_ENDIAN16=4;
 	private static final int ULAW=5;
 
-	private boolean isSupportedFormat(AudioFormat format) {
+	protected boolean isSupportedFormat(AudioFormat format) {
 		return getConvertType(format)!=0;
 	}
 
