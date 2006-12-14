@@ -153,6 +153,8 @@ public class TDebug
 	public static class AssertException
 	extends RuntimeException
 	{
+		private static final long serialVersionUID = 1;
+
 		public AssertException()
 		{
 		}

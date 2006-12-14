@@ -40,6 +40,8 @@ public class ArraySet<E>
 extends ArrayList<E>
 implements Set<E>
 {
+	private static final long serialVersionUID = 1;
+
 	public ArraySet()
 	{
 		super();

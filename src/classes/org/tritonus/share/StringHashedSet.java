@@ -59,6 +59,8 @@ import org.tritonus.share.ArraySet;
 
 public class StringHashedSet<E> extends ArraySet<E>
 {
+	private static final long serialVersionUID = 1;
+
 	public StringHashedSet()
 	{
 		super();
