@@ -50,8 +50,9 @@ public class TClip
 extends	TDataLine
 implements Clip
 {
-	private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
-	private static final int	BUFFER_FRAMES = 16384;
+	//$$fb the following fields are never used
+	//private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
+	//private static final int	BUFFER_FRAMES = 16384;
 
 
 	public TClip(DataLine.Info info)

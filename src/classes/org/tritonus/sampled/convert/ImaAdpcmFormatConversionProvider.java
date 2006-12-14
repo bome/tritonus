@@ -337,7 +337,7 @@ extends TEncodingFormatConversionProvider
 
 		/**
 		 */
-		private int getSampleSizeInBytes()
+		protected int getSampleSizeInBytes()
 		{
 			return getFormat().getFrameSize() / getFormat().getChannels();
 		}
@@ -347,7 +347,7 @@ extends TEncodingFormatConversionProvider
 		/** .
 		    @return .
 		*/
-		private int getFrameSize()
+		protected int getFrameSize()
 		{
 			return getFormat().getFrameSize();
 		}
@@ -510,7 +510,7 @@ extends TEncodingFormatConversionProvider
 
 		/**
 		 */
-		private int getSampleSizeInBytes()
+		protected int getSampleSizeInBytes()
 		{
 			return getFormat().getFrameSize() / getFormat().getChannels();
 		}
@@ -520,7 +520,7 @@ extends TEncodingFormatConversionProvider
 		/** .
 		    @return .
 		*/
-		private int getFrameSize()
+		protected int getFrameSize()
 		{
 			return getFormat().getFrameSize();
 		}

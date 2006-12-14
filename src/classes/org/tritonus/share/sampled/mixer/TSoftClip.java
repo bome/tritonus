@@ -49,11 +49,13 @@ public class TSoftClip
 extends TClip
 implements Runnable
 {
-	private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
+	//$$fb the following field is never used
+	//private static final Class[]	CONTROL_CLASSES = {/*GainControl.class*/};
 	private static final int	BUFFER_SIZE = 16384;
 
 
-	private Mixer			m_mixer;
+	//$$fb the following field is never used
+	//private Mixer			m_mixer;
 	private SourceDataLine		m_line;
 	private byte[]			m_abClip;
 	private int			m_nRepeatCount;
@@ -68,7 +70,7 @@ implements Runnable
 							 audioFormat, -1);
 */
 		super(null);
-		m_mixer = mixer;
+		//m_mixer = mixer;
 		DataLine.Info	info = new DataLine.Info(
 			SourceDataLine.class,
 			// TODO: should pass a real AudioFormat object that isn't too restrictive

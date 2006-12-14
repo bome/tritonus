@@ -273,7 +273,7 @@ extends TFormatConversionProvider
 
 
 
-	private static boolean isSignedPCM(AudioFormat.Encoding encoding)
+	protected static boolean isSignedPCM(AudioFormat.Encoding encoding)
 	{
 		return encoding.equals(AudioFormat.Encoding.PCM_SIGNED);
 	}
