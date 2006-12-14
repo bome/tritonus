@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2000,2006 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,7 @@ extends TSimpleFormatConversionProvider {
 				throw new IllegalArgumentException("format conversion not supported");
 			}
 			return new PCM2PCMStream(sourceStream, targetFormat,
-			                         sourceType, targetType, conversionType);
+			                         conversionType);
 		}
 
 		throw new IllegalArgumentException("format conversion not supported");
@@ -402,8 +402,6 @@ extends TSimpleFormatConversionProvider {
 
 	class PCM2PCMStream extends TSynchronousFilteredAudioInputStream {
 		private int conversionType;
-		private int sourceType;
-		private int targetType;
 		private boolean needExpandChannels;
 		private boolean needMixDown;
 
@@ -411,7 +409,7 @@ extends TSimpleFormatConversionProvider {
 		private FloatSampleBuffer floatBuffer=null;
 
 		public PCM2PCMStream(AudioInputStream sourceStream, AudioFormat targetFormat,
-		                     int sourceType, int targetType, int conversionType) {
+		                     int conversionType) {
 			// transform the targetFormat so that
 			// FrameRate, and SampleRate match the sourceFormat
 			super (sourceStream, new AudioFormat(
@@ -427,8 +425,6 @@ extends TSimpleFormatConversionProvider {
 				           +conversionType2Str(conversionType));
 			}
 			this.conversionType=conversionType;
-			this.sourceType=sourceType;
-			this.targetType=targetType;
 			needExpandChannels=sourceStream.getFormat().getChannels()<targetFormat.getChannels();
 			needMixDown=sourceStream.getFormat().getChannels()>targetFormat.getChannels();
 
