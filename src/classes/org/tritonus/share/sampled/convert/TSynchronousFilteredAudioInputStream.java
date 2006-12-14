@@ -259,10 +259,6 @@ extends TAudioInputStream {
 	}
 
 
-	private int getFrameSize() {
-		return getFormat().getFrameSize();
-	}
-
 }
 
 
