@@ -344,7 +344,7 @@ extends TSimpleFormatConversionProvider {
 			// we must be able to calculate at least one output sample from
 			// one input buffer block
 			if (bufferSize<outSamples2inSamples(1)) {
-				bufferSize=roundUp(outSamples2inSamples(1));
+				bufferSize=((int) outSamples2inSamples(1)) + 1;
 			}
 			if (historyBuffer==null) {
 				historyBuffer=new FloatSampleBuffer(getFormat().getChannels(),
@@ -445,49 +445,34 @@ private long testOutFramesReturned=0;
 			double inc=outSamples2inSamples(1.0);
 			if (!thisBufferValid) {
 				thisBufferValid=true;
-				//dPos=inc/2;
 				dPos=0.0;
 			} else {
-				double temp=dPos;
-				dPos-=(double) oldSampleCount;
+				double temp = dPos;
+				dPos -= (double) oldSampleCount;
 				if (DEBUG_STREAM) {
 					TDebug.out("new dPos: "+temp+" - "+oldSampleCount+" = "+dPos);
 				}
-				if ((dPos>inc || dPos<-inc) && roundDown(dPos)!=0) {
+				if ((dPos>inc || dPos<-inc) && ((int) dPos)!=0) {
 					// hard-reset dPos if - why ever - it got out of bounds
 					if (DEBUG_STREAM_PROBLEMS) {
-						TDebug.out("Need to hard reset dPos="+dPos+" !!!!!!!!!!!!!!!!!!!!!!!");
+						TDebug.out("Need to hard reset dPos="+dPos+" !");
 					}
-					//dPos=inc/2;
 					dPos=0.0;
 				}
 			}
 		}
 
-		private int roundDown(double a) {
-			//return a<0?((int) (a-0.5f)):((int) (a+0.5f));
-			//return a<0?(-((int) -a)):((int) a);
-			//return (int) a;
-			return (int) Math.floor(a);
-		}
-
-		private int roundUp(double a) {
-			//return a<0?((int) (a-0.5f)):((int) (a+0.5f));
-			//return a<0?(-((int) -a)):((int) a);
-			return (int) Math.ceil(a);
-		}
-
-		private void convertSampleAndHold(
+		protected void convertSampleAndHold1(
 				float[] inSamples, double inSampleOffset, int inSampleCount, double increment,
 				float[] outSamples, int outSampleOffset, int outSampleCount, float[] history, int historyLength) {
 			if (DEBUG_STREAM) {
-				TDebug.out("convertSampleAndHold(inSamples["+inSamples.length+"], "
-					+roundDown(inSampleOffset)+" to "+roundDown(inSampleOffset+increment*(outSampleCount-1))+", "
+				TDebug.out("convertSampleAndHold1(inSamples["+inSamples.length+"], "
+					+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
 					+"outSamples["+outSamples.length+"], "+outSampleOffset+" to "+(outSampleOffset+outSampleCount-1)+")");
 				System.out.flush();
 			}
 			for (int i=0; i<outSampleCount; i++) {
-				int iInIndex=roundDown(inSampleOffset+increment*i);
+				int iInIndex=(int) (inSampleOffset+increment*i);
 				if (iInIndex<0) {
 					outSamples[i+outSampleOffset]=history[iInIndex+historyLength];
 					if (DEBUG_STREAM) {
@@ -506,12 +491,52 @@ private long testOutFramesReturned=0;
 			}
 		}
 
-		private void convertLinearInterpolation(
+		/**
+		 * optimized version
+		 * @param inSamples
+		 * @param inSampleOffset
+		 * @param inSampleCount
+		 * @param increment
+		 * @param outSamples
+		 * @param outSampleOffset
+		 * @param outSampleCount
+		 * @param history
+		 * @param historyLength
+		 */
+		private void convertSampleAndHold2(
 				float[] inSamples, double inSampleOffset, int inSampleCount, double increment,
 				float[] outSamples, int outSampleOffset, int outSampleCount, float[] history, int historyLength) {
 			if (DEBUG_STREAM) {
-				TDebug.out("convertLinearInterpolate(inSamples["+inSamples.length+"], "
-					+roundDown(inSampleOffset)+" to "+roundDown(inSampleOffset+increment*(outSampleCount-1))+", "
+				TDebug.out("convertSampleAndHold2(inSamples["+inSamples.length+"], "
+					+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
+					+"outSamples["+outSamples.length+"], "+outSampleOffset+" to "+(outSampleOffset+outSampleCount-1)+")");
+				System.out.flush();
+			}
+			int endSampleOffset = outSampleOffset + outSampleCount;
+			// first go through the history
+			double dHistoryLength = (double) historyLength;
+			while (inSampleOffset < 0.0d && outSampleOffset < endSampleOffset) {
+				double dInIndex = (inSampleOffset + dHistoryLength);
+				outSamples[outSampleOffset] = history[(int) dInIndex];
+				inSampleOffset += increment;
+				outSampleOffset++;
+			}
+
+			// then go through the remaining new samples
+			while (outSampleOffset < endSampleOffset) {
+				outSamples[outSampleOffset] = inSamples[(int) inSampleOffset];
+				
+				inSampleOffset += increment;
+				outSampleOffset++;
+			}
+		}
+
+		protected void convertLinearInterpolation1(
+				float[] inSamples, double inSampleOffset, int inSampleCount, double increment,
+				float[] outSamples, int outSampleOffset, int outSampleCount, float[] history, int historyLength) {
+			if (DEBUG_STREAM) {
+				TDebug.out("convertLinearInterpolate1(inSamples["+inSamples.length+"], "
+					+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
 					+"outSamples["+outSamples.length+"], "+outSampleOffset+" to "+(outSampleOffset+outSampleCount-1)+")");
 				System.out.flush();
 			}
@@ -549,11 +574,95 @@ private long testOutFramesReturned=0;
 					//outSamples[i]=inSamples[roundDown(inSampleOffset)];
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
 					if (DEBUG_STREAM_PROBLEMS) {
-						TDebug.out("**** REAL INDEX OUT OF BOUNDS ****** outSamples["+i+"]=inSamples[roundDown("+inSampleOffset+")="+roundDown(inSampleOffset)+"];");
+						TDebug.out("**** REAL INDEX OUT OF BOUNDS ****** outSamples["+i+"]=inSamples[roundDown("+inSampleOffset+")="+((int) inSampleOffset)+"];");
 					}
 					//throw aioobe;
 				}
 				//inSampleOffset+=increment; <- this produces too much rounding errors...
+			}
+		}
+
+		/**
+		 * optimized version of the linear interpolator
+		 * @param inSamples
+		 * @param inSampleOffset
+		 * @param inSampleCount
+		 * @param increment
+		 * @param outSamples
+		 * @param outSampleOffset
+		 * @param outSampleCount
+		 * @param history
+		 * @param historyLength
+		 */
+		private void convertLinearInterpolation2(float[] inSamples,
+				double inSampleOffset, int inSampleCount, double increment,
+				float[] outSamples, int outSampleOffset, int outSampleCount,
+				float[] history, int historyLength) {
+			// cast results:
+			// (int) -1.7d=-1 (int) -1.5d=-1 (int) -1.2d=-1 (int) -1.0d=-1 (int)
+			// -0.7d=0 (int) -0.5d=0 (int) -0.2d=0
+			if (DEBUG_STREAM) {
+				TDebug.out("convertLinearInterpolate2(inSamples["
+						+ inSamples.length
+						+ "], "
+						+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
+						+ "outSamples["
+						+ outSamples.length + "], " + outSampleOffset + " to "
+						+ (outSampleOffset + outSampleCount - 1) + ")");
+				System.out.flush();
+			}
+
+			try {
+				int endSampleOffset = outSampleOffset + outSampleCount;
+
+				// first go through the history
+				double dHistoryLength = (double) historyLength;
+				while (inSampleOffset < 0.0d && outSampleOffset < endSampleOffset) {
+					double dInIndex = (inSampleOffset + dHistoryLength);
+					int histIndex = (int) dInIndex;
+					float factor = (float) (dInIndex - histIndex);
+
+					outSamples[outSampleOffset] = (history[histIndex - 1] * (1.0f - factor))
+							+ (history[histIndex] * factor);
+
+					inSampleOffset += increment;
+					outSampleOffset++;
+				}
+
+				// then the transition area: last sample is in history, new sample in inSamples
+				while (inSampleOffset < 1.0d && outSampleOffset < endSampleOffset) {
+					float factor = (float) inSampleOffset;
+					outSamples[outSampleOffset] = (history[historyLength - 1] * (1.0f - factor))
+							+ (inSamples[0] * factor);
+
+					inSampleOffset += increment;
+					outSampleOffset++;
+				}
+
+				// then go through the remaining new samples
+				while (outSampleOffset < endSampleOffset) {
+					int iInIndex = (int) inSampleOffset;
+					float factor = (float) (inSampleOffset - iInIndex);
+
+					outSamples[outSampleOffset] = (inSamples[iInIndex-1] * (1.0f - factor))
+							+ (inSamples[iInIndex] * factor);
+
+					inSampleOffset += increment;
+					outSampleOffset++;
+				}
+
+			} catch (ArrayIndexOutOfBoundsException aioobe) {
+				if (DEBUG_STREAM_PROBLEMS) {
+					TDebug.out("**** INDEX OUT OF BOUNDS ****** inSampleOffset="
+							+ inSampleOffset
+							+ "  inSamples.length="
+							+ inSamples.length
+							+ "  outSampleOffset="
+							+ outSampleOffset
+					+ "  outSamples.length="
+					+ outSamples.length);
+				}
+				//throw aioobe;
 			}
 		}
 
@@ -632,7 +741,7 @@ private long testOutFramesReturned=0;
 			do {
 				// check thisBuffer with samples of source stream
 				int inSampleCount=thisBuffer.getSampleCount();
-				if (roundDown(dPos)>=inSampleCount || !thisBufferValid) {
+				if (((int) dPos) >= inSampleCount || !thisBufferValid) {
 					// need to load new data of sourceStream
 					readFromSourceStream();
 					if (isClosed()) {
@@ -643,13 +752,13 @@ private long testOutFramesReturned=0;
 				// calculate number of samples to write
 				int writeCount=count-writtenSamples;
 				// check whether this exceeds the current in-buffer
-				if (roundDown(outSamples2inSamples((double) writeCount)+dPos)>=inSampleCount) {
-					int lastOutIndex=roundUp(inSamples2outSamples(((double) inSampleCount)-dPos));
+				if (((int) (outSamples2inSamples((double) writeCount)+dPos))>=inSampleCount) {
+					int lastOutIndex=((int) (inSamples2outSamples(((double) inSampleCount)-dPos)))+1;
 					// normally, the above formula gives the exact writeCount.
 					// but due to rounding issues, sometimes it has to be decremented once.
 					// so we need to iterate to get the last index and then increment it once to make
 					// it the writeCount (=the number of samples to write)
-					while (roundDown(outSamples2inSamples((double) lastOutIndex)+dPos)>=inSampleCount) {
+					while ((int) (outSamples2inSamples((double) lastOutIndex)+dPos)>=inSampleCount) {
 						lastOutIndex--;
 						if (DEBUG_STREAM) {
 							TDebug.out("--------- Decremented lastOutIndex="+lastOutIndex);
@@ -658,7 +767,7 @@ private long testOutFramesReturned=0;
 					if (DEBUG_STREAM_PROBLEMS) {
 						int testLastOutIndex=writeCount-1;
 						if (DEBUG_STREAM_PROBLEMS) {
-							while (roundDown(outSamples2inSamples((double) testLastOutIndex)+dPos)>=inSampleCount) {
+							while ((int) (outSamples2inSamples((double) testLastOutIndex)+dPos)>=inSampleCount) {
 								testLastOutIndex--;
 							}
 						}
@@ -674,10 +783,14 @@ private long testOutFramesReturned=0;
 					outSamples=outBuffer.getChannel(channel);
 					history=historyBuffer.getChannel(channel);
 					switch (conversionAlgorithm) {
-						case SAMPLE_AND_HOLD: convertSampleAndHold(inSamples, dPos, inSampleCount, increment,
-												outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount()); break;
-						case LINEAR_INTERPOLATION: convertLinearInterpolation(inSamples, dPos, inSampleCount, increment,
-												outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount()); break;
+						case SAMPLE_AND_HOLD: 
+							convertSampleAndHold2(inSamples, dPos, inSampleCount, increment,
+								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount()); 
+							break;
+						case LINEAR_INTERPOLATION: 
+							convertLinearInterpolation2(inSamples, dPos, inSampleCount, increment,
+								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount()); 
+							break;
 					}
 				}
 				writtenSamples+=writeCount;
