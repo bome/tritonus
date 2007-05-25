@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 1999,2000 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 1999,2000,2007 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -60,10 +60,11 @@ extends TEncodingFormatConversionProvider {
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 
-	public static AudioFormat.Encoding ENC_PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
-	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
-	public static AudioFormat.Encoding ENC_ULAW=new AudioFormat.Encoding("ULAW");
-	public static AudioFormat.Encoding ENC_ALAW=new AudioFormat.Encoding("ALAW");
+	// only used as abbreviation
+	public static AudioFormat.Encoding ENC_PCM_SIGNED=AudioFormat.Encoding.PCM_SIGNED;
+	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=AudioFormat.Encoding.PCM_UNSIGNED;
+	public static AudioFormat.Encoding ENC_ULAW=AudioFormat.Encoding.ULAW;
+	public static AudioFormat.Encoding ENC_ALAW=AudioFormat.Encoding.ALAW;
 
 	// TODO:
 	// make a superclass that takes 2 arrays in the constructor

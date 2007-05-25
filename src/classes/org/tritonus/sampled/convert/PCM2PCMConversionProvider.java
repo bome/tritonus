@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000,2006 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2000,2006,2007 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -93,8 +93,9 @@ extends TSimpleFormatConversionProvider {
 	// if true, always use FloatSampleBuffer
 	private static final boolean ONLY_FLOAT_CONVERSION = false;
 
-	public static AudioFormat.Encoding PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
-	public static AudioFormat.Encoding PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
+	// only used as abbreviation
+	public static AudioFormat.Encoding PCM_SIGNED=AudioFormat.Encoding.PCM_SIGNED;
+	public static AudioFormat.Encoding PCM_UNSIGNED=AudioFormat.Encoding.PCM_UNSIGNED;
 
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 	private static final AudioFormat[]	OUTPUT_FORMATS = {

@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2000,2007 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -60,10 +60,11 @@ public class AlawFormatConversionProvider
 extends	TEncodingFormatConversionProvider {
 	private static final int ALL=AudioSystem.NOT_SPECIFIED;
 
-	public static AudioFormat.Encoding ENC_PCM_SIGNED=new AudioFormat.Encoding("PCM_SIGNED");
-	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=new AudioFormat.Encoding("PCM_UNSIGNED");
-	public static AudioFormat.Encoding ENC_ULAW=new AudioFormat.Encoding("ULAW");
-	public static AudioFormat.Encoding ENC_ALAW=new AudioFormat.Encoding("ALAW");
+	// only used as abbreviation
+	public static AudioFormat.Encoding ENC_PCM_SIGNED=AudioFormat.Encoding.PCM_SIGNED;
+	public static AudioFormat.Encoding ENC_PCM_UNSIGNED=AudioFormat.Encoding.PCM_UNSIGNED;
+	public static AudioFormat.Encoding ENC_ULAW=AudioFormat.Encoding.ULAW;
+	public static AudioFormat.Encoding ENC_ALAW=AudioFormat.Encoding.ALAW;
 
 	// TODO:
 	// see UlawFormatConversionProvider
@@ -104,14 +105,19 @@ extends	TEncodingFormatConversionProvider {
 		}
 		if (doMatch(targetFormat.getFrameRate(), sourceFormat.getFrameRate())
 		        && doMatch(targetFormat.getChannels(), sourceFormat.getChannels())) {
+			/*
+			 * thanks to Doug Henderson for detecting the use
+			 * of == instead of equals() for comparing the encoding.
+			 * (he's OK with changing the license to BSD)
+			 */
 			if (doMatch(targetFormat.getSampleSizeInBits(),8)
-			        && targetFormat.getEncoding()==ENC_ALAW) {
+			        && targetFormat.getEncoding().equals(ENC_ALAW)) {
 				// OK, the targetFormat seems fine, so we convert it to ALAW
 				// let the remaining checks be done by ToAlawStream
 				return new ToAlawStream(sourceStream);
 			} else
 				if (doMatch(sourceFormat.getSampleSizeInBits(),8)
-				        && sourceFormat.getEncoding()==ENC_ALAW) {
+				        && sourceFormat.getEncoding().equals(ENC_ALAW)) {
 					// convert ALAW to the target format
 					return new FromAlawStream(sourceStream, targetFormat);
 				}

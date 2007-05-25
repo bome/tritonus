@@ -256,7 +256,7 @@ extends TSimpleFormatConversionProvider {
 		public static final int LINEAR_INTERPOLATION=2;
 		/** Conversion algorithm */
 		public static final int RESAMPLE=3;
-		
+
 		private boolean eofReached = false;
 
 		/** source stream is read in buffers of this size - in milliseconds */
@@ -286,7 +286,7 @@ extends TSimpleFormatConversionProvider {
 			}
 			this.sourceStream=sourceStream;
 			if (sourceStream instanceof FloatSampleInput) {
-				sourceInput = (FloatSampleInput) sourceStream; 
+				sourceInput = (FloatSampleInput) sourceStream;
 			} else {
 				this.sourceInput = null;
 			}
@@ -304,10 +304,10 @@ extends TSimpleFormatConversionProvider {
 			// clean up targetFormat:
 			// - ignore frame rate totally
 			// - recalculate frame size
-			super (new ByteArrayInputStream(new byte[0]), 
+			super (new ByteArrayInputStream(new byte[0]),
 					new SRCAudioFormat(targetFormat),
-			           convertLength(sourceInput.getSampleRate(), 
-			        		   targetFormat.getSampleRate(), 
+			           convertLength(sourceInput.getSampleRate(),
+			        		   targetFormat.getSampleRate(),
 			        		   frameLength));
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("SampleRateConverterStream: <init>");
@@ -324,7 +324,7 @@ extends TSimpleFormatConversionProvider {
 			flush(); // force read of source stream next time read is called
 		}
 
-		
+
 		/**
 		 * Assures that both historyBuffer and working buffer
 		 * <ul><li>exist
@@ -525,7 +525,7 @@ private long testOutFramesReturned=0;
 			// then go through the remaining new samples
 			while (outSampleOffset < endSampleOffset) {
 				outSamples[outSampleOffset] = inSamples[(int) inSampleOffset];
-				
+
 				inSampleOffset += increment;
 				outSampleOffset++;
 			}
@@ -674,12 +674,12 @@ private long testOutFramesReturned=0;
 			return outSamples*sourceSampleRate/targetSampleRate;
 		}
 
-		
+
 		// interface FloatSampleInput
-		
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.tritonus.share.sampled.FloatSampleInput#getChannels()
 		 */
 		public int getChannels() {
@@ -688,7 +688,7 @@ private long testOutFramesReturned=0;
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.tritonus.share.sampled.FloatSampleInput#getSampleRate()
 		 */
 		public float getSampleRate() {
@@ -697,7 +697,7 @@ private long testOutFramesReturned=0;
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.tritonus.share.sampled.FloatSampleInput#isDone()
 		 */
 		public boolean isDone() {
@@ -783,13 +783,13 @@ private long testOutFramesReturned=0;
 					outSamples=outBuffer.getChannel(channel);
 					history=historyBuffer.getChannel(channel);
 					switch (conversionAlgorithm) {
-						case SAMPLE_AND_HOLD: 
+						case SAMPLE_AND_HOLD:
 							convertSampleAndHold2(inSamples, dPos, inSampleCount, increment,
-								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount()); 
+								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount());
 							break;
-						case LINEAR_INTERPOLATION: 
+						case LINEAR_INTERPOLATION:
 							convertLinearInterpolation2(inSamples, dPos, inSampleCount, increment,
-								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount()); 
+								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount());
 							break;
 					}
 				}
