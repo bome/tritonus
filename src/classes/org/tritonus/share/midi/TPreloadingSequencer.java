@@ -55,6 +55,7 @@ extends TSequencer
 	 */
 	private int m_nLatency;
 
+	@SuppressWarnings("unused")
 	private Thread				m_loaderThread;
 
 	/**

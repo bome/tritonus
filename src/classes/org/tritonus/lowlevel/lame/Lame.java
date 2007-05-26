@@ -40,6 +40,7 @@ public class Lame {
 
 	// constants from lame.h
 	private static final int MPEG_VERSION_2 = 0; // MPEG-2
+	@SuppressWarnings("unused") // used from native
 	private static final int MPEG_VERSION_1 = 1; // MPEG-1
 	private static final int MPEG_VERSION_2DOT5 = 2; // MPEG-2.5
 
@@ -103,7 +104,7 @@ public class Lame {
 	 * This field is long because on 64 bit architectures, the native
 	 * size of ints may be 64 bit.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused") // used from native
 	private long m_lNativeGlobalFlags;
 
 	// these fields are set upon successful initialization to show effective values.

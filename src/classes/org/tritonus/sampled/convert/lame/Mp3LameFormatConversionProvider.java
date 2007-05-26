@@ -67,6 +67,7 @@ extends	TSimpleFormatConversionProvider {
 
 	private static final int MPEG_BITS_PER_SAMPLE=ALL; // TODO! should be 0...
 	private static final int MPEG_FRAME_RATE=ALL; // TODO
+	@SuppressWarnings("unused")
 	private static final int MPEG_FRAME_SIZE=ALL; // TODO
 
 	public static final AudioFormat.Encoding MPEG1L3 = new AudioFormat.Encoding("MPEG1L3");
@@ -399,6 +400,7 @@ extends	TSimpleFormatConversionProvider {
 			}
 		}
 
+		@SuppressWarnings("unused")
 		private boolean isBigEndian() {
 			return getFormat().isBigEndian();
 		}

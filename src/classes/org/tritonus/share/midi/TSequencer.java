@@ -112,6 +112,7 @@ implements Sequencer
 
 	/**
 	 */
+	@SuppressWarnings("unchecked")
 	protected TSequencer(MidiDevice.Info info,
 			     Collection<SyncMode> masterSyncModes,
 			     Collection<SyncMode> slaveSyncModes)
