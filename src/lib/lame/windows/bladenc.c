@@ -186,10 +186,10 @@ int getBitrate(LameConf* conf) {
 }
 
 LONG getBladePreset(int quality) {
-	if (quality<org_tritonus_lowlevel_lame_Lame_QUALITY_MIDDLE) {
+	if (quality>org_tritonus_lowlevel_lame_Lame_QUALITY_MIDDLE) {
 		return LQP_LOW_QUALITY;
 	}
-	else if (quality>org_tritonus_lowlevel_lame_Lame_QUALITY_MIDDLE) {
+	else if (quality<org_tritonus_lowlevel_lame_Lame_QUALITY_MIDDLE) {
 		return LQP_HIGH_QUALITY;
 	}
 	return LQP_NORMAL_QUALITY;
