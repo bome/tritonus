@@ -50,16 +50,27 @@ public class MpegAudioFileWriter extends THeaderlessAudioFileWriter {
 	    //new AudioFileFormat.Type("MPEG", "mpeg"),
 	    // workaround for the fixed extension problem in AudioFileFormat.Type
 	    // see org.tritonus.share.sampled.AudioFileTypes.java
-	    new AudioFileFormat.Type("MP3", "mp3")
+	    new AudioFileFormat.Type("MP3", "mp3"),
+	    new AudioFileFormat.Type("MP2", "mp2"),
 	};
 
-	public static AudioFormat.Encoding MPEG1L3=new AudioFormat.Encoding("MPEG1L3");
+	public static final AudioFormat.Encoding MPEG1L3 = new AudioFormat.Encoding("MPEG1L3");
+	public static final AudioFormat.Encoding MPEG2L3 = new AudioFormat.Encoding("MPEG2L3");
+	public static final AudioFormat.Encoding MPEG2DOT5L3 = new AudioFormat.Encoding("MPEG2DOT5L3");
 
 	private static final AudioFormat[]	AUDIO_FORMATS = {
 	    new AudioFormat(MPEG1L3, ALL, ALL, 1, ALL, ALL, false),
 	    new AudioFormat(MPEG1L3, ALL, ALL, 1, ALL, ALL, true),
 	    new AudioFormat(MPEG1L3, ALL, ALL, 2, ALL, ALL, false),
 	    new AudioFormat(MPEG1L3, ALL, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, ALL, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, ALL, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2L3, ALL, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2L3, ALL, ALL, 2, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, ALL, ALL, 1, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, ALL, ALL, 1, ALL, ALL, true),
+	    new AudioFormat(MPEG2DOT5L3, ALL, ALL, 2, ALL, ALL, false),
+	    new AudioFormat(MPEG2DOT5L3, ALL, ALL, 2, ALL, ALL, true),
 	};
 
 	public MpegAudioFileWriter()
