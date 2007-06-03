@@ -357,7 +357,7 @@ extends TFormatConversionProvider
 		if (sampleSize==AudioSystem.NOT_SPECIFIED || channels==AudioSystem.NOT_SPECIFIED) {
 			return AudioSystem.NOT_SPECIFIED;
 		}
-		return sampleSize*channels/8;
+		return ((sampleSize + 7) / 8) * channels;
 	}
 
 
