@@ -76,34 +76,34 @@ public class WaveTool {
 	public static AudioFormat.Encoding IMA_ADPCM = new AudioFormat.Encoding("IMA_ADPCM");
 
 	public static short getFormatCode(AudioFormat format) {
+		// endianness is converted in audio output stream
+		// sign is converted for 8-bit files
 		AudioFormat.Encoding encoding = format.getEncoding();
 		int nSampleSize = format.getSampleSizeInBits();
-		boolean littleEndian = !format.isBigEndian();
-		boolean frameSizeOK=format.getFrameSize()==AudioSystem.NOT_SPECIFIED
-		                    || format.getChannels()!=AudioSystem.NOT_SPECIFIED
-		                    || format.getFrameSize()==nSampleSize/8*format.getChannels();
-
-		if (nSampleSize==8 && frameSizeOK
-		    && (encoding.equals(AudioFormat.Encoding.PCM_SIGNED)
-		        || encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED))) {
-		     	return WAVE_FORMAT_PCM;
-		} else if (nSampleSize>8 && frameSizeOK && littleEndian
-		           && encoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
+		boolean frameSizeOK = format.getFrameSize() == AudioSystem.NOT_SPECIFIED
+				|| format.getChannels() != AudioSystem.NOT_SPECIFIED
+				|| format.getFrameSize() == (nSampleSize + 7) / 8
+						* format.getChannels();
+		boolean signed = encoding.equals(AudioFormat.Encoding.PCM_SIGNED);
+		boolean unsigned = encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED);
+		if (nSampleSize == 8 && frameSizeOK && (signed || unsigned)) {
+			// support signed and unsigned PCM for 8 bit
+			return WAVE_FORMAT_PCM;
+		} else if (nSampleSize > 8 && nSampleSize <= 32 && frameSizeOK && signed) {
+			// support only signed PCM for > 8 bit
 			return WAVE_FORMAT_PCM;
 		} else if (encoding.equals(AudioFormat.Encoding.ULAW)
-		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
-		           && frameSizeOK) {
+				&& (nSampleSize == AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
+				&& frameSizeOK) {
 			return WAVE_FORMAT_ULAW;
 		} else if (encoding.equals(AudioFormat.Encoding.ALAW)
-		           && (nSampleSize==AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
-		           && frameSizeOK) {
+				&& (nSampleSize == AudioSystem.NOT_SPECIFIED || nSampleSize == 8)
+				&& frameSizeOK) {
 			return WAVE_FORMAT_ALAW;
 		} else if (encoding.equals(new AudioFormat.Encoding("IMA_ADPCM"))
-		           && nSampleSize == 4)
-		{
+				&& nSampleSize == 4) {
 			return WAVE_FORMAT_IMA_ADPCM;
-		}
-		else if (encoding.equals(GSM0610)) {
+		} else if (encoding.equals(GSM0610)) {
 			return WAVE_FORMAT_GSM610;
 		}
 		return WAVE_FORMAT_UNSPECIFIED;
@@ -111,4 +111,4 @@ public class WaveTool {
 
 }
 
-/*** WaveTool.java ***/
+/** * WaveTool.java ** */

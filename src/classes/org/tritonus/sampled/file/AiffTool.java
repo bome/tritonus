@@ -55,17 +55,21 @@ public class AiffTool {
 	public static final int	AIFF_FVER_TIME_STAMP = 0xA2805140;  // May 23, 1990, 2:40pm
 
 	public static int getFormatCode(AudioFormat format) {
+		// endianness is converted in audio output stream
+		// sign is converted for 8-bit files
 		AudioFormat.Encoding encoding = format.getEncoding();
 		int nSampleSize = format.getSampleSizeInBits();
-		boolean bigEndian = format.isBigEndian();
 		// $$fb 2000-08-16: check the frame size, too.
 		boolean frameSizeOK=format.getFrameSize()==AudioSystem.NOT_SPECIFIED
 		                    || format.getChannels()!=AudioSystem.NOT_SPECIFIED
 		                    || format.getFrameSize()==nSampleSize/8*format.getChannels();
-
-		if ((encoding.equals(AudioFormat.Encoding.PCM_SIGNED))
-		        && ((bigEndian && nSampleSize>=16 && nSampleSize<=32) || (nSampleSize==8))
-		        && frameSizeOK) {
+		boolean signed = encoding.equals(AudioFormat.Encoding.PCM_SIGNED);
+		boolean unsigned = encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED);
+		if (nSampleSize == 8 && frameSizeOK && (signed || unsigned)) {
+			// support signed and unsigned PCM for 8 bit
+			return AIFF_COMM_PCM;
+		} else if (nSampleSize > 8 && nSampleSize <= 32 && frameSizeOK && signed) {
+			// support only signed PCM for > 8 bit
 			return AIFF_COMM_PCM;
 		} else if (encoding.equals(AudioFormat.Encoding.ULAW) && nSampleSize == 8 && frameSizeOK) {
 			return AIFF_COMM_ULAW;

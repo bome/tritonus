@@ -62,26 +62,29 @@ public class AuTool {
 	public static final int	SND_FORMAT_ALAW_8 = 27;
 
 	public static int getFormatCode(AudioFormat format) {
+		// endianness is converted in audio output stream
+		// sign is converted for 8-bit files
 		AudioFormat.Encoding encoding = format.getEncoding();
 		int nSampleSize = format.getSampleSizeInBits();
-		// must be big endian for >8 bit formats
-		boolean bigEndian = format.isBigEndian();
 		// $$fb 2000-08-16: check the frame size, too.
-		boolean frameSizeOK=(
-		                        format.getFrameSize()==AudioSystem.NOT_SPECIFIED
+		boolean frameSizeOK=(format.getFrameSize()==AudioSystem.NOT_SPECIFIED
 		                        || format.getChannels()!=AudioSystem.NOT_SPECIFIED
 		                        || format.getFrameSize()==nSampleSize/8*format.getChannels());
+		boolean signed = encoding.equals(AudioFormat.Encoding.PCM_SIGNED);
+		boolean unsigned = encoding.equals(AudioFormat.Encoding.PCM_UNSIGNED);
 
 		if (encoding.equals(AudioFormat.Encoding.ULAW) && nSampleSize == 8 && frameSizeOK) {
 			return SND_FORMAT_MULAW_8;
-		} else if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED) && frameSizeOK) {
-			if (nSampleSize == 8) {
-				return SND_FORMAT_LINEAR_8;
-			} else if (nSampleSize == 16 && bigEndian) {
+		} else if (nSampleSize == 8 && frameSizeOK && (signed || unsigned)) {
+			// support signed and unsigned PCM for 8 bit
+			return SND_FORMAT_LINEAR_8;
+		} else if (signed && frameSizeOK) {
+			// support only signed PCM for > 8 bit
+			if (nSampleSize == 16) {
 				return SND_FORMAT_LINEAR_16;
-			} else if (nSampleSize == 24 && bigEndian) {
+			} else if (nSampleSize == 24) {
 				return SND_FORMAT_LINEAR_24;
-			} else if (nSampleSize == 32 && bigEndian) {
+			} else if (nSampleSize == 32) {
 				return SND_FORMAT_LINEAR_32;
 			}
 		} else if (encoding.equals(AudioFormat.Encoding.ALAW) && nSampleSize == 8 && frameSizeOK) {
