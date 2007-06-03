@@ -95,6 +95,14 @@ public class AudioUtils
 		}
 		return false;
 	}
+	
+	/** @return the frame size, given the sample size in bits and number of channels */
+	public static int getFrameSize(int channels, int sampleSizeInBits) {
+		if (channels < 0 || sampleSizeInBits < 0) {
+			return AudioSystem.NOT_SPECIFIED;
+		}
+		return ((sampleSizeInBits + 7) / 8) * channels;
+	}
 
 	/**
 	* Conversion milliseconds -> bytes
