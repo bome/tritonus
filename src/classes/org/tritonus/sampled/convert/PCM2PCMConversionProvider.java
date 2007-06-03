@@ -39,6 +39,7 @@ import javax.sound.sampled.AudioInputStream;
 
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.AudioFormats;
+import org.tritonus.share.sampled.AudioUtils;
 import org.tritonus.share.sampled.TConversionTool;
 import org.tritonus.share.sampled.FloatSampleBuffer;
 import org.tritonus.share.sampled.convert.TSimpleFormatConversionProvider;
@@ -95,8 +96,8 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 	private static final boolean ONLY_FLOAT_CONVERSION = false;
 
 	// only used as abbreviation
-	public static AudioFormat.Encoding PCM_SIGNED = AudioFormat.Encoding.PCM_SIGNED;
-	public static AudioFormat.Encoding PCM_UNSIGNED = AudioFormat.Encoding.PCM_UNSIGNED;
+	public final static AudioFormat.Encoding PCM_SIGNED = AudioFormat.Encoding.PCM_SIGNED;
+	public final static AudioFormat.Encoding PCM_UNSIGNED = AudioFormat.Encoding.PCM_UNSIGNED;
 
 	private static final int ALL = AudioSystem.NOT_SPECIFIED;
 	private static final AudioFormat[] OUTPUT_FORMATS = {
@@ -408,7 +409,6 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 	 * PCM2PCMStream Provides direct conversion of some selected formats and
 	 * rxpanding of channels.
 	 */
-
 	class PCM2PCMStream extends TSynchronousFilteredAudioInputStream {
 		private int conversionType;
 		private boolean needExpandChannels;
@@ -424,10 +424,11 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			super(sourceStream, new AudioFormat(targetFormat.getEncoding(),
 					sourceStream.getFormat().getSampleRate(),
 					targetFormat.getSampleSizeInBits(),
-					targetFormat.getChannels(), targetFormat.getChannels()
-							* targetFormat.getSampleSizeInBits() / 8,
+					targetFormat.getChannels(), AudioUtils.getFrameSize(
+							targetFormat.getChannels(),
+							targetFormat.getSampleSizeInBits()),
 					sourceStream.getFormat().getFrameRate(),
-					targetFormat.isBigEndian()));
+					targetFormat.isBigEndian(), targetFormat.properties()));
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("PCM2PCMStream: constructor. ConversionType="
 						+ conversionType2Str(conversionType));
@@ -460,9 +461,10 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 						targetFormat.getEncoding(),
 						sourceStream.getFormat().getSampleRate(),
 						targetFormat.getSampleSizeInBits(), floatChannels,
-						floatChannels * targetFormat.getSampleSizeInBits() / 8,
+						AudioUtils.getFrameSize(floatChannels,
+								targetFormat.getSampleSizeInBits()),
 						sourceStream.getFormat().getFrameRate(),
-						targetFormat.isBigEndian());
+						targetFormat.isBigEndian(), targetFormat.properties());
 				// with floatBuffer we need to copy anyway, so enable in-place
 				// conversion
 				enableConvertInPlace();
@@ -474,11 +476,14 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 							|| conversionType == CONVERT_BYTE_ORDER24 || conversionType == CONVERT_BYTE_ORDER32)) {
 				enableConvertInPlace();
 			}
+
+			// can always convert in float layer
+			enableFloatConversion();
 		}
 
 		// these functions only treat the highbyte of 16bit samples
 		// obsolete: is handled with FloatBuffer because of dithering
-		private void do16BTO8S(byte[] inBuffer, int inCounter,
+		private final void do16BTO8S(byte[] inBuffer, int inCounter,
 				byte[] outBuffer, int outByteOffset, int sampleCount) {
 			for (; sampleCount > 0; sampleCount--, inCounter++) {
 				outBuffer[outByteOffset++] = inBuffer[inCounter++];
@@ -486,14 +491,14 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 		}
 
 		// obsolete: is handled with FloatBuffer because of dithering
-		private void do16BTO8U(byte[] inBuffer, int inCounter,
+		private final void do16BTO8U(byte[] inBuffer, int inCounter,
 				byte[] outBuffer, int outByteOffset, int sampleCount) {
 			for (; sampleCount > 0; sampleCount--, inCounter++) {
 				outBuffer[outByteOffset++] = (byte) (inBuffer[inCounter++] + 128);
 			}
 		}
 
-		private void do8STO16L(byte[] inBuffer, byte[] outBuffer,
+		private final void do8STO16L(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int sampleCount) {
 			for (int inCounter = 0; sampleCount > 0; sampleCount--) {
 				outBuffer[outByteOffset++] = 0;
@@ -501,7 +506,7 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 		}
 
-		private void do8UTO16L(byte[] inBuffer, byte[] outBuffer,
+		private final void do8UTO16L(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int sampleCount) {
 			for (int inCounter = 0; sampleCount > 0; sampleCount--) {
 				outBuffer[outByteOffset++] = 0;
@@ -509,7 +514,7 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 		}
 
-		private void do8STO16B(byte[] inBuffer, byte[] outBuffer,
+		private final void do8STO16B(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int sampleCount) {
 			for (int inCounter = 0; sampleCount > 0; sampleCount--) {
 				outBuffer[outByteOffset++] = inBuffer[inCounter++];
@@ -517,7 +522,7 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 		}
 
-		private void do8UTO16B(byte[] inBuffer, byte[] outBuffer,
+		private final void do8UTO16B(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int sampleCount) {
 			for (int inCounter = 0; sampleCount > 0; sampleCount--) {
 				outBuffer[outByteOffset++] = (byte) (inBuffer[inCounter++] + 128);
@@ -525,9 +530,9 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 		}
 
-		// copies the channels: in the buffer there is only one channel
-		private void expandChannels(byte[] buffer, int offset, int frameCount,
-				int bytesPerFrame, int channels) {
+		/** copy the channels: in the buffer there is only one channel */
+		private final void expandChannels(byte[] buffer, int offset,
+				int frameCount, int bytesPerFrame, int channels) {
 			int inOffset = offset + bytesPerFrame * frameCount;
 			int outOffset = offset + bytesPerFrame * channels * frameCount;
 			switch (bytesPerFrame) {
@@ -578,7 +583,11 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 		}
 
-		private void doFloatConversion(FloatSampleBuffer buffer,
+		private final void doFloatConversion(FloatSampleBuffer buffer) {
+			doFloatConversion(buffer, needExpandChannels);
+		}
+
+		private final void doFloatConversion(FloatSampleBuffer buffer,
 				boolean expandChannels) {
 			if (needMixDown) {
 				buffer.mixDownChannels();
@@ -588,21 +597,22 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 		}
 
-		private void doFloatConversion(byte[] inBuffer, int inByteOffset,
+		private final void doFloatConversion(byte[] inBuffer, int inByteOffset,
 				byte[] outBuffer, int outByteOffset, int sampleCount) {
 			int byteCount = sampleCount
-					* (getOriginalStream().getFormat().getSampleSizeInBits() / 8);
+					* ((getOriginalStream().getFormat().getSampleSizeInBits() + 7) / 8);
 			if (floatBuffer == null) {
 				floatBuffer = new FloatSampleBuffer();
 			}
 			floatBuffer.initFromByteArray(inBuffer, inByteOffset, byteCount,
 					getOriginalStream().getFormat());
-			doFloatConversion(floatBuffer, false); // expansion is done on byte
-													// array
+			// expansion is done on byte array
+			doFloatConversion(floatBuffer, false);
 			floatBuffer.convertToByteArray(outBuffer, outByteOffset,
 					intermediateFloatBufferFormat);
 		}
 
+		@Override
 		protected int convert(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int inFrameCount) {
 			int sampleCount = inFrameCount
@@ -668,12 +678,13 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 			}
 			if (needExpandChannels) {
 				expandChannels(outBuffer, outByteOffset, inFrameCount,
-						getFormat().getSampleSizeInBits() / 8,
+						(getFormat().getSampleSizeInBits() + 7) / 8,
 						getFormat().getChannels());
 			}
 			return inFrameCount;
 		}
 
+		@Override
 		protected void convertInPlace(byte[] buffer, int byteOffset,
 				int frameCount) {
 			int sampleCount = frameCount
@@ -696,7 +707,7 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 						sampleCount);
 				if (needExpandChannels) {
 					expandChannels(buffer, byteOffset, frameCount,
-							getFormat().getSampleSizeInBits() / 8,
+							(getFormat().getSampleSizeInBits() + 7) / 8,
 							getFormat().getChannels());
 				}
 				break;
@@ -704,6 +715,15 @@ public class PCM2PCMConversionProvider extends TSimpleFormatConversionProvider {
 				throw new RuntimeException(
 						"PCM2PCMStream: Call to convertInPlace, but it cannot convert in place.");
 			}
+		}
+
+		/**
+		 * Convert this buffer. Since float buffers do not need to be PCM
+		 * converted, offset and count are ignored.
+		 */
+		@Override
+		protected void convert(FloatSampleBuffer buffer, int offset, int count) {
+			doFloatConversion(buffer);
 		}
 	}
 
