@@ -132,7 +132,7 @@ public class AiffAudioFileReader extends TAudioFileReader
 		                                     nNumChannels,
 		                                     nFrameSize,
 		                                     fSampleRate,
-		                                     true);
+		                                     nSampleSize > 8);
 		return format;
 	}
 
