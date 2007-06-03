@@ -183,7 +183,7 @@ extends TSimpleFormatConversionProvider {
 	}
 
 
-	// overriden
+	@Override
 	public boolean isConversionSupported(AudioFormat targetFormat,
 	                                     AudioFormat sourceFormat) {
 		// do not match when targetSampleRate set and sourceSamplerate set and NOT both the same
@@ -203,19 +203,21 @@ extends TSimpleFormatConversionProvider {
 		return result;
 	}
 
-	protected static long convertLength(AudioFormat sourceFormat, AudioFormat targetFormat, long sourceLength) {
-		if (sourceLength==AudioSystem.NOT_SPECIFIED) {
+	protected static long convertLength(AudioFormat sourceFormat,
+			AudioFormat targetFormat, long sourceLength) {
+		if (sourceLength == AudioSystem.NOT_SPECIFIED) {
 			return sourceLength;
 		}
-		return Math.round(targetFormat.getSampleRate()/sourceFormat.getSampleRate()*sourceLength);
+		return (long) (targetFormat.getSampleRate()
+				/ sourceFormat.getSampleRate() * sourceLength);
 	}
 
-	protected static long convertLength(float sourceSR, float targetSR, long sourceLength) {
-		if (sourceLength==AudioSystem.NOT_SPECIFIED) {
+	protected static long convertLength(float sourceSR, float targetSR,
+			long sourceLength) {
+		if (sourceLength == AudioSystem.NOT_SPECIFIED) {
 			return sourceLength;
 		}
-		return Math.round(targetSR/sourceSR*sourceLength);
-		//return (long) (targetFormat.getSampleRate()/sourceFormat.getSampleRate()*sourceLength);
+		return (long) (targetSR / sourceSR * sourceLength);
 	}
 
 	/**
@@ -396,9 +398,10 @@ extends TSimpleFormatConversionProvider {
 
 		/** pre-condition: sourceInput != null */
 		private void readFromSourceInput() {
-			sourceInput.read(thisBuffer);
 			if (sourceInput.isDone()) {
 				close();
+			} else {
+				sourceInput.read(thisBuffer);
 			}
 		}
 
@@ -652,7 +655,7 @@ private long testOutFramesReturned=0;
 				}
 
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				if (DEBUG_STREAM_PROBLEMS) {
+				if (DEBUG_STREAM_PROBLEMS || TDebug.TraceAllExceptions) {
 					TDebug.out("**** INDEX OUT OF BOUNDS ****** inSampleOffset="
 							+ inSampleOffset
 							+ "  inSamples.length="
@@ -661,6 +664,9 @@ private long testOutFramesReturned=0;
 							+ outSampleOffset
 					+ "  outSamples.length="
 					+ outSamples.length);
+				}
+				if (TDebug.TraceAllExceptions) {
+					aioobe.printStackTrace();
 				}
 				//throw aioobe;
 			}
@@ -797,6 +803,7 @@ private long testOutFramesReturned=0;
 				// adjust new position
 				dPos+=outSamples2inSamples((double) writeCount);
 			} while (!isClosed() && writtenSamples<outBuffer.getSampleCount());
+			
 			if (writtenSamples<count) {
 				outBuffer.changeSampleCount(writtenSamples+offset, true);
 			}
@@ -877,10 +884,12 @@ private long testOutFramesReturned=0;
 				writeBuffer.changeSampleCount(frameCount, false);
 			}
 			read(writeBuffer);
-			if (eofReached) {
+			
+			if (writeBuffer.getSampleCount() == 0 && eofReached) {
 				return -1;
 			}
-			int written=writeBuffer.convertToByteArray(abData, nOffset, getFormat());
+			
+			int written = writeBuffer.convertToByteArray(abData, nOffset, getFormat());
 			return written;
 		}
 
@@ -999,9 +1008,10 @@ private long testOutFramesReturned=0;
 				targetFormat.getSampleRate(),
 				targetFormat.getSampleSizeInBits(),
 				targetFormat.getChannels(),
-				targetFormat.getChannels()*targetFormat.getSampleSizeInBits()/8,
+				AudioUtils.getFrameSize(targetFormat.getChannels(), targetFormat.getSampleSizeInBits()),
 				targetFormat.getSampleRate(),
-				targetFormat.isBigEndian());
+				targetFormat.isBigEndian(),
+				targetFormat.properties());
 			this.sampleRate=targetFormat.getSampleRate();
 		}
 
