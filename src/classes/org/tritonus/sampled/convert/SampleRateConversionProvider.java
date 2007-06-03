@@ -112,7 +112,7 @@ extends TSimpleFormatConversionProvider {
 			&& sourceFormat.getChannels()!=AudioSystem.NOT_SPECIFIED
 			&& targetFormat.getSampleSizeInBits()!=AudioSystem.NOT_SPECIFIED
 			&& sourceFormat.getSampleSizeInBits()!=AudioSystem.NOT_SPECIFIED
-			&& isConversionSupported(sourceFormat, targetFormat)) {
+			&& isConversionSupported(targetFormat, sourceFormat)) {
 			return new SampleRateConverterStream(sourceStream, targetFormat);
 		}
 		throw new IllegalArgumentException("format conversion not supported");
@@ -361,6 +361,9 @@ extends TSimpleFormatConversionProvider {
 			}
 			// TODO: retain last samples and adjust dPos
 			thisBuffer.changeSampleCount(bufferSize, true);
+			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
+				TDebug.out("Initialized thisBuffer and historyBuffer with "+bufferSize+" samples");
+			}
 		}
 
 		/**
@@ -370,9 +373,15 @@ extends TSimpleFormatConversionProvider {
 		 * Precondition: sourceStream!=null
 		 */
 		private void readFromByteSourceStream() {
-			int byteCount=thisBuffer.getByteArrayBufferSize(getFormat());
-			if (byteBuffer==null || byteBuffer.length<byteCount) {
-				byteBuffer=new byte[byteCount];
+			int byteCount = thisBuffer.getByteArrayBufferSize(sourceStream.getFormat());
+			if (byteBuffer == null || byteBuffer.length < byteCount) {
+				byteBuffer = new byte[byteCount];
+			}
+			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
+				TDebug.out("in readFromByteSourceStream: trying to read "
+						+ byteCount + " bytes = "
+						+ (byteCount / sourceStream.getFormat().getFrameSize())
+						+ " samples from source stream");
 			}
 			// finally read it
 			int bytesRead=0;
@@ -393,6 +402,9 @@ extends TSimpleFormatConversionProvider {
 				close();
 			} else {
 				thisBuffer.initFromByteArray(byteBuffer, 0, bytesRead, sourceStream.getFormat());
+				if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
+					TDebug.out("in readFromByteSourceStream: initialized thisBuffer with "+thisBuffer.getSampleCount()+" samples");
+				}
 			}
 		}
 
@@ -425,13 +437,26 @@ private long testOutFramesReturned=0;
 			FloatSampleBuffer newBuffer=historyBuffer;
 			historyBuffer=thisBuffer;
 			thisBuffer=newBuffer;
-			if (sourceFrameLength!=AudioSystem.NOT_SPECIFIED
-				&& thisBuffer.getSampleCount()+testInFramesRead>sourceFrameLength) {
-					if (sourceFrameLength-testInFramesRead<=0) {
-						close();
-						return;
+			// ensure that we don't read more than the source stream claimed to have
+			if (sourceFrameLength != AudioSystem.NOT_SPECIFIED
+					&& thisBuffer.getSampleCount() + testInFramesRead > sourceFrameLength) {
+				long remaining = sourceFrameLength - testInFramesRead;
+				if (remaining <= 0) {
+					if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
+						TDebug.out("Read more than allowed from source stream:"
+								+ " sourceFrameLength=" + sourceFrameLength
+								+ " samples, inFramesRead=" + testInFramesRead
+								+ " samples.");
 					}
-					thisBuffer.changeSampleCount((int) (sourceFrameLength-testInFramesRead), false);
+					close();
+					return;
+				}
+				if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
+					TDebug.out("Reading from source stream: change from "
+							+ thisBuffer.getSampleCount()+" samples to"
+							+ remaining + " samples");
+				}
+				thisBuffer.changeSampleCount((int) remaining, false);
 			}
 
 			if (sourceInput != null) {
@@ -439,11 +464,15 @@ private long testOutFramesReturned=0;
 			} else {
 				readFromByteSourceStream();
 			}
-			if (TDebug.TraceAudioConverter) {
-				testInFramesRead+=thisBuffer.getSampleCount();
-				if (DEBUG_STREAM) {
-					TDebug.out("Read "+thisBuffer.getSampleCount()+" frames from source stream. Total="+testInFramesRead);
-				}
+
+			int sampleCount = (thisBuffer==null)?0:thisBuffer.getSampleCount();
+			testInFramesRead += sampleCount;
+			
+			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
+				String src = (sourceInput != null)?"source input":"source byte stream";
+				TDebug.out("Read " + sampleCount
+						+ " frames from "+src+" (requested="+oldSampleCount+"). Total="
+						+ testInFramesRead);
 			}
 			double inc=outSamples2inSamples(1.0);
 			if (!thisBufferValid) {
@@ -736,7 +765,7 @@ private long testOutFramesReturned=0;
 			if (outBuffer.getChannelCount()!=thisBuffer.getChannelCount()) {
 				throw new IllegalArgumentException("passed buffer has different channel count");
 			}
-			if (TDebug.TraceAudioConverter) {
+			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
 				TDebug.out(">SamplerateConverterStream.read("+count+" samples)");
 			}
 			float[] outSamples;
@@ -807,7 +836,7 @@ private long testOutFramesReturned=0;
 			if (writtenSamples<count) {
 				outBuffer.changeSampleCount(writtenSamples+offset, true);
 			}
-			if (TDebug.TraceAudioConverter) {
+			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
 				testOutFramesReturned+=outBuffer.getSampleCount();
 				TDebug.out("< return "+outBuffer.getSampleCount()+"frames. Total="+testOutFramesReturned+" frames. Read total "+testInFramesRead+" frames from source stream");
 			}
