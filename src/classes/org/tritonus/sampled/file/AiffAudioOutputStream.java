@@ -55,11 +55,12 @@ public class AiffAudioOutputStream extends TAudioOutputStream {
 	                             AudioFileFormat.Type fileType,
 	                             long lLength,
 	                             TDataOutputStream dataOutputStream) {
+		// always do backpatching if the stream supports seeking, in case the 
+		// reported stream length is longer than the actual data
 		super(audioFormat,
 		      lLength,
 		      dataOutputStream,
-		      lLength == AudioSystem.NOT_SPECIFIED
-		      && dataOutputStream.supportsSeek());
+		      dataOutputStream.supportsSeek());
 		// AIFF files cannot exceed 2GB
 		if (lLength != AudioSystem.NOT_SPECIFIED && lLength>0x7FFFFFFFl) {
 			throw new IllegalArgumentException(
@@ -71,6 +72,19 @@ public class AiffAudioOutputStream extends TAudioOutputStream {
 		        && !audioFormat.getEncoding().equals(AudioFormat.Encoding.PCM_UNSIGNED)) {
 			// only AIFC files can handle non-pcm data
 			m_FileType=AudioFileFormat.Type.AIFC;
+		}
+		// double-check that we can write this audio format
+		if (AiffTool.getFormatCode(audioFormat) == AiffTool.AIFF_COMM_UNSPECIFIED) {
+			throw new IllegalArgumentException("Unknown encoding/format for AIFF file: "+audioFormat);
+		}
+		// AIFF requires signed 8-bit data
+		requireSign8bit(true);
+		// AIFF requires big endian
+		requireEndianness(true);
+
+		if (TDebug.TraceAudioOutputStream) {
+			TDebug.out("Writing " + m_FileType + ": " + audioFormat.getSampleSizeInBits()
+					+ " bits, " + audioFormat.getEncoding());
 		}
 	}
 
@@ -140,9 +154,6 @@ public class AiffAudioOutputStream extends TAudioOutputStream {
 		}
 
 		// write header of SSND chunk
-
-
-
 		dos.writeInt(AiffTool.AIFF_SSND_MAGIC);
 		// don't use lSSndChunkSize here !
 		dos.writeInt((lLength!=AudioSystem.NOT_SPECIFIED)
@@ -175,9 +186,6 @@ public class AiffAudioOutputStream extends TAudioOutputStream {
 			tdos.writeByte(0);
 			// DON'T adjust calculated length !
 		}
-
-
-
 		super.close();
 	}
 
