@@ -32,7 +32,6 @@ package org.tritonus.sampled.convert;
 
 import java.util.Arrays;
 
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import static javax.sound.sampled.AudioFormat.Encoding.*;
