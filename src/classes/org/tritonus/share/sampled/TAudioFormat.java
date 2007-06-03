@@ -62,7 +62,40 @@ extends AudioFormat
 		initMaps(properties);
 	}
 
+	/**
+	 * Create an instance of TAudioFormat as a copy of the supplied audio
+	 * format.
+	 * 
+	 * @param format the instance to copy
+	 */
+	public TAudioFormat(AudioFormat format)
+	{
+		this(format.getEncoding(),
+				format.getSampleRate(),
+				format.getSampleSizeInBits(),
+				format.getChannels(),
+				format.getFrameSize(),
+				format.getFrameRate(),
+				format.isBigEndian(), 
+				format.properties());
+	}
 
+	/**
+	 * Create an instance of TAudioFormat as a copy of the supplied audio
+	 * format, adding the given properties to any properties supplied by
+	 * <code>format</code>. Duplicate properties in the supplied
+	 * <code>properties</code> will overwrite the ones in <code>format</code>.
+	 * 
+	 * @param format the instance to copy
+	 * @param properties properties to be added to this TAudioFormat
+	 */
+	public TAudioFormat(AudioFormat format,
+						Map<String, Object> properties) 
+	{
+		this(format);
+		m_properties.putAll(properties);
+	}
+	
 	public TAudioFormat(float sampleRate,
 						int sampleSizeInBits,
 						int channels,
@@ -86,21 +119,41 @@ extends AudioFormat
 		   is sufficient (or if a deep copy should be made).
 		*/
 		m_properties = new HashMap<String, Object>();
-		m_properties.putAll(properties);
+		if (properties != null) {
+			m_properties.putAll(properties);
+		}
 		m_unmodifiableProperties = Collections.unmodifiableMap(m_properties);
 	}
 
 
 
+	@Override
 	public Map<String, Object> properties()
 	{
+		if (m_properties == null)
+		{
+			initMaps(null);
+		}
 		return m_unmodifiableProperties;
 	}
 
 
+	@Override
+    public Object getProperty(String key) 
+    {
+    	if (m_properties == null) 
+    	{
+    		return null;
+    	}
+    	return m_properties.get(key);
+	}
 
-	protected void setProperty(String key, Object value)
+    
+    protected void setProperty(String key, Object value)
 	{
+		if (m_properties == null) {
+			initMaps(null);
+		}
 		m_properties.put(key, value);
 	}
 }
