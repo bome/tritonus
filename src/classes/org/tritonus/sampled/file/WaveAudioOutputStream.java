@@ -50,15 +50,16 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 	// this constant is used for chunk lengths when the length is not known yet
 	private static final int LENGTH_NOT_KNOWN=-1;
-	private int formatCode;
 
 	public WaveAudioOutputStream(AudioFormat audioFormat,
 	                             long lLength,
 	                             TDataOutputStream dataOutputStream) {
+		// always do backpatching if the stream supports seeking, in case the 
+		// reported stream length is longer than the actual data
 		super(audioFormat,
 		      lLength,
 		      dataOutputStream,
-		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
+		      dataOutputStream.supportsSeek());
 		// wave cannot store more than 4GB
 		if (lLength != AudioSystem.NOT_SPECIFIED
 		    && (lLength+WaveTool.DATA_OFFSET)>0xFFFFFFFFl) {
@@ -70,11 +71,17 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 			}
 			throw new IllegalArgumentException("Wave files cannot be larger than 4GB.");
 		}
-		formatCode = WaveTool.getFormatCode(getFormat());
-		if (formatCode == WaveTool.WAVE_FORMAT_UNSPECIFIED) {
-			throw new IllegalArgumentException("Unknown encoding/format for this wave file.");
+		// double-check that we can write this audio format
+		if (WaveTool.getFormatCode(getFormat()) == WaveTool.WAVE_FORMAT_UNSPECIFIED) {
+			throw new IllegalArgumentException("Unknown encoding/format for WAVE file: "+audioFormat);
 		}
-
+		// WAVE requires unsigned 8-bit data
+		requireSign8bit(false);
+		// WAVE requires little endian
+		requireEndianness(false);
+		if (TDebug.TraceAudioOutputStream) {
+			TDebug.out("Writing WAVE: "+audioFormat.getSampleSizeInBits()+" bits, "+audioFormat.getEncoding());
+		}
 	}
 
 	protected void writeHeader()
@@ -82,6 +89,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		if (TDebug.TraceAudioOutputStream) {
 			TDebug.out("WaveAudioOutputStream.writeHeader()");
 		}
+		int formatCode = WaveTool.getFormatCode(getFormat());
 		AudioFormat		format = getFormat();
 		long			lLength = getLength();
 		int formatChunkAdd=0;
