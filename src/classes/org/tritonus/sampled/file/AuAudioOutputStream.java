@@ -81,11 +81,25 @@ public class AuAudioOutputStream extends TAudioOutputStream {
 	public AuAudioOutputStream(AudioFormat audioFormat,
 	                           long lLength,
 	                           TDataOutputStream dataOutputStream) {
+		// always do backpatching if the stream supports seeking, in case the 
+		// reported stream length is longer than the actual data
 		// if length exceeds 2GB, set the length field to NOT_SPECIFIED
 		super(audioFormat,
 		      lLength>0x7FFFFFFFl?AudioSystem.NOT_SPECIFIED:lLength,
 		      dataOutputStream,
-		      lLength == AudioSystem.NOT_SPECIFIED && dataOutputStream.supportsSeek());
+		      dataOutputStream.supportsSeek());
+		// double-check that we can write this audio format
+		if (AuTool.getFormatCode(audioFormat) == AuTool.SND_FORMAT_UNSPECIFIED) {
+			throw new IllegalArgumentException("Unknown encoding/format for AU file: "+audioFormat);
+		}
+		// AU requires signed 8-bit data
+		requireSign8bit(true);
+		// AU requires big endian
+		requireEndianness(true);
+		if (TDebug.TraceAudioOutputStream) {
+			TDebug.out("Writing AU: " + audioFormat.getSampleSizeInBits()
+					+ " bits, " + audioFormat.getEncoding());
+		}
 	}
 
 	protected void writeHeader() throws IOException {
