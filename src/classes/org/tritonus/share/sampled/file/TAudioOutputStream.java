@@ -35,6 +35,11 @@ import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 
+import static org.tritonus.share.sampled.AudioUtils.isPCM;
+import static org.tritonus.share.sampled.TConversionTool.convertSign8;
+import static org.tritonus.share.sampled.TConversionTool.swapOrder16;
+import static org.tritonus.share.sampled.TConversionTool.swapOrder24;
+import static org.tritonus.share.sampled.TConversionTool.swapOrder32;
 import org.tritonus.share.TDebug;
 
 
@@ -53,8 +58,11 @@ implements AudioOutputStream
 	private TDataOutputStream	m_dataOutputStream;
 	private boolean			m_bDoBackPatching;
 	private boolean			m_bHeaderWritten;
+	/** if this flag is set, do sign conversion for 8-bit PCM data */
+	private boolean			m_doSignConversion;
 
-
+	/** if this flag is set, do endian conversion for 16-bit PCM data */
+	private boolean			m_doEndianConversion;
 
 	protected TAudioOutputStream(AudioFormat audioFormat,
 				     long lLength,
@@ -69,7 +77,28 @@ implements AudioOutputStream
 		m_bHeaderWritten = false;
 	}
 
+	/**
+	 * descendants should call this method if implicit sign conversion for 8-bit
+	 * data should be done
+	 */
+	protected void requireSign8bit(boolean signed) {
+		if (m_audioFormat.getSampleSizeInBits() == 8 && isPCM(m_audioFormat)) {
+			boolean si = m_audioFormat.getEncoding().equals(
+					AudioFormat.Encoding.PCM_SIGNED);
+			m_doSignConversion = signed != si;
+		}
+	}
 
+	/**
+	 * descendants should call this method if implicit endian conversion should
+	 * be done. Currently supported for 16, 24, and 32 bits per sample.
+	 */
+	protected void requireEndianness(boolean bigEndian) {
+		int ssib = m_audioFormat.getSampleSizeInBits();
+		if ((ssib == 16 || ssib == 24 || ssib == 32) && isPCM(m_audioFormat)) {
+			m_doEndianConversion = bigEndian != m_audioFormat.isBigEndian();
+		}
+	}
 
 	public AudioFormat getFormat()
 	{
@@ -100,6 +129,24 @@ implements AudioOutputStream
 	protected TDataOutputStream getDataOutputStream()
 	{
 		return m_dataOutputStream;
+	}
+	
+	/** do sign or endianness conversion */
+	private void handleImplicitConversions(byte[] abData, int nOffset, int nLength) {
+		if (m_doSignConversion) {
+			convertSign8(abData, nOffset, nLength);
+		}
+		if (m_doEndianConversion) {
+			switch (m_audioFormat.getSampleSizeInBits()) {
+			case 16: swapOrder16(abData, nOffset, nLength / 2);
+				break;
+			case 24: swapOrder24(abData, nOffset, nLength / 3);
+				break;
+			case 32:
+				swapOrder32(abData, nOffset, nLength / 4);
+				break;
+			}
+		}
 	}
 
 
@@ -133,8 +180,12 @@ implements AudioOutputStream
 		}
 		// TODO: throw an exception if nLength==0 ? (to indicate end of file ?)
 		if (nLength>0) {
+			handleImplicitConversions(abData, nOffset, nLength);
 			m_dataOutputStream.write(abData, nOffset, nLength);
 			m_lCalculatedLength += nLength;
+			// if we converted something, need to undo the conversion to
+			// guarantee integrity of data
+			handleImplicitConversions(abData, nOffset, nLength);
 		}
 		if (TDebug.TraceAudioOutputStream)
 		{
