@@ -243,12 +243,12 @@ public class FloatInputStream extends AudioInputStream implements
 		}
 		// read from sourceStream, if available
 		if (sourceStream != null) {
-			return readBytesFromInputStream(abData, nOffset,nLength);
+			return readBytesFromInputStream(abData, nOffset, nLength);
 		}
 		// otherwise read from sourceInput
-		return readBytesFromFloatInput(abData, nOffset,nLength);
+		return readBytesFromFloatInput(abData, nOffset, nLength);
 	}
-	
+
 	/**
 	 * internal method to read from the underlying InputStream.<br>
 	 * Precondition: sourceStream!=null
@@ -261,13 +261,15 @@ public class FloatInputStream extends AudioInputStream implements
 		}
 		return readBytes;
 	}
-	
+
 	/**
 	 * internal method to read from the underlying InputStream.<br>
 	 * Precondition: sourceInput!=null
+	 * 
 	 * @param abData: the byte array to fill, or null if just skipping
 	 */
-	protected int readBytesFromFloatInput(byte[] abData, int nOffset, int nLength) throws IOException {
+	protected int readBytesFromFloatInput(byte[] abData, int nOffset,
+			int nLength) throws IOException {
 		if (sourceInput.isDone()) {
 			return -1;
 		}

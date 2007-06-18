@@ -256,10 +256,11 @@ public class FloatSampleBuffer {
 			createChannels(newChannelCount, newSampleCount, lazy);
 		}
 	}
-	
+
 	/**
-	 * Verify that the specified AudioFormat can be converted to and from.
-	 * If the format is not supported, an IllegalArgumentException is thrown.
+	 * Verify that the specified AudioFormat can be converted to and from. If
+	 * the format is not supported, an IllegalArgumentException is thrown.
+	 * 
 	 * @throws IllegalArgumentException if the format is not supported
 	 */
 	public static void checkFormatSupported(AudioFormat format) {
