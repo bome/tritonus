@@ -148,18 +148,29 @@ public class FloatInputStream extends AudioInputStream implements
 			if (tempBuffer == null || byteBufferSize > tempBuffer.length) {
 				tempBuffer = new byte[byteBufferSize];
 			}
-			int readBytes;
-			try {
-				readBytes = sourceStream.read(tempBuffer, 0, byteBufferSize);
-			} catch (IOException ioe) {
-				readBytes = -1;
+			int readSamples = 0;
+			int byteOffset = 0;
+			while (readSamples < sampleCount) {
+				int readBytes;
+				try {
+					readBytes = sourceStream.read(tempBuffer, byteOffset,
+							byteBufferSize);
+				} catch (IOException ioe) {
+					readBytes = -1;
+				}
+				if (readBytes < 0) {
+					eofReached = true;
+					readBytes = 0;
+					break;
+				} else if (readBytes == 0) {
+					Thread.yield();
+				} else {
+					readSamples += readBytes / getFormat().getFrameSize();
+					byteBufferSize -= readBytes;
+					byteOffset += readBytes;
+				}
 			}
-			if (readBytes < 0) {
-				eofReached = true;
-				readBytes = 0;
-			}
-			int readSamples = readBytes / getFormat().getFrameSize();
-			buffer.setSampleCount(offset + readSamples, true);
+			buffer.setSampleCount(offset + readSamples, (offset > 0));
 			if (readSamples > 0) {
 				// convert
 				buffer.setSamplesFromBytes(tempBuffer, 0, getFormat(), offset,
