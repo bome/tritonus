@@ -55,8 +55,7 @@
 		depends="compile" >
 
   <!-- CORE: contains public classes and SPI instantiation support -->
-  <jar jarfile="${dist}/tritonus_core-${version}.jar"
-  	manifest="${src}/packaging/tritonus_core/manifest.mf">
+  <jar jarfile="${dist}/tritonus_core-${version}.jar">
     <fileset dir="${build}">
       <include name="javax/sound/" />
       <include name="org/tritonus/core/" />
@@ -66,6 +65,11 @@
       -->
       <include name="org/tritonus/debug/" />
     </fileset>
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar tritonus_remaining-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- SHARE: contains base and auxiliary classes for all other jars -->
@@ -73,44 +77,59 @@
 	<fileset dir="${build}">
 	  <include name="org/tritonus/share/" />
 	</fileset>
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+    </manifest>
   </jar>
 
   <!-- ALSA: contains Alsa mixer and Alsa sequencer -->
-  <jar jarfile="${dist}/tritonus_alsa-${version}.jar"
-  	manifest="${src}/packaging/tritonus_alsa/manifest.mf">
+  <jar jarfile="${dist}/tritonus_alsa-${version}.jar">
 	<fileset dir="${build}" >
 	  <include name="org/tritonus/lowlevel/alsa/" />
 	  <include name="org/tritonus/sampled/mixer/alsa/" />
 	  <include name="org/tritonus/midi/device/alsa/" />
 	</fileset>
 	<fileset dir="${src}/packaging/tritonus_alsa" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- ESD: contains Esd mixer -->
-  <jar jarfile="${dist}/tritonus_esd-${version}.jar"
-  	manifest="${src}/packaging/tritonus_esd/manifest.mf">
+  <jar jarfile="${dist}/tritonus_esd-${version}.jar">
 	<fileset dir="${build}" >
 	  <include name="org/tritonus/lowlevel/esd/" />
 	  <include name="org/tritonus/sampled/mixer/esd/" />
 	</fileset>
 	<fileset dir="${src}/packaging/tritonus_esd" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- GSM: -->
-  <jar jarfile="${dist}/tritonus_gsm-${version}.jar"
-  	manifest="${src}/packaging/tritonus_gsm/manifest.mf">
+  <jar jarfile="${dist}/tritonus_gsm-${version}.jar">
 	<fileset dir="${build}" >
 	  <include name="org/tritonus/lowlevel/gsm/" />
 	  <include name="org/tritonus/sampled/convert/gsm/" />
 	  <include name="org/tritonus/sampled/file/gsm/" />
 	</fileset>
 	<fileset dir="${src}/packaging/tritonus_gsm" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- (native) VORBIS: -->
-  <jar jarfile="${dist}/tritonus_vorbis-${version}.jar"
-  	manifest="${src}/packaging/tritonus_vorbis/manifest.mf">
-    <fileset dir="${build}" >
+  <jar jarfile="${dist}/tritonus_vorbis-${version}.jar">
+      <fileset dir="${build}" >
       <include name="org/tritonus/lowlevel/ogg/" />
       <include name="org/tritonus/lowlevel/vorbis/" />
       <include name="org/tritonus/sampled/convert/vorbis/" />
@@ -122,11 +141,15 @@
       <include name="org/tritonus/debug/" />
     </fileset>
     <fileset dir="${src}/packaging/tritonus_vorbis" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- (pure java) VORBIS: -->
-  <jar jarfile="${dist}/tritonus_pvorbis-${version}.jar"
-  	manifest="${src}/packaging/tritonus_pvorbis/manifest.mf">
+  <jar jarfile="${dist}/tritonus_pvorbis-${version}.jar">
     <fileset dir="${build}" >
       <include name="org/tritonus/lowlevel/pogg/" />
       <include name="org/tritonus/lowlevel/pvorbis/" />
@@ -139,25 +162,38 @@
       <include name="org/tritonus/debug/" />
     </fileset>
     <fileset dir="${src}/packaging/tritonus_pvorbis" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- JAVASEQUENCER: -->
-  <jar jarfile="${dist}/tritonus_javasequencer-${version}.jar"
-  	manifest="${src}/packaging/tritonus_javasequencer/manifest.mf">
-	  <fileset dir="${build}" >
-		  <include name="org/tritonus/midi/device/java/" />
-	  </fileset>
-	  <fileset dir="${src}/packaging/tritonus_javasequencer" />
+  <jar jarfile="${dist}/tritonus_javasequencer-${version}.jar">
+    <fileset dir="${build}" >
+      <include name="org/tritonus/midi/device/java/" />
+    </fileset>
+    <fileset dir="${src}/packaging/tritonus_javasequencer" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- FLUIDSYNTH: -->
-  <jar jarfile="${dist}/tritonus_fluidsynth-${version}.jar"
-  	manifest="${src}/packaging/tritonus_fluidsynth/manifest.mf">
-	  <fileset dir="${build}" >
-		  <include name="org/tritonus/midi/device/fluidsynth/" />
-		  <include name="org/tritonus/midi/sb/fluidsynth/" />
-	  </fileset>
-	  <fileset dir="${src}/packaging/tritonus_fluidsynth" />
+  <jar jarfile="${dist}/tritonus_fluidsynth-${version}.jar">
+    <fileset dir="${build}" >
+      <include name="org/tritonus/midi/device/fluidsynth/" />
+      <include name="org/tritonus/midi/sb/fluidsynth/" />
+    </fileset>
+    <fileset dir="${src}/packaging/tritonus_fluidsynth" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- AOS: AudioOutputStream stuff-->
@@ -166,15 +202,24 @@
 	  <include name="org/tritonus/sampled/file/*AudioOutputStream.class/" />
 	  <include name="org/tritonus/sampled/file/*Tool.class/" />
 	</fileset>
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <!-- FIXME: tritonus_share not needed in CLASSPATH ? -->
+    </manifest>
   </jar>
 
   <!-- SRC: sample rate converter -->
-  <jar jarfile="${dist}/tritonus_src-${version}.jar"
-  	manifest="${src}/packaging/tritonus_src/manifest.mf">
+  <jar jarfile="${dist}/tritonus_src-${version}.jar">
 	<fileset dir="${build}" >
 	  <include name="org/tritonus/sampled/convert/SampleRateConversionProvider*.class" />
 	</fileset>
 	<fileset dir="${src}/packaging/tritonus_src" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 
   <!-- CDDA: -->
@@ -183,6 +228,11 @@
 	  <include name="org/tritonus/lowlevel/cdda/" />
 	  <include name="org/tritonus/sampled/cdda/" />
 	</fileset>
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <!-- FIXME: tritonus_share not needed in CLASSPATH ? -->
+    </manifest>
   </jar>
 
   <!-- DSP: -->
@@ -191,17 +241,26 @@
 	  <include name="org/tritonus/lowlevel/dsp/" />
 	  <include name="org/tritonus/dsp/" />
 	</fileset>
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <!-- FIXME: tritonus_share not needed in CLASSPATH ? -->
+    </manifest>
   </jar>
 
   <!-- REMAINING:: -->
-  <jar jarfile="${dist}/tritonus_remaining-${version}.jar"
-  	manifest="${src}/packaging/tritonus_core/manifest.mf">
+  <jar jarfile="${dist}/tritonus_remaining-${version}.jar">
 	<fileset dir="${build}" >
 	  <include name="org/tritonus/midi/file/" />
 	  <include name="org/tritonus/sampled/file/*.class" />
 	  <include name="org/tritonus/sampled/convert/*.class" />
 	</fileset>
 	<fileset dir ="${src}/packaging/tritonus_core" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 </target>
 
@@ -211,8 +270,7 @@
 		if="javalayer-present" >
 
   <!-- MP3: -->
-  <jar jarfile="${dist}/tritonus_mp3-${version}.jar"
-  	manifest="${src}/packaging/tritonus_mp3/manifest.mf">
+  <jar jarfile="${dist}/tritonus_mp3-${version}.jar">
     <fileset dir="${build}" >
       <include name="org/tritonus/lowlevel/lame/" />
       <include name="org/tritonus/sampled/convert/javalayer/" />
@@ -220,6 +278,11 @@
       <include name="org/tritonus/sampled/file/mpeg/" />
     </fileset>
     <fileset dir="${src}/packaging/tritonus_mp3" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_mp3-${version}.jar javalayer.jar"/>
+    </manifest>
   </jar>
 </target>
 
@@ -229,8 +292,7 @@
 		if="jorbis-present" >
 
   <!-- JORBIS: -->
-  <jar jarfile="${dist}/tritonus_jorbis-${version}.jar"
-  	manifest="${src}/packaging/tritonus_jorbis/manifest.mf">
+  <jar jarfile="${dist}/tritonus_jorbis-${version}.jar">
     <fileset dir="${build}" >
       <include name="org/tritonus/sampled/convert/jorbis/" />
       <include name="org/tritonus/sampled/file/jorbis/" />
@@ -241,6 +303,11 @@
       <include name="org/tritonus/debug/" />
     </fileset>
     <fileset dir="${src}/packaging/tritonus_jorbis" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+    </manifest>
   </jar>
 </target>
 
@@ -250,12 +317,16 @@
 		if="midishare-present" >
 
   <!-- MIDISHARE: -->
-  <jar jarfile="${dist}/tritonus_midishare-${version}.jar"
-  	manifest="${src}/packaging/tritonus_midishare/manifest.mf">
+  <jar jarfile="${dist}/tritonus_midishare-${version}.jar">
 	<fileset dir="${build}" >
 	  <include name="org/tritonus/midi/device/midishare/" />
 	</fileset>
 	<fileset dir="${src}/packaging/tritonus_midishare" />
+    <manifest>
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Built-Date" value="${DSTAMP}"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar tritonus_remaining-${version}.jar"/>
+    </manifest>
   </jar>
 </target>
 
