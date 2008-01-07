@@ -60,6 +60,9 @@ import com.jcraft.jorbis.Block;
 /**	Pure-java decoder for ogg vorbis streams.
 	The FormatConversionProvider uses the pure-java
 	ogg vorbis decoder from www.jcraft.com/jorbis/.
+	<p>
+	See vorbis spec for more info:
+	http://xiph.org/vorbis/doc/Vorbis_I_spec.html
 
 	@author Matthias Pfisterer
 */
@@ -189,7 +192,7 @@ extends TEncodingFormatConversionProvider
 		if (TDebug.TraceAudioConverter) { TDebug.out("JorbisFormatConversionProvider.getDefaultTargetFormat(): really new target format: " + newTargetFormat); }
 		return newTargetFormat;
 	}
-		
+
 
 
 	/**	AudioInputStream returned on decoding of ogg vorbis.
