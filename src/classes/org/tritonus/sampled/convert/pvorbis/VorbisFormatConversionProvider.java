@@ -133,6 +133,7 @@ extends TEncodingFormatConversionProvider
 
 
 
+	@Override
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream)
 	{
 		if (TDebug.TraceAudioConverter) { TDebug.out(">VorbisFormatConversionProvider.getAudioInputStream(): begin"); }
@@ -180,6 +181,7 @@ extends TEncodingFormatConversionProvider
 
 
 
+	@SuppressWarnings("unchecked")
 	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat)
 	{
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): target format: " + targetFormat); }
@@ -514,6 +516,7 @@ extends TEncodingFormatConversionProvider
 
 
 
+		@Override
 		public void close()
 			throws IOException
 		{
@@ -569,6 +572,7 @@ extends TEncodingFormatConversionProvider
 
   		// private List			m_songComments = new ArrayList();
 		// is altered later in a dubious way
+  		@SuppressWarnings("unused")
   		private int				convsize = -1; // BUFFER_SIZE * 2;
 		// TODO: further checking
   		private byte[]			convbuffer = new byte[CONVSIZE];
@@ -983,7 +987,7 @@ extends TEncodingFormatConversionProvider
 
 
 		/** Read raw data from to ogg bitstream.
-		    Reads from  {@ #m_oggBitStream m_oggBitStream} a
+		    Reads from  {@link #m_oggBitStream m_oggBitStream} a
 		    specified number of bytes into a buffer, starting
 		    at a specified buffer index.
 
@@ -1032,6 +1036,7 @@ extends TEncodingFormatConversionProvider
 
 		/**
 		 */
+		@Override
 		public void close() throws IOException
 		{
 			super.close();

@@ -82,6 +82,7 @@ public class StreamState
 
 	private byte[]	m_abHeader;
 
+	@SuppressWarnings("unused")
 	private int		m_nHeaderFill;
 
 	private boolean	m_bBos;

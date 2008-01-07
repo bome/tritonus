@@ -105,6 +105,7 @@ extends	AudioFileReader
 		@return	an AudioFileFormat instance containing
 		information from the header of the file passed in.
 	*/
+	@Override
 	public AudioFileFormat getAudioFileFormat(File file)
 		throws UnsupportedAudioFileException, IOException
 	{
@@ -136,6 +137,7 @@ extends	AudioFileReader
 		@return	an AudioFileFormat instance containing
 		information from the header of the URL passed in.
 	*/
+	@Override
 	public AudioFileFormat getAudioFileFormat(URL url)
 		throws UnsupportedAudioFileException, IOException
 
@@ -168,6 +170,7 @@ extends	AudioFileReader
 		@return	an AudioFileFormat instance containing
 		information from the header of the stream passed in.
 	*/
+	@Override
 	public AudioFileFormat getAudioFileFormat(InputStream inputStream)
 		throws UnsupportedAudioFileException, IOException
 
@@ -232,6 +235,7 @@ extends	AudioFileReader
 		@return	an AudioInputStream instance containing
 		the audio data from this file.
 	*/
+	@Override
 	public AudioInputStream getAudioInputStream(File file)
 		throws UnsupportedAudioFileException, IOException
 	{
@@ -270,6 +274,7 @@ extends	AudioFileReader
 		@return	an AudioInputStream instance containing
 		the audio data from this URL.
 	*/
+	@Override
 	public AudioInputStream getAudioInputStream(URL url)
 		throws UnsupportedAudioFileException, IOException
 	{
@@ -308,6 +313,7 @@ extends	AudioFileReader
 		@return	an AudioInputStream instance containing
 		the audio data from this stream.
 	*/
+	@Override
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
 		throws UnsupportedAudioFileException, IOException
 	{
@@ -359,6 +365,11 @@ extends	AudioFileReader
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin"); }
 		if (isRereading())
 		{
+			if (TDebug.TraceAudioFileReader) {TDebug.out(" -inputStream is class "+inputStream.getClass()); }
+			if (TDebug.TraceAudioFileReader) {TDebug.out(" -decorating inputStream as BufferedInputStream"); }
+			//$$fb do not optimize by checking for
+			// -BufferedInputStream: markLimit may not be sufficient
+			// -FileInputStream: mark/reset not supported.
 			inputStream = new BufferedInputStream(inputStream, getMarkLimit());
 			inputStream.mark(getMarkLimit());
 		}
@@ -427,6 +438,7 @@ extends	AudioFileReader
 		}
 		return (short) ((b1 << 8) + (b0 << 0));
 	}
+	
 
 
 /*

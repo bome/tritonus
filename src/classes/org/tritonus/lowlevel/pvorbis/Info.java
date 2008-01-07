@@ -36,6 +36,7 @@ import org.tritonus.share.TDebug;
 
 /** Wrapper for vorbis_info.
  */
+@SuppressWarnings("unused")
 public class Info
 implements VorbisConstants
 {
@@ -55,7 +56,6 @@ implements VorbisConstants
 	 *	for the native code.
 	 *	This must be long to be 64bit-clean.
 	 */
-	@SuppressWarnings("unused")
 	private long	m_lNativeHandle;
 
 
@@ -81,6 +81,7 @@ implements VorbisConstants
 
 
 
+	@Override
 	public void finalize()
 	{
 		// TODO: call free()

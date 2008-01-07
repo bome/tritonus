@@ -54,6 +54,8 @@ import org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
  * </ul>
  * <p>
  * FrameRate, SampleRate, Channels CANNOT be converted.
+ * <p>
+ * This new provider replaces UlawFormatConversionProvider and AlawFormatConversionProvider. 
  *
  * @author Florian Bomers
  */
@@ -91,6 +93,7 @@ public class LawEncoder extends TEncodingFormatConversionProvider {
 		super(Arrays.asList(INPUT_FORMATS), Arrays.asList(OUTPUT_FORMATS));
 	}
 
+	@Override
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat,
 			AudioInputStream sourceStream) {
 		AudioFormat sourceFormat = sourceStream.getFormat();
@@ -189,6 +192,7 @@ public class LawEncoder extends TEncodingFormatConversionProvider {
 			}
 		}
 
+		@Override
 		protected int convert(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int inFrameCount) {
 			int sampleCount = inFrameCount * getFormat().getChannels();
@@ -217,6 +221,7 @@ public class LawEncoder extends TEncodingFormatConversionProvider {
 			return inFrameCount;
 		}
 
+		@Override
 		protected void convertInPlace(byte[] buffer, int byteOffset,
 				int frameCount) {
 			int sampleCount = frameCount * getFormat().getChannels();
@@ -256,6 +261,7 @@ public class LawEncoder extends TEncodingFormatConversionProvider {
 			}
 		}
 
+		@Override
 		protected int convert(byte[] inBuffer, byte[] outBuffer,
 				int outByteOffset, int inFrameCount) {
 			int sampleCount = inFrameCount * getFormat().getChannels();
@@ -284,6 +290,7 @@ public class LawEncoder extends TEncodingFormatConversionProvider {
 			return inFrameCount;
 		}
 
+		@Override
 		protected void convertInPlace(byte[] buffer, int byteOffset,
 				int frameCount) {
 			int sampleCount = frameCount * getFormat().getChannels();

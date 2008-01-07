@@ -34,6 +34,7 @@ import org.tritonus.share.TDebug;
 
 /** Holds the static part of a codebook.
  */
+@SuppressWarnings("unused")
 public class StaticCodebook
 implements VorbisConstants
 {

@@ -113,6 +113,12 @@ public class Page
 	{
 	}
 
+	/**
+	 * Dummy method to make it compatible with native vorbis Page class
+	 */
+	public void free() {
+		// nothing
+	}
 
 
 	/** Obtains the stream structure version.  This method returns the
