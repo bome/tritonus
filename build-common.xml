@@ -94,7 +94,7 @@
     <manifest>
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Built-Date" value="${DSTAMP}"/>
-      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar tritonus_remaining-${version}.jar"/>
     </manifest>
   </jar>
 
@@ -108,7 +108,7 @@
     <manifest>
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Built-Date" value="${DSTAMP}"/>
-      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar tritonus_remaining-${version}.jar"/>
     </manifest>
   </jar>
 
@@ -281,7 +281,7 @@
     <manifest>
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Built-Date" value="${DSTAMP}"/>
-      <attribute name="Class-Path" value="tritonus_mp3-${version}.jar javalayer.jar"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar javalayer.jar"/>
     </manifest>
   </jar>
 </target>
@@ -306,7 +306,7 @@
     <manifest>
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Built-Date" value="${DSTAMP}"/>
-      <attribute name="Class-Path" value="tritonus_share-${version}.jar"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar jogg-0.0.7.jar jorbis-0.0.15.jar"/>
     </manifest>
   </jar>
 </target>
