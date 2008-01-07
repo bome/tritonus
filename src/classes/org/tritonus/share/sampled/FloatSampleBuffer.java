@@ -357,6 +357,48 @@ public class FloatSampleBuffer {
 					sampleCount);
 		}
 	}
+	
+	/**
+	 * Write the contents of the byte array to this buffer, overwriting existing
+	 * data. If the byte array has fewer channels than this float buffer, only
+	 * the first channels are written. Vice versa, if the byte buffer has more
+	 * channels than this float buffer, only the first channels of the byte
+	 * buffer are written to this buffer.
+	 * <p>
+	 * The format and the number of samples of this float buffer are not
+	 * changed, so if the byte array has more samples than fit into this float
+	 * buffer, it is not expanded.
+	 * 
+	 * @param buffer the byte buffer to write to this float buffer
+	 * @param srcByteOffset the offset in bytes in buffer where to start reading
+	 * @param format the audio format of the bytes in buffer
+	 * @param dstSampleOffset the offset in samples where to start writing the
+	 *            converted float data into this float buffer
+	 * @param aSampleCount the number of samples to write
+	 * @return the number of samples actually written
+	 */
+	public int writeByteBuffer(byte[] buffer, int srcByteOffset,
+			AudioFormat format, int dstSampleOffset, int aSampleCount) {
+		if (dstSampleOffset + aSampleCount > getSampleCount()) {
+			aSampleCount = getSampleCount() - dstSampleOffset;
+		}
+		int lChannels = format.getChannels();
+		if (lChannels > getChannelCount()) {
+			lChannels = getChannelCount();
+		}
+		if (lChannels > format.getChannels()) {
+			lChannels = format.getChannels();
+		}
+		for (int channel = 0; channel < lChannels; channel++) {
+			float[] data = getChannel(channel);
+
+			FloatSampleTools.byte2floatGeneric(buffer, srcByteOffset,
+					format.getFrameSize(), data, dstSampleOffset, aSampleCount,
+					format);
+			srcByteOffset += format.getFrameSize() / format.getChannels();
+		}
+		return aSampleCount;
+	}
 
 	/**
 	 * Deletes all channels, frees memory... This also removes hidden channels
@@ -597,7 +639,64 @@ public class FloatSampleBuffer {
 			samples[i] = 0.0f;
 		}
 	}
+	
+	/**
+	 * Fade the volume level of this buffer from the given start volume to the end volume.
+	 * E.g. to implement a fade in, use startVol=0 and endVol=1.
+	 * 
+	 * @param startVol the start volume as a linear factor [0..1]
+	 * @param endVol the end volume as a linear factor [0..1]
+	 */
+	public void linearFade(float startVol, float endVol) {
+		linearFade(startVol, endVol, 0, getSampleCount());
+	}
 
+	/**
+	 * Fade the volume level of this buffer from the given start volume to the end volume.
+	 * The fade will start at the offset, and will have reached endVol after count samples.
+	 * E.g. to implement a fade in, use startVol=0 and endVol=1.
+	 * 
+	 * @param startVol the start volume as a linear factor [0..1]
+	 * @param endVol the end volume as a linear factor [0..1]
+	 * @param offset the offset in this buffer where to start the fade (in samples)
+	 * @param count the number of samples to fade
+	 */
+	public void linearFade(float startVol, float endVol, int offset, int count) {
+		for (int channel = 0; channel < getChannelCount(); channel++) {
+			linearFade(channel, startVol, endVol, offset, count);
+		}
+	}
+
+	/**
+	 * Fade the volume level of the specified channel from the given start volume to 
+	 * the end volume.
+	 * The fade will start at the offset, and will have reached endVol after count 
+	 * samples.
+	 * E.g. to implement a fade in, use startVol=0 and endVol=1.
+	 *
+	 * @param channel the channel to do the fade 
+	 * @param startVol the start volume as a linear factor [0..1]
+	 * @param endVol the end volume as a linear factor [0..1]
+	 * @param offset the offset in this buffer where to start the fade (in samples)
+	 * @param count the number of samples to fade
+	 */
+	public void linearFade(int channel, float startVol, float endVol, int offset, int count) {
+		if (count <= 0) return;
+		float end = count+offset;
+		float inc = (endVol - startVol) / count;
+		float[] samples = getChannel(channel);
+		float curr = startVol;
+		for (int i = offset; i < end; i++) {
+			samples[i] *= curr;
+			curr += inc;
+		}
+	}
+
+	/** 
+	 * Add a channel to this buffer, e.g. adding a channel to a mono buffer will make it a stereo buffer.
+	 * 
+	 * @param silent if true, the channel is explicitly silenced. Otherwise the new channel may contain random data.
+	 */
 	public void addChannel(boolean silent) {
 		// creates new, silent channel
 		insertChannel(getChannelCount(), silent);
@@ -685,13 +784,28 @@ public class FloatSampleBuffer {
 	}
 
 	/**
-	 * both source and target channel have to exist. targetChannel will be
-	 * overwritten
+	 * Copy sourceChannel's audio data to targetChannel, identified by their
+	 * indices in the channel list. Both source and target channel have to
+	 * exist. targetChannel will be overwritten
 	 */
 	public void copyChannel(int sourceChannel, int targetChannel) {
 		float[] source = getChannel(sourceChannel);
 		float[] target = getChannel(targetChannel);
 		System.arraycopy(source, 0, target, 0, getSampleCount());
+	}
+
+	/**
+	 * Copy sampleCount samples from sourceChannel at position srcOffset to
+	 * targetChannel at position targetOffset. sourceChannel and targetChannel
+	 * are indices in the channel list. Both source and target channel have to
+	 * exist. targetChannel will be overwritten
+	 */
+	public void copyChannel(int sourceChannel, int sourceOffset,
+			int targetChannel, int targetOffset, int aSampleCount) {
+		float[] source = getChannel(sourceChannel);
+		float[] target = getChannel(targetChannel);
+		System.arraycopy(source, sourceOffset, target, targetOffset,
+				aSampleCount);
 	}
 
 	/**
@@ -760,7 +874,7 @@ public class FloatSampleBuffer {
 	}
 
 	/**
-	 * Mixes <code>buffer</code> to this buffer by adding all samples. At
+	 * Mixes <code>source</code> to this buffer by adding all samples. At
 	 * most, <code>source</code>'s number of samples, number of channels are
 	 * mixed. None of the sample count, channel count or sample rate of either
 	 * buffer are changed. In particular, the caller needs to assure that the
@@ -787,6 +901,32 @@ public class FloatSampleBuffer {
 	}
 
 	/**
+	 * Mixes <code>source</code> samples to this buffer by adding the sample values. 
+	 * None of the sample count, channel count or sample rate of either
+	 * buffer are changed. In particular, the caller needs to assure that the
+	 * sample rate of the buffers match.
+	 * <p>
+	 * This method is not error tolerant, in particular, runtime exceptions
+	 * will be thrown if the channel counts do not match, or if the
+	 * offsets and count exceed the buffer's capacity.
+	 * 
+	 * @param source the source buffer from where to take samples and mix to this one
+	 * @param sourceOffset offset in source where to start reading samples
+	 * @param thisOffset offset in this buffer from where to start mixing samples
+	 * @param count number of samples to mix
+	 */
+	public void mix(FloatSampleBuffer source, int sourceOffset, int thisOffset, int count) {
+		int localChannelCount = getChannelCount();
+		for (int ch = 0; ch < localChannelCount; ch++) {
+			float[] thisChannel = getChannel(ch);
+			float[] otherChannel = source.getChannel(ch);
+			for (int i = 0; i < count; i++) {
+				thisChannel[i+thisOffset] += otherChannel[i+sourceOffset];
+			}
+		}
+	}
+
+	/**
 	 * Copies the contents of this buffer to the destination buffer at the
 	 * destOffset. At most, <code>dest</code>'s number of samples, number of
 	 * channels are copied. None of the sample count, channel count or sample
@@ -797,10 +937,29 @@ public class FloatSampleBuffer {
 	 * @param destOffset the position in <code>dest</code> where to start
 	 *            writing the samples of this buffer
 	 * @param count the number of samples to be copied
+	 * @return the number of samples copied
 	 */
-	public void copyTo(FloatSampleBuffer dest, int destOffset, int count) {
-		if (count > getSampleCount()) {
-			count = getSampleCount();
+	public int copyTo(FloatSampleBuffer dest, int destOffset, int count) {
+		return copyTo(0, dest, destOffset, count);
+	}
+
+	/**
+	 * Copies the specified part of this buffer to the destination buffer. 
+	 * At most, <code>dest</code>'s number of samples, number of
+	 * channels are copied. None of the sample count, channel count or sample
+	 * rate of either buffer are changed. In particular, the caller needs to
+	 * assure that the sample rate of the buffers match.
+	 * 
+	 * @param srcOffset the start position in this buffer, where to start reading samples 
+	 * @param dest the buffer to write to
+	 * @param destOffset the position in <code>dest</code> where to start
+	 *            writing the samples
+	 * @param count the number of samples to be copied
+	 * @return the number of samples copied
+	 */
+	public int copyTo(int srcOffset, FloatSampleBuffer dest, int destOffset, int count) {
+		if (srcOffset + count > getSampleCount()) {
+			count = getSampleCount() - srcOffset;
 		}
 		if (count + destOffset > dest.getSampleCount()) {
 			count = dest.getSampleCount() - destOffset;
@@ -810,9 +969,10 @@ public class FloatSampleBuffer {
 			localChannelCount = dest.getChannelCount();
 		}
 		for (int ch = 0; ch < localChannelCount; ch++) {
-			System.arraycopy(getChannel(ch), 0, dest.getChannel(ch),
+			System.arraycopy(getChannel(ch), srcOffset, dest.getChannel(ch),
 					destOffset, count);
 		}
+		return count;
 	}
 
 	/**
@@ -889,7 +1049,7 @@ public class FloatSampleBuffer {
 	 * @param newSampleCount the new number of samples for this buffer
 	 * @param keepOldSamples if true, the new buffer will keep the current
 	 *            samples in the arrays
-	 * @see #changeSampleCount(int, boolean)ngeSampleCount(int, boolean)
+	 * @see #changeSampleCount(int, boolean)
 	 */
 	public void setSampleCount(int newSampleCount, boolean keepOldSamples) {
 		changeSampleCount(newSampleCount, keepOldSamples);
