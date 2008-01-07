@@ -145,15 +145,17 @@ public class FloatInputStream extends AudioInputStream implements
 			// read into temporary byte buffer
 			int byteBufferSize = buffer.getSampleCount()
 					* getFormat().getFrameSize();
-			if (tempBuffer == null || byteBufferSize > tempBuffer.length) {
-				tempBuffer = new byte[byteBufferSize];
+			byte[] lTempBuffer = tempBuffer;
+			if (lTempBuffer == null || byteBufferSize > lTempBuffer.length) {
+				lTempBuffer = new byte[byteBufferSize];
+				tempBuffer = lTempBuffer;
 			}
 			int readSamples = 0;
 			int byteOffset = 0;
 			while (readSamples < sampleCount) {
 				int readBytes;
 				try {
-					readBytes = sourceStream.read(tempBuffer, byteOffset,
+					readBytes = sourceStream.read(lTempBuffer, byteOffset,
 							byteBufferSize);
 				} catch (IOException ioe) {
 					readBytes = -1;
@@ -173,7 +175,7 @@ public class FloatInputStream extends AudioInputStream implements
 			buffer.setSampleCount(offset + readSamples, (offset > 0));
 			if (readSamples > 0) {
 				// convert
-				buffer.setSamplesFromBytes(tempBuffer, 0, getFormat(), offset,
+				buffer.setSamplesFromBytes(lTempBuffer, 0, getFormat(), offset,
 						readSamples);
 			}
 		}
@@ -211,6 +213,7 @@ public class FloatInputStream extends AudioInputStream implements
 
 	// interface AudioInputStream
 
+	@Override
 	public int read() throws IOException {
 		if (getFormat().getFrameSize() != 1) {
 			throw new IOException("frame size must be 1 to read a single byte");
@@ -227,6 +230,7 @@ public class FloatInputStream extends AudioInputStream implements
 	/**
 	 * @see #read(byte[], int, int)
 	 */
+	@Override
 	public int read(byte[] abData) throws IOException {
 		return read(abData, 0, abData.length);
 	}
@@ -237,6 +241,7 @@ public class FloatInputStream extends AudioInputStream implements
 	 * If an underlying InputStream is available, read from it, otherwise read
 	 * from an underlying FloatSampleInput stream and convert to a byte array.
 	 */
+	@Override
 	public int read(byte[] abData, int nOffset, int nLength) throws IOException {
 		if (isDone()) {
 			return -1;
@@ -266,21 +271,27 @@ public class FloatInputStream extends AudioInputStream implements
 	 * internal method to read from the underlying InputStream.<br>
 	 * Precondition: sourceInput!=null
 	 * 
-	 * @param abData: the byte array to fill, or null if just skipping
+	 * @param abData the byte array to fill, or null if just skipping
 	 */
 	protected int readBytesFromFloatInput(byte[] abData, int nOffset,
 			int nLength) throws IOException {
-		if (sourceInput.isDone()) {
+		FloatSampleInput lInput = sourceInput; 
+		if (lInput.isDone()) {
 			return -1;
 		}
 		int frameCount = nLength / getFormat().getFrameSize();
-		if (tempFloatBuffer == null) {
-			tempFloatBuffer = new FloatSampleBuffer(getFormat().getChannels(),
+		FloatSampleBuffer lTempBuffer = tempFloatBuffer;
+		if (lTempBuffer == null) {
+			lTempBuffer = new FloatSampleBuffer(getFormat().getChannels(),
 					frameCount, getFormat().getSampleRate());
+			tempFloatBuffer = lTempBuffer;
 		} else {
-			tempFloatBuffer.setSampleCount(frameCount, false);
+			lTempBuffer.setSampleCount(frameCount, false);
 		}
-		sourceInput.read(tempFloatBuffer);
+		lInput.read(lTempBuffer);
+		if (lInput.isDone()) {
+			return -1;
+		}
 		if (abData != null) {
 			int writtenBytes = tempFloatBuffer.convertToByteArray(abData,
 					nOffset, getFormat());
@@ -290,6 +301,7 @@ public class FloatInputStream extends AudioInputStream implements
 		return frameCount * getFormat().getFrameSize();
 	}
 
+	@Override
 	public synchronized long skip(long nSkip) throws IOException {
 		// only returns integral frames
 		long skipFrames = nSkip / getFormat().getFrameSize();
@@ -306,6 +318,7 @@ public class FloatInputStream extends AudioInputStream implements
 				(int) (skipFrames * getFormat().getFrameSize()));
 	}
 
+	@Override
 	public int available() throws IOException {
 		if (sourceStream != null) {
 			return sourceStream.available();
@@ -313,6 +326,7 @@ public class FloatInputStream extends AudioInputStream implements
 		return AudioSystem.NOT_SPECIFIED;
 	}
 
+	@Override
 	public void mark(int readlimit) {
 		if (sourceStream != null) {
 			sourceStream.mark(readlimit);
@@ -321,6 +335,7 @@ public class FloatInputStream extends AudioInputStream implements
 		}
 	}
 
+	@Override
 	public void reset() throws IOException {
 		if (sourceStream != null) {
 			sourceStream.reset();
@@ -329,6 +344,7 @@ public class FloatInputStream extends AudioInputStream implements
 		}
 	}
 
+	@Override
 	public boolean markSupported() {
 		if (sourceStream != null) {
 			return sourceStream.markSupported();
@@ -336,6 +352,7 @@ public class FloatInputStream extends AudioInputStream implements
 		return false;
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (eofReached) {
 			return;
