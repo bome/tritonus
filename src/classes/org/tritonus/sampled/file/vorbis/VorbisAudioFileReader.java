@@ -72,8 +72,16 @@ extends TAudioFileReader
 		if (TDebug.TraceAudioFileReader) { TDebug.out(">VorbisAudioFileReader.getAudioFileFormat(): begin"); }
 		SyncState	oggSyncState = new SyncState();
 		StreamState	oggStreamState = new StreamState();
-		Page		oggPage = new Page();
-		Packet		oggPacket = new Packet();
+		Page		oggPage;
+		Packet		oggPacket;
+		
+		//$fb catch unsatisfied link error if native lib is not available
+		try {
+			oggPage = new Page();
+			oggPacket = new Packet();
+		} catch (UnsatisfiedLinkError ule) {
+			throw new UnsupportedAudioFileException(ule.getMessage());
+		}
 
 		int		bytes = 0;
 
