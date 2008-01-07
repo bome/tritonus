@@ -353,6 +353,44 @@ public class FloatSampleTools {
 	}
 
 	/**
+	 * Conversion function to convert one audio channel in an interleaved byte
+	 * array to a float array. The float array will contain normalized samples
+	 * in the range [-1.0, +1.0]. The input array provides bytes in the format
+	 * specified in <code>format</code>.
+	 * <p>
+	 * Only PCM formats are accepted. The method will convert all byte values
+	 * from <code>input[inByteOffset]</code> to
+	 * <code>input[inByteOffset + (frameCount * format.getFrameSize()) - 1]</code>
+	 * to floats from <code>output(n)[outOffset]</code> to
+	 * <code>output(n)[outOffset + frameCount - 1]</code>
+	 * 
+	 * @param channel the channel number to extract from the input audio data
+	 * @param input the audio data in an byte array
+	 * @param inByteOffset index in input where to start the conversion
+	 * @param output the of float array which receives the converted audio data.
+	 * @param outOffset the start offset in <code>output</code>
+	 * @param frameCount number of frames to be converted
+	 * @param format the input format. Only packed PCM is allowed
+	 * @throws IllegalArgumentException if one of the parameters is out of
+	 *             bounds
+	 */
+	public static void byte2float(int channel, byte[] input, int inByteOffset,
+			float[] output, int outOffset, int frameCount, AudioFormat format) {
+
+		if (channel >= format.getChannels()) {
+			throw new IllegalArgumentException("channel out of bounds");
+		}
+		if (output.length < frameCount + outOffset) {
+			throw new IllegalArgumentException("data is too small");
+		}
+
+		// "select" the channel
+		inByteOffset += format.getFrameSize() / format.getChannels() * channel;
+		byte2floatGeneric(input, inByteOffset, format.getFrameSize(), output,
+				outOffset, frameCount, format);
+	}
+
+	/**
 	 * Conversion function to convert an interleaved byte array to an
 	 * interleaved float array. The float array will contain normalized samples
 	 * in the range [-1.0f, +1.0f]. The input array provides bytes in the format
@@ -444,51 +482,58 @@ public class FloatSampleTools {
 			// do conversion
 			switch (formatType) {
 			case CT_8S:
-				output[outIndex] = ((float) input[inIndex]) * invTwoPower7;
+				output[outIndex] = input[inIndex] * invTwoPower7;
 				break;
 			case CT_8U:
-				output[outIndex] = ((float) ((input[inIndex] & 0xFF) - 128))
-						* invTwoPower7;
+				output[outIndex] = ((input[inIndex] & 0xFF) - 128) * invTwoPower7;
 				break;
 			case CT_16SB:
-				output[outIndex] = ((float) ((input[inIndex] << 8) | (input[inIndex + 1] & 0xFF)))
+				output[outIndex] = ((input[inIndex] << 8) 
+						| (input[inIndex + 1] & 0xFF))
 						* invTwoPower15;
 				break;
 			case CT_16SL:
-				output[outIndex] = ((float) ((input[inIndex + 1] << 8) | (input[inIndex] & 0xFF)))
+				output[outIndex] = ((input[inIndex + 1] << 8) 
+						| (input[inIndex] & 0xFF))
 						* invTwoPower15;
 				break;
 			case CT_24_3SB:
-				output[outIndex] = ((float) ((input[inIndex] << 16)
-						| ((input[inIndex + 1] & 0xFF) << 8) | (input[inIndex + 2] & 0xFF)))
+				output[outIndex] = ((input[inIndex] << 16)
+						| ((input[inIndex + 1] & 0xFF) << 8) 
+						| (input[inIndex + 2] & 0xFF))
 						* invTwoPower23;
 				break;
 			case CT_24_3SL:
-				output[outIndex] = ((float) ((input[inIndex + 2] << 16)
-						| ((input[inIndex + 1] & 0xFF) << 8) | (input[inIndex] & 0xFF)))
+				output[outIndex] = ((input[inIndex + 2] << 16)
+						| ((input[inIndex + 1] & 0xFF) << 8) 
+						| (input[inIndex] & 0xFF))
 						* invTwoPower23;
 				break;
 			case CT_24_4SB:
-				output[outIndex] = ((float) ((input[inIndex + 1] << 16)
-						| ((input[inIndex + 2] & 0xFF) << 8) | (input[inIndex + 3] & 0xFF)))
+				output[outIndex] = ((input[inIndex + 1] << 16)
+						| ((input[inIndex + 2] & 0xFF) << 8) 
+						| (input[inIndex + 3] & 0xFF))
 						* invTwoPower23;
 				break;
 			case CT_24_4SL:
 				// TODO: verify the indexes
-				output[outIndex] = ((float) ((input[inIndex + 3] << 16)
-						| ((input[inIndex + 2] & 0xFF) << 8) | (input[inIndex + 1] & 0xFF)))
+				output[outIndex] = ((input[inIndex + 3] << 16)
+						| ((input[inIndex + 2] & 0xFF) << 8) 
+						| (input[inIndex + 1] & 0xFF))
 						* invTwoPower23;
 				break;
 			case CT_32SB:
-				output[outIndex] = ((float) ((input[inIndex] << 24)
+				output[outIndex] = ((input[inIndex] << 24)
 						| ((input[inIndex + 1] & 0xFF) << 16)
-						| ((input[inIndex + 2] & 0xFF) << 8) | (input[inIndex + 3] & 0xFF)))
+						| ((input[inIndex + 2] & 0xFF) << 8) 
+						| (input[inIndex + 3] & 0xFF))
 						* invTwoPower31;
 				break;
 			case CT_32SL:
-				output[outIndex] = ((float) ((input[inIndex + 3] << 24)
+				output[outIndex] = ((input[inIndex + 3] << 24)
 						| ((input[inIndex + 2] & 0xFF) << 16)
-						| ((input[inIndex + 1] & 0xFF) << 8) | (input[inIndex] & 0xFF)))
+						| ((input[inIndex + 1] & 0xFF) << 8) 
+						| (input[inIndex] & 0xFF))
 						* invTwoPower31;
 				break;
 			default:
@@ -593,7 +638,7 @@ public class FloatSampleTools {
 			byte[] output, int outByteOffset, int frameCount,
 			AudioFormat format, float ditherBits) {
 		for (int channel = 0; channel < format.getChannels(); channel++) {
-			float[] data = (float[]) input.get(channel);
+			float[] data = input.get(channel);
 			float2byteGeneric(data, inOffset, output, outByteOffset,
 					format.getFrameSize(), frameCount, format, ditherBits);
 			outByteOffset += format.getFrameSize() / format.getChannels();
@@ -604,8 +649,7 @@ public class FloatSampleTools {
 	 * @param input an array of float[] arrays
 	 * @throws ArrayIndexOutOfBoundsException if one of the parameters is out of
 	 *             bounds
-	 * @see #float2byte(List<float[]>[] input, int inOffset, byte[] output, int
-	 *      outByteOffset, int frameCount, AudioFormat format, float ditherBits)
+	 * @see #float2byte(Object[], int, byte[], int, int, AudioFormat, float)
 	 */
 	public static void float2byte(Object[] input, int inOffset, byte[] output,
 			int outByteOffset, int frameCount, AudioFormat format,
@@ -626,8 +670,7 @@ public class FloatSampleTools {
 	 *            frame
 	 * @throws ArrayIndexOutOfBoundsException if one of the parameters is out of
 	 *             bounds
-	 * @see #float2byte(List<float[]>[] input, int inOffset, byte[] output, int
-	 *      outByteOffset, int frameCount, AudioFormat format, float ditherBits)
+	 * @see #float2byte(Object[], int, byte[], int, int, AudioFormat, float)
 	 */
 	static void float2byte(Object[] input, int inOffset, byte[] output,
 			int outByteOffset, int frameCount, int formatCode, int channels,
