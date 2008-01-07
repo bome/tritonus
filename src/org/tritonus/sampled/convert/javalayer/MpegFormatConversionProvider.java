@@ -192,6 +192,7 @@ extends TEncodingFormatConversionProvider
 
 
 
+	@Override
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream)
 	{
 		if (TDebug.TraceAudioConverter)
@@ -304,7 +305,8 @@ extends TEncodingFormatConversionProvider
 					getCircularBuffer().close();
 					return;
 				}
-				Obuffer	decoderOutput = m_decoder.decodeFrame(header, m_bitstream);
+				//$$fb decodeOutput not needed
+				/*Obuffer	decoderOutput =*/ m_decoder.decodeFrame(header, m_bitstream);
 				m_bitstream.closeFrame();
 				getCircularBuffer().write(m_oBuffer.getBuffer(), 0, m_oBuffer.getCurrentBufferSize());
 				m_oBuffer.reset();
@@ -334,6 +336,7 @@ extends TEncodingFormatConversionProvider
 
 
 
+		@Override
 		public void close()
 			throws IOException
 		{
@@ -364,6 +367,7 @@ extends TEncodingFormatConversionProvider
 
 
 
+			@Override
 			public void append(int nChannel, short sValue)
 			{
 				// TODO: replace by TConversionTool methods
@@ -388,24 +392,28 @@ extends TEncodingFormatConversionProvider
 			}
 
 
+			@Override
 			public void set_stop_flag()
 			{
 			}
 
 
 
+			@Override
 			public void close()
 			{
 			}
 
 
 
+			@Override
 			public void write_buffer(int nValue)
 			{
 			}
 
 
 
+			@Override
 			public void clear_buffer()
 			{
 			}
