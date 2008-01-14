@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2001,2006 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2001,2006,2008 by Florian Bomers <http://www.bomers.de>
  *
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,8 @@
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
 
 package org.tritonus.sampled.convert;
 
@@ -50,69 +50,74 @@ import org.tritonus.share.ArraySet;
 /**
  * This provider converts sample rate of 2 PCM streams. <br>
  * It does:
- * <ul><li>conversion of different sample rates
+ * <ul>
+ * <li>conversion of different sample rates
  * <li>conversion of unsigned/signed (only 8bit unsigned supported)
  * <li>conversion of big/small endian
  * <li>8,16,24,32 bit conversion
  * </ul>
  * It does NOT:
- * <ul><li>change channel count
- * <li>accept a stream where the sample rates are equal. This case should be handled
- * by the PCM2PCM converter
+ * <ul>
+ * <li>change channel count
+ * <li>accept a stream where the sample rates are equal. This case should be
+ * handled by the PCM2PCM converter
  * </ul>
- *
+ * 
  * @author Florian Bomers
  */
 
-public class SampleRateConversionProvider
-extends TSimpleFormatConversionProvider {
+public class SampleRateConversionProvider extends
+		TSimpleFormatConversionProvider {
 
 	// only used as abbreviation
-	public static AudioFormat.Encoding PCM_SIGNED=AudioFormat.Encoding.PCM_SIGNED;
-	public static AudioFormat.Encoding PCM_UNSIGNED=AudioFormat.Encoding.PCM_UNSIGNED;
+	public static AudioFormat.Encoding PCM_SIGNED = AudioFormat.Encoding.PCM_SIGNED;
+	public static AudioFormat.Encoding PCM_UNSIGNED = AudioFormat.Encoding.PCM_UNSIGNED;
 
-	private static final boolean DEBUG_STREAM=false;
-	private static final boolean DEBUG_STREAM_PROBLEMS=false;
+	private static final boolean DEBUG_STREAM = false;
+	private static final boolean DEBUG_STREAM_PROBLEMS = false;
 
-	private static final int ALL=AudioSystem.NOT_SPECIFIED;
-	private static final AudioFormat[]	OUTPUT_FORMATS = {
-	    // Encoding, SampleRate, sampleSizeInBits, channels, frameSize, frameRate, bigEndian
-	    new AudioFormat(PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
-	    new AudioFormat(PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
-	    new AudioFormat(PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
-	    new AudioFormat(PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
-	    new AudioFormat(PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
-	    new AudioFormat(PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
-	    new AudioFormat(PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
-	    new AudioFormat(PCM_SIGNED, ALL, 24, ALL, ALL, ALL, true),
-	    new AudioFormat(PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
-	    new AudioFormat(PCM_SIGNED, ALL, 32, ALL, ALL, ALL, true),
+	private static final int ALL = AudioSystem.NOT_SPECIFIED;
+	private static final AudioFormat[] OUTPUT_FORMATS = {
+			// Encoding, SampleRate, sampleSizeInBits, channels, frameSize,
+			// frameRate, bigEndian
+			new AudioFormat(PCM_SIGNED, ALL, 8, ALL, ALL, ALL, false),
+			new AudioFormat(PCM_SIGNED, ALL, 8, ALL, ALL, ALL, true),
+			new AudioFormat(PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, false),
+			new AudioFormat(PCM_UNSIGNED, ALL, 8, ALL, ALL, ALL, true),
+			new AudioFormat(PCM_SIGNED, ALL, 16, ALL, ALL, ALL, false),
+			new AudioFormat(PCM_SIGNED, ALL, 16, ALL, ALL, ALL, true),
+			new AudioFormat(PCM_SIGNED, ALL, 24, ALL, ALL, ALL, false),
+			new AudioFormat(PCM_SIGNED, ALL, 24, ALL, ALL, ALL, true),
+			new AudioFormat(PCM_SIGNED, ALL, 32, ALL, ALL, ALL, false),
+			new AudioFormat(PCM_SIGNED, ALL, 32, ALL, ALL, ALL, true),
 	};
 
-	/**	Constructor.
+	/**
+	 * Constructor.
 	 */
 	public SampleRateConversionProvider() {
-		super(Arrays.asList(OUTPUT_FORMATS),
-		      Arrays.asList(OUTPUT_FORMATS));
+		super(Arrays.asList(OUTPUT_FORMATS), Arrays.asList(OUTPUT_FORMATS));
 	}
 
-	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream) {
-		AudioFormat sourceFormat=sourceStream.getFormat();
+	@Override
+	public AudioInputStream getAudioInputStream(AudioFormat targetFormat,
+			AudioInputStream sourceStream) {
+		AudioFormat sourceFormat = sourceStream.getFormat();
 
 		// the non-conversion case
 		if (AudioFormats.matches(sourceFormat, targetFormat)) {
 			return sourceStream;
 		}
 
-		targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
+		targetFormat = replaceNotSpecified(sourceFormat, targetFormat);
 		// do not support NOT_SPECIFIED as sample rates
-		if (targetFormat.getSampleRate()!=AudioSystem.NOT_SPECIFIED
-			&& sourceFormat.getSampleRate()!=AudioSystem.NOT_SPECIFIED
-			&& targetFormat.getChannels()!=AudioSystem.NOT_SPECIFIED
-			&& sourceFormat.getChannels()!=AudioSystem.NOT_SPECIFIED
-			&& targetFormat.getSampleSizeInBits()!=AudioSystem.NOT_SPECIFIED
-			&& sourceFormat.getSampleSizeInBits()!=AudioSystem.NOT_SPECIFIED
-			&& isConversionSupported(targetFormat, sourceFormat)) {
+		if (targetFormat.getSampleRate() != AudioSystem.NOT_SPECIFIED
+				&& sourceFormat.getSampleRate() != AudioSystem.NOT_SPECIFIED
+				&& targetFormat.getChannels() != AudioSystem.NOT_SPECIFIED
+				&& sourceFormat.getChannels() != AudioSystem.NOT_SPECIFIED
+				&& targetFormat.getSampleSizeInBits() != AudioSystem.NOT_SPECIFIED
+				&& sourceFormat.getSampleSizeInBits() != AudioSystem.NOT_SPECIFIED
+				&& isConversionSupported(targetFormat, sourceFormat)) {
 			return new SampleRateConverterStream(sourceStream, targetFormat);
 		}
 		throw new IllegalArgumentException("format conversion not supported");
@@ -120,58 +125,63 @@ extends TSimpleFormatConversionProvider {
 
 	// replaces the sample rate and frame rate.
 	// Should only be used with PCM_SIGNED or PCM_UNSIGNED
-	private static AudioFormat replaceSampleRate(AudioFormat format, float newSampleRate) {
-		if (format.getSampleRate()==newSampleRate) {
+	private static AudioFormat replaceSampleRate(AudioFormat format,
+			float newSampleRate) {
+		if (format.getSampleRate() == newSampleRate) {
 			return format;
 		}
-		return new AudioFormat(format.getEncoding(), newSampleRate, format.getSampleSizeInBits(),
-			format.getChannels(), format.getFrameSize(), newSampleRate, format.isBigEndian());
+		return new AudioFormat(format.getEncoding(), newSampleRate,
+				format.getSampleSizeInBits(), format.getChannels(),
+				format.getFrameSize(), newSampleRate, format.isBigEndian());
 	}
 
-	private static final float[] commonSampleRates={
-		8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 56000, 64000, 88200, 96000, 192000
+	private static final float[] commonSampleRates = {
+			8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000,
+			56000, 64000, 88200, 96000, 192000
 	};
 
+	@Override
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
-	                                      AudioFormat sourceFormat)
-	{
+			AudioFormat sourceFormat) {
 		if (TDebug.TraceAudioConverter) {
 			TDebug.out(">SampleRateConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");
 			TDebug.out("checking out possible target formats");
 			TDebug.out("from: " + sourceFormat);
 			TDebug.out("to  : " + targetEncoding);
 		}
-		float sourceSampleRate=sourceFormat.getSampleRate();
+		float sourceSampleRate = sourceFormat.getSampleRate();
 		// a trick: set sourceFormat's sample rate to -1 so that
-		//          replaceNotSpecified does not replace the sample rate.
-		//          we want to convert that !
-		sourceFormat=replaceSampleRate(sourceFormat, AudioSystem.NOT_SPECIFIED);
+		// replaceNotSpecified does not replace the sample rate.
+		// we want to convert that !
+		sourceFormat = replaceSampleRate(sourceFormat,
+				AudioSystem.NOT_SPECIFIED);
 		if (isConversionSupported(targetEncoding, sourceFormat)) {
-			ArraySet<AudioFormat> result=new ArraySet<AudioFormat>();
-			Iterator<AudioFormat> iterator=getCollectionTargetFormats().iterator();
+			ArraySet<AudioFormat> result = new ArraySet<AudioFormat>();
+			Iterator<AudioFormat> iterator = getCollectionTargetFormats().iterator();
 			while (iterator.hasNext()) {
 				AudioFormat targetFormat = iterator.next();
-				targetFormat=replaceNotSpecified(sourceFormat, targetFormat);
+				targetFormat = replaceNotSpecified(sourceFormat, targetFormat);
 				if (isConversionSupported(targetFormat, sourceFormat)) {
 					result.add(targetFormat);
 				}
 			}
 			// for convenience, add some often used sample rates as output
 			// this may help applications that do not handle NOT_SPECIFIED
-			if (result.size()>0
-				&& sourceSampleRate!=AudioSystem.NOT_SPECIFIED) {
-				int count=result.size();
-				for (int i=0; i<count; i++) {
+			if (result.size() > 0
+					&& sourceSampleRate != AudioSystem.NOT_SPECIFIED) {
+				int count = result.size();
+				for (int i = 0; i < count; i++) {
 					AudioFormat format = result.get(i);
-					for (int j=0; j<commonSampleRates.length; j++) {
+					for (int j = 0; j < commonSampleRates.length; j++) {
 						if (!doMatch(sourceSampleRate, commonSampleRates[j])) {
-							result.add(replaceSampleRate(format, commonSampleRates[j]));
+							result.add(replaceSampleRate(format,
+									commonSampleRates[j]));
 						}
 					}
 				}
 			}
 			if (TDebug.TraceAudioConverter) {
-				TDebug.out("<found "+result.size()+" matching formats.");
+				TDebug.out("<found " + result.size() + " matching formats.");
 			}
 			return result.toArray(EMPTY_FORMAT_ARRAY);
 		} else {
@@ -182,17 +192,20 @@ extends TSimpleFormatConversionProvider {
 		}
 	}
 
-
 	@Override
 	public boolean isConversionSupported(AudioFormat targetFormat,
-	                                     AudioFormat sourceFormat) {
-		// do not match when targetSampleRate set and sourceSamplerate set and NOT both the same
-		boolean result=(targetFormat.getSampleRate()==AudioSystem.NOT_SPECIFIED
-				|| targetFormat.getSampleRate()==AudioSystem.NOT_SPECIFIED
-				|| !doMatch(targetFormat.getSampleRate(), sourceFormat.getSampleRate())
-			&& doMatch(targetFormat.getChannels(), sourceFormat.getChannels()))
-			&& AudioUtils.containsFormat(sourceFormat, getCollectionSourceFormats().iterator())
-			&& AudioUtils.containsFormat(targetFormat, getCollectionTargetFormats().iterator());
+			AudioFormat sourceFormat) {
+		// do not match when targetSampleRate set and sourceSamplerate set and
+		// NOT both the same
+		boolean result = (targetFormat.getSampleRate() == AudioSystem.NOT_SPECIFIED
+				|| targetFormat.getSampleRate() == AudioSystem.NOT_SPECIFIED || !doMatch(
+				targetFormat.getSampleRate(), sourceFormat.getSampleRate())
+				&& doMatch(targetFormat.getChannels(),
+						sourceFormat.getChannels()))
+				&& AudioUtils.containsFormat(sourceFormat,
+						getCollectionSourceFormats().iterator())
+				&& AudioUtils.containsFormat(targetFormat,
+						getCollectionTargetFormats().iterator());
 		if (TDebug.TraceAudioConverter) {
 			TDebug.out(">SampleRateConverter: isConversionSupported(AudioFormat, AudioFormat):");
 			TDebug.out("checking if conversion possible");
@@ -227,23 +240,25 @@ extends TSimpleFormatConversionProvider {
 	// about, and new things in an AIS, that I derive directly from
 	// AudioInputStream.
 	// I cannot use TAsynchronousFilteredAudioInputStream because
-	// - it doesn't allow convenient use of a history. The history will be needed
-	//   especially when performing filtering
+	// - it doesn't allow convenient use of a history. The history will be
+	// needed
+	// especially when performing filtering
 	// - it doesn't work on FloatSampleBuffer (yet)
 	// - each sample must be calculated one-by-one. The asynchronous
-	//   difficulty isn't overcome by using a TCircularBuffer
+	// difficulty isn't overcome by using a TCircularBuffer
 	// I cannot use TSynchronousFilteredAudioInputStream because
 	// - it doesn't handle different sample rates
 	// Later we can make a base class for this, e.g. THistoryAudioInputStream
-
-	// TODO: when target sample rate is < source sample rate (or only slightly above),
+	// TODO: when target sample rate is < source sample rate (or only slightly
+	// above),
 	// this stream calculates ONE sample too much.
-	public static class SampleRateConverterStream extends AudioInputStream implements FloatSampleInput {
+	public static class SampleRateConverterStream extends AudioInputStream
+			implements FloatSampleInput {
 
 		/** the current working buffer with samples of the sourceStream */
-		private FloatSampleBuffer thisBuffer=null;
+		private FloatSampleBuffer thisBuffer = null;
 		/** used when read(byte[],int,int) is called */
-		private FloatSampleBuffer writeBuffer=null;
+		private FloatSampleBuffer writeBuffer = null;
 		private byte[] byteBuffer; // used for reading samples of sourceStream
 		private AudioInputStream sourceStream;
 		private FloatSampleInput sourceInput;
@@ -253,124 +268,145 @@ extends TSimpleFormatConversionProvider {
 		/** index in thisBuffer */
 		private double dPos;
 		/** Conversion algorithm */
-		public static final int SAMPLE_AND_HOLD=1;
+		public static final int SAMPLE_AND_HOLD = 1;
 		/** Conversion algorithm */
-		public static final int LINEAR_INTERPOLATION=2;
+		public static final int LINEAR_INTERPOLATION = 2;
 		/** Conversion algorithm */
-		public static final int RESAMPLE=3;
+		public static final int RESAMPLE = 3;
 
 		private boolean eofReached = false;
 
 		/** source stream is read in buffers of this size - in milliseconds */
 		private int sourceBufferTime;
 
+		/** source stream is read in buffers of this size - in samples */
+		private int sourceBufferSizeSamples;
+
 		/** the current conversion algorithm */
-		private int conversionAlgorithm=LINEAR_INTERPOLATION;
-		//private int conversionAlgorithm=SAMPLE_AND_HOLD;
+		private int conversionAlgorithm = LINEAR_INTERPOLATION;
+		// private int conversionAlgorithm=SAMPLE_AND_HOLD;
 
 		// History support
 		/** the buffer with history samples */
-		private FloatSampleBuffer historyBuffer=null;
-		/** the minimum number of samples that must be present in the history buffer */
-		private int minimumSamplesInHistory=1;
+		private FloatSampleBuffer historyBuffer = null;
+		/**
+		 * the minimum number of samples that must be present in the history
+		 * buffer
+		 */
+		private int minimumSamplesInHistory = 1;
 
 		/** force to discard current contents in thisBuffer if true */
-		private boolean thisBufferValid=false;
+		private boolean thisBufferValid = false;
 
-		public SampleRateConverterStream(AudioInputStream sourceStream, AudioFormat targetFormat) {
+		public SampleRateConverterStream(AudioInputStream sourceStream,
+				AudioFormat targetFormat) {
 			// clean up targetFormat:
 			// - ignore frame rate totally
 			// - recalculate frame size
-			super (sourceStream, new SRCAudioFormat(targetFormat),
-			           convertLength(sourceStream.getFormat(), targetFormat, sourceStream.getFrameLength()));
+			super(sourceStream, new SRCAudioFormat(targetFormat),
+					convertLength(sourceStream.getFormat(), targetFormat,
+							sourceStream.getFrameLength()));
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("SampleRateConverterStream: <init>");
 			}
-			this.sourceStream=sourceStream;
+			this.sourceStream = sourceStream;
 			if (sourceStream instanceof FloatSampleInput) {
 				sourceInput = (FloatSampleInput) sourceStream;
 			} else {
 				this.sourceInput = null;
 			}
-			sourceSampleRate=sourceStream.getFormat().getSampleRate();
-			targetSampleRate=targetFormat.getSampleRate();
+			sourceSampleRate = sourceStream.getFormat().getSampleRate();
+			targetSampleRate = targetFormat.getSampleRate();
 			sourceFrameLength = sourceStream.getFrameLength();
-			dPos=0;
+			dPos = 0;
 			// use a buffer size of 100ms
-			sourceBufferTime=100;
+			sourceBufferTime = 100;
 			resizeBuffers();
 			flush(); // force read of source stream next time read is called
 		}
 
-		public SampleRateConverterStream(FloatSampleInput sourceInput, AudioFormat targetFormat, long frameLength) {
+		public SampleRateConverterStream(FloatSampleInput sourceInput,
+				AudioFormat targetFormat, long frameLength) {
 			// clean up targetFormat:
 			// - ignore frame rate totally
 			// - recalculate frame size
-			super (new ByteArrayInputStream(new byte[0]),
-					new SRCAudioFormat(targetFormat),
-			           convertLength(sourceInput.getSampleRate(),
-			        		   targetFormat.getSampleRate(),
-			        		   frameLength));
+			super(new ByteArrayInputStream(new byte[0]), new SRCAudioFormat(
+					targetFormat), convertLength(sourceInput.getSampleRate(),
+					targetFormat.getSampleRate(), frameLength));
 			if (TDebug.TraceAudioConverter) {
 				TDebug.out("SampleRateConverterStream: <init>");
 			}
 			this.sourceStream = null;
-			this.sourceInput = sourceInput;;
+			this.sourceInput = sourceInput;
 			sourceSampleRate = sourceInput.getSampleRate();
 			targetSampleRate = targetFormat.getSampleRate();
 			sourceFrameLength = frameLength;
-			dPos=0;
+			dPos = 0;
 			// use a buffer size of 100ms
-			sourceBufferTime=100;
+			sourceBufferTime = 100;
 			resizeBuffers();
 			flush(); // force read of source stream next time read is called
 		}
 
-
 		/**
 		 * Assures that both historyBuffer and working buffer
-		 * <ul><li>exist
+		 * <ul>
+		 * <li>exist
 		 * <li>have about <code>sourceBufferTime</code> ms samples
 		 * <li>that both have at least <code>minimumSamplesInHistory</code>
 		 * samples
 		 * </ul>
-		 * This method must be called when anything is changed that
-		 * may change the size of the buffers.
+		 * This method must be called when anything is changed that may change
+		 * the size of the buffers.
 		 */
-		private void resizeBuffers() {
-			int bufferSize=(int) AudioUtils.millis2Frames(
-				(long) sourceBufferTime, sourceSampleRate);
-			if (bufferSize<minimumSamplesInHistory) {
-				bufferSize=minimumSamplesInHistory;
+		private synchronized void resizeBuffers() {
+			sourceBufferSizeSamples = (int) AudioUtils.millis2Frames(
+					(long) sourceBufferTime, sourceSampleRate);
+			if (sourceBufferSizeSamples < minimumSamplesInHistory) {
+				sourceBufferSizeSamples = minimumSamplesInHistory;
 			}
 			// we must be able to calculate at least one output sample from
 			// one input buffer block
-			if (bufferSize<outSamples2inSamples(1)) {
-				bufferSize=((int) outSamples2inSamples(1)) + 1;
+			if (sourceBufferSizeSamples < outSamples2inSamples(1)) {
+				sourceBufferSizeSamples = ((int) outSamples2inSamples(1)) + 1;
 			}
-			if (historyBuffer==null) {
-				historyBuffer=new FloatSampleBuffer(getFormat().getChannels(),
-					bufferSize, sourceSampleRate);
+			if (historyBuffer == null) {
+				historyBuffer = new FloatSampleBuffer(
+						getFormat().getChannels(), sourceBufferSizeSamples,
+						sourceSampleRate);
 				historyBuffer.makeSilence();
 			}
 			// TODO: retain last samples !
-			historyBuffer.changeSampleCount(bufferSize, true);
-			if (thisBuffer==null) {
-				thisBuffer=new FloatSampleBuffer(getFormat().getChannels(),
-					bufferSize, sourceSampleRate);
+			historyBuffer.changeSampleCount(sourceBufferSizeSamples, true);
+			if (thisBuffer == null) {
+				thisBuffer = new FloatSampleBuffer(getFormat().getChannels(),
+						sourceBufferSizeSamples, sourceSampleRate);
 			}
 			// TODO: retain last samples and adjust dPos
-			thisBuffer.changeSampleCount(bufferSize, true);
+			thisBuffer.changeSampleCount(sourceBufferSizeSamples, true);
 			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
-				TDebug.out("Initialized thisBuffer and historyBuffer with "+bufferSize+" samples");
+				TDebug.out("Initialized thisBuffer and historyBuffer with "
+						+ sourceBufferSizeSamples + " samples");
 			}
 		}
 
 		/**
-		 * Reads from a source stream that cannot handle float buffers.
-		 * After this method has been called, it is to be checked whether
-		 * we are closed !
-		 * Precondition: sourceStream!=null
+		 * Maintenance work before reading from the source stream. In
+		 * particular, it is ensured that the temporary buffer for reading from
+		 * the source buffer is large enough.
+		 */
+		private void beforeReadFromSourceStream() {
+			FloatSampleBuffer lBuffer = thisBuffer;
+			if (lBuffer != null
+					&& lBuffer.getSampleCount() != sourceBufferSizeSamples) {
+				lBuffer.changeSampleCount(sourceBufferSizeSamples, false);
+			}
+		}
+
+		/**
+		 * Reads from a source stream that cannot handle float buffers. After
+		 * this method has been called, it is to be checked whether we are
+		 * closed ! Precondition: sourceStream!=null
 		 */
 		private void readFromByteSourceStream() {
 			int byteCount = thisBuffer.getByteArrayBufferSize(sourceStream.getFormat());
@@ -384,7 +420,7 @@ extends TSimpleFormatConversionProvider {
 						+ " samples from source stream");
 			}
 			// finally read it
-			int bytesRead=0;
+			int bytesRead = 0;
 			int thisRead;
 			do {
 				try {
@@ -397,18 +433,21 @@ extends TSimpleFormatConversionProvider {
 					bytesRead += thisRead;
 				}
 			} while (bytesRead < byteCount && thisRead > 0);
-			if (bytesRead==0) {
-				// sourceStream is closed. We don't accept 0 bytes read from source stream
+			if (bytesRead == 0) {
+				// sourceStream is closed. We don't accept 0 bytes read from
+				// source stream
 				close();
 			} else {
-				thisBuffer.initFromByteArray(byteBuffer, 0, bytesRead, sourceStream.getFormat());
+				thisBuffer.initFromByteArray(byteBuffer, 0, bytesRead,
+						sourceStream.getFormat());
 				if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
-					TDebug.out("in readFromByteSourceStream: initialized thisBuffer with "+thisBuffer.getSampleCount()+" samples");
+					TDebug.out("in readFromByteSourceStream: initialized thisBuffer with "
+							+ thisBuffer.getSampleCount() + " samples");
 				}
 			}
 		}
 
-		/** pre-condition: sourceInput != null */
+		/** pre-condition: sourceInput != null, thisBuffer.getSampleCount()>0 */
 		private void readFromSourceInput() {
 			if (sourceInput.isDone()) {
 				close();
@@ -417,29 +456,31 @@ extends TSimpleFormatConversionProvider {
 			}
 		}
 
-private long testInFramesRead=0;
-private long testOutFramesReturned=0;
+		private long testInFramesRead = 0;
+		private long testOutFramesReturned = 0;
 
 		/**
-		 * fills thisBuffer with new samples.
-		 * It sets the history buffer to the last buffer.
-		 * thisBuffer's sampleCount will be the number of samples read.
-		 * Calling methods MUST check whether this stream is closed upon
-		 * completion of this method. If the stream is closed, the contents
-		 * of <code>thisBuffer</code> are not valid.
+		 * fills thisBuffer with new samples. It sets the history buffer to the
+		 * last buffer. thisBuffer's sampleCount will be the number of samples
+		 * read. Calling methods MUST check whether this stream is closed upon
+		 * completion of this method. If the stream is closed, the contents of
+		 * <code>thisBuffer</code> are not valid.
 		 */
 		private void readFromSourceStream() {
 			if (isClosed()) {
 				return;
 			}
-			int oldSampleCount=thisBuffer.getSampleCount();
 			// reuse history buffer
-			FloatSampleBuffer newBuffer=historyBuffer;
-			historyBuffer=thisBuffer;
-			thisBuffer=newBuffer;
-			// ensure that we don't read more than the source stream claimed to have
+			FloatSampleBuffer lBuffer = historyBuffer;
+			historyBuffer = thisBuffer;
+			thisBuffer = lBuffer;
+			beforeReadFromSourceStream();
+			int oldSampleCount = thisBuffer.getSampleCount();
+
+			// ensure that we don't read more than the source stream claimed to
+			// have
 			if (sourceFrameLength != AudioSystem.NOT_SPECIFIED
-					&& thisBuffer.getSampleCount() + testInFramesRead > sourceFrameLength) {
+					&& lBuffer.getSampleCount() + testInFramesRead > sourceFrameLength) {
 				long remaining = sourceFrameLength - testInFramesRead;
 				if (remaining <= 0) {
 					if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
@@ -453,10 +494,10 @@ private long testOutFramesReturned=0;
 				}
 				if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
 					TDebug.out("Reading from source stream: change from "
-							+ thisBuffer.getSampleCount()+" samples to"
+							+ lBuffer.getSampleCount() + " samples to"
 							+ remaining + " samples");
 				}
-				thisBuffer.changeSampleCount((int) remaining, false);
+				lBuffer.changeSampleCount((int) remaining, false);
 			}
 
 			if (sourceInput != null) {
@@ -465,66 +506,84 @@ private long testOutFramesReturned=0;
 				readFromByteSourceStream();
 			}
 
-			int sampleCount = (thisBuffer==null)?0:thisBuffer.getSampleCount();
+			int sampleCount = (lBuffer == null) ? 0
+					: lBuffer.getSampleCount();
 			testInFramesRead += sampleCount;
-			
+
 			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
-				String src = (sourceInput != null)?"source input":"source byte stream";
-				TDebug.out("Read " + sampleCount
-						+ " frames from "+src+" (requested="+oldSampleCount+"). Total="
+				String src = (sourceInput != null) ? "source input"
+						: "source byte stream";
+				TDebug.out("Read " + sampleCount + " frames from " + src
+						+ " (requested=" + oldSampleCount + "). Total="
 						+ testInFramesRead);
 			}
-			double inc=outSamples2inSamples(1.0);
+			double inc = outSamples2inSamples(1.0);
 			if (!thisBufferValid) {
-				thisBufferValid=true;
-				dPos=0.0;
+				thisBufferValid = true;
+				dPos = 0.0;
 			} else {
 				double temp = dPos;
-				dPos -= (double) oldSampleCount;
+				dPos -= oldSampleCount;
 				if (DEBUG_STREAM) {
-					TDebug.out("new dPos: "+temp+" - "+oldSampleCount+" = "+dPos);
+					TDebug.out("new dPos: " + temp + " - " + oldSampleCount
+							+ " = " + dPos);
 				}
-				if ((dPos>inc || dPos<-inc) && ((int) dPos)!=0) {
+				if ((dPos > inc || dPos < -inc) && ((int) dPos) != 0) {
 					// hard-reset dPos if - why ever - it got out of bounds
 					if (DEBUG_STREAM_PROBLEMS) {
-						TDebug.out("Need to hard reset dPos="+dPos+" !");
+						TDebug.out("Need to hard reset dPos=" + dPos + " !");
 					}
-					dPos=0.0;
+					dPos = 0.0;
 				}
 			}
 		}
 
-		protected void convertSampleAndHold1(
-				float[] inSamples, double inSampleOffset, int inSampleCount, double increment,
-				float[] outSamples, int outSampleOffset, int outSampleCount, float[] history, int historyLength) {
+		protected void convertSampleAndHold1(float[] inSamples,
+				double inSampleOffset, int inSampleCount, double increment,
+				float[] outSamples, int outSampleOffset, int outSampleCount,
+				float[] history, int historyLength) {
 			if (DEBUG_STREAM) {
-				TDebug.out("convertSampleAndHold1(inSamples["+inSamples.length+"], "
-					+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
-					+"outSamples["+outSamples.length+"], "+outSampleOffset+" to "+(outSampleOffset+outSampleCount-1)+")");
+				TDebug.out("convertSampleAndHold1(inSamples["
+						+ inSamples.length
+						+ "], "
+						+ ((int) inSampleOffset)
+						+ " to "
+						+ ((int) (inSampleOffset + increment
+								* (outSampleCount - 1))) + ", " + "outSamples["
+						+ outSamples.length + "], " + outSampleOffset + " to "
+						+ (outSampleOffset + outSampleCount - 1) + ")");
 				System.out.flush();
 			}
-			for (int i=0; i<outSampleCount; i++) {
-				int iInIndex=(int) (inSampleOffset+increment*i);
-				if (iInIndex<0) {
-					outSamples[i+outSampleOffset]=history[iInIndex+historyLength];
+			for (int i = 0; i < outSampleCount; i++) {
+				int iInIndex = (int) (inSampleOffset + increment * i);
+				if (iInIndex < 0) {
+					outSamples[i + outSampleOffset] = history[iInIndex
+							+ historyLength];
 					if (DEBUG_STREAM) {
-						TDebug.out("convertSampleAndHold: using history["+(iInIndex+historyLength)+" because inIndex="+iInIndex);
+						TDebug.out("convertSampleAndHold: using history["
+								+ (iInIndex + historyLength)
+								+ " because inIndex=" + iInIndex);
 					}
-				}
-				else if (iInIndex>=inSampleCount) {
+				} else if (iInIndex >= inSampleCount) {
 					if (DEBUG_STREAM_PROBLEMS) {
-						TDebug.out("convertSampleAndHold: INDEX OUT OF BOUNDS outSamples["+i+"]=inSamples[roundDown("+inSampleOffset+")="+iInIndex+"];");
+						TDebug.out("convertSampleAndHold: INDEX OUT OF BOUNDS outSamples["
+								+ i
+								+ "]=inSamples[roundDown("
+								+ inSampleOffset
+								+ ")=" + iInIndex + "];");
 					}
 				} else {
-					outSamples[i+outSampleOffset]=inSamples[iInIndex];
-					//outSamples[i]=inSamples[roundDown(inSampleOffset)];
+					outSamples[i + outSampleOffset] = inSamples[iInIndex];
+					// outSamples[i]=inSamples[roundDown(inSampleOffset)];
 				}
-				//inSampleOffset+=increment; <- this produces too much rounding errors...
+				// inSampleOffset+=increment; <- this produces too much rounding
+				// errors...
 			}
 		}
 
 		/**
 		 * optimized version
+		 * 
 		 * @param inSamples
 		 * @param inSampleOffset
 		 * @param inSampleCount
@@ -535,18 +594,25 @@ private long testOutFramesReturned=0;
 		 * @param history
 		 * @param historyLength
 		 */
-		private void convertSampleAndHold2(
-				float[] inSamples, double inSampleOffset, int inSampleCount, double increment,
-				float[] outSamples, int outSampleOffset, int outSampleCount, float[] history, int historyLength) {
+		private void convertSampleAndHold2(float[] inSamples,
+				double inSampleOffset, int inSampleCount, double increment,
+				float[] outSamples, int outSampleOffset, int outSampleCount,
+				float[] history, int historyLength) {
 			if (DEBUG_STREAM) {
-				TDebug.out("convertSampleAndHold2(inSamples["+inSamples.length+"], "
-					+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
-					+"outSamples["+outSamples.length+"], "+outSampleOffset+" to "+(outSampleOffset+outSampleCount-1)+")");
+				TDebug.out("convertSampleAndHold2(inSamples["
+						+ inSamples.length
+						+ "], "
+						+ ((int) inSampleOffset)
+						+ " to "
+						+ ((int) (inSampleOffset + increment
+								* (outSampleCount - 1))) + ", " + "outSamples["
+						+ outSamples.length + "], " + outSampleOffset + " to "
+						+ (outSampleOffset + outSampleCount - 1) + ")");
 				System.out.flush();
 			}
 			int endSampleOffset = outSampleOffset + outSampleCount;
 			// first go through the history
-			double dHistoryLength = (double) historyLength;
+			double dHistoryLength = historyLength;
 			while (inSampleOffset < 0.0d && outSampleOffset < endSampleOffset) {
 				double dInIndex = (inSampleOffset + dHistoryLength);
 				outSamples[outSampleOffset] = history[(int) dInIndex];
@@ -563,59 +629,78 @@ private long testOutFramesReturned=0;
 			}
 		}
 
-		protected void convertLinearInterpolation1(
-				float[] inSamples, double inSampleOffset, int inSampleCount, double increment,
-				float[] outSamples, int outSampleOffset, int outSampleCount, float[] history, int historyLength) {
+		protected void convertLinearInterpolation1(float[] inSamples,
+				double inSampleOffset, int inSampleCount, double increment,
+				float[] outSamples, int outSampleOffset, int outSampleCount,
+				float[] history, int historyLength) {
 			if (DEBUG_STREAM) {
-				TDebug.out("convertLinearInterpolate1(inSamples["+inSamples.length+"], "
-					+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
-					+"outSamples["+outSamples.length+"], "+outSampleOffset+" to "+(outSampleOffset+outSampleCount-1)+")");
+				TDebug.out("convertLinearInterpolate1(inSamples["
+						+ inSamples.length
+						+ "], "
+						+ ((int) inSampleOffset)
+						+ " to "
+						+ ((int) (inSampleOffset + increment
+								* (outSampleCount - 1))) + ", " + "outSamples["
+						+ outSamples.length + "], " + outSampleOffset + " to "
+						+ (outSampleOffset + outSampleCount - 1) + ")");
 				System.out.flush();
 			}
-			for (int i=0; i<outSampleCount; i++) {
+			for (int i = 0; i < outSampleCount; i++) {
 				try {
-					double dInIndex=inSampleOffset+increment*i-1;
-					int iInIndex=(int) Math.floor(dInIndex);
-					double factor=1.0d-(dInIndex-iInIndex);
-					float value=0;
-					for (int x=0; x<2; x++) {
-						if (iInIndex>=inSampleCount) {
+					double dInIndex = inSampleOffset + increment * i - 1;
+					int iInIndex = (int) Math.floor(dInIndex);
+					double factor = 1.0d - (dInIndex - iInIndex);
+					float value = 0;
+					for (int x = 0; x < 2; x++) {
+						if (iInIndex >= inSampleCount) {
 							// we clearly need more samples !
 							if (DEBUG_STREAM_PROBLEMS) {
-								TDebug.out("linear interpolation: INDEX OUT OF BOUNDS iInIndex="+iInIndex+" inSampleCount="+inSampleCount);
+								TDebug.out("linear interpolation: INDEX OUT OF BOUNDS iInIndex="
+										+ iInIndex
+										+ " inSampleCount="
+										+ inSampleCount);
 							}
-						}
-						else if (iInIndex<0) {
-							int histIndex=iInIndex+historyLength;
-							if (histIndex>=0) {
-								value+=history[histIndex]*factor;
+						} else if (iInIndex < 0) {
+							int histIndex = iInIndex + historyLength;
+							if (histIndex >= 0) {
+								value += history[histIndex] * factor;
 								if (DEBUG_STREAM) {
-									TDebug.out("linear interpolation: using history["+iInIndex+"]");
+									TDebug.out("linear interpolation: using history["
+											+ iInIndex + "]");
 								}
-							}
-							else if (DEBUG_STREAM_PROBLEMS) {
-								TDebug.out("linear interpolation: history INDEX OUT OF BOUNDS iInIndex="+iInIndex+" histIndex="+histIndex+" history length="+historyLength);
+							} else if (DEBUG_STREAM_PROBLEMS) {
+								TDebug.out("linear interpolation: history INDEX OUT OF BOUNDS iInIndex="
+										+ iInIndex
+										+ " histIndex="
+										+ histIndex
+										+ " history length=" + historyLength);
 							}
 						} else {
-							value+=inSamples[iInIndex]*factor;
+							value += inSamples[iInIndex] * factor;
 						}
-						factor=1-factor;
+						factor = 1 - factor;
 						iInIndex++;
 					}
-					outSamples[i+outSampleOffset]=value;
-					//outSamples[i]=inSamples[roundDown(inSampleOffset)];
+					outSamples[i + outSampleOffset] = value;
+					// outSamples[i]=inSamples[roundDown(inSampleOffset)];
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
 					if (DEBUG_STREAM_PROBLEMS) {
-						TDebug.out("**** REAL INDEX OUT OF BOUNDS ****** outSamples["+i+"]=inSamples[roundDown("+inSampleOffset+")="+((int) inSampleOffset)+"];");
+						TDebug.out("**** REAL INDEX OUT OF BOUNDS ****** outSamples["
+								+ i
+								+ "]=inSamples[roundDown("
+								+ inSampleOffset
+								+ ")=" + ((int) inSampleOffset) + "];");
 					}
-					//throw aioobe;
+					// throw aioobe;
 				}
-				//inSampleOffset+=increment; <- this produces too much rounding errors...
+				// inSampleOffset+=increment; <- this produces too much rounding
+				// errors...
 			}
 		}
 
 		/**
 		 * optimized version of the linear interpolator
+		 * 
 		 * @param inSamples
 		 * @param inSampleOffset
 		 * @param inSampleCount
@@ -637,8 +722,10 @@ private long testOutFramesReturned=0;
 				TDebug.out("convertLinearInterpolate2(inSamples["
 						+ inSamples.length
 						+ "], "
-						+((int) inSampleOffset)+" to "+((int) (inSampleOffset+increment*(outSampleCount-1)))+", "
-						+ "outSamples["
+						+ ((int) inSampleOffset)
+						+ " to "
+						+ ((int) (inSampleOffset + increment
+								* (outSampleCount - 1))) + ", " + "outSamples["
 						+ outSamples.length + "], " + outSampleOffset + " to "
 						+ (outSampleOffset + outSampleCount - 1) + ")");
 				System.out.flush();
@@ -648,8 +735,9 @@ private long testOutFramesReturned=0;
 				int endSampleOffset = outSampleOffset + outSampleCount;
 
 				// first go through the history
-				double dHistoryLength = (double) historyLength;
-				while (inSampleOffset < 0.0d && outSampleOffset < endSampleOffset) {
+				double dHistoryLength = historyLength;
+				while (inSampleOffset < 0.0d
+						&& outSampleOffset < endSampleOffset) {
 					double dInIndex = (inSampleOffset + dHistoryLength);
 					int histIndex = (int) dInIndex;
 					float factor = (float) (dInIndex - histIndex);
@@ -661,8 +749,10 @@ private long testOutFramesReturned=0;
 					outSampleOffset++;
 				}
 
-				// then the transition area: last sample is in history, new sample in inSamples
-				while (inSampleOffset < 1.0d && outSampleOffset < endSampleOffset) {
+				// then the transition area: last sample is in history, new
+				// sample in inSamples
+				while (inSampleOffset < 1.0d
+						&& outSampleOffset < endSampleOffset) {
 					float factor = (float) inSampleOffset;
 					outSamples[outSampleOffset] = (history[historyLength - 1] * (1.0f - factor))
 							+ (inSamples[0] * factor);
@@ -676,7 +766,7 @@ private long testOutFramesReturned=0;
 					int iInIndex = (int) inSampleOffset;
 					float factor = (float) (inSampleOffset - iInIndex);
 
-					outSamples[outSampleOffset] = (inSamples[iInIndex-1] * (1.0f - factor))
+					outSamples[outSampleOffset] = (inSamples[iInIndex - 1] * (1.0f - factor))
 							+ (inSamples[iInIndex] * factor);
 
 					inSampleOffset += increment;
@@ -691,30 +781,29 @@ private long testOutFramesReturned=0;
 							+ inSamples.length
 							+ "  outSampleOffset="
 							+ outSampleOffset
-					+ "  outSamples.length="
-					+ outSamples.length);
+							+ "  outSamples.length="
+							+ outSamples.length);
 				}
 				if (TDebug.TraceAllExceptions) {
 					aioobe.printStackTrace();
 				}
-				//throw aioobe;
+				// throw aioobe;
 			}
 		}
 
 		private double inSamples2outSamples(double inSamples) {
-			return inSamples*targetSampleRate/sourceSampleRate;
+			return inSamples * targetSampleRate / sourceSampleRate;
 		}
 
 		private double outSamples2inSamples(double outSamples) {
-			return outSamples*sourceSampleRate/targetSampleRate;
+			return outSamples * sourceSampleRate / targetSampleRate;
 		}
-
 
 		// interface FloatSampleInput
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.tritonus.share.sampled.FloatSampleInput#getChannels()
 		 */
 		public int getChannels() {
@@ -723,7 +812,7 @@ private long testOutFramesReturned=0;
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.tritonus.share.sampled.FloatSampleInput#getSampleRate()
 		 */
 		public float getSampleRate() {
@@ -732,7 +821,7 @@ private long testOutFramesReturned=0;
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.tritonus.share.sampled.FloatSampleInput#isDone()
 		 */
 		public boolean isDone() {
@@ -744,125 +833,149 @@ private long testOutFramesReturned=0;
 		}
 
 		/**
-		 * Main read method. It blocks until all samples are converted or
-		 * the source stream is at its end or closed.<br>
-		 * The sourceStream's sample rate is converted following
-		 * the current setting of <code>conversionAlgorithm</code>.
-		 * At most outBuffer.getSampleCount() are converted. In general,
-		 * if outBuffer.getSampleCount()) is less
-		 * after processing this function, then it is an indicator
-		 * that it was the last block to be processed.
-		 *
+		 * Main read method. It blocks until all samples are converted or the
+		 * source stream is at its end or closed.<br>
+		 * The sourceStream's sample rate is converted following the current
+		 * setting of <code>conversionAlgorithm</code>. At most
+		 * outBuffer.getSampleCount() are converted. In general, if
+		 * outBuffer.getSampleCount()) is less after processing this function,
+		 * then it is an indicator that it was the last block to be processed.
+		 * 
 		 * @see #setConversionAlgorithm(int)
-		 * @param outBuffer the buffer that the converted samples will be written to.
-		 * @throws IllegalArgumentException when outBuffer's channel count does not match
+		 * @param outBuffer the buffer that the converted samples will be
+		 *            written to.
+		 * @throws IllegalArgumentException when outBuffer's channel count does
+		 *             not match
 		 */
+		@SuppressWarnings("cast")
 		public void read(FloatSampleBuffer outBuffer, int offset, int count) {
 			if (isClosed() || count == 0) {
 				outBuffer.setSampleCount(offset, true);
 				return;
 			}
-			if (outBuffer.getChannelCount()!=thisBuffer.getChannelCount()) {
-				throw new IllegalArgumentException("passed buffer has different channel count");
+			if (outBuffer.getChannelCount() != thisBuffer.getChannelCount()) {
+				throw new IllegalArgumentException(
+						"passed buffer has different channel count");
 			}
 			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
-				TDebug.out(">SamplerateConverterStream.read("+count+" samples)");
+				TDebug.out(">SamplerateConverterStream.read(" + count
+						+ " samples)");
 			}
+			FloatSampleBuffer lSourceBuffer = thisBuffer;
 			float[] outSamples;
 			float[] inSamples;
 			float[] history;
-			double increment=outSamples2inSamples(1.0);
-			int writtenSamples=0;
+			double increment = outSamples2inSamples(1.0);
+			int writtenSamples = 0;
 			do {
 				// check thisBuffer with samples of source stream
-				int inSampleCount=thisBuffer.getSampleCount();
+				int inSampleCount = lSourceBuffer.getSampleCount();
 				if (((int) dPos) >= inSampleCount || !thisBufferValid) {
 					// need to load new data of sourceStream
 					readFromSourceStream();
 					if (isClosed()) {
 						break;
 					}
-					inSampleCount=thisBuffer.getSampleCount();
+					lSourceBuffer = thisBuffer;
+					inSampleCount = thisBuffer.getSampleCount();
+					if (inSampleCount == 0) {
+						// cannot read anything right now
+						break;
+					}
 				}
 				// calculate number of samples to write
-				int writeCount=count-writtenSamples;
+				int writeCount = count - writtenSamples;
 				// check whether this exceeds the current in-buffer
-				if (((int) (outSamples2inSamples((double) writeCount)+dPos))>=inSampleCount) {
-					int lastOutIndex=((int) (inSamples2outSamples(((double) inSampleCount)-dPos)))+1;
+				if (((int) (outSamples2inSamples((double) writeCount) + dPos)) >= inSampleCount) {
+					int lastOutIndex = ((int) (inSamples2outSamples(((double) inSampleCount)
+							- dPos))) + 1;
 					// normally, the above formula gives the exact writeCount.
-					// but due to rounding issues, sometimes it has to be decremented once.
-					// so we need to iterate to get the last index and then increment it once to make
+					// but due to rounding issues, sometimes it has to be
+					// decremented once.
+					// so we need to iterate to get the last index and then
+					// increment it once to make
 					// it the writeCount (=the number of samples to write)
-					while ((int) (outSamples2inSamples((double) lastOutIndex)+dPos)>=inSampleCount) {
+					while ((int) (outSamples2inSamples((double) lastOutIndex) + dPos) >= inSampleCount) {
 						lastOutIndex--;
 						if (DEBUG_STREAM) {
-							TDebug.out("--------- Decremented lastOutIndex="+lastOutIndex);
+							TDebug.out("--------- Decremented lastOutIndex="
+									+ lastOutIndex);
 						}
 					}
 					if (DEBUG_STREAM_PROBLEMS) {
-						int testLastOutIndex=writeCount-1;
+						int testLastOutIndex = writeCount - 1;
 						if (DEBUG_STREAM_PROBLEMS) {
-							while ((int) (outSamples2inSamples((double) testLastOutIndex)+dPos)>=inSampleCount) {
+							while ((int) (outSamples2inSamples((double) testLastOutIndex) + dPos) >= inSampleCount) {
 								testLastOutIndex--;
 							}
 						}
-						if (testLastOutIndex!=lastOutIndex) {
-							TDebug.out("lastOutIndex wrong: lastOutIndex="+lastOutIndex+" testLastOutIndex="+testLastOutIndex+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+						if (testLastOutIndex != lastOutIndex) {
+							TDebug.out("lastOutIndex wrong: lastOutIndex="
+									+ lastOutIndex
+									+ " testLastOutIndex="
+									+ testLastOutIndex
+									+ " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 						}
 					}
-					writeCount=lastOutIndex+1;
+					writeCount = lastOutIndex + 1;
 				}
 				// finally do the actual conversion - separated per channel
-				for (int channel=0; channel<outBuffer.getChannelCount(); channel++) {
-					inSamples=thisBuffer.getChannel(channel);
-					outSamples=outBuffer.getChannel(channel);
-					history=historyBuffer.getChannel(channel);
+				for (int channel = 0; channel < outBuffer.getChannelCount(); channel++) {
+					inSamples = lSourceBuffer.getChannel(channel);
+					outSamples = outBuffer.getChannel(channel);
+					history = historyBuffer.getChannel(channel);
 					switch (conversionAlgorithm) {
-						case SAMPLE_AND_HOLD:
-							convertSampleAndHold2(inSamples, dPos, inSampleCount, increment,
-								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount());
-							break;
-						case LINEAR_INTERPOLATION:
-							convertLinearInterpolation2(inSamples, dPos, inSampleCount, increment,
-								outSamples, writtenSamples + offset, writeCount, history, historyBuffer.getSampleCount());
-							break;
+					case SAMPLE_AND_HOLD:
+						convertSampleAndHold2(inSamples, dPos, inSampleCount,
+								increment, outSamples, writtenSamples + offset,
+								writeCount, history,
+								historyBuffer.getSampleCount());
+						break;
+					case LINEAR_INTERPOLATION:
+						convertLinearInterpolation2(inSamples, dPos,
+								inSampleCount, increment, outSamples,
+								writtenSamples + offset, writeCount, history,
+								historyBuffer.getSampleCount());
+						break;
 					}
 				}
-				writtenSamples+=writeCount;
+				writtenSamples += writeCount;
 				// adjust new position
-				dPos+=outSamples2inSamples((double) writeCount);
-			} while (!isClosed() && writtenSamples<outBuffer.getSampleCount());
-			
-			if (writtenSamples<count) {
-				outBuffer.changeSampleCount(writtenSamples+offset, true);
+				dPos += outSamples2inSamples((double) writeCount);
+			} while (!isClosed() && writtenSamples < outBuffer.getSampleCount());
+
+			if (writtenSamples < count) {
+				outBuffer.changeSampleCount(writtenSamples + offset, true);
 			}
 			if (TDebug.TraceAudioConverter && DEBUG_STREAM) {
-				testOutFramesReturned+=outBuffer.getSampleCount();
-				TDebug.out("< return "+outBuffer.getSampleCount()+"frames. Total="+testOutFramesReturned+" frames. Read total "+testInFramesRead+" frames from source stream");
+				testOutFramesReturned += outBuffer.getSampleCount();
+				TDebug.out("< return " + outBuffer.getSampleCount()
+						+ "frames. Total=" + testOutFramesReturned
+						+ " frames. Read total " + testInFramesRead
+						+ " frames from source stream");
 			}
 		}
 
-
-		//////////////////// utility methods ////////////////////////
+		// ////////////////// utility methods ////////////////////////
 
 		protected double sourceFrames2targetFrames(double sourceFrames) {
-			return targetSampleRate/sourceSampleRate*sourceFrames;
+			return targetSampleRate / sourceSampleRate * sourceFrames;
 		}
 
 		protected double targetFrames2sourceFrames(double targetFrames) {
-			return sourceSampleRate/targetSampleRate*targetFrames;
+			return sourceSampleRate / targetSampleRate * targetFrames;
 		}
 
 		protected long sourceBytes2targetBytes(long sourceBytes) {
-			long sourceFrames=sourceBytes/getSourceFrameSize();
-			long targetFrames=(long) sourceFrames2targetFrames(sourceFrames);
-			return targetFrames*getFrameSize();
+			long sourceFrames = sourceBytes / getSourceFrameSize();
+			long targetFrames = (long) sourceFrames2targetFrames(sourceFrames);
+			return targetFrames * getFrameSize();
 		}
 
 		protected long targetBytes2sourceBytes(long targetBytes) {
-			long targetFrames=targetBytes/getFrameSize();
-			long sourceFrames=(long) targetFrames2sourceFrames(targetFrames);
-			return sourceFrames*getSourceFrameSize();
+			long targetFrames = targetBytes / getFrameSize();
+			long sourceFrames = (long) targetFrames2sourceFrames(targetFrames);
+			return sourceFrames * getSourceFrameSize();
 		}
 
 		public int getFrameSize() {
@@ -870,14 +983,18 @@ private long testOutFramesReturned=0;
 		}
 
 		public int getSourceFrameSize() {
-			return sourceStream!=null?sourceStream.getFormat().getFrameSize():1;
+			return sourceStream != null ? sourceStream.getFormat().getFrameSize()
+					: 1;
 		}
 
-		//////////////////// methods overwritten of AudioInputStream ////////////////////////
+		// ////////////////// methods overwritten of AudioInputStream
+		// ////////////////////////
 
+		@Override
 		public int read() throws IOException {
 			if (getFormat().getFrameSize() != 1) {
-				throw new IOException("frame size must be 1 to read a single byte");
+				throw new IOException(
+						"frame size must be 1 to read a single byte");
 			}
 			// very ugly, but efficient. Who uses this method anyway ?
 			byte[] temp = new byte[1];
@@ -891,74 +1008,82 @@ private long testOutFramesReturned=0;
 		/**
 		 * @see #read(byte[], int, int)
 		 */
+		@Override
 		public int read(byte[] abData) throws IOException {
 			return read(abData, 0, abData.length);
 		}
 
 		/**
-		 * Read nLength bytes that will be the converted samples
-		 * of the original inputStream.
-		 * When nLength is not an integral number of frames,
-		 * this method may read less than nLength bytes.
+		 * Read nLength bytes that will be the converted samples of the original
+		 * inputStream. When nLength is not an integral number of frames, this
+		 * method may read less than nLength bytes.
 		 */
+		@Override
 		public int read(byte[] abData, int nOffset, int nLength)
-		throws IOException {
+				throws IOException {
 			if (isClosed()) {
 				return -1;
 			}
-			int frameCount=nLength/getFrameSize();
-			if (writeBuffer==null) {
-				writeBuffer=new FloatSampleBuffer(getFormat().getChannels(), frameCount, getFormat().getSampleRate());
+			int frameCount = nLength / getFrameSize();
+			if (writeBuffer == null) {
+				writeBuffer = new FloatSampleBuffer(getFormat().getChannels(),
+						frameCount, getFormat().getSampleRate());
 			} else {
 				writeBuffer.changeSampleCount(frameCount, false);
 			}
 			read(writeBuffer);
-			
+
 			if (writeBuffer.getSampleCount() == 0 && eofReached) {
 				return -1;
 			}
-			
-			int written = writeBuffer.convertToByteArray(abData, nOffset, getFormat());
+
+			int written = writeBuffer.convertToByteArray(abData, nOffset,
+					getFormat());
 			return written;
 		}
 
+		@Override
 		public synchronized long skip(long nSkip) throws IOException {
 			// only returns integral frames
 			long sourceSkip = targetBytes2sourceBytes(nSkip);
-			long sourceSkipped = sourceStream!=null?sourceStream.skip(sourceSkip):0;
+			long sourceSkipped = sourceStream != null ? sourceStream.skip(sourceSkip)
+					: 0;
 			flush();
 			return sourceBytes2targetBytes(sourceSkipped);
 		}
 
-
+		@Override
 		public int available() throws IOException {
-			if (sourceStream==null) {
+			if (sourceStream == null) {
 				return -1;
 			}
 			return (int) sourceBytes2targetBytes(sourceStream.available());
 		}
 
-
+		@Override
 		public void mark(int readlimit) {
-			if (sourceStream!=null) {
+			if (sourceStream != null) {
 				sourceStream.mark((int) targetBytes2sourceBytes(readlimit));
 			}
 		}
 
+		@Override
 		public synchronized void reset() throws IOException {
-			if (sourceStream!=null) {
+			if (sourceStream != null) {
 				sourceStream.reset();
 				flush();
 			}
 		}
 
+		@Override
 		public boolean markSupported() {
-			if (sourceStream!=null) {
+			if (sourceStream != null) {
 				return sourceStream.markSupported();
 			}
 			return false;
 		}
 
+		@Override
 		public void close() {
 			if (isClosed()) {
 				return;
@@ -972,15 +1097,16 @@ private long testOutFramesReturned=0;
 			eofReached = true;
 			// clean memory, this will also be an indicator that
 			// the stream is closed
-			thisBuffer=null;
-			historyBuffer=null;
-			byteBuffer=null;
+			thisBuffer = null;
+			historyBuffer = null;
+			byteBuffer = null;
 		}
 
-		///////////////////////////// additional methods /////////////////////////////
+		// /////////////////////////// additional methods
+		// /////////////////////////////
 
 		public boolean isClosed() {
-			return eofReached || (thisBuffer==null);
+			return eofReached || (thisBuffer == null);
 		}
 
 		/**
@@ -988,26 +1114,27 @@ private long testOutFramesReturned=0;
 		 */
 		public synchronized void flush() {
 			if (!isClosed()) {
-				thisBufferValid=false;
+				thisBufferValid = false;
 				historyBuffer.makeSilence();
 			}
 		}
 
-		/////////////////////////// Properties ///////////////////////////////////////
+		// ///////////////////////// Properties
+		// ///////////////////////////////////////
 
 		public synchronized void setTargetSampleRate(float sr) {
-			if (sr>0) {
-				targetSampleRate=sr;
-				//((SRCAudioFormat) getFormat()).setSampleRate(sr);
+			if (sr > 0) {
+				targetSampleRate = sr;
+				// ((SRCAudioFormat) getFormat()).setSampleRate(sr);
 				resizeBuffers();
 			}
 		}
 
 		public synchronized void setConversionAlgorithm(int algo) {
-			if ((algo==SAMPLE_AND_HOLD || algo==LINEAR_INTERPOLATION)
-				&& (algo!=conversionAlgorithm)) {
-					conversionAlgorithm=algo;
-					resizeBuffers();
+			if ((algo == SAMPLE_AND_HOLD || algo == LINEAR_INTERPOLATION)
+					&& (algo != conversionAlgorithm)) {
+				conversionAlgorithm = algo;
+				resizeBuffers();
 			}
 		}
 
@@ -1021,43 +1148,41 @@ private long testOutFramesReturned=0;
 
 	}
 
-
 	/**
-	   Obviously, this class is used to be able to set the
-	   frame rate/sample rate after the AudioFormat object
-	   has been created. It assumes the PCM case where the
-	   frame rate is always in sync with the sample rate.
-	   (MP)
-	*/
+	 * Obviously, this class is used to be able to set the frame rate/sample
+	 * rate after the AudioFormat object has been created. It assumes the PCM
+	 * case where the frame rate is always in sync with the sample rate. (MP)
+	 */
 	public static class SRCAudioFormat extends AudioFormat {
 		private float sampleRate;
 
 		public SRCAudioFormat(AudioFormat targetFormat) {
-			super(targetFormat.getEncoding(),
-				targetFormat.getSampleRate(),
-				targetFormat.getSampleSizeInBits(),
-				targetFormat.getChannels(),
-				AudioUtils.getFrameSize(targetFormat.getChannels(), targetFormat.getSampleSizeInBits()),
-				targetFormat.getSampleRate(),
-				targetFormat.isBigEndian(),
-				targetFormat.properties());
-			this.sampleRate=targetFormat.getSampleRate();
+			super(targetFormat.getEncoding(), targetFormat.getSampleRate(),
+					targetFormat.getSampleSizeInBits(),
+					targetFormat.getChannels(), AudioUtils.getFrameSize(
+							targetFormat.getChannels(),
+							targetFormat.getSampleSizeInBits()),
+					targetFormat.getSampleRate(), targetFormat.isBigEndian(),
+					targetFormat.properties());
+			this.sampleRate = targetFormat.getSampleRate();
 		}
 
 		public void setSampleRate(float sr) {
-			if (sr>0) {
-				this.sampleRate=sr;
+			if (sr > 0) {
+				this.sampleRate = sr;
 			}
 		}
 
+		@Override
 		public float getSampleRate() {
 			return this.sampleRate;
 		}
 
+		@Override
 		public float getFrameRate() {
 			return this.sampleRate;
 		}
 	}
 }
 
-/*** SampleRateConversionProvider.java ***/
+/** * SampleRateConversionProvider.java ** */
