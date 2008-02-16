@@ -70,18 +70,13 @@ extends TAudioFileReader
 		throws UnsupportedAudioFileException, IOException
 	{
 		if (TDebug.TraceAudioFileReader) { TDebug.out(">VorbisAudioFileReader.getAudioFileFormat(): begin"); }
-		SyncState	oggSyncState = new SyncState();
-		StreamState	oggStreamState = new StreamState();
-		Page		oggPage;
-		Packet		oggPacket;
-		
 		//$fb catch unsatisfied link error if native lib is not available
 		try {
-			oggPage = new Page();
-			oggPacket = new Packet();
-		} catch (UnsatisfiedLinkError ule) {
-			throw new UnsupportedAudioFileException(ule.getMessage());
-		}
+
+		SyncState	oggSyncState = new SyncState();
+		StreamState	oggStreamState = new StreamState();
+		Page		oggPage = new Page();
+		Packet		oggPacket = new Packet();
 
 		int		bytes = 0;
 
@@ -100,7 +95,7 @@ extends TAudioFileReader
 		if (TDebug.TraceAudioFileReader) { TDebug.out("read bytes from input stream: " + bytes); }
 		int nResult = oggSyncState.write(abBuffer, bytes);
 		if (TDebug.TraceAudioFileReader) { TDebug.out("SyncState.write() returned " + nResult); }
-    
+
 		// Get the first page.
 		if (oggSyncState.pageOut(oggPage) != 1)
 		{
@@ -150,7 +145,7 @@ extends TAudioFileReader
 			oggPacket.free();
 			throw new UnsupportedAudioFileException("not a Vorbis stream: can't read first page of Ogg bitstream data");
 		}
-    
+
 		if (oggStreamState.packetOut(oggPacket) != 1)
 		{
 			if (TDebug.TraceAudioFileReader) { TDebug.out("can't read initial header packet"); }
@@ -302,6 +297,10 @@ extends TAudioFileReader
 		if (TDebug.TraceAudioFileReader) { TDebug.out("AudioFileFormat: " + audioFileFormat); }
 		if (TDebug.TraceAudioFileReader) { TDebug.out("<VorbisAudioFileReader.getAudioFileFormat(): end"); }
 		return audioFileFormat;
+
+		} catch (UnsatisfiedLinkError ule) {
+			throw new UnsupportedAudioFileException(ule.getMessage());
+		}
 	}
 }
 
