@@ -1072,8 +1072,12 @@ public class FloatSampleBuffer {
 	}
 
 	/**
+	 * Get the actual audio data of one channel.<br>
+	 * Modifying this array will modify the audio samples of this
+	 * FloatSampleBuffer. <br>
 	 * NOTE: the returned array may be larger than sampleCount. So in any case,
 	 * sampleCount is to be respected.
+	 * @throws IllegalArgumentException if channel is out of bounds
 	 */
 	public float[] getChannel(int channel) {
 		if (channel >= this.channelCount) {
@@ -1084,6 +1088,28 @@ public class FloatSampleBuffer {
 	}
 
 	/**
+	 * Low-level method to directly set the array for the given channel.
+	 * Normally, you do not need this method, as you can conveniently
+	 * resize the array with <code>changeSampleCount()</code>. This method
+	 * may be useful for advanced optimization techniques.
+	 * @param channel the channel to replace
+	 * @param data the audio sample array
+	 * @return the audio data array that was replaced
+	 * @throws IllegalArgumentException if channel is out of bounds or data is null
+	 * @see #changeSampleCount(int, boolean)
+	 */
+	public float[] setRawChannel(int channel, float[] data) {
+		if (data == null) {
+			throw new IllegalArgumentException(
+					"cannot set a channel to a null array");
+		}
+		float[] ret = getChannel(channel);
+		channels[channel] = data;
+		return ret;
+	}
+
+	/**
+	 * Get an array of all channels.
 	 * @return all channels as array
 	 */
 	public Object[] getAllChannels() {

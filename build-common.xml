@@ -148,7 +148,7 @@
     </manifest>
   </jar>
 
-  <!-- (pure java) VORBIS: -->
+  <!-- (pure java, standalone) VORBIS not finished! -->
   <jar jarfile="${dist}/tritonus_pvorbis-${version}.jar">
     <fileset dir="${build}" >
       <include name="org/tritonus/lowlevel/pogg/" />
@@ -291,7 +291,7 @@
 		depends="compile-jorbis-dependent"
 		if="jorbis-present" >
 
-  <!-- JORBIS: -->
+  <!-- JORBIS (depends on the jorbis/jogg jars): -->
   <jar jarfile="${dist}/tritonus_jorbis-${version}.jar">
     <fileset dir="${build}" >
       <include name="org/tritonus/sampled/convert/jorbis/" />
