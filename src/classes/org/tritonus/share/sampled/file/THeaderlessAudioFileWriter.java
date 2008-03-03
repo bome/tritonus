@@ -61,6 +61,7 @@ extends TAudioFileWriter
 
 
 
+	@Override
 	protected AudioOutputStream getAudioOutputStream(
 		AudioFormat audioFormat,
 		long lLengthInBytes,

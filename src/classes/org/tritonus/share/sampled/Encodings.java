@@ -110,7 +110,7 @@ public class Encodings extends AudioFormat.Encoding {
 	  case when the user issues something like AudioSystem.isConversionSupported.
 	 */
 	public static AudioFormat.Encoding getEncoding(String name) {
-		AudioFormat.Encoding res=(AudioFormat.Encoding) encodings.get(name);
+		AudioFormat.Encoding res=encodings.get(name);
 		if (res==null) {
 			// it is not already in the string set. Create a new encoding instance.
 			res=new Encodings(name);
@@ -150,12 +150,12 @@ public class Encodings extends AudioFormat.Encoding {
 	public static AudioFormat.Encoding[] getEncodings() {
 		StringHashedSet<AudioFormat.Encoding> iteratedSources=new StringHashedSet<AudioFormat.Encoding>();
 		StringHashedSet<AudioFormat.Encoding> retrievedTargets=new StringHashedSet<AudioFormat.Encoding>();
-		Iterator sourceFormats=encodings.iterator();
+		Iterator<AudioFormat.Encoding> sourceFormats=encodings.iterator();
 		while (sourceFormats.hasNext()) {
-			AudioFormat.Encoding source=(AudioFormat.Encoding) sourceFormats.next();
+			AudioFormat.Encoding source=sourceFormats.next();
 			iterateEncodings(source, iteratedSources, retrievedTargets);
 		}
-		return (AudioFormat.Encoding[]) retrievedTargets.toArray(
+		return retrievedTargets.toArray(
 		           new AudioFormat.Encoding[retrievedTargets.size()]);
 	}
 

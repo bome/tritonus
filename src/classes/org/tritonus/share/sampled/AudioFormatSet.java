@@ -75,6 +75,7 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 		super(c);
 	}
 
+	@Override
 	public boolean add(AudioFormat elem) {
 		if (elem==null) {
 			return false;
@@ -87,9 +88,9 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 			return false;
 		}
 		AudioFormat comp= elem;
-		Iterator it=iterator();
+		Iterator<AudioFormat> it=iterator();
 		while (it.hasNext()) {
-			if (AudioFormats.equals(comp, (AudioFormat) it.next())) {
+			if (AudioFormats.equals(comp, it.next())) {
 				return true;
 			}
 		}
@@ -101,9 +102,9 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 			return null;
 		}
 		AudioFormat comp= elem;
-		Iterator it=iterator();
+		Iterator<AudioFormat> it=iterator();
 		while (it.hasNext()) {
-			AudioFormat thisElem=(AudioFormat) it.next();
+			AudioFormat thisElem=it.next();
 			if (AudioFormats.equals(comp, thisElem)) {
 				return thisElem;
 			}
@@ -127,9 +128,9 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 		if (elem==null) {
 			return null;
 		}
-		Iterator it=iterator();
+		Iterator<AudioFormat> it=iterator();
 		while (it.hasNext()) {
-			AudioFormat thisElem=(AudioFormat) it.next();
+			AudioFormat thisElem=it.next();
 			if (AudioFormats.matches(elem, thisElem)) {
 				return thisElem;
 			}
@@ -144,10 +145,12 @@ public class AudioFormatSet extends ArraySet<AudioFormat>
 	}
 
 
+	@Override
 	public void add(int index, AudioFormat element) {
 		throw new UnsupportedOperationException("unsupported");
 	}
 
+	@Override
 	public AudioFormat set(int index, AudioFormat element) {
 		throw new UnsupportedOperationException("unsupported");
 	}

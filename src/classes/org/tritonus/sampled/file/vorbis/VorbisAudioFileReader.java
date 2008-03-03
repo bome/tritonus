@@ -40,10 +40,7 @@ import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 import org.tritonus.share.sampled.file.TAudioFileReader;
 
-import org.tritonus.lowlevel.ogg.Page;
-import org.tritonus.lowlevel.ogg.Packet;
-import org.tritonus.lowlevel.ogg.SyncState;
-import org.tritonus.lowlevel.ogg.StreamState;
+import org.tritonus.lowlevel.ogg.*;
 
 
 
@@ -57,7 +54,10 @@ extends TAudioFileReader
 	private static final int	MARK_LIMIT = INITAL_READ_LENGTH + 1;
 
 
+	// TODO: refresh from time to time to allow adding the lib at runtime...
+	private static boolean LIB_AVAILABLE = Ogg.isLibraryAvailable();
 
+	
 	public VorbisAudioFileReader()
 	{
 		super(MARK_LIMIT, true);
@@ -65,10 +65,14 @@ extends TAudioFileReader
 
 
 
+	@Override
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream,
 						     long lFileSizeInBytes)
 		throws UnsupportedAudioFileException, IOException
 	{
+		if (!LIB_AVAILABLE) {
+			throw new UnsupportedAudioFileException("ogg reading not supported: ogg/vorbis native library not found.");
+		}
 		if (TDebug.TraceAudioFileReader) { TDebug.out(">VorbisAudioFileReader.getAudioFileFormat(): begin"); }
 		//$fb catch unsatisfied link error if native lib is not available
 		try {

@@ -147,6 +147,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public int read()
 		throws IOException
 	{
@@ -172,6 +173,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public int read(byte[] abData)
 		throws IOException
 	{
@@ -183,6 +185,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public int read(byte[] abData, int nOffset, int nLength)
 		throws IOException
 	{
@@ -197,6 +200,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public long skip(long lSkip)
 		throws IOException
 	{
@@ -214,6 +218,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public int available()
 		throws IOException
 	{
@@ -222,6 +227,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public void close()
 		throws IOException
 	{
@@ -230,6 +236,7 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public boolean markSupported()
 	{
 		return false;
@@ -237,12 +244,14 @@ implements TCircularBuffer.Trigger
 
 
 
+	@Override
 	public void mark(int nReadLimit)
 	{
 	}
 
 
 
+	@Override
 	public void reset()
 		throws IOException
 	{

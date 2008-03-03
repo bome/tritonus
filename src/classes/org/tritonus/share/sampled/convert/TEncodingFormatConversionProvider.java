@@ -66,6 +66,8 @@ import org.tritonus.share.ArraySet;
 public abstract class TEncodingFormatConversionProvider
 extends TSimpleFormatConversionProvider
 {
+	
+	/** create an instance. The given formats can be set to null. */
 	protected TEncodingFormatConversionProvider(
 	    Collection<AudioFormat> sourceFormats,
 	    Collection<AudioFormat> targetFormats)
@@ -95,6 +97,7 @@ extends TSimpleFormatConversionProvider
 	 * is replaced. Inheriting classes may wish to override this method if the
 	 * default mode of calculating the frame size is not appropriate.
 	 */
+	@Override
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat) {
 		if (TDebug.TraceAudioConverter) {
 			TDebug.out(">TEncodingFormatConversionProvider.getTargetFormats(AudioFormat.Encoding, AudioFormat):");

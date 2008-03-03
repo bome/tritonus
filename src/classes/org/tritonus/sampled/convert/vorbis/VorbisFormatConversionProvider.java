@@ -34,17 +34,13 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Random;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import org.tritonus.lowlevel.ogg.Packet;
-import org.tritonus.lowlevel.ogg.Page;
-import org.tritonus.lowlevel.ogg.StreamState;
-import org.tritonus.lowlevel.ogg.SyncState;
+import org.tritonus.lowlevel.ogg.*;
 import org.tritonus.lowlevel.vorbis.Block;
 import org.tritonus.lowlevel.vorbis.Comment;
 import org.tritonus.lowlevel.vorbis.DspState;
@@ -114,26 +110,33 @@ extends TEncodingFormatConversionProvider
 	private static final int DEFAULT_NOM_BITRATE = 128;
 	private static final int DEFAULT_MIN_BITRATE = 32;
 
-
+	// TODO: refresh from time to time to allow adding the lib at runtime...
+	private static boolean LIB_AVAILABLE = Ogg.isLibraryAvailable();
 
 	/**	Constructor.
 	 */
 	public VorbisFormatConversionProvider()
 	{
 		super(Arrays.asList(INPUT_FORMATS),
-		      Arrays.asList(INPUT_FORMATS)//,
-		      //Arrays.asList(OUTPUT_FORMATS),
+				Arrays.asList(INPUT_FORMATS)
 		      /*
 						     true, // new behaviour
 						     false*/); // bidirectional .. constants UNIDIR../BIDIR..?
+		if (!LIB_AVAILABLE) {
+			disable();
+		}
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.<init>(): begin"); }
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.<init>(): end"); }
 	}
 
 
 
+	@Override
 	public AudioInputStream getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream)
 	{
+		if (!LIB_AVAILABLE) {
+			throw new IllegalArgumentException("format conversion not supported: ogg/vorbis native library not found.");
+		}
 		if (TDebug.TraceAudioConverter) { TDebug.out(">VorbisFormatConversionProvider.getAudioInputStream(): begin"); }
 		/** The AudioInputStream to return.
 		 */
@@ -181,15 +184,16 @@ extends TEncodingFormatConversionProvider
 
 	protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat, AudioFormat sourceFormat)
 	{
+		if (!LIB_AVAILABLE) {
+			throw new IllegalArgumentException("format conversion not supported: ogg/vorbis native library not found.");
+		}
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): target format: " + targetFormat); }
 		if (TDebug.TraceAudioConverter) { TDebug.out("VorbisFormatConversionProvider.getDefaultTargetFormat(): source format: " + sourceFormat); }
 		AudioFormat	newTargetFormat = null;
 		// return first of the matching formats
 		// pre-condition: the predefined target formats (FORMATS2) must be well-defined !
-		Iterator iterator = getCollectionTargetFormats().iterator();
-		while (iterator.hasNext())
+		for (AudioFormat format: getCollectionTargetFormats())
 		{
-			AudioFormat format = (AudioFormat) iterator.next();
 			if (AudioFormats.matches(targetFormat, format))
 			{
 				newTargetFormat = format;
@@ -255,6 +259,9 @@ extends TEncodingFormatConversionProvider
 			super(outputFormat,
 			      AudioSystem.NOT_SPECIFIED,
 			      262144, 16384);
+			if (!LIB_AVAILABLE) {
+				throw new IllegalArgumentException("format conversion not supported: ogg/vorbis native library not found.");
+			}
 			if (TDebug.TraceAudioConverter) TDebug.out(">EncodedVorbisAudioInputStream.<init>(): begin");
 			m_decodedStream = inputStream;
 			m_abReadbuffer = new byte[READ * getFrameSize()];
@@ -509,8 +516,8 @@ extends TEncodingFormatConversionProvider
 
 
 
-		public void close()
-			throws IOException
+		@Override
+		public void close() throws IOException
 		{
 			super.close();
 			m_decodedStream.close();
@@ -564,7 +571,8 @@ extends TEncodingFormatConversionProvider
 
   		// private List			m_songComments = new ArrayList();
 		// is altered later in a dubious way
-  		private int				convsize = -1; // BUFFER_SIZE * 2;
+  		//$$fb field not used
+  		//private int				convsize = -1; // BUFFER_SIZE * 2;
 		// TODO: further checking
   		private byte[]			convbuffer = new byte[CONVSIZE];
 		private float[][]		m_aPcmOut;
@@ -578,6 +586,9 @@ extends TEncodingFormatConversionProvider
 		public DecodedVorbisAudioInputStream(AudioFormat outputFormat, AudioInputStream bitStream)
 		{
 			super(outputFormat, AudioSystem.NOT_SPECIFIED);
+			if (!LIB_AVAILABLE) {
+				throw new IllegalArgumentException("format conversion not supported: ogg/vorbis native library not found.");
+			}
 			if (TDebug.TraceAudioConverter) { TDebug.out("DecodedVorbisAudioInputStream.<init>(): begin"); }
 			m_oggBitStream = bitStream;
 			m_bHeadersExpected = true;
@@ -790,7 +801,8 @@ extends TEncodingFormatConversionProvider
 		*/
 		private void setupVorbisStructures()
 		{
-			convsize = BUFFER_SIZE / m_vorbisInfo.getChannels();
+			//$$fb field not used...
+			//convsize = BUFFER_SIZE / m_vorbisInfo.getChannels();
 			m_vorbisDspState.initSynthesis(m_vorbisInfo);
 			m_vorbisBlock.init(m_vorbisDspState);
 			m_aPcmOut = new float[m_vorbisInfo.getChannels()][];
@@ -969,7 +981,7 @@ extends TEncodingFormatConversionProvider
 
 
 		/** Read raw data from to ogg bitstream.
-		    Reads from  {@ #m_oggBitStream m_oggBitStream} a
+		    Reads from  {@link #m_oggBitStream m_oggBitStream} a
 		    specified number of bytes into a buffer, starting
 		    at a specified buffer index.
 
@@ -1018,6 +1030,7 @@ extends TEncodingFormatConversionProvider
 
 		/**
 		 */
+		@Override
 		public void close() throws IOException
 		{
 			super.close();

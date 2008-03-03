@@ -95,6 +95,7 @@ extends	AudioFileFormat
 	}
 
 
+	@Override
 	public Map<String, Object> properties()
 	{
 		return m_unmodifiableProperties;

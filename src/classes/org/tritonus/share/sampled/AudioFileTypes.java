@@ -121,7 +121,7 @@ public class AudioFileTypes extends AudioFileFormat.Type {
 	 * of <code>AudioFileFormat.Type</code>.
 	 */
 	public static AudioFileFormat.Type getType(String name, String extension) {
-		AudioFileFormat.Type res=(AudioFileFormat.Type) types.get(name);
+		AudioFileFormat.Type res = types.get(name);
 		if (res==null) {
 			// it is not already in the string set.
 			if (extension==null) {

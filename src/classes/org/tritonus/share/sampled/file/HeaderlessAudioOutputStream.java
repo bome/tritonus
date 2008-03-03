@@ -50,6 +50,7 @@ public class HeaderlessAudioOutputStream extends TAudioOutputStream {
 		super(audioFormat, lLength, dataOutputStream, false);
 	}
 
+	@Override
 	protected void writeHeader() throws IOException
 	{
 	}

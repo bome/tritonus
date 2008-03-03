@@ -74,6 +74,12 @@ extends TFormatConversionProvider
 	{
 		m_sourceEncodings = new ArraySet<AudioFormat.Encoding>();
 		m_targetEncodings = new ArraySet<AudioFormat.Encoding>();
+		if (sourceFormats == null) {
+			sourceFormats = new ArraySet<AudioFormat>();
+		}
+		if (targetFormats == null) {
+			targetFormats = new ArraySet<AudioFormat>();
+		}
 		m_sourceFormats = sourceFormats;
 		m_targetFormats = targetFormats;
 		collectEncodings(m_sourceFormats, m_sourceEncodings);
@@ -110,6 +116,7 @@ extends TFormatConversionProvider
 
 
 
+	@Override
 	public AudioFormat.Encoding[] getSourceEncodings()
 	{
 		return m_sourceEncodings.toArray(EMPTY_ENCODING_ARRAY);
@@ -117,6 +124,7 @@ extends TFormatConversionProvider
 
 
 
+	@Override
 	public AudioFormat.Encoding[] getTargetEncodings()
 	{
 		return m_targetEncodings.toArray(EMPTY_ENCODING_ARRAY);
@@ -125,6 +133,7 @@ extends TFormatConversionProvider
 
 
 	// overwritten of FormatConversionProvider
+	@Override
 	public boolean isSourceEncodingSupported(AudioFormat.Encoding sourceEncoding)
 	{
 		return m_sourceEncodings.contains(sourceEncoding);
@@ -133,6 +142,7 @@ extends TFormatConversionProvider
 
 
 	// overwritten of FormatConversionProvider
+	@Override
 	public boolean isTargetEncodingSupported(AudioFormat.Encoding targetEncoding)
 	{
 		return m_targetEncodings.contains(targetEncoding);
@@ -146,6 +156,7 @@ extends TFormatConversionProvider
 	 *	encodings. If this is not the case, the converter has to
 	 *	override this method.
 	 */
+	@Override
 	public AudioFormat.Encoding[] getTargetEncodings(AudioFormat sourceFormat)
 	{
 		if (isAllowedSourceFormat(sourceFormat))
@@ -166,6 +177,7 @@ extends TFormatConversionProvider
 	 *	formats. If this is not the case, the converter has to
 	 *	override this method.
 	 */
+	@Override
 	public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat)
 	{
 		if (isConversionSupported(targetEncoding, sourceFormat))

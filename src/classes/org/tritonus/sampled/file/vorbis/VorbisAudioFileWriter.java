@@ -47,6 +47,7 @@ import org.tritonus.share.sampled.file.THeaderlessAudioFileWriter;
 public class VorbisAudioFileWriter
 extends THeaderlessAudioFileWriter
 {
+
 	private static final AudioFileFormat.Type[]	FILE_TYPES =
 	{
 		new AudioFileFormat.Type("Vorbis", "ogg")

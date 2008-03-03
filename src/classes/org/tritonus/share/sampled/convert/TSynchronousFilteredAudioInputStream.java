@@ -166,6 +166,7 @@ extends TAudioInputStream implements FloatSampleInput {
 	}
 
 
+	@Override
 	public int read()
 	throws IOException {
 		if (newFrameSize != 1) {
@@ -205,6 +206,7 @@ extends TAudioInputStream implements FloatSampleInput {
 	 * When nLength is not an integral number of frames,
 	 * this method may read less than nLength bytes.
 	 */
+	@Override
 	public final int read(byte[] abData, int nOffset, int nLength)
 	throws IOException {
 		// number of frames that we have to read from the underlying stream.
@@ -258,6 +260,7 @@ extends TAudioInputStream implements FloatSampleInput {
 	}
 
 
+	@Override
 	public long skip(long nSkip)
 	throws IOException {
 		// only returns integral frames
@@ -268,6 +271,7 @@ extends TAudioInputStream implements FloatSampleInput {
 	}
 
 
+	@Override
 	public int available()
 	throws IOException {
 		int origAvailFrames = originalStream.available()/originalFrameSize;
@@ -275,6 +279,7 @@ extends TAudioInputStream implements FloatSampleInput {
 	}
 
 
+	@Override
 	public void close()
 	throws IOException {
 		EOF = true;
@@ -284,6 +289,7 @@ extends TAudioInputStream implements FloatSampleInput {
 
 
 
+	@Override
 	public void mark(int readlimit) {
 		int readLimitFrames=readlimit/newFrameSize;
 		originalStream.mark(readLimitFrames*originalFrameSize);
@@ -291,12 +297,14 @@ extends TAudioInputStream implements FloatSampleInput {
 
 
 
+	@Override
 	public void reset()
 	throws IOException {
 		originalStream.reset();
 	}
 
 
+	@Override
 	public boolean markSupported() {
 		return originalStream.markSupported();
 	}

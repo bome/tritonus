@@ -106,6 +106,7 @@ extends AudioFileWriter
 	}
 
 	// implementing the interface
+	@Override
 	public AudioFileFormat.Type[] getAudioFileTypes()
 	{
 		return m_audioFileTypes.toArray(NULL_TYPE_ARRAY);
@@ -113,6 +114,7 @@ extends AudioFileWriter
 
 
 	// implementing the interface
+	@Override
 	public boolean isFileTypeSupported(AudioFileFormat.Type fileType)
 	{
 		return m_audioFileTypes.contains(fileType);
@@ -121,6 +123,7 @@ extends AudioFileWriter
 
 
 	// implementing the interface
+	@Override
 	public AudioFileFormat.Type[] getAudioFileTypes(
 		AudioInputStream audioInputStream)
 	{
@@ -141,6 +144,7 @@ extends AudioFileWriter
 
 
 	// implementing the interface
+	@Override
 	public boolean isFileTypeSupported(AudioFileFormat.Type fileType, AudioInputStream audioInputStream)
 	{
 		// $$fb 2000-08-16: finally this method works reliably !
@@ -156,6 +160,7 @@ extends AudioFileWriter
 
 
 	// implementing the interface
+	@Override
 	public int write(AudioInputStream audioInputStream,
 			 AudioFileFormat.Type fileType,
 			 File file)
@@ -226,6 +231,7 @@ extends AudioFileWriter
 
 
 	// implementing the interface
+	@Override
 	public int write(AudioInputStream audioInputStream,
 			 AudioFileFormat.Type fileType,
 			 OutputStream outputStream)
@@ -305,7 +311,7 @@ extends AudioFileWriter
 		int	nBytesPerSample = outputFormat.getFrameSize() / outputFormat.getChannels();
 
 		//$$fb 2000-07-18: BUFFER_LENGTH must be a multiple of frame size...
-		int nBufferSize=((int)BUFFER_LENGTH/outputFormat.getFrameSize())*outputFormat.getFrameSize();
+		int nBufferSize=(BUFFER_LENGTH/outputFormat.getFrameSize())*outputFormat.getFrameSize();
 		byte[]	abBuffer = new byte[nBufferSize];
 		while (true)
 		{
@@ -369,10 +375,10 @@ extends AudioFileWriter
 			TDebug.out("> TAudioFileWriter.isAudioFormatSupportedImpl(): format to test: " + audioFormat);
 			TDebug.out("class: "+getClass().getName());
 		}
-		Iterator	audioFormats = getSupportedAudioFormats(fileType);
+		Iterator<AudioFormat>	audioFormats = getSupportedAudioFormats(fileType);
 		while (audioFormats.hasNext())
 		{
-			AudioFormat	handledFormat = (AudioFormat) audioFormats.next();
+			AudioFormat	handledFormat = audioFormats.next();
 			if (TDebug.TraceAudioFileWriter) { TDebug.out("matching against format : " + handledFormat); }
 			if (AudioFormats.matches(handledFormat, audioFormat))
 			{

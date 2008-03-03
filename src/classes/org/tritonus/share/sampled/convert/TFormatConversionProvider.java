@@ -53,6 +53,7 @@ extends FormatConversionProvider
 
 
 	// $$fb2000-10-04: use AudioSystem.NOT_SPECIFIED for all fields.
+	@Override
 	public AudioInputStream getAudioInputStream(AudioFormat.Encoding targetEncoding, AudioInputStream audioInputStream)
 	{
 		AudioFormat	sourceFormat = audioInputStream.getFormat();
@@ -85,6 +86,7 @@ extends FormatConversionProvider
 	   implemented by simply calling getMatchingFormat() and comparing the
 	   result against null.
 	*/
+	@Override
 	public boolean isConversionSupported(
 		AudioFormat targetFormat,
 		AudioFormat sourceFormat)
