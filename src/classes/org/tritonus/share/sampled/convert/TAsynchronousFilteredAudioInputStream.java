@@ -60,7 +60,8 @@ implements TCircularBuffer.Trigger
 	private static final byte[]	EMPTY_BYTE_ARRAY = new byte[0];
 
 
-	private TCircularBuffer		m_circularBuffer;
+	// must be protected because it's accessed by the native CDDA lib 
+	protected TCircularBuffer		m_circularBuffer;
 	private int			m_nMinAvailable;
 	private byte[]			m_abSingleByte;
 
