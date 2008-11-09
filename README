@@ -1,12 +1,9 @@
-This is Tritonus, version 0.3.1
+This is Tritonus, version 0.3.7
 
-Tritonus is an implementation of the Java Sound API 1.0.  What you see
-here is an implementaion for GNU/Linux i386 and GNU/Linux PowerPC.
-
-It is intended to support different plattforms in the future.  Several
-components are written purely in Java. They can be used to extend any
-known Java Sound implementation. For pre-compiled versions of these
-components, see: http://www.tritonus.org/plugins.html
+Tritonus is an implementation of the Java Sound API (as of Java 5.0)
+and several Java Sound plugins ("service providers"). For pre-compiled
+versions of these components, see: 
+http://www.tritonus.org/plugins.html
 
 Tritonus is distributed under the terms of the GNU Library General
 Public License. See the file LGPL for details.

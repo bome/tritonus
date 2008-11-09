@@ -32,7 +32,6 @@
   <loadfile property="version"
 			srcFile="version" />
   <property name="plugins"  value="tritonus_share-${version}.jar tritonus_remaining-${version}.jar tritonus_gsm-${version}.jar tritonus_javasequencer-${version}.jar tritonus_src-${version}.jar tritonus_aos-${version}.jar tritonus_vorbis-${version}.jar tritonus_jorbis-${version}.jar tritonus_dsp-${version}.jar tritonus_mp3-${version}.jar" />
-  <!--property name="plugins"  value="../../javalayer/dist/javalayer.jar" /-->
   <property name="plugins-bin"  value="tritonus-vorbis-linux-${version}.zip" />
 </target>
 
@@ -281,7 +280,7 @@
     <manifest>
       <attribute name="Built-By" value="${user.name}"/>
       <attribute name="Built-Date" value="${DSTAMP}"/>
-      <attribute name="Class-Path" value="tritonus_share-${version}.jar javalayer.jar"/>
+      <attribute name="Class-Path" value="tritonus_share-${version}.jar jl1.0.jar"/>
     </manifest>
   </jar>
 </target>

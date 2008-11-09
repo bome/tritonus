@@ -109,7 +109,7 @@ extends	AudioFileReader
 	public AudioFileFormat getAudioFileFormat(File file)
 		throws UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(File): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(File): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = file.length();
 		InputStream	inputStream = new FileInputStream(file);
 		AudioFileFormat	audioFileFormat = null;
@@ -142,7 +142,7 @@ extends	AudioFileReader
 		throws UnsupportedAudioFileException, IOException
 
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(URL): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(URL): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = getDataLength(url);
 		InputStream	inputStream = url.openStream();
 		AudioFileFormat	audioFileFormat = null;
@@ -175,7 +175,7 @@ extends	AudioFileReader
 		throws UnsupportedAudioFileException, IOException
 
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
 		inputStream.mark(getMarkLimit());
 		AudioFileFormat	audioFileFormat = null;
@@ -239,7 +239,7 @@ extends	AudioFileReader
 	public AudioInputStream getAudioInputStream(File file)
 		throws UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(File): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(File): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = file.length();
 		InputStream	inputStream = new FileInputStream(file);
 		AudioInputStream	audioInputStream = null;
@@ -278,7 +278,7 @@ extends	AudioFileReader
 	public AudioInputStream getAudioInputStream(URL url)
 		throws UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(URL): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = getDataLength(url);
 		InputStream	inputStream = url.openStream();
 		AudioInputStream	audioInputStream = null;
@@ -317,7 +317,7 @@ extends	AudioFileReader
 	public AudioInputStream getAudioInputStream(InputStream inputStream)
 		throws UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
 		AudioInputStream	audioInputStream = null;
 		inputStream.mark(getMarkLimit());
@@ -362,7 +362,7 @@ extends	AudioFileReader
 	protected AudioInputStream getAudioInputStream(InputStream inputStream, long lFileLengthInBytes)
 		throws UnsupportedAudioFileException, IOException
 	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin"); }
+		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin (class: "+getClass().getSimpleName()+")"); }
 		if (isRereading())
 		{
 			if (TDebug.TraceAudioFileReader) {TDebug.out(" -inputStream is class "+inputStream.getClass()); }

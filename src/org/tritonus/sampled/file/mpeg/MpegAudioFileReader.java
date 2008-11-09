@@ -84,6 +84,7 @@ extends	TAudioFileReader
 
 
 
+	@Override
 	protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long lFileSizeInBytes)
 		throws UnsupportedAudioFileException, IOException
 	{
