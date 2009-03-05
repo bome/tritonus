@@ -332,7 +332,14 @@ extends	AudioFileReader
 		}
 		catch (IOException e)
 		{
-			inputStream.reset();
+			try {
+				inputStream.reset();
+			} catch (IOException e2) {
+				if (e2.getCause() == null) {
+					e2.initCause(e);
+					throw e2;
+				}
+			}
 			throw e;
 		}
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): end"); }
@@ -357,7 +364,7 @@ extends	AudioFileReader
 		file, if known. If it isn't known, AudioSystem.NOT_SPECIFIED
 		should be passed. This value may be used for byteLength in
 		AudioFileFormat, if this value can't be derived from the
-		informmation in the file header.
+		information in the file header.
 	*/
 	protected AudioInputStream getAudioInputStream(InputStream inputStream, long lFileLengthInBytes)
 		throws UnsupportedAudioFileException, IOException
