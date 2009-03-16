@@ -39,7 +39,6 @@ import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.file.TAudioOutputStream;
 import org.tritonus.share.sampled.file.TDataOutputStream;
 
-
 /**
  * AudioOutputStream for Wave files.
  *
@@ -84,6 +83,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		}
 	}
 
+	@Override
 	protected void writeHeader()
 	throws IOException {
 		if (TDebug.TraceAudioOutputStream) {
@@ -106,18 +106,26 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		// if patching the header, and the length has not been known at first
 		// writing of the header, just truncate the size fields, don't throw an exception
 		if (lLength != AudioSystem.NOT_SPECIFIED
-		    && lLength+dataOffset>0xFFFFFFFFl) {
-			lLength=0xFFFFFFFFl-dataOffset;
+		    && lLength+dataOffset>0xFFFFFFFFL) {
+			lLength=0xFFFFFFFFL-dataOffset;
 		}
 
 		// chunks must be on word-boundaries
-		long 			lDataChunkSize=lLength+(lLength%2);
+		long lDataChunkSize = lLength+(lLength%2);
+		if (lLength == AudioSystem.NOT_SPECIFIED || lDataChunkSize > 0xFFFFFFFFL) {
+			lDataChunkSize = 0xFFFFFFFFL;
+		}
+		
+		long RIFF_Size = lDataChunkSize+dataOffset-WaveTool.CHUNK_HEADER_SIZE; 
+		if (lLength == AudioSystem.NOT_SPECIFIED || RIFF_Size > 0xFFFFFFFFL) {
+			RIFF_Size = 0xFFFFFFFFL;
+		}
+		
 		TDataOutputStream	dos = getDataOutputStream();
 
 		// write RIFF container chunk
 		dos.writeInt(WaveTool.WAVE_RIFF_MAGIC);
-		dos.writeLittleEndian32((int) ((lDataChunkSize+dataOffset-WaveTool.CHUNK_HEADER_SIZE)
-		                               & 0xFFFFFFFF));
+		dos.writeLittleEndian32((int) RIFF_Size);
 		dos.writeInt(WaveTool.WAVE_WAVE_MAGIC);
 
 		// write fmt_ chunk
@@ -156,17 +164,17 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		// write fact chunk
 
 
-		if (formatCode!=WaveTool.WAVE_FORMAT_PCM) {
+		if (formatCode != WaveTool.WAVE_FORMAT_PCM) {
 			// write "fact" chunk: number of samples
 			// todo: add this as an attribute or property
 			// in AudioOutputStream or AudioInputStream
 			long samples=0;
-			if (lLength!=AudioSystem.NOT_SPECIFIED) {
-				samples=lLength/format.getFrameSize()*decodedSamplesPerBlock;
+			if (lLength != AudioSystem.NOT_SPECIFIED) {
+				samples = lLength / format.getFrameSize() * decodedSamplesPerBlock;
 			}
 			// saturate sample count
-			if (samples>0xFFFFFFFFl) {
-				samples=(0xFFFFFFFFl/decodedSamplesPerBlock)*decodedSamplesPerBlock;
+			if (samples>0xFFFFFFFFL) {
+				samples = (0xFFFFFFFFL/decodedSamplesPerBlock)*decodedSamplesPerBlock;
 			}
 			dos.writeInt(WaveTool.WAVE_FACT_MAGIC);
 			dos.writeLittleEndian32(4);
@@ -175,9 +183,10 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 		// write header of data chunk
 		dos.writeInt(WaveTool.WAVE_DATA_MAGIC);
-		dos.writeLittleEndian32((lLength!=AudioSystem.NOT_SPECIFIED)?((int) lLength):LENGTH_NOT_KNOWN);
+		dos.writeLittleEndian32((lLength != AudioSystem.NOT_SPECIFIED)?((int) lLength):LENGTH_NOT_KNOWN);
 	}
 
+	@Override
 	protected void patchHeader()
 	throws IOException {
 		TDataOutputStream	tdos = getDataOutputStream();
@@ -186,6 +195,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 		writeHeader();
 	}
 
+	@Override
 	public void close() throws IOException {
 		long nBytesWritten=getCalculatedLength();
 
