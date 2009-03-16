@@ -177,6 +177,9 @@ extends	AudioFileReader
 	{
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioFileFormat(InputStream): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
+		if (!inputStream.markSupported()) {
+			inputStream = new BufferedInputStream(inputStream, getMarkLimit());
+		}
 		inputStream.mark(getMarkLimit());
 		AudioFileFormat	audioFileFormat = null;
 		try
@@ -197,30 +200,27 @@ extends	AudioFileReader
 
 
 
-	/**	Get an AudioFileFormat (internal implementation).
-		Subclasses must implement this method in a way specific
-		to the file format they handle.
-
-		Note that depending on the implementation of this method,
-		you should or should not override
-		getAudioInputStream(InputStream, long), too (see comment
-		there).
-
-		@param inputStream	The InputStream to read from.
-		@param lFileLengthInBytes	The size of the originating
-		file, if known. If it isn't known, AudioSystem.NOT_SPECIFIED
-		should be passed. This value may be used for byteLength in
-		AudioFileFormat, if this value can't be derived from the
-		informmation in the file header.
-
-		@return	an AudioFileFormat instance containing
-		information from the header of the stream passed in as
-		inputStream.
-	*/
+	/**
+	 * Get an AudioFileFormat (internal implementation). Subclasses must
+	 * implement this method in a way specific to the file format they handle.
+	 * Note that depending on the implementation of this method, you should or
+	 * should not override getAudioInputStream(InputStream, long), too (see
+	 * comment there).
+	 * 
+	 * @param inputStream The InputStream to read from. It should be tested if
+	 *            it is markable. If not, and it is re-reading, wrap it into a
+	 *            BufferedInputStream with getMarkLimit() size.
+	 * @param lFileLengthInBytes The size of the originating file, if known. If
+	 *            it isn't known, AudioSystem.NOT_SPECIFIED should be passed.
+	 *            This value may be used for byteLength in AudioFileFormat, if
+	 *            this value can't be derived from the informmation in the file
+	 *            header.
+	 * @return an AudioFileFormat instance containing information from the
+	 *         header of the stream passed in as inputStream.
+	 */
 	protected abstract AudioFileFormat getAudioFileFormat(
-		InputStream inputStream,
-		long lFileLengthInBytes)
-		throws UnsupportedAudioFileException, IOException;
+			InputStream inputStream, long lFileLengthInBytes)
+			throws UnsupportedAudioFileException, IOException;
 
 
 
@@ -320,6 +320,9 @@ extends	AudioFileReader
 		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream): begin (class: "+getClass().getSimpleName()+")"); }
 		long	lFileLengthInBytes = AudioSystem.NOT_SPECIFIED;
 		AudioInputStream	audioInputStream = null;
+		if (!inputStream.markSupported()) {
+			inputStream = new BufferedInputStream(inputStream, getMarkLimit());
+		}
 		inputStream.mark(getMarkLimit());
 		try
 		{
@@ -348,48 +351,49 @@ extends	AudioFileReader
 
 
 
-	/**	Get an AudioInputStream (internal implementation).
-		This implementation calls getAudioFileFormat() with the
-		same arguments as passed in here. Then, it constructs
-		an AudioInputStream instance. This instance takes the passed
-		inputStream in the state it is left after getAudioFileFormat()
-		did its work. In other words, the implementation here
-		assumes that getAudioFileFormat() reads the entire header
-		up to a position exactely where the audio data starts.
-		If this can't be realized for a certain format, this method
-		should be overridden.
-
-		@param inputStream	The InputStream to read from.
-		@param lFileLengthInBytes	The size of the originating
-		file, if known. If it isn't known, AudioSystem.NOT_SPECIFIED
-		should be passed. This value may be used for byteLength in
-		AudioFileFormat, if this value can't be derived from the
-		information in the file header.
-	*/
-	protected AudioInputStream getAudioInputStream(InputStream inputStream, long lFileLengthInBytes)
-		throws UnsupportedAudioFileException, IOException
-	{
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin (class: "+getClass().getSimpleName()+")"); }
-		if (isRereading())
-		{
-			if (TDebug.TraceAudioFileReader) {TDebug.out(" -inputStream is class "+inputStream.getClass()); }
-			if (TDebug.TraceAudioFileReader) {TDebug.out(" -decorating inputStream as BufferedInputStream"); }
-			//$$fb do not optimize by checking for
-			// -BufferedInputStream: markLimit may not be sufficient
-			// -FileInputStream: mark/reset not supported.
-			inputStream = new BufferedInputStream(inputStream, getMarkLimit());
+	/**
+	 * Get an AudioInputStream (internal implementation). This implementation
+	 * calls getAudioFileFormat() with the same arguments as passed in here.
+	 * Then, it constructs an AudioInputStream instance. This instance takes the
+	 * passed inputStream in the state it is left after getAudioFileFormat() did
+	 * its work. In other words, the implementation here assumes that
+	 * getAudioFileFormat() reads the entire header up to a position exactly
+	 * where the audio data starts. If this can't be realized for a certain
+	 * format, this method should be overridden.
+	 * 
+	 * @param inputStream The InputStream to read from. It should be tested if
+	 *            it is markable. If not, and it is re-reading, wrap it into a
+	 *            BufferedInputStream with getMarkLimit() size.
+	 * @param lFileLengthInBytes The size of the originating file, if known. If
+	 *            it isn't known, AudioSystem.NOT_SPECIFIED should be passed.
+	 *            This value may be used for byteLength in AudioFileFormat, if
+	 *            this value can't be derived from the information in the file
+	 *            header.
+	 */
+	protected AudioInputStream getAudioInputStream(InputStream inputStream,
+			long lFileLengthInBytes) throws UnsupportedAudioFileException,
+			IOException {
+		if (TDebug.TraceAudioFileReader) {
+			TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): begin (class: "
+					+ getClass().getSimpleName() + ")");
+		}
+		if (isRereading()) {
+			if (!inputStream.markSupported()) {
+				inputStream = new BufferedInputStream(inputStream,
+						getMarkLimit());
+			}
 			inputStream.mark(getMarkLimit());
 		}
-		AudioFileFormat	audioFileFormat = getAudioFileFormat(inputStream, lFileLengthInBytes);
-		if (isRereading())
-		{
+		AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream,
+				lFileLengthInBytes);
+		if (isRereading()) {
 			inputStream.reset();
 		}
-		AudioInputStream	audioInputStream =
-			new AudioInputStream(inputStream,
-					     audioFileFormat.getFormat(),
-					     audioFileFormat.getFrameLength());
-		if (TDebug.TraceAudioFileReader) {TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): end"); }
+		AudioInputStream audioInputStream = new AudioInputStream(inputStream,
+				audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+		if (TDebug.TraceAudioFileReader) {
+			TDebug.out("TAudioFileReader.getAudioInputStream(InputStream, long): end");
+		}
 		return audioInputStream;
 	}
 
