@@ -75,16 +75,19 @@ static jfieldID getNativeGlobalFlagsFieldID(JNIEnv *env) {
 	return nativeGlobalFlagsFieldID;
 }
 
+#ifndef _WIN32
+typedef unsigned long UINT_PTR;
+#endif
 
 static LameConf* getNativeGlobalFlags(JNIEnv *env, jobject obj) {
 	jfieldID	fieldID = getNativeGlobalFlagsFieldID(env);
-	return (LameConf*) ((unsigned int) (*env)->GetLongField(env, obj, fieldID));
+	return (LameConf*) ((UINT_PTR) (*env)->GetLongField(env, obj, fieldID));
 }
 
 
 static void setNativeGlobalFlags(JNIEnv *env, jobject obj, LameConf* flags) {
 	jfieldID	fieldID = getNativeGlobalFlagsFieldID(env);
-	(*env)->SetLongField(env, obj, fieldID, (jlong) ((unsigned int) flags));
+	(*env)->SetLongField(env, obj, fieldID, (jlong) ((UINT_PTR) flags));
 }
 
 static void setIntField(JNIEnv *env, jobject obj, char* name, int value) {
