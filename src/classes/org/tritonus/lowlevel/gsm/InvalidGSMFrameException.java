@@ -17,8 +17,6 @@
 //    License along with this library; if not, write to the Free
 //    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-
-
 //  This software is a port of the GSM Library provided by
 //  Jutta Degener (jutta@cs.tu-berlin.de) and 
 //  Carsten Bormann (cabo@cs.tu-berlin.de), 
@@ -26,13 +24,8 @@
 
 package org.tritonus.lowlevel.gsm;
 
-
-
-public class InvalidGSMFrameException
-extends	Exception
+public class InvalidGSMFrameException extends Exception
 {
 }
-
-
 
 /*** InvalidGSMFrameException.java ***/

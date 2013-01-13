@@ -420,7 +420,8 @@ public final class GSMDecoder
             m_xmc[51] = getNextBits(3);
 
             m_frame_chain = m_sr & 0xf;
-        } else
+        }
+        else
         {
             m_sr = m_frame_chain;
             m_sr |= getNextCodedByteValue() << 4; /* 1 */
@@ -565,7 +566,8 @@ public final class GSMDecoder
             if (i < data.length - 1)
             {
                 System.out.print(",");
-            } else
+            }
+            else
             {
                 System.out.println("]");
             }
@@ -652,7 +654,8 @@ public final class GSMDecoder
         {
             exp = -4;
             mant = 7;
-        } else
+        }
+        else
         {
             while (mant <= 7)
             {
@@ -940,7 +943,8 @@ public final class GSMDecoder
                 LARp[i] = (-((temp < 11059) ? temp << 1
                         : ((temp < 20070) ? temp + 11059 : add((temp >> 2),
                                 26112))));
-            } else
+            }
+            else
             {
                 temp = LARp[i];
                 LARp[i] = ((temp < 11059) ? temp << 1
@@ -1016,7 +1020,8 @@ public final class GSMDecoder
             ep[epo++] = 0;
             ep[epo++] = 0;
             ep[epo++] = xMp[po++];
-        } while (--i > 0);
+        }
+        while (--i > 0);
 
         while (++Mc < 4)
         {
