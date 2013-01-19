@@ -275,10 +275,6 @@ public class WaveAudioFileReader extends TAudioFileReader
 		long dataChunkLength = findChunk(dataInputStream, WaveTool.WAVE_DATA_MAGIC);
 
 		long frameLength = dataChunkLength / format.getFrameSize();
-		if (format.getEncoding().equals(WaveTool.GSM0610)) {
-			// TODO: should not be necessary
-			frameLength = dataChunkLength;
-		}
 
 		if (TDebug.TraceAudioFileReader) {
 			TDebug.out("WaveAudioFileReader.getAudioFileFormat(): total length: "

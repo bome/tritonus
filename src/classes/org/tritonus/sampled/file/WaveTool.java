@@ -72,7 +72,7 @@ public class WaveTool {
 	public static final int DATA_OFFSET=RIFF_CONTAINER_CHUNK_SIZE
 	                                    +CHUNK_HEADER_SIZE+FMT_CHUNK_SIZE+CHUNK_HEADER_SIZE;
 
-	public static AudioFormat.Encoding GSM0610 = new AudioFormat.Encoding("GSM0610");
+	public static AudioFormat.Encoding GSM0610 = new AudioFormat.Encoding("MS GSM0610");
 	public static AudioFormat.Encoding IMA_ADPCM = new AudioFormat.Encoding("IMA_ADPCM");
 
 	public static short getFormatCode(AudioFormat format) {

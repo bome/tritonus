@@ -1,5 +1,7 @@
 package org.tritonus.test.tritonus.sampled.convert.gsm;
 
+import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -276,13 +278,29 @@ public class GSMDecoderFormatConversionProviderTest extends
     public void testGetAudioInputStreamEncodingAudioInputStream()
     {
         testGetAudioInputStreamEncoding(Encoding.PCM_SIGNED, new AudioFormat(
-                TOAST_GSM_ENCODING, 8000.0F, ALL, 1, 33, 50, true), ALL,
+                TOAST_GSM_ENCODING, 8000.0F, ALL, 1, 33, 50, true), //
+                NOT_SPECIFIED,//
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
-                        8000.0F, false), ALL);
+                        8000.0F, false), //
+                NOT_SPECIFIED);
         testGetAudioInputStreamEncoding(Encoding.PCM_SIGNED, new AudioFormat(
-                MS_GSM_ENCODING, 8000.0F, ALL, 1, 65, 25, true), ALL,
+                TOAST_GSM_ENCODING, 8000.0F, ALL, 1, 33, 50, true), //
+                134,//
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
-                        8000.0F, false), ALL);
+                        8000.0F, false), //
+                160 * 134);
+        testGetAudioInputStreamEncoding(Encoding.PCM_SIGNED, new AudioFormat(
+                MS_GSM_ENCODING, 8000.0F, ALL, 1, 65, 25, true), //
+                NOT_SPECIFIED,//
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                NOT_SPECIFIED);
+        testGetAudioInputStreamEncoding(Encoding.PCM_SIGNED, new AudioFormat(
+                MS_GSM_ENCODING, 8000.0F, ALL, 1, 65, 25, true), //
+                134,//
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                320 * 134);
     }
 
     /**
@@ -298,17 +316,36 @@ public class GSMDecoderFormatConversionProviderTest extends
                         8000.0F, false), //
                 new AudioFormat(TOAST_GSM_ENCODING, 8000.0F, ALL, 1, 33, 50,
                         true), //
-                ALL, //
+                NOT_SPECIFIED, //
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
                         8000.0F, false), //
-                ALL);
+                NOT_SPECIFIED);
+        testGetAudioInputStreamAudioFormat(//
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                new AudioFormat(TOAST_GSM_ENCODING, 8000.0F, ALL, 1, 33, 50,
+                        true), //
+                134, //
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                160 * 134);
         testGetAudioInputStreamAudioFormat(
                 //
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
                         8000.0F, false),//
                 new AudioFormat(MS_GSM_ENCODING, 8000.0F, ALL, 1, 65, 25, true), //
-                ALL,//
+                NOT_SPECIFIED,//
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
-                        8000.0F, false), ALL);
+                        8000.0F, false), //
+                NOT_SPECIFIED);
+        testGetAudioInputStreamAudioFormat(
+                //
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false),//
+                new AudioFormat(MS_GSM_ENCODING, 8000.0F, ALL, 1, 65, 25, true), //
+                134,//
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                320 * 134);
     }
 }

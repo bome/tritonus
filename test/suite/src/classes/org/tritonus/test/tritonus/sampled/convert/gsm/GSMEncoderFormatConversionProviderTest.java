@@ -236,14 +236,32 @@ public class GSMEncoderFormatConversionProviderTest extends
     {
         testGetAudioInputStreamEncoding(TOAST_GSM_ENCODING, //
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
-                        8000.0F, true), NOT_SPECIFIED,//
+                        8000.0F, true), //
+                NOT_SPECIFIED,//
                 new AudioFormat(TOAST_GSM_ENCODING, 8000.0F, NOT_SPECIFIED, 1,
-                        33, 50.0F, true), NOT_SPECIFIED);
+                        33, 50.0F, true), //
+                NOT_SPECIFIED);
         testGetAudioInputStreamEncoding(TOAST_GSM_ENCODING, //
                 new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
-                        8000.0F, false), NOT_SPECIFIED,//
+                        8000.0F, true), //
+                160 * 134,//
                 new AudioFormat(TOAST_GSM_ENCODING, 8000.0F, NOT_SPECIFIED, 1,
-                        33, 50.0F, true), NOT_SPECIFIED);
+                        33, 50.0F, true), //
+                134);
+        testGetAudioInputStreamEncoding(TOAST_GSM_ENCODING, //
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                NOT_SPECIFIED,//
+                new AudioFormat(TOAST_GSM_ENCODING, 8000.0F, NOT_SPECIFIED, 1,
+                        33, 50.0F, true), //
+                NOT_SPECIFIED);
+        testGetAudioInputStreamEncoding(TOAST_GSM_ENCODING, //
+                new AudioFormat(Encoding.PCM_SIGNED, 8000.0F, 16, 1, 2,
+                        8000.0F, false), //
+                160 * 134,//
+                new AudioFormat(TOAST_GSM_ENCODING, 8000.0F, NOT_SPECIFIED, 1,
+                        33, 50.0F, true), //
+                134);
 
         // wrong source PCM Encoding
         testGetAudioInputStreamEncodingUnsupported(TOAST_GSM_ENCODING,//
