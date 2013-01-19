@@ -1,2 +1,3 @@
 # for the gsm codec
-org.tritonus.sampled.convert.gsm.GSMFormatConversionProvider
+org.tritonus.sampled.convert.gsm.GSMEncoderFormatConversionProvider
+org.tritonus.sampled.convert.gsm.GSMDecoderFormatConversionProvider

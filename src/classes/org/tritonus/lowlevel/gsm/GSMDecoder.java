@@ -157,7 +157,7 @@ public final class GSMDecoder
      * @param c
      *            byte array containing the coded frame
      * @param bufferStartOffset
-     *            TODO
+     *            offset into the array for the coded frame
      * @param firstHalfOfMicrosoftFrame
      *            should be passed as <code>true</code> if the frame is the
      *            first half of a 65 byte Microsoft format frame, false if the
@@ -542,17 +542,9 @@ public final class GSMDecoder
         return value & 0xFF;
     }
 
-    /**
-     * Bit masks for obtaining the 1, 2, ..., or 7 lowest bits. The index into
-     * the array is equal to the number of bits to mask. Used in
-     * {@link #getNextBits(int)}.
-     */
-    private static final int[] BITMASKS = { 0x0, 0x1, 0x3, 0x7, 0xF, 0x1F,
-            0x3F, 0x7F };
-
     private final int getNextBits(int bits)
     {
-        int value = m_sr & BITMASKS[bits];
+        int value = m_sr & Gsm_Def.BITMASKS[bits];
         m_sr >>>= bits;
         return value;
     }

@@ -62,6 +62,7 @@ import org.tritonus.share.sampled.convert.TSynchronousFilteredAudioInputStream;
 public class LawEncoder extends TEncodingFormatConversionProvider {
 
 	// abbreviations, also used in LawDecoder
+    // $$MP: move this definition to base class TFormatConversionProvider
 	static final int ALL = AudioSystem.NOT_SPECIFIED;
 
 	static final AudioFormat[] LAW_FORMATS = {

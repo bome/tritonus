@@ -20,11 +20,16 @@
 
 package org.tritonus.lowlevel.gsm;
 
-import java.io.*;
+import org.tritonus.lowlevel.gsm.BitEncoder.AllocationMode;
 
+/**
+ * Encoder for GSM 06.10.
+ * 
+ * @author Christopher Edwards
+ * @author Matthias Pfisterer
+ */
 public class Encoder
-{
-    /* Every Encoder has a state through completion */
+{ /* Every Encoder has a state through completion */
     private Gsm_State g_s = new Gsm_State();
     private Long_term lg_term_Obj = new Long_term();
     private Lpc lpc_Obj = new Lpc();
@@ -46,231 +51,154 @@ public class Encoder
 
     /* Reads 160 bytes */
     private int[] input_signal = new int[160]; /* [0..159] OUT */
-    /* Writes 33 bytes */
-    private byte[] frame = new byte[Gsm_Def.FRAME_SIZE];
+
+    private GsmFrameFormat gsmFrameFormat;
 
     /**
-     * Encoder class constructor.
-     */
-    public Encoder()
-    {
-    }
-
-    /**
-     * Remove the header info from the stream and verifies the file type. As
-     * defined by the NeXT/Sun audio file format U-law (.au). For more info see
-     * the README file. <br>
-     * <br>
-     * Note: Most of this info is not needed to reproduce the sound file after
-     * encoding. All that is needed is the magic number and the sampling rate to
-     * reproduce the sound file during decoding.
+     * Constructor.
      * 
-     * @param in
-     *            Strip the header from a Sun/Next formated sound stream.
+     * @param gsmFrameFormat
+     *            the format of the GSM frames to produce
      */
-    public static void stripAUHeader(InputStream in) throws Exception
+    public Encoder(GsmFrameFormat gsmFrameFormat)
     {
-        DataInputStream input = new DataInputStream(in);
-
-        /* Just read these bits from the stream and do nothing with them */
-        int magic = input.readInt(); /*
-                                      * magic number SND_MAGIC
-                                      * ((int)0x2e736e64), which equals ".snd".)
-                                      */
-        input.readInt(); /* offset or pointer to the data */
-        input.readInt(); /* number of bytes of data */
-        int dataFormat = input.readInt(); /* the data format code */
-        int sampleRate = input.readInt(); /*
-                                           * the sampling rate = ~8000
-                                           * samples/sec.
-                                           */
-        input.readInt(); /* the number of channels */
-        input.readChar(); /* optional text information - 4 chars */
-        input.readChar();
-        input.readChar();
-        input.readChar();
-
-        if (magic != 0x2E736E64) // ".snd" in ASCII
-        {
-            // throw new GsmException("AuFile wrong Magic Number");
-        }
-        else if (dataFormat != 1) // 8-Bit mu-Law
-        {
-            // throw new GsmException("AuFile not 8-bit Mu-Law");
-        }
-        else if (sampleRate != 8000) // 8kHz
-        {
-            // throw new GsmException("AuFile not 8kHz");
-        }
-    }
-
-    /**
-     * Encode the specified file. <br>
-     * This method calls the <code>stripAUHeader</code> method for you.<br>
-     * stripAUHeader will verify file type.
-     * 
-     * @param input_file
-     *            The name of the file to encode.
-     * @param output_file
-     *            The name of the GSM encoded file.
-     */
-    public void encode(String input_file, String output_file) throws Exception
-    {
-
-        File arg1 = new File(input_file);
-        if (!arg1.exists() || !arg1.isFile() || !arg1.canRead())
-        {
-            throw new IOException("File : " + input_file
-                    + "\ndoes not exist or cannot be read.");
-        }
-
-        FileInputStream from = null;
-        FileOutputStream to = null;
-        try
-        {
-            from = new FileInputStream(input_file);
-            to = new FileOutputStream(output_file);
-
-            // Remove the header. It gets mangled by the encoding.
-            stripAUHeader(from);
-
-            // Read bytes till EOF.
-            while (ulaw_input(from) > 0)
-            {
-                // System.out.println("Entering Native method.");
-                gsm_encode();
-
-                // Need to do some error check here. Update ulaw_output.
-                ulaw_output(to); // Write bytes.
-            }
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Encoder: " + e.getMessage());
-        }
-        finally
-        {
-            if (from != null)
-            {
-                try
-                {
-                    from.close();
-                }
-                catch (IOException e)
-                {
-                    throw new IOException("Encoder: " + e.getMessage());
-                }
-            }
-            if (to != null)
-            {
-                try
-                {
-                    to.close();
-                }
-                catch (IOException e)
-                {
-                    throw new IOException("Encoder: " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    /**
-     * Encode the specified InputStream.
-     * 
-     * @param input
-     *            The stream to encode.
-     * @param output_file
-     *            The name of the GSM encoded file.
-     */
-    public void encode(InputStream input, String output_file)
-            throws IOException
-    {
-        FileOutputStream to = null;
-        try
-        {
-            to = new FileOutputStream(output_file);
-
-            // Read bytes till EOF.
-            while (ulaw_input(input) > 0)
-            {
-                gsm_encode();
-
-                // Need to do some error check here. Update ulaw_output.
-                ulaw_output(to); // Write bytes.
-            }
-
-        }
-        catch (IOException e)
-        {
-            throw new IOException("Encoder: " + e.getMessage());
-        }
-        finally
-        {
-            if (to != null)
-            {
-                try
-                {
-                    to.close();
-                }
-                catch (IOException e)
-                {
-                    throw new IOException("Encoder: " + e.getMessage());
-                }
-            }
-        }
+        this.gsmFrameFormat = gsmFrameFormat;
     }
 
     /**
      * Encodes a block of data.
      * 
      * @param asBuffer
-     *            an 160-element array with the data to encode int PCM 16 bit
-     *            format.
-     * 
+     *            an 160-element (for "toast" frame format) or 320-element array
+     *            (for Microsoft frame format) with the data to encode in PCM
+     *            signed 16 bit format
      * @param abFrame
-     *            the encoded GSM frame (33 bytes).
+     *            the encoded GSM frame (33 or 65 bytes, depending on the frame
+     *            format).
      */
     public void encode(short[] asBuffer, byte[] abFrame)
     {
+        BitEncoder bitEncoder;
+        switch (gsmFrameFormat)
+        {
+        case TOAST:
+            bitEncoder = new BitEncoder(abFrame, AllocationMode.MSBitFirst);
+            bitEncoder.addBits(0xD, 4);
+            break;
+        case MICROSOFT:
+            bitEncoder = new BitEncoder(abFrame, AllocationMode.LSBitFirst);
+            break;
+        default:
+            throw new RuntimeException("Unhandled GSM frame format");
+        }
         for (int i = 0; i < 160; i++)
         {
             input_signal[i] = asBuffer[i];
         }
-        gsm_encode();
-        System.arraycopy(frame, 0, abFrame, 0, frame.length);
-    }
-
-    /**
-     * Read 160 bytes from a U-law stream and set up the input_signal array.
-     */
-    private int ulaw_input(InputStream in) throws IOException
-    {
-        int c = 0;
-        int i = 0;
-
-        for (i = 0; i < input_signal.length && ((c = in.read()) != -1); i++)
-        {
-            if (c < 0)
-            {
-                throw new IOException(
-                        "Encoder ulaw_input: Corrupt InputStream.");
-            }
-            else
-            {
-                input_signal[i] = u2s[c];
-            }
-        }
-        return (i);
-    }
-
-    private void gsm_encode()
-    {
-        int index = 0;
-
         Gsm_Coder_java();
+        implodeFrameGeneric(bitEncoder);
+        if (gsmFrameFormat == GsmFrameFormat.MICROSOFT)
+        {
+            for (int i = 0; i < 160; i++)
+            {
+                input_signal[i] = asBuffer[i + 160];
+            }
+            Gsm_Coder_java();
+            implodeFrameGeneric(bitEncoder);
+        }
 
+        // byte[] frameold = new byte[33];
+        // implodeFrame(frameold, index);
+        // System.arraycopy(frame, 0, abFrame, 0, frame.length);
+    }
+
+    private void implodeFrameGeneric(BitEncoder bitEncoder)
+    {
+        bitEncoder.addBits(LARc[0], 6);
+        bitEncoder.addBits(LARc[1], 6);
+        bitEncoder.addBits(LARc[2], 5);
+        bitEncoder.addBits(LARc[3], 5);
+        bitEncoder.addBits(LARc[4], 4);
+        bitEncoder.addBits(LARc[5], 4);
+        bitEncoder.addBits(LARc[6], 3);
+        bitEncoder.addBits(LARc[7], 3);
+
+        bitEncoder.addBits(Nc[0], 7);
+        bitEncoder.addBits(bc[0], 2);
+        bitEncoder.addBits(Mc[0], 2);
+        bitEncoder.addBits(xmaxc[0], 6);
+        bitEncoder.addBits(xmc[0], 3);
+        bitEncoder.addBits(xmc[1], 3);
+        bitEncoder.addBits(xmc[2], 3);
+        bitEncoder.addBits(xmc[3], 3);
+        bitEncoder.addBits(xmc[4], 3);
+        bitEncoder.addBits(xmc[5], 3);
+        bitEncoder.addBits(xmc[6], 3);
+        bitEncoder.addBits(xmc[7], 3);
+        bitEncoder.addBits(xmc[8], 3);
+        bitEncoder.addBits(xmc[9], 3);
+        bitEncoder.addBits(xmc[10], 3);
+        bitEncoder.addBits(xmc[11], 3);
+        bitEncoder.addBits(xmc[12], 3);
+
+        bitEncoder.addBits(Nc[1], 7);
+        bitEncoder.addBits(bc[1], 2);
+        bitEncoder.addBits(Mc[1], 2);
+        bitEncoder.addBits(xmaxc[1], 6);
+        bitEncoder.addBits(xmc[13], 3);
+        bitEncoder.addBits(xmc[14], 3);
+        bitEncoder.addBits(xmc[15], 3);
+        bitEncoder.addBits(xmc[16], 3);
+        bitEncoder.addBits(xmc[17], 3);
+        bitEncoder.addBits(xmc[18], 3);
+        bitEncoder.addBits(xmc[19], 3);
+        bitEncoder.addBits(xmc[20], 3);
+        bitEncoder.addBits(xmc[21], 3);
+        bitEncoder.addBits(xmc[22], 3);
+        bitEncoder.addBits(xmc[23], 3);
+        bitEncoder.addBits(xmc[24], 3);
+        bitEncoder.addBits(xmc[25], 3);
+
+        bitEncoder.addBits(Nc[2], 7);
+        bitEncoder.addBits(bc[2], 2);
+        bitEncoder.addBits(Mc[2], 2);
+        bitEncoder.addBits(xmaxc[2], 6);
+        bitEncoder.addBits(xmc[26], 3);
+        bitEncoder.addBits(xmc[27], 3);
+        bitEncoder.addBits(xmc[28], 3);
+        bitEncoder.addBits(xmc[29], 3);
+        bitEncoder.addBits(xmc[30], 3);
+        bitEncoder.addBits(xmc[31], 3);
+        bitEncoder.addBits(xmc[32], 3);
+        bitEncoder.addBits(xmc[33], 3);
+        bitEncoder.addBits(xmc[34], 3);
+        bitEncoder.addBits(xmc[35], 3);
+        bitEncoder.addBits(xmc[36], 3);
+        bitEncoder.addBits(xmc[37], 3);
+        bitEncoder.addBits(xmc[38], 3);
+
+        bitEncoder.addBits(Nc[3], 7);
+        bitEncoder.addBits(bc[3], 2);
+        bitEncoder.addBits(Mc[3], 2);
+        bitEncoder.addBits(xmaxc[3], 6);
+        bitEncoder.addBits(xmc[39], 3);
+        bitEncoder.addBits(xmc[40], 3);
+        bitEncoder.addBits(xmc[41], 3);
+        bitEncoder.addBits(xmc[42], 3);
+        bitEncoder.addBits(xmc[43], 3);
+        bitEncoder.addBits(xmc[44], 3);
+        bitEncoder.addBits(xmc[45], 3);
+        bitEncoder.addBits(xmc[46], 3);
+        bitEncoder.addBits(xmc[47], 3);
+        bitEncoder.addBits(xmc[48], 3);
+        bitEncoder.addBits(xmc[49], 3);
+        bitEncoder.addBits(xmc[50], 3);
+        bitEncoder.addBits(xmc[51], 3);
+    }
+
+    // TODO (GSM) remove
+    private void implodeFrameOld(byte[] frame, int index)
+    {
         frame[index++] = (byte) (((0xD) << 4) /* 1 */
         | ((LARc[0] >> 2) & 0xF));
         frame[index++] = (byte) (((LARc[0] & 0x3) << 6) /* 2 */
@@ -480,59 +408,4 @@ public class Encoder
         g_s.setL_z2(L_z2);
         g_s.setMp(mp);
     }
-
-    /* Write the encoded bytes to the stream. */
-    private void ulaw_output(FileOutputStream out) throws IOException
-    {
-        int i = 0;
-        for (i = 0; i < frame.length; i++)
-        {
-            out.write(frame[i]);
-        }
-    }
-
-    /**
-     * Used for debugging.
-     * 
-     * @param state
-     *            The Gsm_State object to be viewed.
-     */
-    private void dump_Gsm_State(Gsm_State state)
-    {
-        state.dump_Gsm_State();
-    }
-
-    /*
-     * This is the encoding matrix.
-     * 
-     * Java does not have an unsigned short, ie. 16 bits, so I will use the
-     * upper 16 bits of the integer. This wastes a little memory although I do
-     * not think it will cause a problem.
-     */
-    private static final int u2s[] = { 33280, 34308, 35336, 36364, 37393,
-            38421, 39449, 40477, 41505, 42534, 43562, 44590, 45618, 46647,
-            47675, 48703, 49474, 49988, 50503, 51017, 51531, 52045, 52559,
-            53073, 53587, 54101, 54616, 55130, 55644, 56158, 56672, 57186,
-            57572, 57829, 58086, 58343, 58600, 58857, 59114, 59371, 59628,
-            59885, 60142, 60399, 60656, 60913, 61171, 61428, 61620, 61749,
-            61877, 62006, 62134, 62263, 62392, 62520, 62649, 62777, 62906,
-            63034, 63163, 63291, 63420, 63548, 63645, 63709, 63773, 63838,
-            63902, 63966, 64030, 64095, 64159, 64223, 64287, 64352, 64416,
-            64480, 64544, 64609, 64657, 64689, 64721, 64753, 64785, 64818,
-            64850, 64882, 64914, 64946, 64978, 65010, 65042, 65075, 65107,
-            65139, 65163, 65179, 65195, 65211, 65227, 65243, 65259, 65275,
-            65291, 65308, 65324, 65340, 65356, 65372, 65388, 65404, 65416,
-            65424, 65432, 65440, 65448, 65456, 65464, 65472, 65480, 65488,
-            65496, 65504, 65512, 65520, 65528, 0, 32256, 31228, 30200, 29172,
-            28143, 27115, 26087, 25059, 24031, 23002, 21974, 20946, 19918,
-            18889, 17861, 16833, 16062, 15548, 15033, 14519, 14005, 13491,
-            12977, 12463, 11949, 11435, 10920, 10406, 9892, 9378, 8864, 8350,
-            7964, 7707, 7450, 7193, 6936, 6679, 6422, 6165, 5908, 5651, 5394,
-            5137, 4880, 4623, 4365, 4108, 3916, 3787, 3659, 3530, 3402, 3273,
-            3144, 3016, 2887, 2759, 2630, 2502, 2373, 2245, 2116, 1988, 1891,
-            1827, 1763, 1698, 1634, 1570, 1506, 1441, 1377, 1313, 1249, 1184,
-            1120, 1056, 992, 927, 879, 847, 815, 783, 751, 718, 686, 654, 622,
-            590, 558, 526, 494, 461, 429, 397, 373, 357, 341, 325, 309, 293,
-            277, 261, 245, 228, 212, 196, 180, 164, 148, 132, 120, 112, 104,
-            96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 0 };
 }

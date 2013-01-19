@@ -94,4 +94,11 @@ public abstract class Gsm_Def
     /* i 0 1 2 3 4 5 6 7 */
     public static final short gsm_FAC[] = { 18431, 20479, 22527, 24575, 26623,
             28671, 30719, 32767 };
+
+    /**
+     * Bit masks for obtaining the 1, 2, ..., or 7 lowest bits. The index into
+     * the array is equal to the number of bits to mask.
+     */
+    public static final int[] BITMASKS = { 0x0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F,
+            0x7F };
 }
