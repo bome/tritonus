@@ -23,32 +23,25 @@
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
 
 package org.tritonus.lowlevel.dsp;
 
-
-/**	An implementation of the Hamming window.
+/**
+ * An implementation of the Hamming window.
  */
-public class HammingWindow
-implements Window
-{
-	/**	Get an array containing the window coefficients.
-		@param nOrder The number of elements that the returned
-		array should have.
-	 */
-	public double[] getWindow(int nOrder)
-	{
-		double[]	adWindow = new double[nOrder];
-		for (int n = 0; n < nOrder; n++)
-		{
-			adWindow[n] = 0.54 - 0.46 * Math.cos((2.0 * Math.PI * n) / (nOrder - 1));
+public class HammingWindow implements FIRWindow {
+	/** {@inheritDoc} */
+	@Override
+	public double[] getWindow(int nOrder) {
+		double[] adWindow = new double[nOrder];
+		for (int n = 0; n < nOrder; n++) {
+			adWindow[n] = 0.54 - 0.46 * Math.cos((2.0 * Math.PI * n)
+					/ (nOrder - 1));
 		}
 		return adWindow;
 	}
-} 
-
-
+}
 
 /*** HammingWindow.java ***/

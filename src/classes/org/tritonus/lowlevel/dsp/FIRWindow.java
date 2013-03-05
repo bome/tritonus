@@ -1,5 +1,5 @@
 /*
- *	Window.java
+ *	FIRWindow.java
  *
  *	This file is part of Tritonus: http://www.tritonus.org/
  */
@@ -23,23 +23,20 @@
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
 
 package org.tritonus.lowlevel.dsp;
 
-
-/**	Common interface for all types of windows.
-*/
-public interface Window
-{
-	/**	Get an array containing the window coefficients.
-		@param nOrder The number of elements that the returned
-		array should have.
+/**
+ * Window for FIR filter design using the windowing method.
+ */
+public interface FIRWindow {
+	/**
+	 * Get an array containing the window coefficients.
+	 * 
+	 * @param nOrder
+	 *            The number of elements that the returned array should have.
 	 */
 	public double[] getWindow(int nOrder);
-} 
-
-
-
-/*** Window.java ***/
+}

@@ -23,56 +23,34 @@
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
 
 package org.tritonus.lowlevel.dsp;
 
-
-/**	Common interface for all types of filters.
-	This is intended for filters that consume samples
-	the same rate they output them.
-	Examples of such filters are common FIR and IIR filters.
-*/
-public interface Filter
-{
-	/**	Process one sample through the filter.
-		Input and output samples are normally in the
-		range [-1.0 .. +1.0].
-	*/
+/**
+ * Common interface for all types of filters with sample processing.
+ * 
+ * <p>
+ * This is for filters that have a sample-by-sample processing approach (opposed
+ * to a block processing approach). This is intended for filters that consume
+ * samples the same rate they output them. Examples of such filters are common
+ * FIR and IIR filters.
+ * </p>
+ * <p>
+ * This interface uses float as data type for samples. The samples are normally
+ * in the range [-1.0 .. +1.0].
+ * </p>
+ */
+public interface Filter {
+	/**
+	 * Process one sample through the filter.
+	 * 
+	 * @param fSample
+	 *            the input sample
+	 * @return the output sample
+	 */
 	public float process(float fSample);
-
-
-	/**	Get the frequency response of the filter at a specified frequency.
-		This method calculates the frequency response of the filter
-		for a specified frequency. Calling this method is allowed
-		at any time, even while the filter is operating. It does not
-		affect the operation of the filter.
-
-		@param dOmega The frequency for which the frequency response
-		should be calculated. Has to be given as omega values
-		([-PI .. +PI]).
-
-		@return The calculated frequency response.
-	 */
-	public double getFrequencyResponse(double dOmega);
-
-
-	/**	Get the phase response of the filter at a specified frequency.
-		This method calculates the phase response of the filter
-		for a specified frequency. Calling this method is allowed
-		at any time, even while the filter is operating. It does not
-		affect the operation of the filter.
-
-		@param dOmega The frequency for which the phase response
-		should be calculated. Has to be given as omega values
-		([-PI .. +PI]).
-
-		@return The calculated phase response.
-	 */
-	public double getPhaseResponse(double dOmega);
-} 
-
-
+}
 
 /*** Filter.java ***/

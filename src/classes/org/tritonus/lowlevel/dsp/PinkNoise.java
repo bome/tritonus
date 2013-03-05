@@ -61,8 +61,6 @@ http://www.abel.co.uk/~maxim/
 public class PinkNoise
 implements Source
 {
-	private static final boolean	DEBUG = false;
-
 	private Source		m_whiteNoiseSource;
 	private float		m_b0, m_b1, m_b2, m_b3, m_b4, m_b5, m_b6;
 
@@ -101,7 +99,6 @@ implements Source
 		m_b6 = fWhite * 0.115926F;
 		return fPink;
 	}
-
 } 
 
 

@@ -23,32 +23,24 @@
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
 
 package org.tritonus.lowlevel.dsp;
 
-
-/**	An implementation of the Rectangular window.
+/**
+ * An implementation of the Rectangular window.
  */
-public class RectangularWindow
-implements Window
-{
-	/**	Get an array containing the window coefficients.
-		@param nOrder The number of elements that the returned
-		array should have.
-	 */
-	public double[] getWindow(int nOrder)
-	{
-		double[]	adWindow = new double[nOrder];
-		for (int n = 0; n < nOrder; n++)
-		{
+public class RectangularWindow implements FIRWindow {
+	/** {@inheritDoc} */
+	@Override
+	public double[] getWindow(int nOrder) {
+		double[] adWindow = new double[nOrder];
+		for (int n = 0; n < nOrder; n++) {
 			adWindow[n] = 1.0;
 		}
 		return adWindow;
 	}
-} 
-
-
+}
 
 /*** RectangularWindow.java ***/

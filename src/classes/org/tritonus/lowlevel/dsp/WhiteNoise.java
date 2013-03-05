@@ -23,43 +23,28 @@
  */
 
 /*
-|<---            this code is formatted to fit into 80 columns             --->|
-*/
+ |<---            this code is formatted to fit into 80 columns             --->|
+ */
 
 package org.tritonus.lowlevel.dsp;
 
 import java.util.Random;
 
+public class WhiteNoise implements Source {
+	private Random m_random;
 
-
-public class WhiteNoise
-implements Source
-{
-	private static final boolean	DEBUG = false;
-
-	private Random		m_random;
-
-
-	public WhiteNoise()
-	{
+	public WhiteNoise() {
 		this(new Random());
 	}
 
-
-	public WhiteNoise(Random random)
-	{
+	public WhiteNoise(Random random) {
 		m_random = random;
 	}
 
-
-	public float process()
-	{
-		float	fOutput = m_random.nextFloat() * 2.0F - 1.0F;
+	public float process() {
+		float fOutput = m_random.nextFloat() * 2.0F - 1.0F;
 		return fOutput;
 	}
-
-} 
-
-
+}
 
 /*** WhiteNoise.java ***/
