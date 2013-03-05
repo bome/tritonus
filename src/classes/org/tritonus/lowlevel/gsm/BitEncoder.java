@@ -50,12 +50,16 @@ public class BitEncoder
             int bits = Math.min(numBits, remainingBitsInCurrentByte);
             int nextRemainingBits = remainingBitsInCurrentByte - bits;
             int nextNumBits = numBits - bits;
+            int x;
             switch (allocationMode)
             {
             case LSBitFirst:
+                x = (((value) & Gsm_Def.BITMASKS[bits]) << (8 - remainingBitsInCurrentByte));
+                codedBytes[byteIndex] |= x;
+                value >>>= bits;
                 break;
             case MSBitFirst:
-                int x = (((value >>> nextNumBits) & Gsm_Def.BITMASKS[bits]) << nextRemainingBits);
+                x = (((value >>> nextNumBits) & Gsm_Def.BITMASKS[bits]) << nextRemainingBits);
                 codedBytes[byteIndex] |= x;
                 break;
             }
