@@ -135,7 +135,7 @@ public class WaveAudioOutputStream extends TAudioOutputStream {
 
 		if (formatCode==WaveTool.WAVE_FORMAT_GSM610) {
 			if (format.getFrameSize()==33) {
-				decodedSamplesPerBlock=320;
+				decodedSamplesPerBlock=160;
 			} else if (format.getFrameSize()==65) {
 				decodedSamplesPerBlock=320;
 			} else {

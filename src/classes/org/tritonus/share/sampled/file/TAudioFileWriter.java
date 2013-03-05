@@ -53,7 +53,7 @@ import org.tritonus.share.ArraySet;
  * <p>It provides often-used functionality and the new architecture using
  * an AudioOutputStream.
  * <p>There should be only one set of audio formats supported by any given
- * class of TAudioFileWriter. This class assumes implicitely that all
+ * class of TAudioFileWriter. This class assumes implicitly that all
  * supported file types have a common set of audio formats they can handle.
  *
  * @author Matthias Pfisterer
@@ -154,7 +154,7 @@ extends AudioFileWriter
 		// we may soft it up by including the possibility of endian/sign
 		// changing for PCM formats.
 		// I prefer to return false if the format is not exactly supported
-		// but still exectute the write, if only sign/endian changing is necessary.
+		// but still execute the write, if only sign/endian changing is necessary.
 	}
 
 
