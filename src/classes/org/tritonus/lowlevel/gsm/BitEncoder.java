@@ -17,6 +17,10 @@ public class BitEncoder
     /**
      * Constructor.
      * 
+     * <p>
+     * Note: this constructor writes 0 values into the passed byte array.
+     * </p>
+     * 
      * @param codedBytes
      * @param allocationMode
      */
@@ -27,6 +31,7 @@ public class BitEncoder
         remainingBitsInCurrentByte = 8;
         this.codedBytes = codedBytes;
         this.allocationMode = allocationMode;
+        Arrays.fill(codedBytes, (byte) 0);
     }
 
     /**

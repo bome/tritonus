@@ -40,7 +40,6 @@ import java.util.Iterator;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.tritonus.lowlevel.gsm.GSMDecoder;
 import org.tritonus.lowlevel.gsm.GsmConstants;

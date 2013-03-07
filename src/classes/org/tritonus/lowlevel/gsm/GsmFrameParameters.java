@@ -68,6 +68,7 @@ public class GsmFrameParameters
      * </p>
      * 
      * @param printStream
+     *            the stream to output the dump
      */
     public void dump(PrintStream printStream)
     {
