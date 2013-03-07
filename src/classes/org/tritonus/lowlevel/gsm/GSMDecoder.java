@@ -56,12 +56,6 @@ public final class GSMDecoder
 
     private GsmFrameParameters m_gsmFrameParameters = new GsmFrameParameters();
 
-    /**
-     * Stores the last 4 bits of the last byte of the first half of a Microsoft
-     * frame to become the first 4 bits of the second half.
-     */
-    private int m_frame_chain;
-
     private int[] m_erp = new int[40];
     private int[] m_wt = new int[160];
 
@@ -409,12 +403,9 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(2);
             gsmFrameParameters.m_xmc[50] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[51] = bitDecoder.getNextBits(3);
-
-            m_frame_chain = bitDecoder.m_sr & 0xf;
         }
         else
         {
-            bitDecoder.m_sr = m_frame_chain;
             bitDecoder.getNextCodedByteValue(4); /* 1 */
             gsmFrameParameters.m_LARc[0] = bitDecoder.getNextBits(6);
             gsmFrameParameters.m_LARc[1] = bitDecoder.getNextBits(6);
