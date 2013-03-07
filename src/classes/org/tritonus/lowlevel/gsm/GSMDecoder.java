@@ -41,13 +41,8 @@ public final class GSMDecoder
 
     private GsmFrameFormat gsmFrameFormat;
 
-    /**
-     * The following variables are for exploding Microsoft frames. See
-     * {@link #explodeFrameMicrosoft(byte[], int, boolean)}.
-     */
-    private byte[] m_codedFrame;
-    private int m_codedFrameByteIndex;
-    private int m_sr;
+    private BitDecoder bitDecoder = new BitDecoder(null, 0,
+            AllocationMode.LSBitFirst);
 
     private int[] m_dp0 = new int[280];
 
@@ -299,232 +294,232 @@ public final class GSMDecoder
             GsmFrameParameters gsmFrameParameters)
             throws InvalidGSMFrameException
     {
-        m_codedFrame = c;
-        m_codedFrameByteIndex = bufferStartIndex;
-        m_sr = 0;
+        bitDecoder.m_codedFrame = c;
+        bitDecoder.m_codedFrameByteIndex = bufferStartIndex;
+        bitDecoder.m_sr = 0;
 
         if (firstHalfOfMicrosoftFrame)
         {
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_LARc[0] = getNextBits(6);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_LARc[1] = getNextBits(6);
-            m_sr |= getNextCodedByteValue() << 4;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 4;
             gsmFrameParameters.m_LARc[2] = getNextBits(5);
             gsmFrameParameters.m_LARc[3] = getNextBits(5);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_LARc[4] = getNextBits(4);
             gsmFrameParameters.m_LARc[5] = getNextBits(4);
-            m_sr |= getNextCodedByteValue() << 2; /* 5 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2; /* 5 */
             gsmFrameParameters.m_LARc[6] = getNextBits(3);
             gsmFrameParameters.m_LARc[7] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 4;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 4;
             gsmFrameParameters.m_Nc[0] = getNextBits(7);
             gsmFrameParameters.m_bc[0] = getNextBits(2);
             gsmFrameParameters.m_Mc[0] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmaxc[0] = getNextBits(6);
             gsmFrameParameters.m_xmc[0] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[1] = getNextBits(3);
             gsmFrameParameters.m_xmc[2] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[3] = getNextBits(3);
             gsmFrameParameters.m_xmc[4] = getNextBits(3);
             gsmFrameParameters.m_xmc[5] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1; /* 10 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1; /* 10 */
             gsmFrameParameters.m_xmc[6] = getNextBits(3);
             gsmFrameParameters.m_xmc[7] = getNextBits(3);
             gsmFrameParameters.m_xmc[8] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[9] = getNextBits(3);
             gsmFrameParameters.m_xmc[10] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[11] = getNextBits(3);
             gsmFrameParameters.m_xmc[12] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 4;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 4;
             gsmFrameParameters.m_Nc[1] = getNextBits(7);
             gsmFrameParameters.m_bc[1] = getNextBits(2);
             gsmFrameParameters.m_Mc[1] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmaxc[1] = getNextBits(6);
             gsmFrameParameters.m_xmc[13] = getNextBits(3);
-            m_sr = getNextCodedByteValue(); /* 15 */
+            bitDecoder.m_sr = getNextCodedByteValue(); /* 15 */
             gsmFrameParameters.m_xmc[14] = getNextBits(3);
             gsmFrameParameters.m_xmc[15] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[16] = getNextBits(3);
             gsmFrameParameters.m_xmc[17] = getNextBits(3);
             gsmFrameParameters.m_xmc[18] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[19] = getNextBits(3);
             gsmFrameParameters.m_xmc[20] = getNextBits(3);
             gsmFrameParameters.m_xmc[21] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[22] = getNextBits(3);
             gsmFrameParameters.m_xmc[23] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[24] = getNextBits(3);
             gsmFrameParameters.m_xmc[25] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 4; /* 20 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 4; /* 20 */
             gsmFrameParameters.m_Nc[2] = getNextBits(7);
             gsmFrameParameters.m_bc[2] = getNextBits(2);
             gsmFrameParameters.m_Mc[2] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmaxc[2] = getNextBits(6);
             gsmFrameParameters.m_xmc[26] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[27] = getNextBits(3);
             gsmFrameParameters.m_xmc[28] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[29] = getNextBits(3);
             gsmFrameParameters.m_xmc[30] = getNextBits(3);
             gsmFrameParameters.m_xmc[31] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[32] = getNextBits(3);
             gsmFrameParameters.m_xmc[33] = getNextBits(3);
             gsmFrameParameters.m_xmc[34] = getNextBits(3);
-            m_sr = getNextCodedByteValue(); /* 25 */
+            bitDecoder.m_sr = getNextCodedByteValue(); /* 25 */
             gsmFrameParameters.m_xmc[35] = getNextBits(3);
             gsmFrameParameters.m_xmc[36] = getNextBits(3);
-            m_sr |= getNextCodedByteValue();
+            bitDecoder.m_sr |= getNextCodedByteValue();
             gsmFrameParameters.m_xmc[37] = getNextBits(3);
             gsmFrameParameters.m_xmc[38] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 4;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 4;
             gsmFrameParameters.m_Nc[3] = getNextBits(7);
             gsmFrameParameters.m_bc[3] = getNextBits(2);
             gsmFrameParameters.m_Mc[3] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmaxc[3] = getNextBits(6);
             gsmFrameParameters.m_xmc[39] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[40] = getNextBits(3);
             gsmFrameParameters.m_xmc[41] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2; /* 30 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2; /* 30 */
             gsmFrameParameters.m_xmc[42] = getNextBits(3);
             gsmFrameParameters.m_xmc[43] = getNextBits(3);
             gsmFrameParameters.m_xmc[44] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[45] = getNextBits(3);
             gsmFrameParameters.m_xmc[46] = getNextBits(3);
             gsmFrameParameters.m_xmc[47] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[48] = getNextBits(3);
             gsmFrameParameters.m_xmc[49] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[50] = getNextBits(3);
             gsmFrameParameters.m_xmc[51] = getNextBits(3);
 
-            m_frame_chain = m_sr & 0xf;
+            m_frame_chain = bitDecoder.m_sr & 0xf;
         }
         else
         {
-            m_sr = m_frame_chain;
-            m_sr |= getNextCodedByteValue() << 4; /* 1 */
+            bitDecoder.m_sr = m_frame_chain;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 4; /* 1 */
             gsmFrameParameters.m_LARc[0] = getNextBits(6);
             gsmFrameParameters.m_LARc[1] = getNextBits(6);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_LARc[2] = getNextBits(5);
-            m_sr |= getNextCodedByteValue() << 3;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 3;
             gsmFrameParameters.m_LARc[3] = getNextBits(5);
             gsmFrameParameters.m_LARc[4] = getNextBits(4);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_LARc[5] = getNextBits(4);
             gsmFrameParameters.m_LARc[6] = getNextBits(3);
             gsmFrameParameters.m_LARc[7] = getNextBits(3);
-            m_sr = getNextCodedByteValue(); /* 5 */
+            bitDecoder.m_sr = getNextCodedByteValue(); /* 5 */
             gsmFrameParameters.m_Nc[0] = getNextBits(7);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_bc[0] = getNextBits(2);
             gsmFrameParameters.m_Mc[0] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 5;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 5;
             gsmFrameParameters.m_xmaxc[0] = getNextBits(6);
             gsmFrameParameters.m_xmc[0] = getNextBits(3);
             gsmFrameParameters.m_xmc[1] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[2] = getNextBits(3);
             gsmFrameParameters.m_xmc[3] = getNextBits(3);
             gsmFrameParameters.m_xmc[4] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[5] = getNextBits(3);
             gsmFrameParameters.m_xmc[6] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2; /* 10 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2; /* 10 */
             gsmFrameParameters.m_xmc[7] = getNextBits(3);
             gsmFrameParameters.m_xmc[8] = getNextBits(3);
             gsmFrameParameters.m_xmc[9] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[10] = getNextBits(3);
             gsmFrameParameters.m_xmc[11] = getNextBits(3);
             gsmFrameParameters.m_xmc[12] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_Nc[1] = getNextBits(7);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_bc[1] = getNextBits(2);
             gsmFrameParameters.m_Mc[1] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 5;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 5;
             gsmFrameParameters.m_xmaxc[1] = getNextBits(6);
             gsmFrameParameters.m_xmc[13] = getNextBits(3);
             gsmFrameParameters.m_xmc[14] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1; /* 15 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1; /* 15 */
             gsmFrameParameters.m_xmc[15] = getNextBits(3);
             gsmFrameParameters.m_xmc[16] = getNextBits(3);
             gsmFrameParameters.m_xmc[17] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[18] = getNextBits(3);
             gsmFrameParameters.m_xmc[19] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[20] = getNextBits(3);
             gsmFrameParameters.m_xmc[21] = getNextBits(3);
             gsmFrameParameters.m_xmc[22] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[23] = getNextBits(3);
             gsmFrameParameters.m_xmc[24] = getNextBits(3);
             gsmFrameParameters.m_xmc[25] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_Nc[2] = getNextBits(7);
-            m_sr |= getNextCodedByteValue() << 1; /* 20 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1; /* 20 */
             gsmFrameParameters.m_bc[2] = getNextBits(2);
             gsmFrameParameters.m_Mc[2] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 5;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 5;
             gsmFrameParameters.m_xmaxc[2] = getNextBits(6);
             gsmFrameParameters.m_xmc[26] = getNextBits(3);
             gsmFrameParameters.m_xmc[27] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[28] = getNextBits(3);
             gsmFrameParameters.m_xmc[29] = getNextBits(3);
             gsmFrameParameters.m_xmc[30] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_xmc[31] = getNextBits(3);
             gsmFrameParameters.m_xmc[32] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[33] = getNextBits(3);
             gsmFrameParameters.m_xmc[34] = getNextBits(3);
             gsmFrameParameters.m_xmc[35] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1; /* 25 */
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1; /* 25 */
             gsmFrameParameters.m_xmc[36] = getNextBits(3);
             gsmFrameParameters.m_xmc[37] = getNextBits(3);
             gsmFrameParameters.m_xmc[38] = getNextBits(3);
-            m_sr = getNextCodedByteValue();
+            bitDecoder.m_sr = getNextCodedByteValue();
             gsmFrameParameters.m_Nc[3] = getNextBits(7);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_bc[3] = getNextBits(2);
             gsmFrameParameters.m_Mc[3] = getNextBits(2);
-            m_sr |= getNextCodedByteValue() << 5;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 5;
             gsmFrameParameters.m_xmaxc[3] = getNextBits(6);
             gsmFrameParameters.m_xmc[39] = getNextBits(3);
             gsmFrameParameters.m_xmc[40] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[41] = getNextBits(3);
             gsmFrameParameters.m_xmc[42] = getNextBits(3);
             gsmFrameParameters.m_xmc[43] = getNextBits(3);
-            m_sr = getNextCodedByteValue(); /* 30 */
+            bitDecoder.m_sr = getNextCodedByteValue(); /* 30 */
             gsmFrameParameters.m_xmc[44] = getNextBits(3);
             gsmFrameParameters.m_xmc[45] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 2;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 2;
             gsmFrameParameters.m_xmc[46] = getNextBits(3);
             gsmFrameParameters.m_xmc[47] = getNextBits(3);
             gsmFrameParameters.m_xmc[48] = getNextBits(3);
-            m_sr |= getNextCodedByteValue() << 1;
+            bitDecoder.m_sr |= getNextCodedByteValue() << 1;
             gsmFrameParameters.m_xmc[49] = getNextBits(3);
             gsmFrameParameters.m_xmc[50] = getNextBits(3);
             gsmFrameParameters.m_xmc[51] = getNextBits(3);
@@ -533,15 +528,15 @@ public final class GSMDecoder
 
     private final int getNextCodedByteValue()
     {
-        int value = m_codedFrame[m_codedFrameByteIndex];
-        m_codedFrameByteIndex++;
+        int value = bitDecoder.m_codedFrame[bitDecoder.m_codedFrameByteIndex];
+        bitDecoder.m_codedFrameByteIndex++;
         return value & 0xFF;
     }
 
     private final int getNextBits(int bits)
     {
-        int value = m_sr & Gsm_Def.BITMASKS[bits];
-        m_sr >>>= bits;
+        int value = bitDecoder.m_sr & Gsm_Def.BITMASKS[bits];
+        bitDecoder.m_sr >>>= bits;
         return value;
     }
 

@@ -16,9 +16,10 @@ public class BitDecoder
      * {@link #explodeFrameMicrosoft(byte[], int, boolean)}.
      */
 
-    private byte[] m_codedFrame;
-    private int m_codedFrameByteIndex;
-    private int m_sr;
+    // TODO: (GSM) should be reverted to private once transition is finished
+    public byte[] m_codedFrame;
+    public int m_codedFrameByteIndex;
+    public int m_sr;
     private int m_currentBits;
 
     /**
@@ -39,7 +40,7 @@ public class BitDecoder
         m_codedFrameByteIndex = bufferStartIndex;
         m_sr = 0;
         m_currentBits = 0;
-//        getNextCodedByteValue(0);
+        // getNextCodedByteValue(0);
     }
 
     public final void getNextCodedByteValue(int shift)
@@ -48,7 +49,8 @@ public class BitDecoder
         m_currentBits += 8;
     }
 
-    private final int getNextCodedByteValue()
+    //TODO: (GSM) revert to private
+    public final int getNextCodedByteValue()
     {
         int value = m_codedFrame[m_codedFrameByteIndex];
         m_codedFrameByteIndex++;
