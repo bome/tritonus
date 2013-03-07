@@ -300,7 +300,7 @@ public final class GSMDecoder
 
         if (firstHalfOfMicrosoftFrame)
         {
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_LARc[0] = bitDecoder.getNextBits(6);
             bitDecoder.getNextCodedByteValue(2);
             gsmFrameParameters.m_LARc[1] = bitDecoder.getNextBits(6);
@@ -320,7 +320,7 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_xmaxc[0] = bitDecoder.getNextBits(6);
             gsmFrameParameters.m_xmc[0] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[1] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[2] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -331,7 +331,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[6] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[7] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[8] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[9] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[10] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -344,7 +344,7 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_xmaxc[1] = bitDecoder.getNextBits(6);
             gsmFrameParameters.m_xmc[13] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue(); /* 15 */
+            bitDecoder.getNextCodedByteValue(0); /* 15 */
             gsmFrameParameters.m_xmc[14] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[15] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -355,7 +355,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[19] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[20] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[21] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[22] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[23] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -368,7 +368,7 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_xmaxc[2] = bitDecoder.getNextBits(6);
             gsmFrameParameters.m_xmc[26] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[27] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[28] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -379,7 +379,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[32] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[33] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[34] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue(); /* 25 */
+            bitDecoder.getNextCodedByteValue(0); /* 25 */
             gsmFrameParameters.m_xmc[35] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[36] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(0);
@@ -392,7 +392,7 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_xmaxc[3] = bitDecoder.getNextBits(6);
             gsmFrameParameters.m_xmc[39] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[40] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[41] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2); /* 30 */
@@ -403,7 +403,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[45] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[46] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[47] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[48] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[49] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -418,7 +418,7 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(4); /* 1 */
             gsmFrameParameters.m_LARc[0] = bitDecoder.getNextBits(6);
             gsmFrameParameters.m_LARc[1] = bitDecoder.getNextBits(6);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_LARc[2] = bitDecoder.getNextBits(5);
             bitDecoder.getNextCodedByteValue(3);
             gsmFrameParameters.m_LARc[3] = bitDecoder.getNextBits(5);
@@ -427,7 +427,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_LARc[5] = bitDecoder.getNextBits(4);
             gsmFrameParameters.m_LARc[6] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_LARc[7] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue(); /* 5 */
+            bitDecoder.getNextCodedByteValue(0); /* 5 */
             gsmFrameParameters.m_Nc[0] = bitDecoder.getNextBits(7);
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_bc[0] = bitDecoder.getNextBits(2);
@@ -440,7 +440,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[2] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[3] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[4] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[5] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[6] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2); /* 10 */
@@ -451,7 +451,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[10] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[11] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[12] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_Nc[1] = bitDecoder.getNextBits(7);
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_bc[1] = bitDecoder.getNextBits(2);
@@ -464,7 +464,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[15] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[16] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[17] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[18] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[19] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -475,7 +475,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[23] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[24] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[25] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_Nc[2] = bitDecoder.getNextBits(7);
             bitDecoder.getNextCodedByteValue(1); /* 20 */
             gsmFrameParameters.m_bc[2] = bitDecoder.getNextBits(2);
@@ -488,7 +488,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[28] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[29] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[30] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_xmc[31] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[32] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);
@@ -499,7 +499,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[36] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[37] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[38] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue();
+            bitDecoder.getNextCodedByteValue(0);
             gsmFrameParameters.m_Nc[3] = bitDecoder.getNextBits(7);
             bitDecoder.getNextCodedByteValue(1);
             gsmFrameParameters.m_bc[3] = bitDecoder.getNextBits(2);
@@ -512,7 +512,7 @@ public final class GSMDecoder
             gsmFrameParameters.m_xmc[41] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[42] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[43] = bitDecoder.getNextBits(3);
-            bitDecoder.m_sr = bitDecoder.getNextCodedByteValue(); /* 30 */
+            bitDecoder.getNextCodedByteValue(0); /* 30 */
             gsmFrameParameters.m_xmc[44] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[45] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(2);

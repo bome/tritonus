@@ -49,8 +49,7 @@ public class BitDecoder
         m_currentBits += 8;
     }
 
-    //TODO: (GSM) revert to private
-    public final int getNextCodedByteValue()
+    private final int getNextCodedByteValue()
     {
         int value = m_codedFrame[m_codedFrameByteIndex];
         m_codedFrameByteIndex++;
