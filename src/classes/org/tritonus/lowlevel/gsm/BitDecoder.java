@@ -45,7 +45,12 @@ public class BitDecoder
 
     public final void getNextCodedByteValue(int shift)
     {
-        m_sr |= getNextCodedByteValue() << shift;
+    // TODO: (GSM) remove
+        if (shift != m_currentBits)
+        {
+            System.out.println("shift != m_currentBits: shift: " + shift +", m_currentBits: "+ m_currentBits);
+        }
+        m_sr |= getNextCodedByteValue() << m_currentBits;
         m_currentBits += 8;
     }
 

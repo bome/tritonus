@@ -376,7 +376,7 @@ public final class GSMDecoder
             bitDecoder.getNextCodedByteValue(0); /* 25 */
             gsmFrameParameters.m_xmc[35] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[36] = bitDecoder.getNextBits(3);
-            bitDecoder.getNextCodedByteValue(0);
+            bitDecoder.getNextCodedByteValue(2);
             gsmFrameParameters.m_xmc[37] = bitDecoder.getNextBits(3);
             gsmFrameParameters.m_xmc[38] = bitDecoder.getNextBits(3);
             bitDecoder.getNextCodedByteValue(4);
