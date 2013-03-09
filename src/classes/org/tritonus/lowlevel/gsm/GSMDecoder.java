@@ -290,7 +290,6 @@ public final class GSMDecoder
     {
         bitDecoder.m_codedFrame = c;
         bitDecoder.m_codedFrameByteIndex = bufferStartIndex;
-        bitDecoder.m_sr = 0;
 
         if (firstHalfOfMicrosoftFrame)
         {

@@ -135,10 +135,6 @@ public class GSMDecoderFormatConversionProvider extends
             }
             throw new IllegalArgumentException("conversion not supported");
         }
-        // TODO: this is unreachable
-        // if (TDebug.TraceAudioConverter) {
-        // TDebug.out("GSMFormatConversionProvider.getAudioInputStream(): end");
-        // }
     }
 
     protected AudioFormat getDefaultTargetFormat(AudioFormat targetFormat,

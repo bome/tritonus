@@ -19,7 +19,7 @@ public class BitDecoder
     // TODO: (GSM) should be reverted to private once transition is finished
     public byte[] m_codedFrame;
     public int m_codedFrameByteIndex;
-    public int m_sr;
+    private int m_sr;
     private int m_currentBits;
 
     /**
@@ -43,13 +43,9 @@ public class BitDecoder
         // getNextCodedByteValue(0);
     }
 
+    // TODO: (GSM) parameter shift not used
     public final void getNextCodedByteValue(int shift)
     {
-    // TODO: (GSM) remove
-        if (shift != m_currentBits)
-        {
-            System.out.println("shift != m_currentBits: shift: " + shift +", m_currentBits: "+ m_currentBits);
-        }
         m_sr |= getNextCodedByteValue() << m_currentBits;
         m_currentBits += 8;
     }

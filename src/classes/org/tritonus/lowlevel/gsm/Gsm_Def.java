@@ -22,22 +22,11 @@ package org.tritonus.lowlevel.gsm;
 
 public abstract class Gsm_Def
 {
-    // TODO: remove
-    // Define the magic number for audio files
-    public static final int AUDIO_FILE_MAGIC = 0x2e736e64;
-
-    // TODO: remove
-    // The encoding key for type: 8-bit ISDN u-law
-    public static final int AUDIO_FILE_ENCODING_MULAW_8 = 1;
-
-    public static final short FRAME_SIZE = 33;
-    public static final short MAX_FRAME_READ = 1000;
-
-    // TODO: use Short.MIN/MAX_VALUE
+    // TODO: (GSM) use Short.MIN/MAX_VALUE
     public static final short MIN_WORD = -32768;
     public static final short MAX_WORD = 32767;
 
-    // TODO: use Integer.MIN/MAX_VALUE
+    // TODO: (GSM) use Integer.MIN/MAX_VALUE
     public static final int MIN_LONGWORD = -2147483648;
     public static final int MAX_LONGWORD = 2147483647;
 
