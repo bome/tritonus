@@ -7,9 +7,6 @@ public class BitDecoder
         MSBitFirst, LSBitFirst;
     }
 
-    // private int byteIndex;
-    // private int remainingBitsInCurrentByte;
-    // private byte[] codedBytes;
     private AllocationMode allocationMode;
     /**
      * The following variables are for exploding Microsoft frames. See
@@ -32,25 +29,20 @@ public class BitDecoder
             AllocationMode allocationMode)
     {
         super();
-        // byteIndex = 0;
-        // remainingBitsInCurrentByte = 8;
-        // this.codedBytes = codedBytes;
         this.allocationMode = allocationMode;
         m_codedFrame = codedBytes;
         m_codedFrameByteIndex = bufferStartIndex;
         m_sr = 0;
         m_currentBits = 0;
-        // getNextCodedByteValue(0);
     }
 
-    // TODO: (GSM) parameter shift not used
-    public final void getNextCodedByteValue(int shift)
+    public final void getNextCodedByteValue()
     {
-        m_sr |= getNextCodedByteValue() << m_currentBits;
+        m_sr |= getNextCodedByteValue2() << m_currentBits;
         m_currentBits += 8;
     }
 
-    private final int getNextCodedByteValue()
+    private final int getNextCodedByteValue2()
     {
         int value = m_codedFrame[m_codedFrameByteIndex];
         m_codedFrameByteIndex++;
