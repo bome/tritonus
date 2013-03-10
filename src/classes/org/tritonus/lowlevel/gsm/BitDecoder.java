@@ -37,13 +37,13 @@ public class BitDecoder
         m_codedFrameByteIndex = bufferStartIndex;
     }
 
-    private final void getNextCodedByteValue()
+    private final void addNextCodedByteValue()
     {
-        m_sr |= getNextCodedByteValue2() << m_currentBits;
+        m_sr |= getNextCodedByteValue() << m_currentBits;
         m_currentBits += 8;
     }
 
-    private final int getNextCodedByteValue2()
+    private final int getNextCodedByteValue()
     {
         int value = m_codedFrame[m_codedFrameByteIndex];
         m_codedFrameByteIndex++;
@@ -57,7 +57,7 @@ public class BitDecoder
         case LSBitFirst:
             while (m_currentBits < bits)
             {
-                getNextCodedByteValue();
+                addNextCodedByteValue();
             }
             int value = m_sr & Gsm_Def.BITMASKS[bits];
             m_sr >>>= bits;
