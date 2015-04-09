@@ -15,41 +15,28 @@ http://www.kaffe.org/
 
 
 Which components do i need?
-[TODO: Which coponents to compile/install]
+[TODO: Which components to compile/install]
 
 
 
 What you need
 =============
 
-- jdk 1.5.x. Testing was done with the
-Sun jdk 1.5.0-b64. Other versions may work.
+- jdk 5 or later.
 If you want to compile Linux specific components, it is recommended to do
-it on a Linux system, so you need a j2sdk for Linux. Cross-compiling has not
+it on a Linux system, so you need a JDK for Linux. Cross-compiling has not
 been tested.
 If you only want to build pure-java (not Linux specific) components, you
-can use a j2sdk on any platform.
-Tritonus does not work with jdk1.1.X.
+can use a JDK on any platform.
+Tritonus does not work with JDK 1.1.X.
 There are no experiences with gcj. Reports are welcome.
 
 - Optional: jikes (recommended, testing was done with version 1.16)
 
-- Either: the Enlightened Sound Daemon (esd or EsounD). On Debian
-systems, install the packages esound-common, esound, libesd0 and
-libesd0-dev. On Suse systems, install the package esound. If esd is
-not part of your Linux distribution, look at www.gnome.org. Make sure
-you have not only the daemon and the shared library, but also the header
-files for libesd.
-
-  NOTE: this is kept more or less as a compatibility option. Esd is
-  considered a badly designed program. Using ALSA is highly
-  recommended.
-
-- Or: ALSA 0.9.0rc2 or later or the corresponding cvs state. Get it
-from http://www.alsa-project.org/. It is recommended to use ALSA if
-you want to get high-performance, low-latency operation, or reliable
-full-duplex. It is a necessity if you want professional-grade MIDI support.
-Testing was done with ALSA 0.9.0rc2. 0.9.0rc3 has been reported to work.
+- It is recommended to use ALSA if you want to get high-performance, 
+low-latency operation, or reliable full-duplex. It is a necessity if 
+you want professional-grade MIDI support. Testing was done with ALSA 
+0.9.0rc2. 0.9.0rc3 has been reported to work.
 
   STILL ANOTHER NOTE: currently, Tritonus' ALSA handling does not do
   software mixing. This means that for normal JS operation (multiple
@@ -85,6 +72,7 @@ Building mp3 related components
 The ant based build requires that javalayer.jar is already compiled
 and that it is available in the classpath during the build. Only then
 the mp3 SPI plug-in gets compiled and packaged.
+See also README_mp3.
 
 
 Installing steps

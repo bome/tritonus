@@ -116,15 +116,16 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+# does not work with my version of autoconf
+# AC_DISABLE_STATIC
+# AC_PROG_LIBTOOL
 
 AC_SUBST(SUBDIRS)
 dnl Checks for libraries.
 SUBDIRS=
 AC_CHECK_LIB(asound, snd_seq_open,[SUBDIRS="$SUBDIRS src/lib/alsa"; AC_MSG_RESULT(Information: will build stuff for ALSA sequencer)],[AC_MSG_RESULT(Information: will not build stuff for ALSA sequencer)],)
 AC_CHECK_LIB(esd,esd_open_sound,[SUBDIRS="$SUBDIRS src/lib/esd"; AC_MSG_RESULT(Information: will build stuff for Enlightened Sound Daemon)],[AC_MSG_RESULT(Information: will not build stuff for Enlightened Sound Daemon)])
-AC_CHECK_LIB(mp3lame,lame_init_params,[SUBDIRS="$SUBDIRS src/lib/lame"; AC_MSG_RESULT(Information: will build stuff for LAME mp3 encoder)],[AC_MSG_RESULT(Information: will not build stuff for LAME mp3 encoder)])
+AC_CHECK_LIB(mp3lame,lame_init_params,[SUBDIRS="$SUBDIRS src/lib/lame"; AC_MSG_RESULT(Information: will build stuff for LAME mp3 encoder)],[AC_MSG_RESULT(Information: will not build stuff for LAME mp3 encoder)], -lm)
 AC_CHECK_HEADER(linux/cdrom.h,[SUBDIRS="$SUBDIRS src/lib/cooked_ioctl"; AC_MSG_RESULT(Information: will build stuff for 'cooked ioctl' cdda)],[AC_MSG_RESULT(Information: will not build stuff for 'cooked ioctl' cdda)])
 AC_CHECK_HEADER(cdda_interface.h,[SUBDIRS="$SUBDIRS src/lib/cdparanoia"; AC_MSG_RESULT(Information: will build stuff for cdparanoia)],[AC_MSG_RESULT(Information: will not build stuff for cdparanoia)])
 AC_CHECK_HEADER(ogg/ogg.h,[SUBDIRS="$SUBDIRS src/lib/vorbis"; AC_MSG_RESULT(Information: will build stuff for vorbis)],[AC_MSG_RESULT(Information: will not build stuff for vorbis)])

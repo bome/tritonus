@@ -1,5 +1,7 @@
 NEWS for Tritonus
 
+Re-released under Apache v2 license.
+
 version 0.2.0:
 - bug fixes in audio file writers
 - improved A-law and u-law converters
@@ -56,8 +58,5 @@ version 0.1.002:
 - circular buffer in output channel has been eliminated
 - honors passed AudioFormat in Mixer.getOutputChannel()
 - Mixer.get*Formats() work
-
-Please report bugs to the author of this library:
-Matthias Pfisterer <Matthias.Pfisterer@gmx.de>
 
 Have fun!
