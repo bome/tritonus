@@ -6,7 +6,7 @@
 
 /*
  *  Copyright (c) 1999,2000 by Matthias Pfisterer
- *  Copyright (c) 1999 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 1999 by Florian Bomers
  *
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");

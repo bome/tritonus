@@ -4,7 +4,7 @@
 
 
 /*
- *  Copyright (c) 2001 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2001 by Florian Bomers
  *
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");

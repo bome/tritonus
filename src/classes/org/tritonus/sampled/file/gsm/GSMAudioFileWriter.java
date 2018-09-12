@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2000 by Florian Bomers
  *  Copyright (c) 2000 by Matthias Pfisterer
  *
  *

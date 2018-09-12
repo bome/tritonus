@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2006 by Florian Bomers <http://www.bomers.de>
+ *  Copyright (c) 2006 by Florian Bomers
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
