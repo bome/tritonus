@@ -3,7 +3,7 @@
  */
 
 /*
- *  Copyright (c) 1999, 2000 by Matthias Pfisterer <Matthias.Pfisterer@web.de>
+ *  Copyright (c) 1999, 2000 by Matthias Pfisterer
  *
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");

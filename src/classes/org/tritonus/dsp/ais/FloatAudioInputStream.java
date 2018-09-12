@@ -5,7 +5,7 @@
  */
 
 /*
- *  Copyright (c) 2000 by Florian Bomers <florian@bome.com>
+ *  Copyright (c) 2000 by Florian Bomers
  *  Copyright (c) 2003 by Matthias Pfisterer
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
