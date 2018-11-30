@@ -30,6 +30,10 @@ AC_MSG_RESULT($JAVA_VERSION)
 
 JDK_OK=yes
 case $JAVA_VERSION in
+    1.8* )
+	;;
+    1.7* )
+	;;
     1.6* )
 	;;
     1.5* )
