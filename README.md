@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/umjammer/tritonus.svg)](https://jitpack.io/#umjammer/tritonus)
+
 # tritonus
 
 This is Tritonus, version 0.3.7
