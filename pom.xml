@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.tritonus</groupId>
+  <artifactId>tritonus</artifactId>
+  <version>0.3.8-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Tritonus Parent Module</name>
+
+  <modules>
+    <module>tritonus-share</module>
+    <module>tritonus-remaining</module>
+    <module>tritonus-dsp</module>
+    <module>tritonus-core</module>
+    <module>tritonus-gsm</module>
+    <module>tritonus-javasequencer</module>
+    <module>tritonus-jorbis</module>
+    <module>tritonus-midishare</module>
+    <module>tritonus-mp3</module>
+    <module>tritonus-esd</module>
+    <module>tritonus-alsa</module>
+    <module>tritonus-vorbis</module>
+    <module>tritonus-pvorbis</module>
+    <module>tritonus-cdda</module>
+    <module>tritonus-fluidsynth</module>
+<!--
+    <module>tritonus-src</module>
+    <module>tritonus-aos</module>
+
+    <module>tritonus-saol</module>
+-->
+  </modules>
+
+</project>
