@@ -22,6 +22,8 @@ package org.tritonus.test;
 
 import javax.sound.sampled.Control;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 // import javax.sound.sampled.BooleanControl;
@@ -36,6 +38,7 @@ public class ControlTypeTestCase
 		The test checks if the constructor does not throw an
 		exception.
 	*/
+    @Test
 	public void testConstructor()
 		throws Exception
 	{
@@ -50,6 +53,7 @@ public class ControlTypeTestCase
 		The test checks if an object is considered equal to
 		itself.
 	*/
+    @Test
 	public void testEqualsSelfIdentity()
 		throws Exception
 	{
@@ -64,6 +68,7 @@ public class ControlTypeTestCase
 		The test checks if two objects are considered unequal,
 		even if they have the same type string.
 	*/
+    @Test
 	public void testEqualsSelfUnequality()
 		throws Exception
 	{
@@ -79,6 +84,7 @@ public class ControlTypeTestCase
 		The test checks if two calls to hashCode() on the
 		same object return the same value.
 	*/
+    @Test
 	public void testHashCode()
 		throws Exception
 	{
@@ -94,6 +100,7 @@ public class ControlTypeTestCase
 		equals the one passed in the constructor
 		(and doesn't throw an exception).
 	*/
+    @Test
 	public void testToString()
 		throws Exception
 	{

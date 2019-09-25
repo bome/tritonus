@@ -22,6 +22,7 @@ package org.tritonus.test.tritonus.lowlevel.pogg;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.lowlevel.pogg.Packet;
 import org.tritonus.lowlevel.pogg.Page;
 import org.tritonus.lowlevel.pogg.StreamState;
@@ -483,7 +484,7 @@ public class FramingTestCase
 				   "Never got a packet with EOS set!\n");
 	}
 
-
+	@Test
 	public void testStreamEncoding0()
 		throws Exception
 	{
@@ -493,7 +494,7 @@ public class FramingTestCase
 				  new int[][]{head1_0});
 	}
 
-
+    @Test
 	public void testStreamEncoding1()
 		throws Exception
 	{
@@ -503,7 +504,7 @@ public class FramingTestCase
 				  new int[][]{head1_1,head2_1});
 	}
 
-
+    @Test
 	public void testStreamEncoding2()
 		throws Exception
 	{
@@ -513,7 +514,7 @@ public class FramingTestCase
 				  new int[][]{head1_2,head2_2});
 	}
 
-
+    @Test
 	public void testStreamEncoding3()
 		throws Exception
 	{
@@ -523,7 +524,7 @@ public class FramingTestCase
 				  new int[][]{head1_3,head2_3});
 	}
 
-
+    @Test
 	public void testStreamEncoding4()
 		throws Exception
 	{
@@ -533,7 +534,7 @@ public class FramingTestCase
 				  new int[][]{head1_4,head2_4,head3_4});
 	}
 
-
+    @Test
 	public void testStreamEncoding5()
 		throws Exception
 	{
@@ -578,7 +579,7 @@ public class FramingTestCase
 				  new int[][]{head1_5,head2_5,head3_5});
 	}
 
-
+    @Test
 	public void testStreamEncoding6()
 		throws Exception
 	{
@@ -588,7 +589,7 @@ public class FramingTestCase
 				  new int[][]{head1_6,head2_6,head3_6,head4_6});
 	}
 
-
+    @Test
 	public void testStreamEncoding7()
 		throws Exception
 	{
@@ -644,7 +645,7 @@ public class FramingTestCase
 	}
 
 
-
+    @Test
 	public void testFraming()
 		throws Exception
 	{
@@ -659,6 +660,7 @@ public class FramingTestCase
 
 
 	/* Test lost pages on pagein/packetout: no rollback */
+    @Test
 	public void testFraming1()
 		throws Exception
 	{
@@ -714,6 +716,7 @@ public class FramingTestCase
 
 
 	/* Test lost pages on pagein/packetout: rollback with continuation */
+    @Test
 	public void testFraming2()
 		throws Exception
 	{
@@ -769,6 +772,7 @@ public class FramingTestCase
 
 
 	/* the rest only test sync */
+    @Test
 	public void testFraming3()
 		throws Exception
 	{
@@ -817,6 +821,7 @@ public class FramingTestCase
 
 
 	/* Test fractional page inputs: page + incomplete capture */
+    @Test
 	public void testFraming4()
 		throws Exception
 	{
@@ -850,6 +855,7 @@ public class FramingTestCase
 
 
 	/* Test recapture: garbage + page */
+    @Test
 	public void testFraming5()
 		throws Exception
 	{
@@ -890,6 +896,7 @@ public class FramingTestCase
 
 
 	/* Test recapture: page + garbage + page */
+    @Test
 	public void testFraming6()
 		throws Exception
 	{

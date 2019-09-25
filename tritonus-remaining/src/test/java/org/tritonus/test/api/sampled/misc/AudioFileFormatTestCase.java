@@ -29,15 +29,19 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 */
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class AudioFileFormatTestCase
 {
+    @Test
 	public void testNoMap()
 	{
 		AudioFileFormat fileFormat = new AudioFileFormat(null, null, 0);
@@ -49,17 +53,16 @@ public class AudioFileFormatTestCase
 	}
 
 
+    @Test
 	public void testNullMap()
 	{
-		AudioFileFormat fileFormat = new AudioFileFormat(null, null, 0,
-			null);
-		Map<String, Object> propReturn = fileFormat.properties();
-		assertTrue(propReturn.isEmpty());
-		Object result = propReturn.get("bitrate");
-		assertNull(result);
+        assertThrows(NullPointerException.class, () -> {
+            new AudioFileFormat(null, null, 0, null);
+        });
 	}
 
 
+    @Test
 	public void testEmptyMap()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
@@ -73,6 +76,7 @@ public class AudioFileFormatTestCase
 
 
 
+    @Test
 	public void testCopying()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();

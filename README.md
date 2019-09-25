@@ -2,12 +2,35 @@
 
 # tritonus
 
-This is Tritonus, version 0.3.7
+This is Tritonus
 
 Tritonus is an implementation of the Java Sound API and several 
 Java Sound plugins ("service providers"). For pre-compiled
 versions of these components, see: 
 http://www.tritonus.org/plugins.html
+
+| module        | status | comment |
+|---------------|:------:|---------|
+| share         | ✅    |         |
+| remaining     | ✅    |         |
+| dsp           | ✅    |         |
+| core          | ✅    |         |
+| gsm           | ✅    |         |
+| javasequencer | ✅    |         |
+| jorbis        | ✅    |         |
+| midishare     | ✅    |         |
+| mp3           | ✅    |         |
+| esd           | 🚫    | linux only |
+| alsa          | 🚫    | linux only |
+| vorbis        | 🚧    |         |
+| pvorbis       | 🚧    |         |
+| cdda          | 🚫    | linux only |
+| fluidsynth    | ?    | no test  |
+| src           | 🚫    |         |
+| aos           | 🚫    |         |
+| saol          | 🚫    |         |
+| timidity      | 🚧    |         |
+
 
 ## License
 Tritonus is distributed under the terms of the Apache License,

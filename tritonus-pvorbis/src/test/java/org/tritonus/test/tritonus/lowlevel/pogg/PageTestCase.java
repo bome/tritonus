@@ -20,6 +20,7 @@
 
 package org.tritonus.test.tritonus.lowlevel.pogg;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.lowlevel.pogg.Page;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +57,7 @@ public class PageTestCase
 	};
 
 
+    @Test
 	public void testSetData()
 		throws Exception
 	{
@@ -77,6 +79,7 @@ public class PageTestCase
 
 
 
+    @Test
 	public void testSetDataOffset()
 		throws Exception
 	{
@@ -102,6 +105,7 @@ public class PageTestCase
 
 
 
+    @Test
 	public void testHeaderProperties()
 		throws Exception
 	{

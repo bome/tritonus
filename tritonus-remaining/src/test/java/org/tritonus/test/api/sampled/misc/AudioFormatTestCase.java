@@ -25,9 +25,12 @@ import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -35,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class AudioFormatTestCase
 {
+    @Test
 	public void testNoMap()
 	{
 		AudioFormat fileFormat = new AudioFormat(
@@ -47,21 +51,19 @@ public class AudioFormatTestCase
 	}
 
 
+    @Test
 	public void testNullMap()
 	{
-		AudioFormat fileFormat = new AudioFormat(
-			null, 0.0F, 0, 0, 0, 0.0F, false,
-			null);
-		Map<String, Object> propReturn = fileFormat.properties();
-		assertTrue(propReturn.isEmpty());
-		Object result = propReturn.get("bitrate");
-		assertNull(result);
+        assertThrows(NullPointerException.class, () -> {
+            new AudioFormat(null, 0.0F, 0, 0, 0, 0.0F, false, null);
+        });
 	}
 
 
+    @Test
 	public void testEmptyMap()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		AudioFormat format = new AudioFormat(
 			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
 		Map<String, Object> propReturn = format.properties();
@@ -72,9 +74,10 @@ public class AudioFormatTestCase
 
 
 
+    @Test
 	public void testCopying()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		prop.put("bitrate", new Float(22.5F));
 		AudioFormat format = new AudioFormat(
 			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
@@ -86,9 +89,10 @@ public class AudioFormatTestCase
 	}
 
 
+    @Test
 	public void testUnmodifiable()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		AudioFormat format = new AudioFormat(
 			null, 0.0F, 0, 0, 0, 0.0F, false, prop);
 		Map<String, Object> propReturn = format.properties();
@@ -103,9 +107,10 @@ public class AudioFormatTestCase
 	}
 
 
+    @Test
 	public void testGet()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		prop.put("bitrate", new Float(22.5F));
 		prop.put("author", "Matthias Pfisterer");
 		AudioFormat format = new AudioFormat(

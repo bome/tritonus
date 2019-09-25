@@ -31,12 +31,15 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.spi.FormatConversionProvider;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.Encodings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@Disabled
 public class BaseFormatConversionProviderTestCase
 extends BaseProviderTestCase
 {
@@ -83,6 +86,7 @@ extends BaseProviderTestCase
 
 
 
+    @Test
 	public void testGetSourceEncodings()
 	{
 		AudioFormat.Encoding[]	aEncodings = null;
@@ -95,6 +99,7 @@ extends BaseProviderTestCase
 
 
 
+    @Test
 	public void testGetTargetEncodings()
 	{
 		AudioFormat.Encoding[]	aEncodings = null;
@@ -132,6 +137,7 @@ extends BaseProviderTestCase
 
 
 
+    @Test
 	public void testIsSourceEncodingsSupported()
 	{
 		implTestIsEncodingSupported(true);
@@ -139,6 +145,7 @@ extends BaseProviderTestCase
 
 
 
+    @Test
 	public void testIsTargetEncodingsSupported()
 	{
 		implTestIsEncodingSupported(false);

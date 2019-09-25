@@ -20,12 +20,14 @@
 
 package org.tritonus.test.tritonus.share.midi;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.midi.TMidiChannel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TMidiChannelTestCase
 {
+    @Test
     public void testChannelNumber()
 	{
 		int CHANNEL = 19;
@@ -35,6 +37,7 @@ public class TMidiChannelTestCase
 
 
 
+    @Test
 	public void testNoteOff()
 	{
 		TestMidiChannel channel = new TestMidiChannel(0);
@@ -59,6 +62,7 @@ public class TMidiChannelTestCase
 	}
 
 
+    @Test
 	public void testProgramChange()
 	{
 		TestMidiChannel channel = new TestMidiChannel(0);
@@ -86,6 +90,7 @@ public class TMidiChannelTestCase
 	}
 
 
+    @Test
 	public void testResetAllControllers()
 	{
 		TestMidiChannel channel = new TestMidiChannel(0);
@@ -95,6 +100,7 @@ public class TMidiChannelTestCase
 	}
 
 
+    @Test
 	public void testAllNotesOff()
 	{
 		TestMidiChannel channel = new TestMidiChannel(0);
@@ -104,6 +110,7 @@ public class TMidiChannelTestCase
 	}
 
 
+    @Test
 	public void testAllSoundOff()
 	{
 		TestMidiChannel channel = new TestMidiChannel(0);
@@ -113,6 +120,7 @@ public class TMidiChannelTestCase
 	}
 
 
+    @Test
 	public void testLocalControl()
 	{
 		TestMidiChannel channel = new TestMidiChannel(0);

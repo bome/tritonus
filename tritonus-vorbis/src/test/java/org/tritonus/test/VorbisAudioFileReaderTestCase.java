@@ -25,7 +25,7 @@ package org.tritonus.test;
 public class VorbisAudioFileReaderTestCase
 extends BaseAudioFileReaderTestCase
 {
-	public VorbisAudioFileReaderTestCase(String strName)
+	public VorbisAudioFileReaderTestCase()
 	{
 		setResourcePrefix("vorbis");
 		setCheckRealLengths(false);

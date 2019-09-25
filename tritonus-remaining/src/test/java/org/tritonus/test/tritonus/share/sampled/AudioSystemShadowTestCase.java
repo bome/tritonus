@@ -23,6 +23,7 @@ package org.tritonus.test.tritonus.share.sampled;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.AudioSystemShadow;
 import org.tritonus.share.sampled.file.TDataOutputStream;
 import org.tritonus.test.Util;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AudioSystemShadowTestCase
 {
+    @Test
 	public void testGetDataOutputStreamFile()
 		throws Exception
 	{
@@ -48,6 +50,7 @@ public class AudioSystemShadowTestCase
 
 
 
+    @Test
 	public void testGetDataOutputStreamOutputStream()
 		throws Exception
 	{
@@ -61,6 +64,7 @@ public class AudioSystemShadowTestCase
 
 
 
+    @Test
 	private void checkTDataOutputStream(TDataOutputStream dataOutputStream,
 										boolean bSeekable)
 		throws Exception
@@ -74,6 +78,7 @@ public class AudioSystemShadowTestCase
 
 
 
+    @Test
 	private void checkTDataOutputStream2(byte[] abResultingData)
 		throws Exception
 	{

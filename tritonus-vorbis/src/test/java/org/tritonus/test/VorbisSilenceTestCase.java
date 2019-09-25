@@ -35,6 +35,9 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.AudioSystemShadow;
 import org.tritonus.share.sampled.file.AudioOutputStream;
 
@@ -48,9 +51,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class VorbisSilenceTestCase
 {
-	private File _sourceFileOgg = new File("sounds/testsilence.ogg");
-	private File _destFileWav = new File("sounds/testsilenceout.wav");
+	private File _sourceFileOgg = new File("src/test/resources/" + "sounds/testsilence.ogg");
+	private File _destFileWav = new File("src/test/resources/" + "sounds/testsilenceout.wav");
 
+	@BeforeEach
 	protected void setUp()
 	{
 		assertTrue(_sourceFileOgg.exists(),
@@ -59,6 +63,7 @@ public class VorbisSilenceTestCase
 		_destFileWav.deleteOnExit();
 	}
 
+    @AfterEach
 	protected void tearDown()
 	{
 		assertTrue(_sourceFileOgg.exists(),
@@ -75,7 +80,7 @@ public class VorbisSilenceTestCase
 	}
 
 
-
+    @Test
 	public void testConvertSilentOggWithAudioOutStream() throws Exception
 	{
 		final AudioInputStream inAIStreamOgg = AudioSystem.getAudioInputStream(_sourceFileOgg);
@@ -142,7 +147,7 @@ public class VorbisSilenceTestCase
 	}
 
 
-
+    @Test
 	public void testConvertSilentOggWithAudioSystem() throws Exception
 	{
 		final AudioInputStream inAIStreamOgg = AudioSystem.getAudioInputStream(_sourceFileOgg);

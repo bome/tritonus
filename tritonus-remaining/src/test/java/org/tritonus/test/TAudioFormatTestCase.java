@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.TAudioFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TAudioFormatTestCase
 {
+    @Test
 	public void testEmptyMap()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
@@ -50,6 +52,7 @@ public class TAudioFormatTestCase
 
 
 
+    @Test
 	public void testCopying()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
@@ -65,6 +68,7 @@ public class TAudioFormatTestCase
 	}
 
 
+    @Test
 	public void testUnmodifiable()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();
@@ -83,6 +87,7 @@ public class TAudioFormatTestCase
 	}
 
 
+    @Test
 	public void testGet()
 	{
 		Map<String, Object> prop = new HashMap<String, Object>();

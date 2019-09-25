@@ -25,6 +25,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.SourceDataLine;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataLineInfoTestCase
 {
+    @Test
 	public void testConstructors()
 	{
 		DataLine.Info info;
@@ -58,6 +61,7 @@ public class DataLineInfoTestCase
 					 "max buffer size");
 	}
 
+    @Test
 	public void testMatches()
 	{
 		DataLine.Info info1 = new DataLine.Info(SourceDataLine.class,
@@ -68,6 +72,7 @@ public class DataLineInfoTestCase
 	}
 
 
+    @Test
 	public void testToString()
 	{
 	}

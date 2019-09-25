@@ -20,6 +20,7 @@
 
 package org.tritonus.test.tritonus.share.sampled.file;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.file.TDataOutputStream;
 import org.tritonus.test.Util;
 
@@ -44,6 +45,7 @@ public abstract class BaseDataOutputStreamTestCase
 		throws Exception;
 
 
+    @Test
 	public void testWriting()
 		throws Exception
 	{
@@ -56,6 +58,7 @@ public abstract class BaseDataOutputStreamTestCase
 
 
 
+    @Test
 	public void testSupportsSeek()
 		throws Exception
 	{

@@ -23,8 +23,11 @@ package org.tritonus.test;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.convert.TAudioInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,11 +39,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TAudioInputStreamTestCase
 {
+    @Test
 	public void testEmptyMap()
 	{
+        AudioFormat format = new AudioFormat(44100.0F, 16, 2, true, false);
 		Map<String, Object> prop = new HashMap<String, Object>();
 		TAudioInputStream fileFormat = new TAudioInputStream(
-			null, null,
+			null, format,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();
@@ -51,12 +56,15 @@ public class TAudioInputStreamTestCase
 
 
 
+    @Test
+    @Disabled // TODO
 	public void testCopying()
 	{
+        AudioFormat format = new AudioFormat(22.5F, 16, 2, true, false);
 		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		TAudioInputStream fileFormat = new TAudioInputStream(
-			null, null,
+			null, format,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();
@@ -67,11 +75,13 @@ public class TAudioInputStreamTestCase
 	}
 
 
+    @Test
 	public void testUnmodifiable()
 	{
+        AudioFormat format = new AudioFormat(44100.0F, 16, 2, true, false);
 		Map<String, Object> prop = new HashMap<String, Object>();
 		TAudioInputStream fileFormat = new TAudioInputStream(
-			null, null,
+			null, format,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map<String, Object> propReturn = fileFormat.properties();
@@ -86,13 +96,15 @@ public class TAudioInputStreamTestCase
 	}
 
 
+    @Test
 	public void testGet()
 	{
+        AudioFormat format = new AudioFormat(44100.0F, 16, 2, true, false);
 		Map<String, Object> prop = new HashMap<String, Object>();
 		prop.put("bitrate", new Float(22.5F));
 		prop.put("author", "Matthias Pfisterer");
 		TAudioInputStream fileFormat = new TAudioInputStream(
-			null, null,
+			null, format,
 			AudioSystem.NOT_SPECIFIED,
 			prop);
 		Map propReturn = fileFormat.properties();

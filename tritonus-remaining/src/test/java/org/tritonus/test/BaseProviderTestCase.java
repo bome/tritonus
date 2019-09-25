@@ -26,11 +26,11 @@ import	java.util.ResourceBundle;
 import	javax.sound.sampled.AudioFileFormat;
 import	javax.sound.sampled.AudioFormat;
 
+import org.junit.jupiter.api.BeforeEach;
 import	org.tritonus.share.sampled.AudioFileTypes;
 import	org.tritonus.share.sampled.Encodings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 
 public class BaseProviderTestCase
@@ -69,7 +69,7 @@ public class BaseProviderTestCase
 	}
 
 
-
+	@BeforeEach
 	protected void setUp()
 		throws Exception
 	{

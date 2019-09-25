@@ -22,6 +22,7 @@ package org.tritonus.test;
 
 import javax.sound.sampled.AudioFormat;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.sampled.Encodings;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class EncodingsTestCase
 {
+    @Test
 	public void testGetEncodings()
 	{
 		AudioFormat.Encoding[]	aEncodings = Encodings.getEncodings();

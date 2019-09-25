@@ -20,6 +20,7 @@
 
 package org.tritonus.test.tritonus.lowlevel.pogg;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.lowlevel.pogg.Buffer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -209,7 +210,7 @@ public class BufferTestCase
 	}
 
 
-
+	@Test
 	public void testBuffer()
 		throws Exception
 	{

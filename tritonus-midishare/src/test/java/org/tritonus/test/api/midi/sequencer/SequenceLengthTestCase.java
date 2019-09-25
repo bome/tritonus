@@ -20,7 +20,7 @@
 
 package org.tritonus.test.api.midi.sequencer;
 
-import java.io.File;
+import java.io.InputStream;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
@@ -57,9 +57,9 @@ extends BaseSequencerTestCase
 	}
 
 
-	private static File getMediaFile(String strFilename)
+	private static InputStream getMediaFile(String strFilename)
 	{
-		return new File("sounds/" + strFilename);
+		return SequenceLengthTestCase.class.getResourceAsStream("/sounds/" + strFilename);
 	}
 }
 

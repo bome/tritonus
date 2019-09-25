@@ -24,6 +24,8 @@ import javax.sound.sampled.Mixer;
 //import javax.sound.sampled.DataLine;
 //import javax.sound.sampled.Line;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MixerTestCase
 extends BaseMixerTestCase
 {
+    @Test
 	public void testGetMixerInfo()
 		throws Exception
 	{
@@ -53,6 +56,7 @@ extends BaseMixerTestCase
 	}
 
 
+    @Test
 	public void testOpenClose()
 		throws Exception
 	{

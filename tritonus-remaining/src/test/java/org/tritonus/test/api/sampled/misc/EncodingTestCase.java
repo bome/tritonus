@@ -22,6 +22,8 @@ package org.tritonus.test.api.sampled.misc;
 
 import javax.sound.sampled.AudioFormat.Encoding;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EncodingTestCase
 {
+    @Test
 	public void testEquals()
 	{
 		assertTrue(! Encoding.ALAW.equals(null), "equals(null)");
@@ -52,6 +55,7 @@ public class EncodingTestCase
 	}
 
 
+    @Test
 	public void testHashCode()
 	{
 		assertEquals(Encoding.ALAW.hashCode(), Encoding.ALAW.hashCode(), "hashCode() for multiple invocations");
@@ -63,24 +67,26 @@ public class EncodingTestCase
 	}
 
 
+    @Test
 	public void testToString()
 	{
 		String strEncodingName = "my fancy encoding";
 		Encoding encoding = new Encoding(strEncodingName);
-		assertEquals("toString()", strEncodingName, encoding.toString());
+		assertEquals(strEncodingName, encoding.toString(), "toString()");
 	}
 
 
+    @Test
 	public void testStaticInstances()
 	{
-		assertEquals("PCM_SIGNED.toString()", "PCM_SIGNED",
-					 Encoding.PCM_SIGNED.toString());
-		assertEquals("PCM_UNSIGNED.toString()", "PCM_UNSIGNED",
-					 Encoding.PCM_UNSIGNED.toString());
-		assertEquals("ALAW.toString()", "ALAW",
-					 Encoding.ALAW.toString());
-		assertEquals("ULAW.toString()", "ULAW",
-					 Encoding.ULAW.toString());
+		assertEquals("PCM_SIGNED",
+					 Encoding.PCM_SIGNED.toString(), "PCM_SIGNED.toString()");
+		assertEquals("PCM_UNSIGNED",
+					 Encoding.PCM_UNSIGNED.toString(), "PCM_UNSIGNED.toString()");
+		assertEquals("ALAW",
+					 Encoding.ALAW.toString(), "ALAW.toString()");
+		assertEquals("ULAW",
+					 Encoding.ULAW.toString(), "ULAW.toString()");
 	}
 }
 

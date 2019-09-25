@@ -23,6 +23,8 @@ package org.tritonus.test;
 import javax.sound.sampled.BooleanControl;
 import javax.sound.sampled.Control;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,6 +38,7 @@ public class ControlTestCase
 		The test checks if the object returned by
 		getType() is the one passed to the constructor.
 	*/
+    @Test
 	public void testGetTypeObject()
 		throws Exception
 	{
@@ -51,6 +54,7 @@ public class ControlTestCase
 		The test checks if the object returned by
 		getType() is null, as is passed to the constructor.
 	*/
+    @Test
 	public void testGetTypeNull()
 		throws Exception
 	{
@@ -66,6 +70,7 @@ public class ControlTestCase
 		The test checks if the string returned by toString()
 		contains characters (and doesn't throw an exception).
 	*/
+    @Test
 	public void testToString()
 		throws Exception
 	{

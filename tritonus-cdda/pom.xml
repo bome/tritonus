@@ -93,14 +93,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <forkMode>once</forkMode>
-              <argLine>-Djava.library.path=${project.build.directory}</argLine>
-            </configuration>
-          </plugin>
-          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>native-maven-plugin</artifactId>
             <extensions>true</extensions>
@@ -148,12 +140,24 @@
               </execution>
             </executions>
           </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.0</version>
             <configuration>
-              <forkMode>once</forkMode>
-              <argLine>-Djava.library.path=${project.build.directory}</argLine>
+              <skipTests>true</skipTests>
             </configuration>
           </plugin>
         </plugins>
@@ -171,6 +175,15 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <forkMode>once</forkMode>
+          <argLine>-Djava.library.path=${project.build.directory}</argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -179,6 +192,19 @@
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
       <version>0.3.8-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.3.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

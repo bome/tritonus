@@ -30,6 +30,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 //import javax.sound.midi.MidiMessage;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.midi.TDirectSynthesizer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TDirectSynthesizerTestCase
 {
+    @Test
 	public void testNoteOn()
 	throws Exception
 	{
@@ -46,6 +48,7 @@ public class TDirectSynthesizerTestCase
 	}
 
 
+    @Test
 	public void testNoteOff()
 	throws Exception
 	{
@@ -53,6 +56,7 @@ public class TDirectSynthesizerTestCase
 	}
 
 
+    @Test
 	public void testPolyPressure()
 	throws Exception
 	{
@@ -60,6 +64,7 @@ public class TDirectSynthesizerTestCase
 	}
 
 
+    @Test
 	public void testControlChange()
 	throws Exception
 	{
@@ -67,6 +72,7 @@ public class TDirectSynthesizerTestCase
 	}
 
 
+    @Test
 	public void testProgramChange()
 	throws Exception
 	{
@@ -74,6 +80,7 @@ public class TDirectSynthesizerTestCase
 	}
 
 
+    @Test
 	public void testChannelPressure()
 	throws Exception
 	{
@@ -81,6 +88,7 @@ public class TDirectSynthesizerTestCase
 	}
 
 
+    @Test
 	public void testPitchbend()
 	throws Exception
 	{

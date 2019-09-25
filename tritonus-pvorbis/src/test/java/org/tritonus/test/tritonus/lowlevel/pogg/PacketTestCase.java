@@ -22,6 +22,7 @@ package org.tritonus.test.tritonus.lowlevel.pogg;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.lowlevel.pogg.Packet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +43,7 @@ public class PacketTestCase
 
 
 
+    @Test
 	public void testClear()
 		throws Exception
 	{
@@ -54,6 +56,7 @@ public class PacketTestCase
 
 
 
+    @Test
 	public void testSetData()
 		throws Exception
 	{
@@ -69,6 +72,7 @@ public class PacketTestCase
 
 
 
+    @Test
 	public void testSetDataTruncated()
 		throws Exception
 	{
@@ -86,6 +90,7 @@ public class PacketTestCase
 
 
 
+    @Test
 	public void testSetFlags()
 		throws Exception
 	{

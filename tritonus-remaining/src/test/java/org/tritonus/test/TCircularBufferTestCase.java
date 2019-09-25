@@ -20,6 +20,7 @@
 
 package org.tritonus.test;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.share.TCircularBuffer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TCircularBufferTestCase
 {
+    @Test
 	public void testBufferSize()
 	{
 		int	nSize = 45678;
@@ -43,6 +45,7 @@ public class TCircularBufferTestCase
 
 
 
+    @Test
 	public void testAvailable()
 	{
 		int	nBufferSize = 45678;
@@ -77,6 +80,7 @@ public class TCircularBufferTestCase
 	}
 
 
+    @Test
 	public void testReadWrite()
 	{
 		int	nBufferSize = 8901 * 4;
@@ -105,6 +109,7 @@ public class TCircularBufferTestCase
 	}
 
 
+    @Test
 	public void testTrigger()
 	{
 		TestTrigger	trigger = new TestTrigger();
@@ -122,6 +127,7 @@ public class TCircularBufferTestCase
 	}
 
 
+    @Test
 	public void testClose()
 	{
 		int	nResult;
