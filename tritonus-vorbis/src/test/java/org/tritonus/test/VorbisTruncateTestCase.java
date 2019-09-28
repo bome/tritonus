@@ -147,7 +147,7 @@ public class VorbisTruncateTestCase
         // attempt to play the resulting wav file - end of file shouldn't be truncated
         playStream(_destFileWav);
 
-        assertEquals(369708, // known file size Wave file built using native Windoze oggdec.exe
+        assertEquals(369710, // known file size Wave file built using native Windoze oggdec.exe
 					 _destFileWav.length(), "Missing some PCM data from decoded Vorbis stream.");
 	}
 

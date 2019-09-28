@@ -22,9 +22,9 @@
 |<---            this code is formatted to fit into 80 columns             --->|
 */
 
-#include "common.h"
-#include "debug.h"
-#include "HandleFieldHandler.h"
+#include "common/common.h"
+#include "common/debug.h"
+#include "common/HandleFieldHandler.h"
 #include <ogg/ogg.h>
 #include "org_tritonus_lowlevel_ogg_Packet.h"
 
