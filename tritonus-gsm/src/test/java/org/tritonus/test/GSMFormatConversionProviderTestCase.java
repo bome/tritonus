@@ -22,7 +22,7 @@ package org.tritonus.test;
 
 import org.junit.jupiter.api.Disabled;
 
-@Disabled
+@Disabled // no suitable class
 public class GSMFormatConversionProviderTestCase
 extends BaseFormatConversionProviderTestCase
 {
