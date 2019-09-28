@@ -54,14 +54,14 @@ static void                                                            \
 setHandle(JNIEnv *env, jobject obj, _type handle)                      \
 {                                                                      \
 	jfieldID	fieldID = getNativeHandleFieldID(env, obj);    \
-	(*env)->SetLongField(env, obj, fieldID, (jlong) (int) handle);       \
+	(*env)->SetLongField(env, obj, fieldID, (jlong) (long) handle);       \
 }                                                                      \
                                                                        \
 static _type                                                           \
 getHandle(JNIEnv *env, jobject obj)                                    \
 {                                                                      \
 	jfieldID	fieldID = getNativeHandleFieldID(env, obj);    \
-	_type	handle = (_type) (int) (*env)->GetLongField(env, obj, fieldID); \
+	_type	handle = (_type) (long) (*env)->GetLongField(env, obj, fieldID); \
 	return handle;                                                 \
 }
 
