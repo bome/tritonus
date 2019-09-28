@@ -9,27 +9,27 @@ Java Sound plugins ("service providers"). For pre-compiled
 versions of these components, see: 
 http://www.tritonus.org/plugins.html
 
-| module        | status | comment |
-|---------------|:------:|---------|
-| share         | ✅    |         |
-| remaining     | ✅    |         |
-| dsp           | ✅    |         |
-| core          | ✅    |         |
-| gsm           | ✅    |         |
-| javasequencer | ✅    |         |
-| jorbis        | ✅    |         |
-| midishare     | ✅    |         |
-| mp3           | ✅    |         |
-| esd           | 🚫    | linux only |
-| alsa          | 🚫    | linux only |
-| vorbis        | 🚧    |         |
-| pvorbis       | 🚧    |         |
-| cdda          | 🚫    | linux only |
-| fluidsynth    | ?    | no test  |
-| src           | 🚫    |         |
-| aos           | 🚫    |         |
-| saol          | 🚫    |         |
-| timidity      | 🚧    |         |
+| module        | status | comment | library |
+|---------------|:------:|---------|---------|
+| share         | ✅    |         | |
+| remaining     | ✅    |         | |
+| dsp           | ✅    |         | |
+| core          | ✅    |         | |
+| gsm           | ✅    |         | |
+| javasequencer | ✅    |         | |
+| jorbis        | ✅    |         | |
+| midishare     | ✅    |         | |
+| mp3           | ✅    |         | |
+| esd           | 🚫    | linux only | libesd |
+| alsa          | 🚫    | linux only | libasound |
+| vorbis        | ✅    |         | |
+| pvorbis       | ✅    |         | |
+| cdda          | 🚫    | linux only | libcdda_interface libcdda_paranoia |
+| fluidsynth    | ✅    |         | liblfluidsynth |
+| src           | 🚫    |         | |
+| aos           | 🚫    |         | |
+| saol          | 🚫    |         | |
+| timidity      | 🚧    |         | [libtimidity](https://github.com/sezero/libtimidity) |
 
 
 ## License
