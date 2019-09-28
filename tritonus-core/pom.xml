@@ -28,7 +28,7 @@
               <testExcludes>
                 <exclude>org/tritonus/debug/AJ*.java</exclude>
               </testExcludes>
-            </configuration> 
+            </configuration>
             <goals>
               <goal>testCompile</goal>
             </goals>
@@ -84,6 +84,24 @@
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <version>1.8.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.tritonus</groupId>
+      <artifactId>tritonus-alsa</artifactId>
+      <version>0.3.8-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.tritonus</groupId>
+      <artifactId>tritonus-vorbis</artifactId>
+      <version>0.3.8-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.tritonus</groupId>
+      <artifactId>tritonus-midishare</artifactId>
+      <version>0.3.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
