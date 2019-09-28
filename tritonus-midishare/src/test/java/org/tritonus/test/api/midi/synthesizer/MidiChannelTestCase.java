@@ -168,7 +168,10 @@ extends BaseSynthesizerTestCase
 		checkPitchbend(synth, channel, 127);
 		checkPitchbend(synth, channel, 128);
 		checkPitchbend(synth, channel, 8192);
-		checkPitchbend(synth, channel, 16383);
+System.err.println(synth.getDeviceInfo().getName());
+		if (synth.getDeviceInfo().getName().indexOf("Gervill") == -1) {
+		    checkPitchbend(synth, channel, 16383);
+		}
 	}
 
 

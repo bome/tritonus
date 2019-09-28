@@ -24,6 +24,8 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
 
+import org.junit.jupiter.api.Test;
+
 
 /**	Base class for testsof javax.sound.midi.Sequencer.
  */
@@ -34,6 +36,7 @@ public abstract class BaseSequencerTestCase
 
 	/**	Iterate over all available Sequencers.
 	*/
+    @Test
 	public void testSeqencer()
 		throws Exception
 	{

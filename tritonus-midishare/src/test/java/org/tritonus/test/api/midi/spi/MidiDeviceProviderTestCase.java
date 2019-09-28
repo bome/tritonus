@@ -23,6 +23,9 @@ package org.tritonus.test.api.midi.spi;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -31,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class MidiDeviceProviderTestCase
 {
+    @Test
 	public void testIsDeviceSupported()
 		throws Exception
 	{
@@ -38,7 +42,10 @@ public class MidiDeviceProviderTestCase
 											"description", "version");
 		checkIsDeviceSupported(new MidiDevice.Info[0], info, false);
 		checkIsDeviceSupported(new MidiDevice.Info[]{info}, info, true);
-		checkIsDeviceSupported(new MidiDevice.Info[]{info}, null, false);
+        assertThrows(NullPointerException.class, () -> {
+            // MidiDeviceProvider.isDeviceSupported(null) throws NPE
+            checkIsDeviceSupported(new MidiDevice.Info[]{info}, null, false);
+        });
 	}
 
 

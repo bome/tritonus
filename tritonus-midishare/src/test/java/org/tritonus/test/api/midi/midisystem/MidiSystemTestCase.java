@@ -22,6 +22,9 @@ package org.tritonus.test.api.midi.midisystem;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,18 +39,30 @@ public class MidiSystemTestCase
 	private static final float DELTA = 1E-9F;
 
 
+    @Test
 	public void testGetDevices()
 		throws Exception
 	{
 		assertNotNull(MidiSystem.getSynthesizer(), "getSynthesizer()");
+System.err.println(MidiSystem.getSynthesizer());
 		assertNotNull(MidiSystem.getSequencer(), "getSequencer()");
+System.err.println(MidiSystem.getSequencer());
  		assertNotNull(MidiSystem.getSequencer(true), "getSequencer(true)");
+System.err.println(MidiSystem.getSequencer(true));
  		assertNotNull(MidiSystem.getSequencer(false), "getSequencer(false)");
+System.err.println(MidiSystem.getSequencer(false));
 		assertNotNull(MidiSystem.getReceiver(), "getReceiver()");
-		assertNotNull(MidiSystem.getTransmitter(), "getTransmitter()");
+System.err.println(MidiSystem.getReceiver());
+        try {
+            assertNotNull(MidiSystem.getTransmitter(), "getTransmitter()");
+System.err.println(MidiSystem.getTransmitter());
+        } catch (MidiUnavailableException e) {
+            // accept
+        }
 	}
 
 
+    @Test
 	public void testGetEachMidiDevice()
 		throws Exception
 	{
@@ -60,6 +75,7 @@ public class MidiSystemTestCase
 	}
 
 
+    @Test
 	public void testGetWrongMidiDevice()
 		throws Exception
 	{

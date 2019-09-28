@@ -24,6 +24,8 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MidiDeviceTestCase
 extends BaseMidiDeviceTestCase
 {
+    @Test
 	public void testGetDeviceInfo()
 		throws Exception
 	{
@@ -53,7 +56,7 @@ extends BaseMidiDeviceTestCase
 		checkMidiDevice(check);
 	}
 
-
+	@Test
 	public void testOpenClose()
 		throws Exception
 	{
@@ -73,6 +76,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetMicrosecondPosition()
 		throws Exception
 	{
@@ -95,6 +99,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetMaxReceivers()
 		throws Exception
 	{
@@ -110,6 +115,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetMaxTransmitters()
 		throws Exception
 	{
@@ -125,6 +131,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetReceiver()
 		throws Exception
 	{
@@ -158,6 +165,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetReceivers()
 		throws Exception
 	{
@@ -193,6 +201,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetTransmitter()
 		throws Exception
 	{
@@ -226,6 +235,7 @@ extends BaseMidiDeviceTestCase
 	}
 
 
+    @Test
 	public void testGetTransmitters()
 		throws Exception
 	{

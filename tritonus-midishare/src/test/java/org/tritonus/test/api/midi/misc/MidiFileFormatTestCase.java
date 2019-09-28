@@ -25,9 +25,12 @@ import java.util.Map;
 
 import javax.sound.midi.MidiFileFormat;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -38,6 +41,7 @@ public class MidiFileFormatTestCase
 	private static final float DELTA = 1E-9F;
 
 
+    @Test
 	public void testGetValues()
 	{
 		checkGetValues(0, 0.0F, 0, 0, 0L, false);
@@ -54,7 +58,7 @@ public class MidiFileFormatTestCase
 		MidiFileFormat fileFormat;
 		if (bWithMap)
 		{
-			Map<String, Object> prop = new HashMap<String, Object>();
+			Map<String, Object> prop = new HashMap<>();
 			fileFormat = new MidiFileFormat(nType, fDivisionType,
 											nResolution, nByteLength,
 											lMicrosecondLength, prop);
@@ -73,6 +77,7 @@ public class MidiFileFormatTestCase
 	}
 
 
+    @Test
 	public void testNoMap()
 	{
 		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L);
@@ -84,20 +89,19 @@ public class MidiFileFormatTestCase
 	}
 
 
+    @Test
 	public void testNullMap()
 	{
-		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L,
-													   null);
-		Map<String, Object> propReturn = fileFormat.properties();
-		assertTrue(propReturn.isEmpty());
-		Object result = propReturn.get("bitrate");
-		assertNull(result);
+        assertThrows(NullPointerException.class, () -> {
+    		new MidiFileFormat(0, 0.0F, 0, 0, 0L, null);
+        });
 	}
 
 
+    @Test
 	public void testEmptyMap()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L,
 													   prop);
 		Map<String, Object> propReturn = fileFormat.properties();
@@ -107,9 +111,10 @@ public class MidiFileFormatTestCase
 	}
 
 
+    @Test
 	public void testCopying()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		prop.put("bitrate", new Float(22.5F));
 		MidiFileFormat fileFormat = new MidiFileFormat(0, 0, 0, 0, 0,
 													   prop);
@@ -121,9 +126,10 @@ public class MidiFileFormatTestCase
 	}
 
 
+    @Test
 	public void testUnmodifiable()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L,
 													   prop);
 		Map<String, Object> propReturn = fileFormat.properties();
@@ -138,9 +144,10 @@ public class MidiFileFormatTestCase
 	}
 
 
+    @Test
 	public void testGet()
 	{
-		Map<String, Object> prop = new HashMap<String, Object>();
+		Map<String, Object> prop = new HashMap<>();
 		prop.put("bitrate", new Float(22.5F));
 		prop.put("author", "Matthias Pfisterer");
 		MidiFileFormat fileFormat = new MidiFileFormat(0, 0.0F, 0, 0, 0L,

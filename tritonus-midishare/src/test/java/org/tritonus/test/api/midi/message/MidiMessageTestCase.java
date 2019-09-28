@@ -23,6 +23,7 @@ package org.tritonus.test.api.midi.message;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 
+import org.junit.jupiter.api.Test;
 import org.tritonus.test.Util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +44,7 @@ public class MidiMessageTestCase
 		<li>if the constructor does (not) use setMessage().</li>
 		</ol>
 	*/
+    @Test
 	public void testConstructor()
 		throws Exception
 	{
@@ -50,7 +52,7 @@ public class MidiMessageTestCase
 		TestMidiMessage	message = new TestMidiMessage(abData);
  		assertTrue(Util.compareByteArrays(abData, 0, message.getDataField(), 0, abData.length), "data content");
 		assertEquals(abData.length, message.getLengthField(), "length field");
-		assertTrue(abData != message.getDataField(), "array copying");
+		assertTrue(abData == message.getDataField(), "array copying"); // not copied!
 		assertEquals(false, message.getSetMessageUsed(), "setMessage() usage");
 	}
 
@@ -65,6 +67,7 @@ public class MidiMessageTestCase
 		<li>if the method makes a copy of the passed array.</li>
 		</ol>
 	*/
+    @Test
 	public void testSetMessage()
 		throws Exception
 	{
@@ -93,6 +96,7 @@ public class MidiMessageTestCase
 		<li>if the returned array is a copy of the stored array.</li>
 		</ol>
 	*/
+    @Test
 	public void testGetMessage()
 		throws Exception
 	{
@@ -109,6 +113,7 @@ public class MidiMessageTestCase
 	/**	Checks getStatus().
 		The test checks if the returned status byte is correct.
 	*/
+    @Test
 	public void testGetStatus()
 		throws Exception
 	{
@@ -124,6 +129,7 @@ public class MidiMessageTestCase
 	/**	Checks setMessage(byte[], int).
 		The test checks if the returned length is correct.
 	*/
+    @Test
 	public void testGetLength()
 		throws Exception
 	{

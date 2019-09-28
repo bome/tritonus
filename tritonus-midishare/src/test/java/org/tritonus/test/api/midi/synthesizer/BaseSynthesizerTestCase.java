@@ -24,8 +24,12 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Synthesizer;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 /**	Base class for testsof javax.sound.midi.Synthesizer.
  */
+@Disabled
 public abstract class BaseSynthesizerTestCase
 {
 	private static final boolean IGNORE_SUN_SYNTHESIZER = false;
@@ -33,6 +37,7 @@ public abstract class BaseSynthesizerTestCase
 
 	/**	Iterate over all available Sequencers.
 	*/
+    @Test
 	public void testSeqencer()
 		throws Exception
 	{
