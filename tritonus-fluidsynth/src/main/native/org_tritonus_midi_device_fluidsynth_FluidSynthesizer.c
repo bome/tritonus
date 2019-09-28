@@ -42,8 +42,8 @@
 
 #include "org_tritonus_midi_device_fluidsynth_FluidSynthesizer.h"
 #include "org_tritonus_midi_sb_fluidsynth_FluidSoundbank.h"
-#include "common.h"
-#include "debug.h"
+#include "common/common.h"
+#include "common/debug.h"
 
 /* non-API method of libfluidsynth */
 void fluid_log_config(void);
@@ -491,9 +491,9 @@ JNIEXPORT jint JNICALL Java_org_tritonus_midi_device_fluidsynth_FluidSynthesizer
 (JNIEnv *env, jobject obj, jint channel)
 {
 	fluid_synth_t* synth = get_synth(env, obj);
-	unsigned int sfont;
-	unsigned int bank;
-	unsigned int program = 0;
+	int sfont;
+	int bank;
+	int program = 0;
 	if (synth)
 	{
 		fluid_synth_get_program(synth, channel, &sfont, &bank, &program);

@@ -48,7 +48,7 @@
                   <directory>src/main/native</directory>
                   <fileNames>
                     <fileName>org_tritonus_midi_device_fluidsynth_FluidSynthesizer.c</fileName>
-                    <fileName>common.c</fileName>
+                    <fileName>common/common.c</fileName>
                   </fileNames>
                 </source>
               </sources>
@@ -93,6 +93,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.0</version>
         <configuration>
+          <dependenciesToScan>
+            <dependency>org.tritonus:tritonus-midishare</dependency>
+          </dependenciesToScan>
           <forkMode>once</forkMode>
           <argLine>-Djava.library.path=${project.build.directory}</argLine>
         </configuration>
@@ -105,6 +108,33 @@
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
       <version>0.3.8-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.tritonus</groupId>
+      <artifactId>tritonus-share</artifactId>
+      <version>0.3.8-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.tritonus</groupId>
+      <artifactId>tritonus-midishare</artifactId>
+      <version>0.3.8-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
