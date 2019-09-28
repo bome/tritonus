@@ -99,7 +99,6 @@ public abstract class BaseAudioOutputStreamTestCase
 
 	// non-seekable, unknown length
     @Test
-    @Disabled // TODO
 	public void testAOS2()
 		throws Exception
 	{
