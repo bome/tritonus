@@ -97,7 +97,11 @@
             <dependency>org.tritonus:tritonus-midishare</dependency>
           </dependenciesToScan>
           <forkMode>once</forkMode>
-          <argLine>-Djava.library.path=${project.build.directory}</argLine>
+          <!-- mvn clean install -Dsoundfont.path=your_soundfont_path -->
+          <argLine>
+            -Djava.library.path=${project.build.directory}
+            -Dtritonus.fluidsynth.defaultsoundbank=${soundfont.path}
+          </argLine>
         </configuration>
       </plugin>
     </plugins>

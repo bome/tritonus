@@ -23,7 +23,7 @@ http://www.tritonus.org/plugins.html
 | esd           | 🚫    | linux only | libesd |
 | alsa          | 🚫    | linux only | libasound |
 | vorbis        | ✅    |         | |
-| pvorbis       | ✅    |         | |
+| pvorbis       | 🚧    | test | |
 | cdda          | 🚫    | linux only | libcdda_interface libcdda_paranoia |
 | fluidsynth    | ✅    |         | liblfluidsynth |
 | src           | 🚫    |         | |
