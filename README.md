@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/umjammer/tritonus.svg)](https://jitpack.io/#umjammer/tritonus)
+[![Release](https://jitpack.io/v/umjammer/tritonus.svg)](https://jitpack.io/#umjammer/tritonus) [![Parent](https://img.shields.io/badge/Parent-vavi--sound--sandbox-pink)](https://github.com/umjammer/vavi-sound-sandbox)
 
 # tritonus
 
