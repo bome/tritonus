@@ -26,9 +26,10 @@
 
 package org.tritonus.share;
 
-import java.io.PrintStream;
-import  java.util.StringTokenizer;
 import  java.security.AccessControlException;
+import  java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -37,7 +38,7 @@ public class TDebug
 	public static boolean		SHOW_ACCESS_CONTROL_EXCEPTIONS = false;
 	private static final String	PROPERTY_PREFIX = "tritonus.";
 	// The stream we output to
-	public static PrintStream	m_printStream = System.out;
+	public static Logger	m_printStream = Logger.getLogger(TDebug.class.getName());
 
 	private static String indent="";
 
@@ -124,7 +125,7 @@ public class TDebug
 		} else {
 			newMsg=indent+strMessage;
 		}
-		m_printStream.println(newMsg);
+		m_printStream.info(newMsg);
 		if (strMessage.length()>0 && strMessage.charAt(0)=='>') {
 				indent+="  ";
 		} 
@@ -134,7 +135,7 @@ public class TDebug
 
 	public static void out(Throwable throwable)
 	{
-		throwable.printStackTrace(m_printStream);
+	    m_printStream.log(Level.SEVERE, throwable.getMessage(), throwable);
 	}
 
 
