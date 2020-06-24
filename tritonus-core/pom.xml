@@ -22,6 +22,13 @@
         </configuration>
         <executions>
           <execution>
+            <id>default-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>default-testCompile</id>
             <phase>test-compile</phase>
             <configuration>
@@ -43,6 +50,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.9</version>
         <executions>
           <execution>
             <phase>process-sources</phase>

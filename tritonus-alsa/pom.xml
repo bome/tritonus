@@ -60,7 +60,7 @@
               <compilerStartOptions>
                 <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
                 <!-- unless locating jdk includes, cause error why??? -->
-                <compilerStartOption>-arch x86_64
+                <compilerStartOption>
                       -I${java.home}/../include
                       -I${java.home}/../include/darwin
                       -I/usr/local/include/libasound
@@ -94,7 +94,7 @@
                 </source>
               </sources>
               <linkerStartOptions>
-                <linkerStartOption>-dynamiclib -arch x86_64
+                <linkerStartOption>-dynamiclib
                   -L/usr/local/lib -lasound</linkerStartOption>
               </linkerStartOptions>
               <linkerFinalName></linkerFinalName>
@@ -104,7 +104,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>javah</id>
+                <id>compile-alsa</id>
                 <phase>compile</phase>
                 <goals>
                   <goal>javah</goal>

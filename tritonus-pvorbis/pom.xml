@@ -91,7 +91,7 @@
               </sources>
               <linkerStartOptions>
                 <linkerStartOption>-dynamiclib -arch x86_64
-                  -L/usr/local/lib -lfluidsynth</linkerStartOption>
+                  -L/usr/local/lib</linkerStartOption>
               </linkerStartOptions>
               <linkerFinalName></linkerFinalName>
               <linkerEndOptions>
@@ -100,7 +100,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>javah</id>
+                <id>compile-pvorbis</id>
                 <phase>compile</phase>
                 <goals>
                   <goal>javah</goal>

@@ -37,7 +37,7 @@
               <compilerStartOptions>
                 <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
                 <!-- unless locating jdk includes, cause error why??? -->
-                <compilerStartOption>-arch x86_64
+                <compilerStartOption>
                       -I${java.home}/../include
                       -I${java.home}/../include/darwin
                 </compilerStartOption>
@@ -66,7 +66,7 @@
                     </source>
                   </sources>
                   <linkerStartOptions>
-                    <linkerStartOption>-dynamiclib -arch x86_64
+                    <linkerStartOption>-dynamiclib
                       -L/usr/local/lib -lcdda_interface -lcdda_paranoia</linkerStartOption>
                   </linkerStartOptions>
                   <linkerEndOptions>
@@ -95,11 +95,11 @@
                     </source>
                   </sources>
                   <linkerStartOptions>
-                    <linkerStartOption>-dynamiclib -arch x86_64
+                    <linkerStartOption>-dynamiclib
                       -L/usr/local/lib</linkerStartOption>
                   </linkerStartOptions>
                   <linkerEndOptions>
-                    <linkerEndOption>-o ${project.build.directory}/libtritonuscooked_ioctl.dylib</linkerEndOption>
+                    <linkerEndOption>-o ${project.build.directory}/libtritonuscooked_ioctl.so</linkerEndOption>
                   </linkerEndOptions>
                 </configuration>
               </execution>

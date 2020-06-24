@@ -84,7 +84,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>javah</id>
+                <id>compile-fluidsynth</id>
                 <phase>compile</phase>
                 <goals>
                   <goal>javah</goal>
