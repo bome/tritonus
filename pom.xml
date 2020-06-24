@@ -3,7 +3,7 @@
 
   <groupId>org.tritonus</groupId>
   <artifactId>tritonus</artifactId>
-  <version>0.3.8-SNAPSHOT</version>
+  <version>0.3.8</version>
   <packaging>pom</packaging>
 
   <name>Tritonus Parent Module</name>

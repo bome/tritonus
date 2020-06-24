@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-fluidsynth</artifactId>
   <packaging>jar</packaging>
@@ -19,9 +19,30 @@
           <name>env.JITPACK</name>
           <value>!true</value>
         </property>
+        <os>
+          <family>mac</family>
+        </os>
       </activation>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0.0</version>
+            <executions>
+              <execution>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <files>
+                    <file>${basedir}/local.properties</file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>native-maven-plugin</artifactId>
@@ -96,12 +117,14 @@
           <dependenciesToScan>
             <dependency>org.tritonus:tritonus-midishare</dependency>
           </dependenciesToScan>
-          <forkMode>once</forkMode>
+          <forkMode>always</forkMode>
           <!-- mvn clean install -Dsoundfont.path=your_soundfont_path -->
           <argLine>
             -Djava.library.path=${project.build.directory}
-            -Dtritonus.fluidsynth.defaultsoundbank=${soundfont.path}
           </argLine>
+          <systemProperties>
+            <tritonus.fluidsynth.defaultsoundbank>${tritonus.fluidsynth.defaultsoundbank}</tritonus.fluidsynth.defaultsoundbank>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -111,7 +134,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
     </dependency>
 
     <dependency>
@@ -126,17 +149,18 @@
       <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-midishare</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-share</artifactId>
   <packaging>jar</packaging>

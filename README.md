@@ -2,7 +2,7 @@
 
 # tritonus
 
-This is Tritonus
+This is mavenized Tritonus
 
 Tritonus is an implementation of the Java Sound API and several 
 Java Sound plugins ("service providers"). For pre-compiled

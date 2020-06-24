@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-alsa</artifactId>
   <packaging>jar</packaging>
@@ -13,7 +13,7 @@
 
   <profiles>
     <profile>
-      <id>local (not on jitpack)</id>
+      <id>linux (not on jitpack)</id>
       <activation>
         <property>
           <name>env.JITPACK</name>
@@ -55,7 +55,7 @@
                 <javahClassName>org.tritonus.lowlevel.alsa.AlsaCtl</javahClassName>
               </javahClassNames>
               <javahSearchJNIFromDependencies>false</javahSearchJNIFromDependencies>
-              <javahOS>darwin</javahOS>
+              <javahOS>linux</javahOS>
               <compilerProvider>generic-classic</compilerProvider>
               <compilerStartOptions>
                 <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
@@ -99,7 +99,7 @@
               </linkerStartOptions>
               <linkerFinalName></linkerFinalName>
               <linkerEndOptions>
-                <linkerEndOption>-o ${project.build.directory}/libtritonusalsa.dylib</linkerEndOption>
+                <linkerEndOption>-o ${project.build.directory}/libtritonusalsa.so</linkerEndOption>
               </linkerEndOptions>
             </configuration>
             <executions>
@@ -114,9 +114,20 @@
               </execution>
             </executions>
           </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.0</version>
+            <configuration>
+              <forkMode>once</forkMode>
+              <argLine>-Djava.library.path=${project.build.directory}</argLine>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>mac</id>
       <activation>
@@ -149,15 +160,6 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
-        <configuration>
-          <forkMode>once</forkMode>
-          <argLine>-Djava.library.path=${project.build.directory}</argLine>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -165,7 +167,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
     </dependency>
 
     <dependency>

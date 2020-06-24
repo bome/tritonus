@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-cdda</artifactId>
   <packaging>jar</packaging>
@@ -13,7 +13,7 @@
 
   <profiles>
     <profile>
-      <id>local (not on jitpack)</id>
+      <id>linux (not on jitpack)</id>
       <activation>
         <property>
           <name>env.JITPACK</name>
@@ -31,11 +31,8 @@
             <artifactId>native-maven-plugin</artifactId>
             <extensions>true</extensions>
             <configuration>
-              <javahClassNames>
-                <javahClassName>org.tritonus.lowlevel.cdda.cdparanoia.Cdparanoia</javahClassName>
-              </javahClassNames>
               <javahSearchJNIFromDependencies>false</javahSearchJNIFromDependencies>
-              <javahOS>darwin</javahOS>
+              <javahOS>linux</javahOS>
               <compilerProvider>generic-classic</compilerProvider>
               <compilerStartOptions>
                 <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
@@ -45,104 +42,83 @@
                       -I${java.home}/../include/darwin
                 </compilerStartOption>
               </compilerStartOptions>
-              <sources>
-                <source>
-                  <directory>src/main/native/cdparanoia</directory>
-                  <fileNames>
-                    <fileName>org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.c</fileName>
-                  </fileNames>
-                </source>
-              </sources>
-              <linkerStartOptions>
-                <linkerStartOption>-dynamiclib -arch x86_64
-                  -L/usr/local/lib -lcdda_interface -lcdda_paranoia</linkerStartOption>
-              </linkerStartOptions>
               <linkerFinalName></linkerFinalName>
-              <linkerEndOptions>
-                <linkerEndOption>-o ${project.build.directory}/libtritonuscdparanoia.dylib</linkerEndOption>
-              </linkerEndOptions>
             </configuration>
             <executions>
               <execution>
-                <id>javah</id>
+                <id>compile-cdparanoia</id>
                 <phase>compile</phase>
                 <goals>
                   <goal>javah</goal>
                   <goal>compile</goal>
                   <goal>link</goal>
                 </goals>
+                <configuration>
+                  <javahClassNames>
+                    <javahClassName>org.tritonus.lowlevel.cdda.cdparanoia.Cdparanoia</javahClassName>
+                  </javahClassNames>
+                  <sources>
+                    <source>
+                      <directory>src/main/native/cdparanoia</directory>
+                      <fileNames>
+                        <fileName>org_tritonus_lowlevel_cdda_cdparanoia_Cdparanoia.c</fileName>
+                      </fileNames>
+                    </source>
+                  </sources>
+                  <linkerStartOptions>
+                    <linkerStartOption>-dynamiclib -arch x86_64
+                      -L/usr/local/lib -lcdda_interface -lcdda_paranoia</linkerStartOption>
+                  </linkerStartOptions>
+                  <linkerEndOptions>
+                    <linkerEndOption>-o ${project.build.directory}/libtritonuscdparanoia.so</linkerEndOption>
+                  </linkerEndOptions>
+                </configuration>
+              </execution>
+              <execution>
+                <id>compile-cooked_ioctl</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>javah</goal>
+                  <goal>compile</goal>
+                  <goal>link</goal>
+                </goals>
+                <configuration>
+                  <javahClassNames>
+                    <javahClassName>org.tritonus.lowlevel.cdda.cooked_ioctl.CookedIoctl</javahClassName>
+                  </javahClassNames>
+                  <sources>
+                    <source>
+                      <directory>src/main/native/cooked_ioctl</directory>
+                      <fileNames>
+                        <fileName>org_tritonus_lowlevel_cdda_cooked_ioctl_CookedIoctl.cc</fileName>
+                      </fileNames>
+                    </source>
+                  </sources>
+                  <linkerStartOptions>
+                    <linkerStartOption>-dynamiclib -arch x86_64
+                      -L/usr/local/lib</linkerStartOption>
+                  </linkerStartOptions>
+                  <linkerEndOptions>
+                    <linkerEndOption>-o ${project.build.directory}/libtritonuscooked_ioctl.dylib</linkerEndOption>
+                  </linkerEndOptions>
+                </configuration>
               </execution>
             </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.0</version>
+            <configuration>
+              <forkMode>once</forkMode>
+              <argLine>-Djava.library.path=${project.build.directory}</argLine>
+            </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
 
-    <profile>
-      <id>local (not on jitpack) 2</id>
-      <activation>
-        <property>
-          <name>env.JITPACK</name>
-          <value>!true</value>
-        </property>
-        <os>
-          <family>unix</family>
-          <name>Linux</name>
-        </os>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>native-maven-plugin</artifactId>
-            <extensions>true</extensions>
-            <configuration>
-              <javahClassNames>
-                <javahClassName>org.tritonus.lowlevel.cdda.cooked_ioctl.CookedIoctl</javahClassName>
-              </javahClassNames>
-              <javahSearchJNIFromDependencies>false</javahSearchJNIFromDependencies>
-              <javahOS>darwin</javahOS>
-              <compilerProvider>generic-classic</compilerProvider>
-              <compilerStartOptions>
-                <compilerStartOption>-g -Wall -O2 -fomit-frame-pointer -fPIC</compilerStartOption>
-                <!-- unless locating jdk includes, cause error why??? -->
-                <compilerStartOption>-arch x86_64
-                      -I${java.home}/../include
-                      -I${java.home}/../include/darwin
-                </compilerStartOption>
-              </compilerStartOptions>
-              <sources>
-                <source>
-                  <directory>src/main/native/cooked_ioctl</directory>
-                  <fileNames>
-                    <fileName>org_tritonus_lowlevel_cdda_cooked_ioctl_CookedIoctl.cc</fileName>
-                  </fileNames>
-                </source>
-              </sources>
-              <linkerStartOptions>
-                <linkerStartOption>-dynamiclib -arch x86_64
-                  -L/usr/local/lib</linkerStartOption>
-              </linkerStartOptions>
-              <linkerFinalName></linkerFinalName>
-              <linkerEndOptions>
-                <linkerEndOption>-o ${project.build.directory}/libtritonuscooked_ioctl.dylib</linkerEndOption>
-              </linkerEndOptions>
-            </configuration>
-            <executions>
-              <execution>
-                <id>javah</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>javah</goal>
-                  <goal>compile</goal>
-                  <goal>link</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>mac</id>
       <activation>
@@ -175,15 +151,6 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
-        <configuration>
-          <forkMode>once</forkMode>
-          <argLine>-Djava.library.path=${project.build.directory}</argLine>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -191,7 +158,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
     </dependency>
 
     <dependency>

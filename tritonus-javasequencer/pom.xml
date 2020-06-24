@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-javasequencer</artifactId>
   <packaging>jar</packaging>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
     </dependency>
 
     <dependency>

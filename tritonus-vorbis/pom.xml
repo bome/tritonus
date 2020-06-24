@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-vorbis</artifactId>
   <packaging>jar</packaging>
@@ -19,6 +19,9 @@
           <name>env.JITPACK</name>
           <value>!true</value>
         </property>
+        <os>
+          <family>mac</family>
+        </os>
       </activation>
       <build>
         <plugins>
@@ -121,7 +124,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-remaining</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
     </dependency>
 
     <dependency>
@@ -139,7 +142,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-remaining</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

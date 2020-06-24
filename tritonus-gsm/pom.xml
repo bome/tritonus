@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.tritonus</groupId>
     <artifactId>tritonus</artifactId>
-    <version>0.3.8-SNAPSHOT</version>
+    <version>0.3.8</version>
   </parent>
   <artifactId>tritonus-gsm</artifactId>
   <packaging>jar</packaging>
@@ -27,7 +27,6 @@
         <version>2.22.0</version>
         <configuration>
           <forkMode>once</forkMode>
-          <argLine>-Djava.library.path=${project.build.directory}</argLine>
         </configuration>
       </plugin>
     </plugins>
@@ -37,7 +36,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-share</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
     </dependency>
 
     <dependency>
@@ -55,7 +54,7 @@
     <dependency>
       <groupId>org.tritonus</groupId>
       <artifactId>tritonus-remaining</artifactId>
-      <version>0.3.8-SNAPSHOT</version>
+      <version>0.3.8</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

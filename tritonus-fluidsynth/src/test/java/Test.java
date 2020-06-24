@@ -24,12 +24,6 @@ import javax.sound.midi.Synthesizer;
  */
 public class Test {
 
-    static {
-//        System.setProperty("tritonus.fluidsynth.defaultsoundbank", "/Users/nsano/lib/audio/sf2/SGM-V2.01.sf2");
-//        System.setProperty("tritonus.fluidsynth.defaultsoundbank", "/Users/nsano/lib/audio/sf2/bennetng_AnotherGS_v2-0.sf2");
-        System.setProperty("tritonus.fluidsynth.defaultsoundbank", "/Users/nsano/lib/audio/sf2/Aspirin-Stereo.sf2");
-    }
-
     /**
      * @param args 0: midi
      */
