@@ -79,12 +79,14 @@ extends	AudioFileReader
 
 
 
-	private int getMarkLimit()
+	protected int getMarkLimit()
 	{
 		return m_nMarkLimit;
 	}
 
-
+    protected void setMarkLimit(int limit) {
+        m_nMarkLimit = limit;
+    }
 
 	private boolean isRereading()
 	{
@@ -328,7 +330,11 @@ extends	AudioFileReader
 		}
 		catch (UnsupportedAudioFileException e)
 		{
-			inputStream.reset();
+		    try {
+		        inputStream.reset();
+		    } catch (IOException f) {
+		        f.printStackTrace();
+		    }
 			throw e;
 		}
 		catch (IOException e)
